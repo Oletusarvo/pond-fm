@@ -1,0 +1,4 @@
+seeds
+node_modules
+mock-data
+.env

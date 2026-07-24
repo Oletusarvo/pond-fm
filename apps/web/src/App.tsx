@@ -1,0 +1,52 @@
+import { PlaybackProvider } from './features/audio/providers/playback-provider';
+import { BrowserRouter, Route, Routes } from 'react-router-dom';
+import { DiscoveryFeedScreen } from './features/posts/screens/discovery-feed-screen';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { LoginScreen } from './features/auth/screens/login-screen';
+import { MainLayout } from './layouts/main-layout';
+import { AuthProvider } from './features/auth/providers/auth-provider';
+import { HomeLayout } from './layouts/home-layout';
+import { AuthorizationScreen } from './features/auth/screens/authorization-screen';
+
+function App() {
+  return (
+    <QueryClientProvider client={new QueryClient()}>
+      <AuthProvider>
+        <PlaybackProvider>
+          <div className='flex flex-col w-full h-full'>
+            <BrowserRouter>
+              <Routes>
+                <Route
+                  path='/'
+                  element={<MainLayout />}>
+                  <Route
+                    path='/'
+                    element={<HomeLayout />}>
+                    <Route
+                      path='login'
+                      element={<LoginScreen />}
+                    />
+                    <Route
+                      path='authorize/:code'
+                      element={<AuthorizationScreen />}
+                    />
+                  </Route>
+                  <Route
+                    path='discover'
+                    element={<DiscoveryFeedScreen />}
+                  />
+                  <Route
+                    path='login'
+                    element={<LoginScreen />}
+                  />
+                </Route>
+              </Routes>
+            </BrowserRouter>
+          </div>
+        </PlaybackProvider>
+      </AuthProvider>
+    </QueryClientProvider>
+  );
+}
+
+export default App;

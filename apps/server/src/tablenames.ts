@@ -1,0 +1,15 @@
+export const tablenames = {
+  contentStatuses: 'content_status',
+  artists: 'artist_data',
+  tracks: 'track_data',
+  trackTags: 'track_tag_data',
+  users: 'user_data',
+  userStatuses: 'user_status',
+  userTags: 'user_tag_data',
+  payments: 'payment_data',
+  paymentStatuses: 'payment_status',
+  paymentTypes: 'payment_type',
+  authTokens: 'auth_token_data',
+  posts: 'post_data',
+  tags: 'tag_data',
+};

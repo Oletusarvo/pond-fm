@@ -1,0 +1,56 @@
+@import 'tailwindcss';
+
+:root {
+  --primary: var(--color-green-600);
+  --warning: var(--color-orange-400);
+  --success: var(--color-green-400);
+  --error: var(--color-red-400);
+}
+
+@theme {
+  --color-primary: var(--primary);
+  --breakpoint-xs: 360px;
+}
+
+#root {
+  display: flex;
+  flex-flow: column;
+  width: 100vw;
+  height: 100vh;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+body {
+  display: flex;
+  flex-flow: column;
+  width: 100%;
+  height: 100%;
+  flex: 1;
+}
+
+button {
+  cursor: pointer;
+}
+
+.no-scrollbar {
+  scrollbar-width: none;
+  overflow: auto;
+  -ms-overflow-style: none; /* IE/old Edge */
+}
+
+/* Chrome, Safari, and newer Edge */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+@media screen and (max-width: 1023px) {
+  .h-pad {
+    padding-inline: --spacing(2);
+  }
+}
+
+@media screen and (min-width: 1024px) {
+  .h-pad {
+    padding-inline: --spacing(32);
+  }
+}
