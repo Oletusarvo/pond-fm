@@ -1,15 +1,15 @@
 import { useNavigate } from 'react-router-dom';
 import { Modal } from '../../../components/modal';
 import { Button, LoaderButton } from '../../../components/button';
-import { useAuthContext } from '../providers/auth-provider';
 import { Input } from '../../../components/input';
 import { Form } from '../../../components/form';
 import { useStatus } from '../../../hooks/use-status';
+import { useAppContext } from '../../../providers/app-provider';
 
 export function LoginScreen() {
   const navigate = useNavigate();
   const close = () => navigate('/');
-  const { requestAuthorization } = useAuthContext();
+  const { authService } = useAppContext();
   const { status, loading, setStatus } = useStatus();
 
   const onSubmit = async e => {
@@ -21,7 +21,7 @@ export function LoginScreen() {
     };
 
     try {
-      await requestAuthorization(credentials);
+      await authService.requestAuthorization(credentials);
       setStatus('success');
       navigate('/');
     } catch (err) {

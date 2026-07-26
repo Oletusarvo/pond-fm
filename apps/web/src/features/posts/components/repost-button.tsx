@@ -5,8 +5,8 @@ import { useRepostContext } from '../providers/repost-provider';
 import { useAuthContext } from '../../auth/providers/auth-provider';
 
 export function RepostButton() {
-  const { post } = usePostContext();
-  const { showRepostModal } = useRepostContext();
+  const { post, toggleRepost } = usePostContext();
+
   const { status } = useAuthContext();
   const color = 'var(--color-blue-500)';
   return (
@@ -19,7 +19,7 @@ export function RepostButton() {
         />
       )}
       value={post.repost_count}
-      onClick={showRepostModal}
+      onClick={() => toggleRepost(true)}
     />
   );
 }

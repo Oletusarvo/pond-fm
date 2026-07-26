@@ -6,15 +6,16 @@ import { useStatus } from '../../../hooks/use-status';
 import { apiService } from '../../../utils/api-service';
 import { ErrorMessage, SuccessMessage } from '../../../components/helper-message';
 import { useAuthContext } from '../providers/auth-provider';
+import { useAppContext } from '../../../providers/app-provider';
 
 export function LogoutModal() {
-  const { toggleLogoutModal, logout } = useAuthContext();
+  const { authService } = useAppContext();
   const { status, loading, setStatus } = useStatus();
   const buttonsDisabled = loading || status === 'success';
 
   const onLogout = async () => {
     try {
-      const res = await logout();
+      const res = await authService.logout();
       if (!res.ok) {
         setStatus('error');
       } else {
@@ -27,7 +28,7 @@ export function LogoutModal() {
     }
   };
 
-  const cancel = () => toggleLogoutModal(false);
+  const cancel = () => authService.toggleLogoutModal(false);
 
   return (
     <Modal

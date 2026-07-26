@@ -14,7 +14,7 @@ export function UploadTrackScreen() {
       if (!res.ok) {
         return { success: false };
       }
-      return { success: true, data: await res.json() };
+      return { success: true };
     },
   });
 

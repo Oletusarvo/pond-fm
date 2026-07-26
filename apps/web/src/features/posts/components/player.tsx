@@ -2,6 +2,8 @@ import { useEffect, useRef } from 'react';
 import WaveSurfer from 'wavesurfer.js';
 import { usePostContext } from '../providers/post-provider';
 import { usePlaybackContext } from '../../audio/providers/playback-provider';
+import { useAppContext } from '../../../providers/app-provider';
+import { postToPlayback } from '../../../utils/post-to-playback';
 
 export function generateMockPeaks(length = 400) {
   return Array.from({ length }, (_, i) => {
@@ -16,8 +18,7 @@ export default function SoundCloudWaveform() {
   const containerRef = useRef(null);
   const waveSurferRef = useRef<WaveSurfer>(null);
   const { post } = usePostContext();
-  const { playbackPosition, currentPlayback, audioRef, updateCurrentPlayback } =
-    usePlaybackContext();
+  const { playbackService } = useAppContext();
 
   useEffect(() => {
     if (!containerRef.current) return;
@@ -47,9 +48,10 @@ export default function SoundCloudWaveform() {
     });
     ws.on('click', t => {
       const currentTime = t * post.track.duration;
-      if (currentPlayback?.track.id !== post.track.id) {
-        updateCurrentPlayback(post);
-        audioRef.current.currentTime = currentTime;
+      if (playbackService.currentPlayback?.id !== post.track.id) {
+        playbackService.updateCurrentPlayback(postToPlayback(post));
+        playbackService.updatePlaybackPosition(currentTime);
+        playbackService.audioRef.current.currentTime = currentTime;
       }
     });
 
@@ -61,11 +63,11 @@ export default function SoundCloudWaveform() {
   }, [containerRef.current]);
 
   useEffect(() => {
-    if (!waveSurferRef.current || currentPlayback?.track.id !== post.track.id) {
+    if (!waveSurferRef.current || playbackService.currentPlayback?.id !== post.track.id) {
       return;
     }
-    waveSurferRef.current.setTime(playbackPosition);
-  }, [playbackPosition, currentPlayback?.track.id]);
+    waveSurferRef.current.setTime(playbackService.playbackPosition);
+  }, [playbackService.playbackPosition, playbackService.currentPlayback?.id]);
 
   return (
     <div

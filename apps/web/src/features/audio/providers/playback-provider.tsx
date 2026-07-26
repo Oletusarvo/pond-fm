@@ -4,6 +4,7 @@ import { useAudioPlayer } from '../hooks/use-audio-player';
 import { apiService } from '../../../utils/api-service';
 import { TPost } from '../../../types/post';
 import { useScrobble } from '../hooks/use-scrobble';
+import { TPlayback } from '../../../types/playback';
 
 const [PlaybackContext, usePlaybackContext] = setupContext<{
   audioRef: React.RefObject<HTMLAudioElement>;
@@ -13,14 +14,14 @@ const [PlaybackContext, usePlaybackContext] = setupContext<{
   playbackPosition;
   updatePlaybackState;
   updatePlaybackPosition;
-  currentPlayback: TPost | null;
+  currentPlayback: TPlayback | null;
   playbackState: string;
   playbackSrc: string;
-  togglePlayback: (track: TPost) => Promise<void>;
-  updateCurrentPlayback: (track: TPost) => void;
+  togglePlayback: (playback: TPlayback) => Promise<void>;
+  updateCurrentPlayback: (playback: TPlayback) => void;
 }>({ name: 'PlaybackContext' });
 
-/**Provides functionality for selecting a track for; and controlling playback. */
+/**Provides functionality for selecting a track for; and controlling playback. @deprecated*/
 export function PlaybackProvider({ children }: React.PropsWithChildren) {
   const {
     audioRef,
@@ -32,7 +33,7 @@ export function PlaybackProvider({ children }: React.PropsWithChildren) {
     playbackState,
     playbackPosition,
   } = useAudioPlayer();
-  const duration = currentPlayback?.track.duration || 0;
+  const duration = currentPlayback?.duration || 0;
 
   const { updateTimeListened, reset, resetLastTimeUpdate } = useScrobble({
     threshold: duration <= 30 ? 1 : duration <= 480 ? 0.5 : null,
@@ -40,13 +41,13 @@ export function PlaybackProvider({ children }: React.PropsWithChildren) {
     onPlayTimeReached: () => {
       if (currentPlayback) {
         console.log('Counting play...');
-        apiService.countPlay(currentPlayback?.track.id);
+        apiService.countPlay(currentPlayback?.id);
       }
     },
   });
 
   const playbackSrc = currentPlayback
-    ? `http://localhost:3002/api/v1/tracks/stream/${currentPlayback.track.id}`
+    ? `http://localhost:3002/api/v1/tracks/stream/${currentPlayback.id}`
     : null;
 
   return (

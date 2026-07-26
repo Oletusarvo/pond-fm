@@ -8,47 +8,50 @@ import { AuthProvider } from './features/auth/providers/auth-provider';
 import { HomeLayout } from './layouts/home-layout';
 import { AuthorizationScreen } from './features/auth/screens/authorization-screen';
 import { UploadTrackScreen } from './features/posts/screens/upload-track-screen';
+import { AppProvider } from './providers/app-provider';
 
 function App() {
   return (
     <QueryClientProvider client={new QueryClient()}>
       <AuthProvider>
-        <PlaybackProvider>
-          <div className='flex flex-col w-full h-full'>
-            <BrowserRouter>
-              <Routes>
-                <Route
-                  path='/'
-                  element={<MainLayout />}>
+        <AppProvider>
+          <PlaybackProvider>
+            <div className='flex flex-col w-full h-full'>
+              <BrowserRouter>
+                <Routes>
                   <Route
                     path='/'
-                    element={<HomeLayout />}>
+                    element={<MainLayout />}>
+                    <Route
+                      path='/'
+                      element={<HomeLayout />}>
+                      <Route
+                        path='login'
+                        element={<LoginScreen />}
+                      />
+                      <Route
+                        path='authorize/:code'
+                        element={<AuthorizationScreen />}
+                      />
+                    </Route>
+                    <Route
+                      path='discover'
+                      element={<DiscoveryFeedScreen />}
+                    />
+                    <Route
+                      path='upload'
+                      element={<UploadTrackScreen />}
+                    />
                     <Route
                       path='login'
                       element={<LoginScreen />}
                     />
-                    <Route
-                      path='authorize/:code'
-                      element={<AuthorizationScreen />}
-                    />
                   </Route>
-                  <Route
-                    path='discover'
-                    element={<DiscoveryFeedScreen />}
-                  />
-                  <Route
-                    path='upload'
-                    element={<UploadTrackScreen />}
-                  />
-                  <Route
-                    path='login'
-                    element={<LoginScreen />}
-                  />
-                </Route>
-              </Routes>
-            </BrowserRouter>
-          </div>
-        </PlaybackProvider>
+                </Routes>
+              </BrowserRouter>
+            </div>
+          </PlaybackProvider>
+        </AppProvider>
       </AuthProvider>
     </QueryClientProvider>
   );

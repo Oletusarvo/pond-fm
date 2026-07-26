@@ -1,14 +1,19 @@
 import { useEffect, useRef, useState } from 'react';
 import { TPost } from '../../../types/post';
+import { TPlayback } from '../../../types/playback';
 
 export function useAudioPlayer() {
-  const [currentPlayback, setCurrentPlayback] = useState<TPost | null>(null);
+  const [currentPlayback, setCurrentPlayback] = useState<TPlayback | null>(null);
+  const playbackSrc = currentPlayback
+    ? `http://localhost:3002/api/v1/tracks/stream/${currentPlayback.id}`
+    : null;
+
   const [playbackState, setPlaybackState] = useState<'playing' | 'paused' | 'buffering'>('paused');
   const [playbackPosition, setPlaybackPosition] = useState(0);
   const audioRef = useRef<HTMLAudioElement>(null);
 
-  const updateCurrentPlayback = (post: TPost | null) => {
-    setCurrentPlayback(post);
+  const updateCurrentPlayback = (playback: TPlayback | null) => {
+    setCurrentPlayback(playback);
   };
 
   const updatePlaybackState = (newState: typeof playbackState) => {
@@ -19,10 +24,10 @@ export function useAudioPlayer() {
     setPlaybackPosition(pos);
   };
 
-  const togglePlayback = async (post: TPost) => {
+  const togglePlayback = async (playback: TPlayback) => {
     if (!audioRef.current) return;
 
-    if (currentPlayback?.track.id === post.track.id) {
+    if (currentPlayback?.id === playback.id) {
       //Toggle the playback state of a track if the track.id matches.
       if (audioRef.current.paused) {
         await onPlay();
@@ -30,7 +35,7 @@ export function useAudioPlayer() {
         onPause();
       }
     } else {
-      setCurrentPlayback(post);
+      setCurrentPlayback(playback);
     }
   };
 
@@ -55,7 +60,7 @@ export function useAudioPlayer() {
     if (currentPlayback) {
       onPlay();
     }
-  }, [currentPlayback?.track.id]);
+  }, [currentPlayback?.id]);
 
   return {
     currentPlayback,
@@ -66,5 +71,6 @@ export function useAudioPlayer() {
     updatePlaybackPosition,
     playbackPosition,
     audioRef,
+    playbackSrc,
   };
 }
