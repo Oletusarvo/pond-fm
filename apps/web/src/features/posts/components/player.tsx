@@ -1,5 +1,7 @@
 import { useEffect, useRef } from 'react';
 import WaveSurfer from 'wavesurfer.js';
+import { usePostContext } from '../providers/post-provider';
+import { usePlaybackContext } from '../../audio/providers/playback-provider';
 
 export function generateMockPeaks(length = 400) {
   return Array.from({ length }, (_, i) => {
@@ -12,12 +14,14 @@ export function generateMockPeaks(length = 400) {
 
 export default function SoundCloudWaveform() {
   const containerRef = useRef(null);
-  const waveSurferRef = useRef(null);
-  const peaks = generateMockPeaks();
+  const waveSurferRef = useRef<WaveSurfer>(null);
+  const { post } = usePostContext();
+  const { playbackPosition, currentPlayback, audioRef, updateCurrentPlayback } =
+    usePlaybackContext();
 
   useEffect(() => {
     if (!containerRef.current) return;
-
+    const peaks = post.track.waveform;
     const ws = WaveSurfer.create({
       container: containerRef.current,
       peaks: [peaks],
@@ -39,7 +43,14 @@ export default function SoundCloudWaveform() {
       // Improve rendering
       minPxPerSec: 0,
       interact: true,
-      duration: 200,
+      duration: post.track.duration,
+    });
+    ws.on('click', t => {
+      const currentTime = t * post.track.duration;
+      if (currentPlayback?.track.id !== post.track.id) {
+        updateCurrentPlayback(post);
+        audioRef.current.currentTime = currentTime;
+      }
     });
 
     waveSurferRef.current = ws;
@@ -47,7 +58,14 @@ export default function SoundCloudWaveform() {
     return () => {
       ws.destroy();
     };
-  }, [containerRef.current, peaks]);
+  }, [containerRef.current]);
+
+  useEffect(() => {
+    if (!waveSurferRef.current || currentPlayback?.track.id !== post.track.id) {
+      return;
+    }
+    waveSurferRef.current.setTime(playbackPosition);
+  }, [playbackPosition, currentPlayback?.track.id]);
 
   return (
     <div

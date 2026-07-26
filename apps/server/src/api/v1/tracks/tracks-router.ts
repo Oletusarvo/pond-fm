@@ -11,9 +11,10 @@ import { unlikeTrackHandler } from './handlers/unlike-track-handler';
 import { unrepostTrackHandler } from './handlers/unrepost-track-handler';
 import { updateTrackTagsHandler } from './handlers/update-track-tags';
 import { countPlayHandler } from './handlers/count-play-handler';
+import { upload } from '../../../multer-config';
 
 const router = getRouter();
-router.post('/', checkAuth(), createTrackHandler);
+router.post('/', checkAuth(), upload.single('file'), createTrackHandler);
 router.get('/feed/main', checkAuth(false), getDiscoveryFeed);
 router.get('/feed/discover', checkAuth(false), getDiscoveryFeed);
 router.post('/tags', checkAuth(), updateTrackTagsHandler);

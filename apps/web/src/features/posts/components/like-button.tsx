@@ -1,12 +1,15 @@
 import { Heart } from 'lucide-react';
 import { usePostContext } from '../providers/post-provider';
 import { Count } from './count';
+import { useAuthContext } from '../../auth/providers/auth-provider';
 
 export function LikeButton() {
   const { post, toggleLike } = usePostContext();
+  const { status } = useAuthContext();
   const color = 'var(--color-red-500)';
   return (
     <Count
+      disabled={status !== 'authorized'}
       icon={props => (
         <Heart
           {...props}

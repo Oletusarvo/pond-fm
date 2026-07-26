@@ -2,6 +2,7 @@ import { Pause, Play } from 'lucide-react';
 import { useClassName } from '../../../hooks/use-class-name';
 import { usePostContext } from '../providers/post-provider';
 import { usePlaybackContext } from '../../audio/providers/playback-provider';
+import { Spinner } from '../../../components/spinner';
 
 type PlayButtonProps = Pick<React.ComponentProps<'button'>, 'onClick'> & {
   state: ReturnType<typeof usePlaybackContext>['playbackState'];
@@ -24,6 +25,8 @@ export function PlayButton({ onClick, state, size = 'default' }: PlayButtonProps
           color='white'
           size='1.5em'
         />
+      ) : state === 'buffering' ? (
+        <Spinner />
       ) : (
         <Play
           color='white'

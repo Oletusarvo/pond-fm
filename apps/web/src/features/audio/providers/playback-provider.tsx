@@ -6,6 +6,13 @@ import { TPost } from '../../../types/post';
 import { useScrobble } from '../hooks/use-scrobble';
 
 const [PlaybackContext, usePlaybackContext] = setupContext<{
+  audioRef: React.RefObject<HTMLAudioElement>;
+  updateTimeListened;
+  resetLastTimeUpdate;
+  reset;
+  playbackPosition;
+  updatePlaybackState;
+  updatePlaybackPosition;
   currentPlayback: TPost | null;
   playbackState: string;
   playbackSrc: string;
@@ -13,6 +20,7 @@ const [PlaybackContext, usePlaybackContext] = setupContext<{
   updateCurrentPlayback: (track: TPost) => void;
 }>({ name: 'PlaybackContext' });
 
+/**Provides functionality for selecting a track for; and controlling playback. */
 export function PlaybackProvider({ children }: React.PropsWithChildren) {
   const {
     audioRef,
@@ -20,59 +28,44 @@ export function PlaybackProvider({ children }: React.PropsWithChildren) {
     currentPlayback,
     updateCurrentPlayback,
     updatePlaybackState,
+    updatePlaybackPosition,
     playbackState,
+    playbackPosition,
   } = useAudioPlayer();
+  const duration = currentPlayback?.track.duration || 0;
 
-  const { updateTimeListened } = useScrobble({
-    threshold: 0.5,
-    duration: currentPlayback?.track.duration || 0,
+  const { updateTimeListened, reset, resetLastTimeUpdate } = useScrobble({
+    threshold: duration <= 30 ? 1 : duration <= 480 ? 0.5 : null,
+    duration: duration,
     onPlayTimeReached: () => {
       if (currentPlayback) {
-        countPlay(currentPlayback.track.id);
+        console.log('Counting play...');
+        apiService.countPlay(currentPlayback?.track.id);
       }
     },
   });
 
-  const countPlay = async (trackId: string) => {
-    await apiService.countPlay(trackId);
-  };
-
-  const playbackSrc = useMemo(
-    () =>
-      currentPlayback
-        ? `http://localhost:3002/api/v1/tracks/stream/${currentPlayback.track.id}`
-        : null,
-    [currentPlayback?.track.id],
-  );
-
-  useEffect(() => {
-    if (playbackState === 'playing') {
-      countPlay(currentPlayback?.track.id);
-    }
-  }, [playbackState]);
+  const playbackSrc = currentPlayback
+    ? `http://localhost:3002/api/v1/tracks/stream/${currentPlayback.track.id}`
+    : null;
 
   return (
     <PlaybackContext.Provider
       value={{
+        audioRef,
+        updateTimeListened,
+        reset,
+        resetLastTimeUpdate,
         currentPlayback,
         togglePlayback,
         updateCurrentPlayback,
+        updatePlaybackState,
+        updatePlaybackPosition,
+        playbackPosition,
         playbackState,
         playbackSrc,
       }}>
-      <>
-        {children}
-        <audio
-          hidden
-          onPlay={() => updatePlaybackState('playing')}
-          onPause={() => updatePlaybackState('paused')}
-          onEnded={() => updatePlaybackState('paused')}
-          onLoad={() => console.log('loading')}
-          ref={audioRef}
-          src={playbackSrc}
-          controls
-        />
-      </>
+      <>{children}</>
     </PlaybackContext.Provider>
   );
 }

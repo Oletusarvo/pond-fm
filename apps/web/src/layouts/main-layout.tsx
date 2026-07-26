@@ -2,6 +2,7 @@ import { Outlet } from 'react-router-dom';
 import { BottomNav } from '../components/bottom-nav';
 import { MainHeader } from '../components/main-header';
 import { MiniPlayer } from '../features/posts/components/mini-player';
+import { WindowResizeManager } from '../managers/window-resize-manager';
 
 export function MainLayout() {
   return (
@@ -12,6 +13,7 @@ export function MainLayout() {
       </main>
       <MiniPlayer />
       <BottomNav />
+      <WindowResizeManager />
     </div>
   );
 }

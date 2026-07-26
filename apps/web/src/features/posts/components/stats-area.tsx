@@ -15,12 +15,9 @@ export function StatsArea() {
         icon={Play}
         value={post.play_count}
       />
-      {status === 'authorized' ? (
-        <>
-          <LikeButton />
-          <RepostButton />
-        </>
-      ) : null}
+
+      <LikeButton />
+      <RepostButton />
 
       <TipButton />
     </div>

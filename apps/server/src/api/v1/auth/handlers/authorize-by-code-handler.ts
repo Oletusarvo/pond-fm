@@ -1,5 +1,5 @@
 import { serverConfig } from '../../../../../server-config';
-import { authService } from '../../../../container';
+import { authService, userService } from '../../../../container';
 import { db } from '../../../../db-config';
 import { createHandler } from '../../../../utils/create-handler';
 
@@ -12,12 +12,7 @@ export const authorizeByCodeHandler = createHandler(async (req, res) => {
   }
 
   return res
-    .cookie(serverConfig.accessTokenName, result.data, {
-      httpOnly: true,
-      secure: true,
-      sameSite: 'none',
-      maxAge: 1000 * 60 * 60 * 24 * 90,
-    })
+    .cookie(serverConfig.accessTokenName, result.data, serverConfig.sessionCookieSettings)
     .json({
       token: result.data,
     });

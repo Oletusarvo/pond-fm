@@ -86,12 +86,14 @@ export class PostRepository extends Repository<{ data: string; status: string; l
           'id', track.id, 
           'title', track.title, 
           'author', track_author.json,
+          'duration', track.duration,
           'tags', (
             SELECT JSON_AGG(tags.label) FROM ${tablenames.trackTags} track_tags
             JOIN ${tablenames.tags} tags ON tags.id = track_tags.tag_id 
             WHERE 
             track_tags.track_id = track.id
-          )
+          ),
+          'waveform', track.waveform
         ) AS track
       `,
       ),
@@ -105,17 +107,21 @@ export class PostRepository extends Repository<{ data: string; status: string; l
       title: string;
       userId: string;
       filename: string;
+      duration: number;
       tags: string[];
+      waveform: number[];
     },
     ctx: Knex.Transaction,
   ) {
-    const { title, userId, tags, filename, id } = payload;
+    const { title, userId, tags, filename, id, duration, waveform } = payload;
     const [track] = await ctx(tablenames.tracks)
       .insert({
         id,
         title,
         user_id: userId,
         filename,
+        duration,
+        waveform: JSON.stringify(waveform),
         track_status_id: db
           .select('id')
           .from(tablenames.contentStatuses)

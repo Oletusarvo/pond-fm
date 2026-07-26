@@ -18,6 +18,11 @@ class RequestBuilder {
     return this;
   }
 
+  formData(payload: FormData) {
+    this.query.body = payload;
+    return this;
+  }
+
   /**Sets the credentials-field of the request to "include". */
   includeCredentials() {
     this.query.credentials = 'include';

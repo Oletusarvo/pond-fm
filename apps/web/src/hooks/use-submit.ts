@@ -11,7 +11,7 @@ export type ResponseType =
     };
 
 export type UseSubmitProps = {
-  fetchFn: (e: any) => Promise<ResponseType>;
+  fetchFn: (payload: FormData) => Promise<ResponseType>;
   onSuccess?: (data: any) => Promise<void> | void;
   onError?: (res: Response) => Promise<void> | void;
   onException?: (err: any) => Promise<void> | void;
@@ -24,7 +24,8 @@ export function useSubmit({ fetchFn, onSuccess, onError, onException }: UseSubmi
     e.preventDefault();
     try {
       setStatus('loading');
-      const res = await fetchFn(e);
+      const payload = new FormData(e.currentTarget);
+      const res = await fetchFn(payload);
       if (res.success === true) {
         setStatus('success');
         await onSuccess?.(res.data);

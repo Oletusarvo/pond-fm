@@ -11,9 +11,9 @@ export const debounced = {
 export const cancelable = {
   toggleTrackLike: cancelPrevious(async (trackId: string, isLiked: boolean) => {
     return isLiked ? apiService.unlikeTrack(trackId) : apiService.likeTrack(trackId);
-  }, 700),
+  }, 2000),
 
   repost: cancelPrevious(async (trackId: string, isReposted: boolean) => {
     return !isReposted ? apiService.repostTrack(trackId) : null;
-  }, 700),
+  }, 2000),
 };

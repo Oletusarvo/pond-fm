@@ -1,3 +1,4 @@
+import { withLoader } from '../hoc/with-alternate';
 import { useClassName } from '../hooks/use-class-name';
 import type { WithoutClassName } from '../utils/without-class-name';
 
@@ -48,3 +49,5 @@ export function Button({
     </button>
   );
 }
+
+export const LoaderButton = withLoader(Button);

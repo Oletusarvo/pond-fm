@@ -12,7 +12,7 @@ export class AuthService {
     this.repo = repo;
   }
 
-  /**Authorizes a user by an auth code.
+  /**Authorizes a user by an auth code.Also activates the user if they haven't already been.
    * @returns A JWT-token encoding the authorized user's data.
    */
   async authorizeUserByCode(code: string, ctx: DBContext): Promise<ServiceResponse<string>> {

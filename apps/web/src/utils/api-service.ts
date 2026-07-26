@@ -20,8 +20,8 @@ export class ApiService {
   }
 
   /**Creates a new track. */
-  async createTrack(payload: { title: string; file?: File }) {
-    const req = requestBuilder.post().body(payload).includeCredentials().json().build();
+  async createTrack(payload: FormData) {
+    const req = requestBuilder.post().formData(payload).includeCredentials().build();
     return await fetch(this.withEndpoint('tracks'), req);
   }
 
@@ -99,9 +99,16 @@ export class ApiService {
     return await fetch(this.withEndpoint('auth/me'), req);
   }
 
+  /**Counts a play by track id. */
   async countPlay(trackId: string) {
     const req = requestBuilder.post().body({ trackId }).json().includeCredentials().build();
     return await fetch(this.withEndpoint('tracks/play'), req);
+  }
+
+  /**Logs the user out. */
+  async logout() {
+    const req = requestBuilder.post().includeCredentials().build();
+    return await fetch(this.withEndpoint('auth/logout'), req);
   }
 }
 

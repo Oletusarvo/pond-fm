@@ -11,7 +11,7 @@ export const requestAuthorizationHandler = createHandler(async (req, res) => {
 
     //Create an auth token and a database entry with a temporary code.
     const code = await authService.createAuthorizationCode(user.data.id, trx);
-    //await userService.activateById(user.data.id, trx);
+
     console.log('Temporary code log(remove once email is implemented): ', code);
     //await emailService.sendMagicLink(email, code.data);
   });

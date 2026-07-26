@@ -29,10 +29,6 @@ export const loginHandler = createHandler(async (req: AuthenticatedExpressReques
   console.log('Temporary code log(remove once email is implemented): ', code);
 
   const token = createJWT(user);
-  res.cookie(serverConfig.accessTokenName, token, {
-    httpOnly: true,
-    sameSite: 'none',
-    maxAge: 60 * 60 * 24 * 1000,
-  });
+  res.cookie(serverConfig.accessTokenName, token, serverConfig.sessionCookieSettings);
   return res.json({ token }).end();
 });

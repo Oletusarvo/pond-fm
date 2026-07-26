@@ -6,7 +6,10 @@ export function Count({
   icon: Icon,
   value,
   ...props
-}: { icon: React.FC<any>; value: number } & Pick<React.ComponentProps<'button'>, 'onClick'>) {
+}: { icon: React.FC<any>; value: number } & Pick<
+  React.ComponentProps<'button'>,
+  'onClick' | 'disabled'
+>) {
   const post = usePostContext();
   const convertedCount = useMemo(() => {
     const rawCount = value >= 1000 ? value / 1000 : value >= 1000000 ? value / 1000000 : value;

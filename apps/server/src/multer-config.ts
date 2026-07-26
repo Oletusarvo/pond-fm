@@ -2,16 +2,12 @@ import multer from 'multer';
 
 const allowedMimetypes = ['audio/mpeg', 'audio/wav'];
 
-const storage =
-  process.env.UPLOAD_ENV === 'development'
-    ? multer.diskStorage({
-        destination: './uploads',
-
-        filename: (req, file, cb) => {
-          cb(null, `${Date.now()}-${file.originalname}`);
-        },
-      })
-    : multer.memoryStorage();
+const storage = multer.diskStorage({
+  destination: './uploads',
+  filename: (req, file, cb) => {
+    cb(null, `${Date.now()}-${file.originalname}`);
+  },
+});
 
 export const upload = multer({
   storage,

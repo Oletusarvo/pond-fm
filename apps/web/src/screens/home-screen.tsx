@@ -6,9 +6,10 @@ import { Spinner } from '../components/spinner';
 export function HomeScreen() {
   const navigate = useNavigate();
   const { status } = useAuthContext();
+  const { toggleLogoutModal } = useAuthContext();
   const heroButtonAction = () => {
     if (status === 'authorized') {
-      navigate('/logout');
+      toggleLogoutModal(true);
     } else if (status === 'unauthorized') {
       navigate('/login');
     }

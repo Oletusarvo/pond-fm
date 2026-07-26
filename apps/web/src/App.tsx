@@ -7,6 +7,7 @@ import { MainLayout } from './layouts/main-layout';
 import { AuthProvider } from './features/auth/providers/auth-provider';
 import { HomeLayout } from './layouts/home-layout';
 import { AuthorizationScreen } from './features/auth/screens/authorization-screen';
+import { UploadTrackScreen } from './features/posts/screens/upload-track-screen';
 
 function App() {
   return (
@@ -34,6 +35,10 @@ function App() {
                   <Route
                     path='discover'
                     element={<DiscoveryFeedScreen />}
+                  />
+                  <Route
+                    path='upload'
+                    element={<UploadTrackScreen />}
                   />
                   <Route
                     path='login'

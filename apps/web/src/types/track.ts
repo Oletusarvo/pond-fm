@@ -9,4 +9,5 @@ export type TTrack = {
   duration: number;
   author: TAuthor;
   tags: string[];
+  waveform: number[];
 };

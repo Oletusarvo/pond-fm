@@ -1,15 +1,16 @@
 import { useNavigate, useParams } from 'react-router-dom';
 import { Modal } from '../../../components/modal';
 import { Spinner } from '../../../components/spinner';
-import { apiService } from '../../../utils/api-service';
 import { useEffect } from 'react';
+import { useAuthContext } from '../providers/auth-provider';
 
 export function AuthorizationScreen() {
   const { code } = useParams();
   const navigate = useNavigate();
-  const authorize = async () => {
+  const { authorize } = useAuthContext();
+  const onAuthorize = async () => {
     try {
-      const res = await apiService.authorize(code);
+      const res = await authorize(code);
       if (res.ok) {
         navigate('/discover');
       } else {
@@ -21,7 +22,7 @@ export function AuthorizationScreen() {
   };
 
   useEffect(() => {
-    authorize();
+    onAuthorize();
   }, []);
 
   return (

@@ -4,7 +4,7 @@ import { TPost } from '../../../types/post';
 export function useAudioPlayer() {
   const [currentPlayback, setCurrentPlayback] = useState<TPost | null>(null);
   const [playbackState, setPlaybackState] = useState<'playing' | 'paused' | 'buffering'>('paused');
-
+  const [playbackPosition, setPlaybackPosition] = useState(0);
   const audioRef = useRef<HTMLAudioElement>(null);
 
   const updateCurrentPlayback = (post: TPost | null) => {
@@ -13,6 +13,10 @@ export function useAudioPlayer() {
 
   const updatePlaybackState = (newState: typeof playbackState) => {
     setPlaybackState(newState);
+  };
+
+  const updatePlaybackPosition = (pos: number) => {
+    setPlaybackPosition(pos);
   };
 
   const togglePlayback = async (post: TPost) => {
@@ -59,6 +63,8 @@ export function useAudioPlayer() {
     togglePlayback,
     updateCurrentPlayback,
     updatePlaybackState,
+    updatePlaybackPosition,
+    playbackPosition,
     audioRef,
   };
 }

@@ -13,6 +13,8 @@ import { tryCatch } from '../utils/try-catch';
 import { db } from '../db-config';
 import { tablenames } from '../tablenames';
 import { TSession } from '../types/session';
+import { createJWT } from '../utils/jwt';
+import { v4 } from 'uuid';
 /**Responsible for handling business-logic related to tracks, and to call a TrackRepository to intercat with the database. */
 export class PostService {
   constructor(private repo: PostRepository) {}
@@ -51,7 +53,9 @@ export class PostService {
       title: string;
       userId: string;
       tags: string[];
+      duration: number;
       file: Record<string, any>;
+      waveform: number[];
     },
     trx: Knex.Transaction,
   ) {
@@ -61,7 +65,9 @@ export class PostService {
         title: payload.title,
         userId: payload.userId,
         tags: payload.tags,
+        duration: payload.duration,
         filename: payload.file.filename,
+        waveform: payload.waveform,
       },
       trx,
     );
@@ -136,5 +142,22 @@ export class PostService {
     }
     await this.repo.updateTrackTags({ trackId: payload.trackId, tags: payload.tags }, trx);
     return { success: true, data: null };
+  }
+
+  /**Returns a token allowing fetching of streams and counting plays.
+   * @todo */
+  async createStreamToken(trackId: string, ctx: DBContext) {
+    const track = await this.repo.findTrackById(trackId, ctx).first();
+    const token = await createJWT(
+      {
+        id: v4(),
+        streamStarted: Date.now(),
+        expires: 0, //Stream start + duration of the track.
+      },
+      {
+        expiresIn: '30min',
+      },
+    );
+    return token;
   }
 }
