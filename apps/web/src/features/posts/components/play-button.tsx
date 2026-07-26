@@ -3,13 +3,18 @@ import { useClassName } from '../../../hooks/use-class-name';
 import { usePostContext } from '../providers/post-provider';
 import { usePlaybackContext } from '../../audio/providers/playback-provider';
 import { Spinner } from '../../../components/spinner';
+import React from 'react';
 
 type PlayButtonProps = Pick<React.ComponentProps<'button'>, 'onClick'> & {
   state: ReturnType<typeof usePlaybackContext>['playbackState'];
   size?: 'default' | 'small';
 };
 
-export function PlayButton({ onClick, state, size = 'default' }: PlayButtonProps) {
+export const PlayButton = React.memo(function PlayButton({
+  onClick,
+  state,
+  size = 'default',
+}: PlayButtonProps) {
   const className = useClassName(
     state === 'playing' ? 'bg-green-500' : 'bg-primary',
     size === 'small' ? 'p-2' : 'p-3',
@@ -35,4 +40,4 @@ export function PlayButton({ onClick, state, size = 'default' }: PlayButtonProps
       )}
     </button>
   );
-}
+});

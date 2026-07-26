@@ -9,7 +9,9 @@ import { withCursor } from '../../../../utils/with-cursor';
 export const getDiscoveryFeed = createHandler(async (req: AuthenticatedExpressRequest, res) => {
   const cursor = getCursor(req);
   const session = req.session || null;
-  const tracks = await postService.getDiscoveryFeed(cursor, session, db);
-  const data = tracks.data.length > 10 ? tracks.data.slice(0, -1) : tracks.data;
-  return res.json(withCursor(data));
+  const result = await postService.getDiscoveryFeed(cursor, session, db);
+  return res.json({
+    data: result.data.tracks,
+    cursor: result.data.cursor,
+  });
 });

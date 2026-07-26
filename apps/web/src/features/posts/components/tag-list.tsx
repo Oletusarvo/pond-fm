@@ -1,3 +1,4 @@
+import React from 'react';
 import { useClassName } from '../../../hooks/use-class-name';
 import { usePostContext } from '../providers/post-provider';
 
@@ -41,7 +42,11 @@ type TagListProps = {
   onTagSelected?: (tag: string) => void;
   selectedTag?: string;
 };
-export function TagList({ tags, onTagSelected, selectedTag }: TagListProps) {
+export const TagList = React.memo(function TagList({
+  tags,
+  onTagSelected,
+  selectedTag,
+}: TagListProps) {
   return (
     <div className='flex items-center gap-2 max-w-full shrink-0 no-scrollbar'>
       {tags.map(tag => {
@@ -65,4 +70,4 @@ export function TagList({ tags, onTagSelected, selectedTag }: TagListProps) {
       })}
     </div>
   );
-}
+});

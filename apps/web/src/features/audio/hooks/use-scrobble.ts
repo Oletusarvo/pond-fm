@@ -1,4 +1,4 @@
-import { useMemo, useRef, useState } from 'react';
+import { useCallback, useMemo, useRef, useState } from 'react';
 
 type UseScrobbleProps = {
   /**Percentage of the full duration, 0-1, at which to send a play count increment. If set to null, will scrobble at 4 minutes (240 seconds) */
@@ -18,7 +18,7 @@ export function useScrobble({ threshold, duration, onPlayTimeReached }: UseScrob
     return threshold ? threshold * duration : 240;
   }, [duration, threshold]);
 
-  const updateTimeListened = () => {
+  const updateTimeListened = useCallback(() => {
     const now = Date.now();
 
     if (lastTimeUpdateRef.current === null) {
@@ -31,15 +31,15 @@ export function useScrobble({ threshold, duration, onPlayTimeReached }: UseScrob
       playCounted.current = true;
       onPlayTimeReached();
     }
-  };
+  }, [targetTime]);
 
-  const reset = () => {
+  const reset = useCallback(() => {
     timeListenedRef.current = 0;
     lastTimeUpdateRef.current = null;
     playCounted.current = false;
-  };
+  }, []);
 
-  const resetLastTimeUpdate = () => (lastTimeUpdateRef.current = null);
+  const resetLastTimeUpdate = useCallback(() => (lastTimeUpdateRef.current = null), []);
 
   return {
     updateTimeListened,

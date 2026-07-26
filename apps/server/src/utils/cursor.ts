@@ -10,3 +10,8 @@ export function decodeCursor(encodedCursor?: string) {
     ? (JSON.parse(Buffer.from(encodedCursor, 'base64url').toString('utf-8')) as TCursor)
     : null;
 }
+
+export function createCursor(data: any[], pageSize: number) {
+  const cursorItem = data.length === pageSize + 1 ? data.at(-2) : null;
+  return cursorItem ? encodeCursor({ id: cursorItem.id, timestamp: cursorItem.created_at }) : null;
+}

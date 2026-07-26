@@ -1,13 +1,16 @@
 import { encodeCursor } from './cursor';
 
 /**Includes with the given array of data an base64url-encoded cursor pointing at the last element. */
-export function withCursor<T extends { id: string; created_at: string }>(data: T[]) {
-  const lastItem = data?.at(-1);
+export function withCursor<T extends { id: string; created_at: string }>(
+  data: T[],
+  pageSize: number,
+) {
+  const cursorItem = data.length === pageSize + 1 ? data.at(-2) : null;
   return {
-    cursor: lastItem
+    cursor: cursorItem
       ? encodeCursor({
-          timestamp: lastItem.created_at,
-          id: lastItem.id,
+          timestamp: cursorItem.created_at,
+          id: cursorItem.id,
         })
       : null,
     data,

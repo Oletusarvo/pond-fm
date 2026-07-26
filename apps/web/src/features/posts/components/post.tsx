@@ -1,7 +1,7 @@
 import { PostAuthor } from './post-author';
 import { Title } from './title';
 import { StatsArea } from './stats-area';
-import { PlayerArea } from './play-area';
+import { LargePlayer } from './large-player';
 import { TagList } from './tag-list';
 import { TipButton } from './tip-button';
 import { UploadTime } from './upload-time';
@@ -18,7 +18,7 @@ export function Post() {
         </div>
         <UploadTime />
       </div>
-      <PlayerArea />
+      <LargePlayer />
       <StatsArea />
       <TagList tags={post.track.tags} />
     </div>

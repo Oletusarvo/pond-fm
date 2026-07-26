@@ -1,19 +1,76 @@
-import { useClassName } from '../../../hooks/use-class-name';
-import { usePlaybackContext } from '../../audio/providers/playback-provider';
-import { usePostContext } from '../providers/post-provider';
+import { useEffect, useRef } from 'react';
+import WaveSurfer from 'wavesurfer.js';
 
-export function WaveForm() {
-  const { currentPlayback } = usePlaybackContext();
-  const { post } = usePostContext();
-  const isPlaying = post.track.id === currentPlayback?.id;
-  const className = useClassName(
-    'bg-green-300 rounded-md w-full h-full flex grow items-center px-2 transition-colors duration-500',
-    isPlaying ? 'bg-green-300' : 'bg-slate-300',
-  );
+import React from 'react';
+
+type WaveformProps = {
+  waveform: number[];
+  duration: number;
+  playbackPosition: number;
+  onWaveformClicked?: (currentTime: number) => void;
+};
+
+export default React.memo(function Waveform({
+  duration,
+  waveform,
+  playbackPosition,
+  onWaveformClicked,
+}: WaveformProps) {
+  const containerRef = useRef(null);
+  const waveSurferRef = useRef<WaveSurfer>(null);
+  console.log('Rendering waveform');
+  useEffect(() => {
+    if (!containerRef.current) return;
+
+    const ws = WaveSurfer.create({
+      container: containerRef.current,
+      peaks: [waveform],
+      // Appearance
+      height: 64,
+      waveColor: '#d6d6d6',
+      progressColor: '#00BCFF',
+
+      // Make it look like SoundCloud
+      barWidth: 2,
+      barGap: 1,
+      barRadius: 1,
+
+      normalize: true,
+
+      // Hide cursor
+      cursorWidth: 0,
+
+      // Improve rendering
+      minPxPerSec: 0,
+      interact: true,
+      duration,
+    });
+    ws.on('click', t => {
+      const currentTime = t * duration;
+      onWaveformClicked(currentTime);
+    });
+
+    waveSurferRef.current = ws;
+
+    return () => {
+      ws.destroy();
+    };
+  }, [containerRef.current]);
+
+  useEffect(() => {
+    if (!waveSurferRef.current) {
+      return;
+    }
+    waveSurferRef.current.setTime(playbackPosition);
+  }, [playbackPosition]);
 
   return (
-    <div className={className}>
-      <span>Waveform</span>
-    </div>
+    <div
+      ref={containerRef}
+      style={{
+        width: '100%',
+        cursor: 'pointer',
+      }}
+    />
   );
-}
+});

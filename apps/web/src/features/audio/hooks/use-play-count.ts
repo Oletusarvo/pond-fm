@@ -1,10 +1,10 @@
-import { useState } from 'react';
+import { useCallback, useState } from 'react';
 import { apiService } from '../../../utils/api-service';
 
 /**Provides functionality for tracking plays on tracks. */
 export function usePlayCount() {
   const [lastCountedTrackId, setLastCountedTrackId] = useState(null);
-  const countPlay = (trackId: string) => {
+  const countPlay = useCallback((trackId: string) => {
     apiService
       .countPlay(trackId)
       .then(res => {
@@ -15,6 +15,6 @@ export function usePlayCount() {
       .catch(err => {
         console.log(err.message);
       });
-  };
+  }, []);
   return { lastCountedTrackId, countPlay };
 }

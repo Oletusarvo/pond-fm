@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { TPost } from '../../../types/post';
 import { TPlayback } from '../../../types/playback';
 
@@ -12,42 +12,46 @@ export function useAudioPlayer() {
   const [playbackPosition, setPlaybackPosition] = useState(0);
   const audioRef = useRef<HTMLAudioElement>(null);
 
-  const updateCurrentPlayback = (playback: TPlayback | null) => {
+  /**Updates the current playback if it is different. */
+  const updateCurrentPlayback = useCallback((playback: TPlayback | null) => {
     setCurrentPlayback(playback);
-  };
+  }, []);
 
-  const updatePlaybackState = (newState: typeof playbackState) => {
+  const updatePlaybackState = useCallback((newState: typeof playbackState) => {
     setPlaybackState(newState);
-  };
+  }, []);
 
-  const updatePlaybackPosition = (pos: number) => {
+  const updatePlaybackPosition = useCallback((pos: number) => {
     setPlaybackPosition(pos);
-  };
+  }, []);
 
-  const togglePlayback = async (playback: TPlayback) => {
-    if (!audioRef.current) return;
+  const togglePlayback = useCallback(
+    async (playback: TPlayback) => {
+      if (!audioRef.current) return;
 
-    if (currentPlayback?.id === playback.id) {
-      //Toggle the playback state of a track if the track.id matches.
-      if (audioRef.current.paused) {
-        await onPlay();
+      if (currentPlayback?.id === playback.id) {
+        //Toggle the playback state of a track if the track.id matches.
+        if (audioRef.current.paused) {
+          await onPlay();
+        } else {
+          onPause();
+        }
       } else {
-        onPause();
+        setCurrentPlayback(playback);
       }
-    } else {
-      setCurrentPlayback(playback);
-    }
-  };
+    },
+    [audioRef.current, currentPlayback?.id],
+  );
 
-  const onPlay = async () => {
+  const onPlay = useCallback(async () => {
     if (!audioRef.current) return;
     await audioRef.current.play();
-  };
+  }, [audioRef.current]);
 
-  const onPause = () => {
+  const onPause = useCallback(() => {
     if (!audioRef.current) return;
     audioRef.current.pause();
-  };
+  }, [audioRef.current]);
 
   useEffect(() => {
     if (audioRef.current) {

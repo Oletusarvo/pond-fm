@@ -15,9 +15,22 @@ import { tablenames } from '../tablenames';
 import { TSession } from '../types/session';
 import { createJWT } from '../utils/jwt';
 import { v4 } from 'uuid';
+import { createCursor, encodeCursor } from '../utils/cursor';
+import { withCursor } from '../utils/with-cursor';
 /**Responsible for handling business-logic related to tracks, and to call a TrackRepository to intercat with the database. */
 export class PostService {
   constructor(private repo: PostRepository) {}
+
+  private prepareData(data: any[], pageSize: number) {
+    return data.length > pageSize ? data.slice(0, -1) : data;
+  }
+
+  private withCursor(data: any[], pageSize: number) {
+    return {
+      tracks: this.prepareData(data, pageSize),
+      cursor: createCursor(data, pageSize),
+    };
+  }
 
   async findTrackById(id: string, ctx: DBContext) {
     const data = await this.repo.findTrackById(id, ctx);
@@ -31,15 +44,28 @@ export class PostService {
   }
 
   async getDiscoveryFeed(cursor: TCursor | null, session: TSession | null, ctx: DBContext) {
+    const pageSize = 3;
     const query = this.repo.getBaseQuery(ctx);
     this.repo.selectPost(query, session);
     this.repo.selectTrack(query);
-    query.where('track.play_count', '<', 100).limit(10).orderBy('created_at', 'desc');
+    query
+      .where('track.play_count', '<', 100)
+      .limit(pageSize + 1)
+      .orderBy('created_at', 'desc');
+
     if (cursor) {
-      query.where('post.created_at', '<=', cursor.timestamp).andWhereNot({ 'post.id': cursor.id });
+      query.where('post.created_at', '<=', cursor.timestamp).whereNot({ 'post.id': cursor.id });
     }
 
-    return { success: true, data: await query } as ServiceSuccessResponse<any[]>;
+    const data = await query;
+
+    return {
+      success: true,
+      data: this.withCursor(data, pageSize),
+    } as ServiceSuccessResponse<{
+      tracks: any[];
+      cursor: string;
+    }>;
   }
 
   /**Returns the curated track feed for a user. */
