@@ -1,18 +1,16 @@
-import { useCallback, useMemo } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useAppContext } from '../../../providers/app-provider';
 import { postToPlayback } from '../../../utils/post-to-playback';
 import { usePostContext } from '../providers/post-provider';
 import { PlayButton } from './play-button';
 import SoundCloudWaveform from './waveform';
+import { useEventHandler } from '../../../hooks/use-event-handler';
 
 export function LargePlayer() {
+  const [playbackPosition, setPlaybackPosition] = useState(0);
   const { playbackService } = useAppContext();
-  const { playbackState, togglePlayback, currentPlayback } = playbackService;
+  const { playbackState, togglePlayback, currentPlayback, audioRef } = playbackService;
   const { post } = usePostContext();
-
-  const playbackPosition = useMemo(() => {
-    return currentPlayback?.id === post.track.id ? playbackService.playbackPosition : null;
-  }, [currentPlayback?.id, playbackService.playbackPosition]);
 
   const onWaveformClicked = useCallback(
     (currentTime: number) => {
@@ -26,6 +24,16 @@ export function LargePlayer() {
   const onPlayButtonClicked = useCallback(async () => {
     await togglePlayback(postToPlayback(post));
   }, [togglePlayback, postToPlayback]);
+
+  useEventHandler({
+    type: 'timeupdate',
+    service: audioRef.current,
+    handler: (e: any) => {
+      if (currentPlayback?.id === post.track.id) {
+        setPlaybackPosition(e.currentTarget.currentTime);
+      }
+    },
+  });
 
   return (
     <div className='flex gap-2 w-full h-full items-center'>

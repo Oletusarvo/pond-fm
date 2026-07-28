@@ -1,20 +1,35 @@
-import { useCallback, useState } from 'react';
+import { useCallback, useRef, useState } from 'react';
 import { apiService } from '../../../utils/api-service';
+
+type PlayCountEvent = 'track-played';
 
 /**Provides functionality for tracking plays on tracks. */
 export function usePlayCount() {
-  const [lastCountedTrackId, setLastCountedTrackId] = useState(null);
+  const playCountRef = useRef(new EventTarget());
   const countPlay = useCallback((trackId: string) => {
     apiService
       .countPlay(trackId)
       .then(res => {
         if (res.ok) {
-          setLastCountedTrackId(trackId);
+          playCountRef.current.dispatchEvent(
+            new CustomEvent<{ id: string }>('track-played', {
+              detail: { id: trackId },
+            }),
+          );
         }
       })
       .catch(err => {
         console.log(err.message);
       });
   }, []);
-  return { lastCountedTrackId, countPlay };
+
+  const addEventListener = (type: PlayCountEvent, callback: any) => {
+    playCountRef.current.addEventListener(type, callback);
+  };
+
+  const removeEventListener = (type: PlayCountEvent, callback: any) => {
+    playCountRef.current.removeEventListener(type, callback);
+  };
+
+  return { addEventListener, removeEventListener, countPlay };
 }

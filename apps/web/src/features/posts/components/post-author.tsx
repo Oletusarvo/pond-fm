@@ -1,17 +1,26 @@
 import { Repeat, Star } from 'lucide-react';
 import { usePostContext } from '../providers/post-provider';
+import { Link } from 'react-router-dom';
+import { ObjectEncoder } from '../../../utils/object-encoder';
 
 /**Renders a post author's username, or the post author followed by the tracks author in case of a repost. */
 export function PostAuthor() {
   const { post } = usePostContext();
   const isCanonicalAuthor = post.is_canonical;
-
+  const canonicalAuthorLink = (
+    <Link to={`/user/${ObjectEncoder.encodeToBase64Url(post.track.author)}`}>
+      {post.track.author.username}
+    </Link>
+  );
+  const posterLink = (
+    <Link to={`/user/${ObjectEncoder.encodeToBase64Url(post.author)}`}>{post.author.username}</Link>
+  );
   return (
     <UsernameLabel>
       <div className='flex gap-2 items-baseline'>
         {isCanonicalAuthor ? (
           <>
-            <span>{post.author.username}</span>
+            {canonicalAuthorLink}
             <Star
               size='12px'
               color='transparent'
@@ -20,12 +29,12 @@ export function PostAuthor() {
           </>
         ) : (
           <>
-            <span>{post.author.username}</span>
+            {posterLink}
             <Repeat
               size='12px'
               className='text-primary'
             />
-            {post.track.author.username}
+            {canonicalAuthorLink}
           </>
         )}
       </div>

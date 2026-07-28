@@ -17,7 +17,7 @@ export function AppProvider({ children }: React.PropsWithChildren) {
   const duration = playbackService.currentPlayback?.duration || 1;
   const scrobbleService = useScrobble({
     duration,
-    threshold: duration <= 30 ? 1 : duration <= 480 ? 0.5 : 240 / duration,
+    threshold: duration <= 30 ? 1 : duration <= 60 ? 30 / duration : duration <= 480 ? 0.5 : null,
     onPlayTimeReached: () => playcountService.countPlay(playbackService.currentPlayback.id),
   });
   const authService = useAuth();

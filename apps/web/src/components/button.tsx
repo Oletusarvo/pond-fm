@@ -39,7 +39,7 @@ export function Button({
         ? 'hover:bg-slate-500/10'
         : 'border-transparent',
     fullWidth ? 'w-full' : '',
-    paddingEnabled ? 'py-2 px-4' : '',
+    paddingEnabled ? (variant !== 'ghost' ? 'py-2 px-4' : 'p-2') : '',
   );
   return (
     <button

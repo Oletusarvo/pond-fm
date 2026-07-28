@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { TPost } from '../../../types/post';
 import { TPlayback } from '../../../types/playback';
+import { apiService } from '../../../utils/api-service';
 
 export function useAudioPlayer() {
   const [currentPlayback, setCurrentPlayback] = useState<TPlayback | null>(null);
@@ -14,6 +15,7 @@ export function useAudioPlayer() {
 
   /**Updates the current playback if it is different. */
   const updateCurrentPlayback = useCallback((playback: TPlayback | null) => {
+    //Request a stream token.
     setCurrentPlayback(playback);
   }, []);
 
@@ -37,10 +39,14 @@ export function useAudioPlayer() {
           onPause();
         }
       } else {
-        setCurrentPlayback(playback);
+        apiService.requestStreamToken(playback.id).then(res => {
+          if (res.status === 200) {
+            setCurrentPlayback(playback);
+          }
+        });
       }
     },
-    [audioRef.current, currentPlayback?.id],
+    [audioRef.current, currentPlayback?.id, apiService],
   );
 
   const onPlay = useCallback(async () => {

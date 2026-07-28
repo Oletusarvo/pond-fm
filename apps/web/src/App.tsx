@@ -9,12 +9,14 @@ import { HomeLayout } from './layouts/home-layout';
 import { AuthorizationScreen } from './features/auth/screens/authorization-screen';
 import { UploadTrackScreen } from './features/posts/screens/upload-track-screen';
 import { AppProvider } from './providers/app-provider';
+import { MainScreenFeed } from './features/posts/screens/main-feed-screen';
+import { UserScreen } from './features/posts/screens/user-screen';
 
 function App() {
   return (
     <QueryClientProvider client={new QueryClient()}>
-      <AuthProvider>
-        <AppProvider>
+      <AppProvider>
+        <AuthProvider>
           <PlaybackProvider>
             <div className='flex flex-col w-full h-full'>
               <BrowserRouter>
@@ -35,8 +37,16 @@ function App() {
                       />
                     </Route>
                     <Route
-                      path='discover'
+                      path='undiscovered'
                       element={<DiscoveryFeedScreen />}
+                    />
+                    <Route
+                      path='user/:userDataBase64Url'
+                      element={<UserScreen />}
+                    />
+                    <Route
+                      path='new'
+                      element={<MainScreenFeed />}
                     />
                     <Route
                       path='upload'
@@ -51,8 +61,8 @@ function App() {
               </BrowserRouter>
             </div>
           </PlaybackProvider>
-        </AppProvider>
-      </AuthProvider>
+        </AuthProvider>
+      </AppProvider>
     </QueryClientProvider>
   );
 }

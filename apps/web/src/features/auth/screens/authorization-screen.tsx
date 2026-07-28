@@ -12,7 +12,7 @@ export function AuthorizationScreen() {
     try {
       const res = await authService.authorize(code);
       if (res.ok) {
-        navigate('/discover');
+        navigate('/undiscovered');
       } else {
         navigate('/');
       }

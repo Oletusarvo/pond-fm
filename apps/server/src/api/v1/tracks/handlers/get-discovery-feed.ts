@@ -8,10 +8,8 @@ import { withCursor } from '../../../../utils/with-cursor';
 /**Returns the main track feed. */
 export const getDiscoveryFeed = createHandler(async (req: AuthenticatedExpressRequest, res) => {
   const cursor = getCursor(req);
+  const { tag } = req.query as { tag: string };
   const session = req.session || null;
-  const result = await postService.getDiscoveryFeed(cursor, session, db);
-  return res.json({
-    data: result.data.tracks,
-    cursor: result.data.cursor,
-  });
+  const result = await postService.getUndiscoveredFeed(cursor, session, tag, db);
+  return res.json(result.data);
 });

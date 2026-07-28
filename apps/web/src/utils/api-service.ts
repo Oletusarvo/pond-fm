@@ -57,7 +57,15 @@ export class ApiService {
 
   /**Makes a tip to a user. */
   async tip(payload: { recipientId: string; amountInCents: number }) {
-    const req = requestBuilder.post().body(payload).json().includeCredentials().build();
+    const req = requestBuilder
+      .post()
+      .body({
+        ...payload,
+        currency: 'EUR',
+      })
+      .json()
+      .includeCredentials()
+      .build();
     return await fetch(this.withEndpoint('payments/tip'), req);
   }
 
@@ -73,20 +81,35 @@ export class ApiService {
     return await fetch(this.withEndpoint('tracks/tags'), req);
   }
 
-  /**Returns the discovery feed. */
-  async getDiscoveryFeed(cursor?: string) {
-    const req = requestBuilder.get().includeCredentials().build();
-    const url = new URL(this.withEndpoint(`tracks/feed/discover`));
+  private buildFeedUrl(endpoint: string, cursor?: string, tag?: string) {
+    const url = new URL(this.withEndpoint(endpoint));
     if (cursor) {
       url.searchParams.set('cursor', cursor);
     }
+    if (tag) {
+      url.searchParams.set('tag', tag);
+    }
+    return url;
+  }
+
+  /**Returns the discovery feed. */
+  async getDiscoveryFeed(cursor?: string, tag?: string) {
+    const req = requestBuilder.get().includeCredentials().build();
+    const url = this.buildFeedUrl(`tracks/feed/discover`, cursor, tag);
     return await fetch(url, req);
   }
 
   /**Returns the main feed. */
-  async getMainFeed(cursor?: string) {
+  async getMainFeed(cursor?: string, tag?: string) {
     const req = requestBuilder.get().includeCredentials().build();
-    const url = new URL(this.withEndpoint(`tracks/feed/main`));
+    const url = this.buildFeedUrl(`tracks/feed/main`, cursor, tag);
+    return await fetch(url, req);
+  }
+
+  /**Returns tracks posted by a specific user. */
+  async getAuthorFeed(authorId: string, cursor?: string) {
+    const req = requestBuilder.get().includeCredentials().build();
+    const url = new URL(this.withEndpoint(`tracks/feed/${authorId}`));
     if (cursor) {
       url.searchParams.set('cursor', cursor);
     }
@@ -109,6 +132,11 @@ export class ApiService {
   async logout() {
     const req = requestBuilder.post().includeCredentials().build();
     return await fetch(this.withEndpoint('auth/logout'), req);
+  }
+
+  async requestStreamToken(trackId: string) {
+    const req = requestBuilder.get().includeCredentials().build();
+    return await fetch(this.withEndpoint(`tracks/stream/${trackId}/token`), req);
   }
 }
 

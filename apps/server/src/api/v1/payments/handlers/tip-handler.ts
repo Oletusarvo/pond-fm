@@ -13,7 +13,7 @@ export const tipHandler = createHandler(async (req: AuthenticatedExpressRequest,
       userId: session?.user.id,
       recipientId,
       amountInCents,
-      currency,
+      currency: 'EUR',
     },
     db,
   );

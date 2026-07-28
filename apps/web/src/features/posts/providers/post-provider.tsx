@@ -6,6 +6,8 @@ import { Modal } from '../../../components/modal';
 import { Repeat } from 'lucide-react';
 import { Button } from '../../../components/button';
 import { useAppContext } from '../../../providers/app-provider';
+import { useEventHandler } from '../../../hooks/use-event-handler';
+import { TippingProvider } from '../../tipping/providers/tipping-provider';
 
 const [PostContext, usePostContext] = setupContext<{
   post: TPost;
@@ -30,18 +32,23 @@ export function PostProvider({ children, initialPost }: PostProviderProps) {
     setShowRepostModal(state);
   };
 
-  useEffect(() => {
-    if (playcountService.lastCountedTrackId === post.track.id) {
-      setPost({
-        ...post,
-        play_count: post.play_count + 1,
-      });
-    }
-  }, [playcountService.lastCountedTrackId]);
+  useEventHandler({
+    type: 'track-played',
+    service: playcountService,
+    handler: (e: CustomEvent) => {
+      if (e.detail.id === post.track.id) {
+        setPost({
+          ...post,
+          play_count: post.play_count + 1,
+        });
+      }
+    },
+  });
 
   return (
     <PostContext.Provider value={{ post, toggleLike, toggleRepost }}>
       {children}
+
       {showRepostModal ? (
         <Modal
           title='Repost Track'

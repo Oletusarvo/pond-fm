@@ -5,6 +5,13 @@ type TData = Record<string, unknown>;
 
 export type ExpressRequest<T extends TData = any> = Request & {
   data?: T;
+  streamToken?: {
+    expires: number;
+    trackId: string;
+    id: string;
+    streamStarted: number;
+    countValidAt: number;
+  };
 };
 
 export type AuthenticatedExpressRequest<T extends TData = any> = ExpressRequest<T> & {

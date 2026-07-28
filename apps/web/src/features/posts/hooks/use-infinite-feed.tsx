@@ -20,7 +20,7 @@ export function useInfiniteFeed({ queryFn, key }: UseFeedProps) {
     placeholderData: previousData => previousData,
   });
 
-  const items = useMemo(() => data?.pages.flatMap(page => page.data) ?? [], [data]);
+  const items = useMemo(() => data?.pages.flatMap(page => page.tracks) ?? [], [data]);
   const hasContent = useMemo(() => items.length > 0, [items.length]);
 
   useEffect(() => {

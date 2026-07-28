@@ -3,9 +3,10 @@ import { TAuthor } from '../../../types/author';
 import { setupContext } from '../../../utils/setup-context';
 import { apiService } from '../../../utils/api-service';
 import { Modal } from '../../../components/modal';
-import { Button } from '../../../components/button';
+import { Button, LoaderButton } from '../../../components/button';
 import { Coins } from 'lucide-react';
 import { v4 } from 'uuid';
+import { useStatus } from '../../../hooks/use-status';
 
 const amounts = [
   { amount: 2, id: v4() },
@@ -14,7 +15,7 @@ const amounts = [
 ];
 
 const [TippingContext, useTippingContext] = setupContext<{
-  tip: (amountInCents: number) => Promise<void>;
+  //tip: (amountInCents: number) => Promise<void>;
   showTippingModal: () => void;
 }>({ name: 'TippingContext' });
 
@@ -24,7 +25,10 @@ type TippingProviderProps = React.PropsWithChildren & {
 
 /**Provides logic and a modal for giving tips to authors. */
 export function TippingProvider({ children, recipient }: TippingProviderProps) {
+  const { status, loading, setStatus } = useStatus();
   const [selectedAmount, setSelectedAmount] = useState(() => amounts.at(1));
+  const amount = selectedAmount.amount;
+
   const [showModal, setShowModal] = useState(false);
 
   const showTippingModal = () => {
@@ -32,13 +36,22 @@ export function TippingProvider({ children, recipient }: TippingProviderProps) {
   };
 
   const tip = async () => {
-    const res = await apiService.tip({
-      recipientId: recipient.id,
-      amountInCents: amount * 100,
-    });
+    setStatus('loading');
+
+    try {
+      const res = await apiService.tip({
+        recipientId: recipient.id,
+        amountInCents: amount * 100,
+      });
+      setStatus('success');
+      setShowModal(false);
+      return res;
+    } catch (err) {
+      setStatus('error');
+      console.log(err.message);
+    }
   };
 
-  const amount = selectedAmount.amount;
   const platformFeePercentage = 0.05;
   const platformFeeAmount =
     typeof amount !== 'undefined' ? Math.round(amount * platformFeePercentage * 100) / 100 : 0;
@@ -46,7 +59,7 @@ export function TippingProvider({ children, recipient }: TippingProviderProps) {
   const totalTip = amount;
 
   return (
-    <TippingContext.Provider value={{ tip, showTippingModal }}>
+    <TippingContext.Provider value={{ showTippingModal }}>
       {children}
       {showModal ? (
         <Modal
@@ -92,6 +105,7 @@ export function TippingProvider({ children, recipient }: TippingProviderProps) {
             />
             <div className='flex gap-4 w-full'>
               <Button
+                disabled={loading || status === 'success'}
                 shape='rounded'
                 paddingEnabled
                 onClick={() => setShowModal(false)}
@@ -99,7 +113,9 @@ export function TippingProvider({ children, recipient }: TippingProviderProps) {
                 fullWidth>
                 Cancel
               </Button>
-              <Button
+              <LoaderButton
+                disabled={loading || status === 'success'}
+                loading={loading}
                 shape='rounded'
                 paddingEnabled
                 onClick={tip}
@@ -107,7 +123,7 @@ export function TippingProvider({ children, recipient }: TippingProviderProps) {
                 fullWidth>
                 <Coins size='1rem' />
                 Tip {totalTip + vat}€
-              </Button>
+              </LoaderButton>
             </div>
           </div>
         </Modal>

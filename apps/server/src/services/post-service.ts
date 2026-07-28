@@ -5,32 +5,16 @@ import { TCursor } from '../types/cursor';
 import { serviceError } from '../utils/service-error';
 import {
   ServiceErrorResponse,
-  ServiceErrorValue,
   ServiceResponse,
   ServiceSuccessResponse,
 } from '../types/service-response';
 import { tryCatch } from '../utils/try-catch';
-import { db } from '../db-config';
-import { tablenames } from '../tablenames';
 import { TSession } from '../types/session';
 import { createJWT } from '../utils/jwt';
 import { v4 } from 'uuid';
-import { createCursor, encodeCursor } from '../utils/cursor';
-import { withCursor } from '../utils/with-cursor';
 /**Responsible for handling business-logic related to tracks, and to call a TrackRepository to intercat with the database. */
-export class PostService {
+export class FeedService {
   constructor(private repo: PostRepository) {}
-
-  private prepareData(data: any[], pageSize: number) {
-    return data.length > pageSize ? data.slice(0, -1) : data;
-  }
-
-  private withCursor(data: any[], pageSize: number) {
-    return {
-      tracks: this.prepareData(data, pageSize),
-      cursor: createCursor(data, pageSize),
-    };
-  }
 
   async findTrackById(id: string, ctx: DBContext) {
     const data = await this.repo.findTrackById(id, ctx);
@@ -38,33 +22,58 @@ export class PostService {
   }
 
   /**Returns the global feed ordered by upload date in descending order. */
-  async getMainFeed(cursor: TCursor | null, ctx: DBContext) {
-    const data = await this.repo.findMany(cursor, ctx).orderBy('created_at', 'desc');
-    return { success: true, data } as ServiceSuccessResponse<{ id: string; created_at: string }[]>;
+  async getMainFeed(
+    cursor: TCursor | null,
+    session: TSession | null,
+    tag: string | null,
+    ctx: DBContext,
+  ) {
+    const query = this.repo.getFeedQuery(cursor, session, tag, ctx);
+    query.orderBy('created_at', 'desc');
+    const data = await query;
+    return { success: true, data: this.repo.withCursor(data) } as ServiceSuccessResponse<{
+      tracks: any[];
+      cursor: string | null;
+    }>;
   }
 
-  async getDiscoveryFeed(cursor: TCursor | null, session: TSession | null, ctx: DBContext) {
-    const pageSize = 3;
-    const query = this.repo.getBaseQuery(ctx);
-    this.repo.selectPost(query, session);
-    this.repo.selectTrack(query);
-    query
-      .where('track.play_count', '<', 100)
-      .limit(pageSize + 1)
-      .orderBy('created_at', 'desc');
-
-    if (cursor) {
-      query.where('post.created_at', '<=', cursor.timestamp).whereNot({ 'post.id': cursor.id });
-    }
-
+  /**Returns the feed of undiscovered tracks; tracks with less than 100 unique listeners. */
+  async getUndiscoveredFeed(
+    cursor: TCursor | null,
+    session: TSession | null,
+    tag: string | null,
+    ctx: DBContext,
+  ) {
+    const query = this.repo.getFeedQuery(cursor, session, tag, ctx);
+    query.where('track.play_count', '<', 100).orderBy('created_at', 'desc');
     const data = await query;
 
     return {
       success: true,
-      data: this.withCursor(data, pageSize),
+      data: this.repo.withCursor(data),
     } as ServiceSuccessResponse<{
       tracks: any[];
-      cursor: string;
+      cursor: string | null;
+    }>;
+  }
+
+  /**Returns tracks by a specific author. */
+  async getAuthorFeed(
+    authorId: string,
+    cursor: TCursor | null,
+    session: TSession | null,
+    ctx: DBContext,
+  ) {
+    const query = this.repo.getFeedQuery(cursor, session, null, ctx);
+    query.where({ 'track_author.id': authorId });
+    query.orderBy('created_at', 'desc');
+    const data = await query;
+    return {
+      success: true,
+      data: this.repo.withCursor(data),
+    } as ServiceSuccessResponse<{
+      tracks: any[];
+      cursor: string | null;
     }>;
   }
 
@@ -173,17 +182,27 @@ export class PostService {
   /**Returns a token allowing fetching of streams and counting plays.
    * @todo */
   async createStreamToken(trackId: string, ctx: DBContext) {
-    const track = await this.repo.findTrackById(trackId, ctx).first();
-    const token = await createJWT(
-      {
-        id: v4(),
-        streamStarted: Date.now(),
-        expires: 0, //Stream start + duration of the track.
-      },
-      {
-        expiresIn: '30min',
-      },
-    );
-    return token;
+    const track = await this.repo.findTrackById(trackId, ctx);
+    const streamStarted = Date.now();
+    //Stream start + duration of the track + a grace period of 10 seconds, in milliseconds.
+    const expires = streamStarted + track.duration * 1000 + 10000;
+    const threshold =
+      track.duration <= 30
+        ? 1
+        : track.duration <= 60
+          ? 30 / track.duration
+          : track.duration <= 480
+            ? 0.5
+            : null;
+    const requiredListenTime = threshold ? threshold * track.duration : 240;
+    const countValidAt = streamStarted + requiredListenTime * 1000;
+    const token = createJWT({
+      id: v4(),
+      trackId: track.id,
+      streamStarted: streamStarted,
+      expires,
+      countValidAt,
+    });
+    return { success: true, data: token } as ServiceSuccessResponse<string>;
   }
 }

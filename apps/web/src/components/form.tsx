@@ -6,7 +6,7 @@ export function Form({ children, ...props }: FormProps) {
   return (
     <form
       {...props}
-      className='flex flex-col w-full gap-8'>
+      className='flex flex-col w-full gap-4'>
       {children}
     </form>
   );

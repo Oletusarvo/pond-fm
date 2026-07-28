@@ -4,8 +4,11 @@ import { tablenames } from '../tablenames';
 import { Repository } from './repository';
 import { DBContext } from '../types/db-context';
 import { TSession } from '../types/session';
+import { TCursor } from '../types/cursor';
+import { createCursor } from '../utils/cursor';
 
 export class PostRepository extends Repository<{ data: string; status: string; likes: string }> {
+  private pageSize: number;
   constructor() {
     super(
       {
@@ -20,6 +23,11 @@ export class PostRepository extends Repository<{ data: string; status: string; l
               'id',
               db.raw("JSON_BUILD_OBJECT('id', id, 'username', username) AS json"),
             ).from(tablenames.users);
+          })
+          .with('track_tags', qb => {
+            qb.select('track_tag.track_id', 'tag.label')
+              .from({ track_tag: 'track_tag_data' })
+              .join({ tag: 'tag_data' }, 'tag.id', 'track_tag.tag_id');
           })
           .from(
             db.raw(
@@ -39,9 +47,11 @@ export class PostRepository extends Repository<{ data: string; status: string; l
           )
           .join({ author: 'author_json' }, 'author.id', 'post.user_id')
           .join({ track: tablenames.tracks }, 'track.id', 'post.track_id')
-          .join({ track_author: 'author_json' }, 'track_author.id', 'track.user_id');
+          .join({ track_author: 'author_json' }, 'track_author.id', 'track.user_id')
+          .join('track_tags', 'track_tags.track_id', 'track.id');
       },
     );
+    this.pageSize = 10;
   }
 
   countPlay(trackId: string, ctx: DBContext) {
@@ -88,8 +98,7 @@ export class PostRepository extends Repository<{ data: string; status: string; l
           'author', track_author.json,
           'duration', track.duration,
           'tags', (
-            SELECT JSON_AGG(tags.label) FROM ${tablenames.trackTags} track_tags
-            JOIN ${tablenames.tags} tags ON tags.id = track_tags.tag_id 
+            SELECT JSON_AGG(track_tags.label) FROM track_tags
             WHERE 
             track_tags.track_id = track.id
           ),
@@ -98,6 +107,38 @@ export class PostRepository extends Repository<{ data: string; status: string; l
       `,
       ),
     );
+  }
+
+  prepareData(data: any[]) {
+    return data.length > this.pageSize ? data.slice(0, -1) : data;
+  }
+
+  withCursor(data: any[]) {
+    return {
+      tracks: this.prepareData(data),
+      cursor: createCursor(data, this.pageSize),
+    };
+  }
+
+  getFeedQuery(
+    cursor: TCursor | null,
+    session: TSession | null,
+    tag: string | null,
+    ctx: DBContext,
+  ) {
+    const query = this.getBaseQuery(ctx);
+    this.selectPost(query, session);
+    this.selectTrack(query);
+    query.limit(this.pageSize + 1);
+    if (cursor) {
+      query.where('post.created_at', '<=', cursor.timestamp).whereNot({ 'post.id': cursor.id });
+    }
+    if (tag) {
+      query.where(function () {
+        this.whereILike('track_tags.label', `%${tag}%`);
+      });
+    }
+    return query;
   }
 
   /**Creates a track. Also creates a post for the track. */

@@ -12,15 +12,18 @@ export function Post() {
   return (
     <div className='flex py-2 rounded-md bg-white w-full flex-col gap-2 items-start h-pad'>
       <div className='flex justify-between w-full items-start'>
-        <div className='flex flex-col'>
+        <div className='flex flex-col leading-none'>
           <PostAuthor />
           <Title />
         </div>
+
         <UploadTime />
       </div>
       <LargePlayer />
-      <StatsArea />
-      <TagList tags={post.track.tags} />
+      <div className='flex justify-between w-full'>
+        <StatsArea />
+        <TagList tags={post.track.tags} />
+      </div>
     </div>
   );
 }

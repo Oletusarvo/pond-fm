@@ -2,6 +2,8 @@ import { useEffect, useRef } from 'react';
 import WaveSurfer from 'wavesurfer.js';
 
 import React from 'react';
+import { useAppContext } from '../../../providers/app-provider';
+import { usePostContext } from '../providers/post-provider';
 
 type WaveformProps = {
   waveform: number[];
@@ -18,7 +20,6 @@ export default React.memo(function Waveform({
 }: WaveformProps) {
   const containerRef = useRef(null);
   const waveSurferRef = useRef<WaveSurfer>(null);
-  console.log('Rendering waveform');
   useEffect(() => {
     if (!containerRef.current) return;
 
