@@ -18,8 +18,8 @@ export const createTrackHandler = createHandler(
       await postService.create(
         {
           title: req.body.title,
-          userId: session.user.id,
-          file: req.file,
+          user_id: session.user.id,
+          filename: req.file.filename,
           tags: ['Electronic'],
           duration: metadata.format.duration,
           waveform,

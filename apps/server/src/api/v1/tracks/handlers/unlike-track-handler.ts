@@ -8,8 +8,8 @@ export const unlikeTrackHandler = createHandler(async (req: AuthenticatedExpress
   const session = req.session;
   await postService.unlikeTrack(
     {
-      userId: session.user.id,
-      trackId: req.body.trackId,
+      user_id: session.user.id,
+      track_id: req.body.trackId,
     },
     db,
   );

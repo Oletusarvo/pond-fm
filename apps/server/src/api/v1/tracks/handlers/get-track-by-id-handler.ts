@@ -4,7 +4,6 @@ import { createHandler } from '../../../../utils/create-handler';
 
 /**Returns a track by its ID. */
 export const getTrackByIdHandler = createHandler(async (req, res) => {
-  const { id } = req.params as { id: string };
-  const track = await postService.findTrackById(id, db);
+  const track = await postService.findTrackById(req.params.trackId as string, db);
   return res.status(200).json(track.data);
 });

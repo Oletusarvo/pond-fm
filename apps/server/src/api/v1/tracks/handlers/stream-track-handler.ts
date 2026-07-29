@@ -3,9 +3,28 @@ import path from 'node:path';
 import { createHandler } from '../../../../utils/create-handler';
 import { postService } from '../../../../container';
 import { db } from '../../../../db-config';
+import { serverConfig } from '../../../../../server-config';
+import { verifyJWT } from '../../../../utils/jwt';
 
 export const streamTrackHandler = createHandler(async (req, res) => {
-  const track = await postService.findTrackById(req.params.id as string, db);
+  const trackId = req.params.trackId as string;
+  /*
+  const streamCookie = req.cookies[serverConfig.streamTokenName];
+
+  if (!streamCookie) {
+    const newToken = await postService.createStreamToken(trackId, db);
+    res.cookie(serverConfig.streamTokenName, newToken, serverConfig.streamCookieSettings);
+  } else {
+    const currentStreamToken = verifyJWT(streamCookie) as any;
+    if (currentStreamToken.trackId !== trackId) {
+      //Create a new token for this stream.
+      const newToken = await postService.createStreamToken(trackId, db);
+      res.cookie(serverConfig.streamTokenName, newToken, serverConfig.streamCookieSettings);
+    }
+  }
+    */
+
+  const track = await postService.findTrackById(trackId, db);
   const filePath = path.join(process.cwd(), 'uploads', `${track.data.filename}`);
 
   const fileSize = statSync(filePath).size;

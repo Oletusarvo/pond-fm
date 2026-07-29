@@ -12,8 +12,11 @@ import { tryCatch } from '../utils/try-catch';
 import { TSession } from '../types/session';
 import { createJWT } from '../utils/jwt';
 import { v4 } from 'uuid';
+import { TrackAndUserId, TTrack } from '../types/track-type';
+import { formatError } from 'zod';
+import { formatErrorMessage } from '../utils/format-error-message';
 /**Responsible for handling business-logic related to tracks, and to call a TrackRepository to intercat with the database. */
-export class FeedService {
+export class PostService {
   constructor(private repo: PostRepository) {}
 
   async findTrackById(id: string, ctx: DBContext) {
@@ -45,7 +48,7 @@ export class FeedService {
     ctx: DBContext,
   ) {
     const query = this.repo.getFeedQuery(cursor, session, tag, ctx);
-    query.where('track.play_count', '<', 100).orderBy('created_at', 'desc');
+    query.where({ 'track.is_discovered': false }).orderBy('created_at', 'desc');
     const data = await query;
 
     return {
@@ -77,43 +80,32 @@ export class FeedService {
     }>;
   }
 
-  /**Returns the curated track feed for a user. */
-  async getCuratedFeed(userId: string, cursor: TCursor | null, ctx: DBContext) {
-    throw new Error('getCuratedFeed: Method not implemented!');
-  }
-
-  async create(
-    payload: {
-      id?: string;
-      title: string;
-      userId: string;
-      tags: string[];
-      duration: number;
-      file: Record<string, any>;
-      waveform: number[];
-    },
-    trx: Knex.Transaction,
-  ) {
-    await this.repo.createTrack(
-      {
-        id: payload.id,
-        title: payload.title,
-        userId: payload.userId,
-        tags: payload.tags,
-        duration: payload.duration,
-        filename: payload.file.filename,
-        waveform: payload.waveform,
-      },
-      trx,
-    );
+  async create(payload: TTrack, trx: Knex.Transaction) {
+    await this.repo.createTrack(payload, trx);
     return { success: true } as ServiceSuccessResponse;
   }
 
+  /**Counts a play for the given track id. */
   async countPlay(trackId: string, ctx: DBContext) {
-    await this.repo.countPlay(trackId, ctx);
+    const [{ play_count }] = await this.repo.countPlay(trackId, ctx).returning('play_count');
+    return { success: true, data: play_count } as ServiceSuccessResponse<number>;
   }
 
-  async repostTrack(payload: { trackId: string; userId: string }, ctx: DBContext) {
+  async updateUniqueListeners(...args: Parameters<PostRepository['updateUniqueListeners']>) {
+    const [result, err] = await tryCatch(
+      async () => await this.repo.updateUniqueListeners(...args),
+    );
+    if (err) {
+      console.log(formatErrorMessage('PostRepository.updateUniqueListeners', err.message));
+      return {
+        success: false,
+        data: serviceError.post.uniqueListenerUpdateFail,
+      };
+    }
+    return { success: true } as ServiceSuccessResponse;
+  }
+
+  async repostTrack(payload: TrackAndUserId, ctx: DBContext) {
     const [result, err] = await tryCatch(async () => await this.repo.createPost(payload, ctx));
     if (err) {
       if (err.message.toLowerCase().includes('duplicate')) {
@@ -125,19 +117,13 @@ export class FeedService {
     return { success: true };
   }
 
-  async unrepostTrack(payload: { userId: string; trackId: string }, ctx: DBContext) {
+  async unrepostTrack(payload: TrackAndUserId, ctx: DBContext) {
     await this.repo.deletePost(payload, ctx);
     return { success: true } as ServiceSuccessResponse;
   }
 
   /**Likes a posted track. */
-  async likeTrack(
-    payload: {
-      trackId: string;
-      userId: string;
-    },
-    ctx: DBContext,
-  ) {
+  async likeTrack(payload: TrackAndUserId, ctx: DBContext) {
     return await this.repo
       .createTrackLike(payload, ctx)
       .then(() => {
@@ -154,7 +140,7 @@ export class FeedService {
       });
   }
 
-  async unlikeTrack(payload: { userId: string; trackId: string }, ctx: DBContext) {
+  async unlikeTrack(payload: TrackAndUserId, ctx: DBContext) {
     await this.repo.deleteTrackLike(payload, ctx);
     return { success: true } as ServiceSuccessResponse<void>;
   }
@@ -175,12 +161,11 @@ export class FeedService {
         error: serviceError.auth.forbidden,
       };
     }
-    await this.repo.updateTrackTags({ trackId: payload.trackId, tags: payload.tags }, trx);
+    await this.repo.updateTrackTags({ track_id: payload.trackId, tags: payload.tags }, trx);
     return { success: true, data: null };
   }
 
-  /**Returns a token allowing fetching of streams and counting plays.
-   * @todo */
+  /**Returns a token allowing fetching of streams and counting plays.**/
   async createStreamToken(trackId: string, ctx: DBContext) {
     const track = await this.repo.findTrackById(trackId, ctx);
     const streamStarted = Date.now();

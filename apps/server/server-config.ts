@@ -4,6 +4,7 @@ export const serverConfig = {
   artistAuthString: 'middleman-service-artist-auth',
   accessTokenName: 'amplitune-access-token',
   streamTokenName: 'pondfm-stream-cookie',
+  anonymousSessionCookieName: 'pondfm-anon-cookie',
   streamCookieSettings: {
     httpOnly: true,
     secure: true,
@@ -15,5 +16,10 @@ export const serverConfig = {
     secure: true,
     sameSite: 'none',
     maxAge: 1000 * 60 * 60 * 24 * 90,
+  } as CookieOptions,
+  anonymousSessionCookieSettings: {
+    httpOnly: true,
+    secure: true,
+    sameSite: 'none',
   } as CookieOptions,
 };

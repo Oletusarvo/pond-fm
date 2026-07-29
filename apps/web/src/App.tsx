@@ -1,6 +1,6 @@
 import { PlaybackProvider } from './features/audio/providers/playback-provider';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
-import { DiscoveryFeedScreen } from './features/posts/screens/discovery-feed-screen';
+import { UndiscoveredFeedScreen } from './features/posts/screens/discovery-feed-screen';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { LoginScreen } from './features/auth/screens/login-screen';
 import { MainLayout } from './layouts/main-layout';
@@ -38,7 +38,7 @@ function App() {
                     </Route>
                     <Route
                       path='undiscovered'
-                      element={<DiscoveryFeedScreen />}
+                      element={<UndiscoveredFeedScreen />}
                     />
                     <Route
                       path='user/:userDataBase64Url'

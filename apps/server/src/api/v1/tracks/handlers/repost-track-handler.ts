@@ -11,8 +11,8 @@ export const repostTrackHandler = createHandler(
     const { trackId } = req.body as { trackId: string };
     const result = await postService.repostTrack(
       {
-        userId: session.user.id,
-        trackId,
+        user_id: session.user.id,
+        track_id: trackId,
       },
       db,
     );

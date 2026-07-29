@@ -4,7 +4,7 @@ import { useDiscoveryFeed } from '../hooks/use-discovery-feed';
 import { Feed } from '../components/feed';
 import { Separator } from '../../../components/separator';
 
-export function DiscoveryFeedScreen() {
+export function UndiscoveredFeedScreen() {
   const [selectedTag, setSelectedTag] = useState(null);
   return (
     <div className='flex flex-col w-full max-h-full'>

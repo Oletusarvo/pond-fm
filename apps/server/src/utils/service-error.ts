@@ -14,6 +14,7 @@ export const serviceError = {
   post: {
     duplicateRepost: postError('double-repost'),
     duplicateLike: postError('duplicate-like'),
+    uniqueListenerUpdateFail: postError('unique-listener-update-fail'),
   },
   server: {
     unexpected: buildErrorString('server', 'unexpected'),

@@ -14,9 +14,17 @@ import { upload } from '../../../multer-config';
 import { getAuthorFeed } from './handlers/get-author-feed-handler';
 import { getStreamTokenHandler } from './handlers/get-stream-token-handler';
 import { verifyStreamToken } from './middleware/verify-stream-token';
+import { createBodyParser } from '../../../utils/create-body-parser';
+import { trackSchema } from '../../../schemas/track-schema';
 
 const router = getRouter();
-router.post('/', checkAuth(), upload.single('file'), createTrackHandler);
+router.post(
+  '/',
+  checkAuth(),
+  createBodyParser(trackSchema),
+  upload.single('file'),
+  createTrackHandler,
+);
 router.get('/feed/main', checkAuth(false), getDiscoveryFeed);
 router.get('/feed/discover', checkAuth(false), getDiscoveryFeed);
 router.get('/feed/:authorId', checkAuth(false), getAuthorFeed);
@@ -28,9 +36,9 @@ router.delete('/like', checkAuth(), unlikeTrackHandler);
 
 router.post('/repost', checkAuth(), repostTrackHandler);
 router.delete('/repost', checkAuth(), unrepostTrackHandler);
-router.post('/play', verifyStreamToken, countPlayHandler);
+router.post('/play/:trackId', verifyStreamToken, countPlayHandler);
 router.get('/stream/:trackId/token', getStreamTokenHandler);
-router.get('/stream/:id', verifyStreamToken, streamTrackHandler);
-router.get('/:id', getTrackByIdHandler);
+router.get('/stream/:trackId', verifyStreamToken, streamTrackHandler);
+router.get('/:trackId', getTrackByIdHandler);
 
 export { router as tracksRouter };

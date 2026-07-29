@@ -2,8 +2,9 @@ import { serverConfig } from '../../../../../server-config';
 import { createMiddleware } from '../../../../utils/create-handler';
 import { verifyJWT } from '../../../../utils/jwt';
 
+/**Checks a stream token is present as a cookie and verifies it.
+ * It being for the track it refers to is left for other middleware or handlers. */
 export const verifyStreamToken = createMiddleware(async (req, res, next) => {
-  //Check the stream token.
   const streamToken = req.cookies[serverConfig.streamTokenName];
   if (!streamToken) {
     return res.status(401).end();

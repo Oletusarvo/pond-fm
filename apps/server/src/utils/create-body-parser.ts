@@ -12,7 +12,7 @@ export function createBodyParser(schema: ZodType) {
     if (!parseResult.success) {
       return res.status(400).json(z.treeifyError(parseResult.error));
     }
-    req.data = parseResult.data;
+    req.body = parseResult.data;
     next();
   });
 }

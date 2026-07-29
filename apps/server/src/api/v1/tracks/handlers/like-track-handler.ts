@@ -8,8 +8,8 @@ export const likeTrackHandler = createHandler(async (req: AuthenticatedExpressRe
   const session = req.session;
   const result = await postService.likeTrack(
     {
-      userId: session.user.id,
-      trackId: req.body.trackId,
+      user_id: session.user.id,
+      track_id: req.body.trackId,
     },
     db,
   );

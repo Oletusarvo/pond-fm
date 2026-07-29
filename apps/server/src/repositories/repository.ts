@@ -1,7 +1,7 @@
 import { Knex } from 'knex';
 import { DBContext } from '../types/db-context';
 
-export abstract class Repository<TTable extends { data: string } & Record<string, string>> {
+export abstract class Repository<TTable extends Record<string, string>> {
   constructor(
     protected tablename: TTable,
     protected baseQuery: (ctx: DBContext) => Knex.QueryBuilder,

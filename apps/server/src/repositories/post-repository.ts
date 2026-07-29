@@ -6,6 +6,8 @@ import { DBContext } from '../types/db-context';
 import { TSession } from '../types/session';
 import { TCursor } from '../types/cursor';
 import { createCursor } from '../utils/cursor';
+import { TrackAndUserId, TTrack } from '../types/track-type';
+import { TPost } from '../types/post-type';
 
 export class PostRepository extends Repository<{ data: string; status: string; likes: string }> {
   private pageSize: number;
@@ -40,18 +42,39 @@ export class PostRepository extends Repository<{ data: string; status: string; l
               [this.tablename.data],
             ),
           )
-          .join(
-            { post_status: tablenames.contentStatuses },
-            'post_status.id',
-            'post.post_status_id',
-          )
+
           .join({ author: 'author_json' }, 'author.id', 'post.user_id')
           .join({ track: tablenames.tracks }, 'track.id', 'post.track_id')
           .join({ track_author: 'author_json' }, 'track_author.id', 'track.user_id')
-          .join('track_tags', 'track_tags.track_id', 'track.id');
+          .join('track_tags', 'track_tags.track_id', 'track.id')
+          .join(
+            { track_status: tablenames.contentStatuses },
+            'track_status.id',
+            'track.track_status_id',
+          );
       },
     );
     this.pageSize = 10;
+  }
+
+  async updateUniqueListeners(
+    payload: { trackId: string; userId?: string; playCount: number },
+    ctx: DBContext,
+  ) {
+    const { trackId, userId, playCount } = payload;
+
+    if (playCount < 100) {
+      await ctx('unique_listener_data')
+        .insert({
+          user_id: userId,
+          track_id: trackId,
+        })
+        .onConflict(['user_id', 'track_id'])
+        .ignore();
+    } else {
+      await ctx('unique_listener_data').where({ track_id: trackId }).del();
+      await ctx(tablenames.tracks).where({ id: trackId }).update({ is_discovered: true });
+    }
   }
 
   countPlay(trackId: string, ctx: DBContext) {
@@ -65,7 +88,7 @@ export class PostRepository extends Repository<{ data: string; status: string; l
   selectPost(query: Knex.QueryBuilder, session?: TSession) {
     query.select(
       'post.id as id',
-      'post_status.label as status',
+      'track_status.label as status',
       'post.created_at',
       'track.play_count',
       db.raw('(SELECT COUNT(*) FROM ?? AS likes WHERE likes.track_id = track.id) AS like_count', [
@@ -88,6 +111,7 @@ export class PostRepository extends Repository<{ data: string; status: string; l
     query.select('author.json as author');
   }
 
+  /**Applies a select-clause to the provided query, including as a json-object the track referred to by a post.*/
   selectTrack(query: Knex.QueryBuilder) {
     query.select(
       db.raw(
@@ -109,17 +133,20 @@ export class PostRepository extends Repository<{ data: string; status: string; l
     );
   }
 
-  prepareData(data: any[]) {
+  /**Omits the last item of the provided array if there are more items than the defined page size of the repository. */
+  pruneData(data: any[]) {
     return data.length > this.pageSize ? data.slice(0, -1) : data;
   }
 
+  /**Prunes the data and creates a cursor pointing to the pruned item; allowing pagination. */
   withCursor(data: any[]) {
     return {
-      tracks: this.prepareData(data),
+      tracks: this.pruneData(data),
       cursor: createCursor(data, this.pageSize),
     };
   }
 
+  /**Returns a basic feed query including relevant post, track and author data. */
   getFeedQuery(
     cursor: TCursor | null,
     session: TSession | null,
@@ -141,25 +168,14 @@ export class PostRepository extends Repository<{ data: string; status: string; l
     return query;
   }
 
-  /**Creates a track. Also creates a post for the track. */
-  async createTrack(
-    payload: {
-      id?: string;
-      title: string;
-      userId: string;
-      filename: string;
-      duration: number;
-      tags: string[];
-      waveform: number[];
-    },
-    ctx: Knex.Transaction,
-  ) {
-    const { title, userId, tags, filename, id, duration, waveform } = payload;
+  /**Creates a track and a post for the track. */
+  async createTrack(payload: TTrack, ctx: Knex.Transaction) {
+    const { title, user_id, tags, filename, id, duration, waveform } = payload;
     const [track] = await ctx(tablenames.tracks)
       .insert({
         id,
         title,
-        user_id: userId,
+        user_id,
         filename,
         duration,
         waveform: JSON.stringify(waveform),
@@ -184,80 +200,61 @@ export class PostRepository extends Repository<{ data: string; status: string; l
     //Create post
     await this.createPost(
       {
-        trackId: track.id,
-        userId,
+        track_id: track.id,
+        user_id,
       },
       ctx,
     );
   }
 
+  /**Updates the tags associated with a track. */
   async updateTrackTags(
-    payload: {
-      trackId: string;
-      tags: string[];
-    },
+    payload: { track_id: TrackAndUserId['track_id']; tags: TTrack['tags'] },
     trx: Knex.Transaction,
   ) {
-    await trx(tablenames.trackTags).where({ track_id: payload.trackId }).del();
+    const { track_id, tags } = payload;
+    await trx(tablenames.trackTags).where({ track_id }).del();
     await trx(tablenames.trackTags).insert(
-      payload.tags.map(tag => {
+      tags.map(tag => {
         return {
-          track_id: payload.trackId,
+          track_id,
           tag_id: db.select('id').from(tablenames.tags).where({ label: tag }).limit(1),
         };
       }),
     );
   }
 
-  /**Creates a post of a track. */
-  createPost(
-    payload: {
-      trackId: string;
-      userId: string;
-    },
-    ctx: DBContext,
-  ) {
-    const { trackId, userId } = payload;
-    return ctx('post_data').insert({
-      track_id: trackId,
-      user_id: userId,
-      post_status_id: db
-        .select('id')
-        .from(tablenames.contentStatuses)
-        .where({ label: 'active' })
-        .limit(1),
-    });
+  /**Creates a post of a track. This does not create a track; use createTrack instead.*/
+  createPost(payload: TPost, ctx: DBContext) {
+    return ctx('post_data').insert(payload);
   }
 
-  deletePost(payload: { trackId: string; userId: string }, ctx: DBContext) {
-    return ctx(this.tablename.data)
-      .where({ track_id: payload.trackId, user_id: payload.userId })
-      .del();
+  /**Deletes a post. This does not delete the track. */
+  deletePost(payload: TrackAndUserId, ctx: DBContext) {
+    return ctx(this.tablename.data).where(payload).del();
   }
 
+  /**Deletes a track. Deletion of a track causes the deletion of all posts of it. */
   deleteTrack(id: string, ctx: DBContext) {
     return ctx(tablenames.tracks).where({ id }).del();
   }
 
-  findLike(payload: { userId: string; trackId: string }, ctx: DBContext) {
-    return ctx(this.tablename.likes)
-      .where({ user_id: payload.userId, track_id: payload.trackId })
-      .first();
+  /**Finds a like-record by user and track id. */
+  findLike(payload: TrackAndUserId, ctx: DBContext) {
+    return ctx(this.tablename.likes).where(payload).first();
   }
 
-  deleteTrackLike(payload: { userId: string; trackId: string }, ctx: DBContext) {
-    return ctx(this.tablename.likes)
-      .where({ user_id: payload.userId, track_id: payload.trackId })
-      .del();
+  /**Deletes a like by user and track id. */
+  deleteTrackLike(payload: TrackAndUserId, ctx: DBContext) {
+    return ctx(this.tablename.likes).where(payload).del();
   }
 
-  createTrackLike(payload: { userId: string; trackId: string }, ctx: DBContext) {
-    return ctx(this.tablename.likes).insert({
-      track_id: payload.trackId,
-      user_id: payload.userId,
-    });
+  /**Creates a like by user and track id. */
+  createTrackLike(payload: TrackAndUserId, ctx: DBContext) {
+    return ctx(this.tablename.likes).insert(payload);
   }
 
+  /**Returns the author of a track by its id. */
   async getAuthorByTrackId(trackId: string, ctx: DBContext) {
     return await ctx(tablenames.tracks).where({ id: trackId }).select('user_id').first();
   }
