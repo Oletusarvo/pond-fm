@@ -10,7 +10,6 @@ import { TrackAndUserId, TTrack } from '../types/track-type';
 import { TPost } from '../types/post-type';
 
 export class PostRepository extends Repository<{ data: string; status: string; likes: string }> {
-  private pageSize: number;
   constructor() {
     super(
       {
@@ -54,31 +53,6 @@ export class PostRepository extends Repository<{ data: string; status: string; l
           );
       },
     );
-    this.pageSize = 10;
-  }
-
-  async updateUniqueListeners(
-    payload: { trackId: string; userId?: string; playCount: number },
-    ctx: DBContext,
-  ) {
-    const { trackId, userId, playCount } = payload;
-
-    if (playCount < 100) {
-      await ctx('unique_listener_data')
-        .insert({
-          user_id: userId,
-          track_id: trackId,
-        })
-        .onConflict(['user_id', 'track_id'])
-        .ignore();
-    } else {
-      await ctx('unique_listener_data').where({ track_id: trackId }).del();
-      await ctx(tablenames.tracks).where({ id: trackId }).update({ is_discovered: true });
-    }
-  }
-
-  countPlay(trackId: string, ctx: DBContext) {
-    return ctx(tablenames.tracks).where({ id: trackId }).increment('play_count');
   }
 
   findTrackById(id: string, ctx: DBContext) {
@@ -131,41 +105,6 @@ export class PostRepository extends Repository<{ data: string; status: string; l
       `,
       ),
     );
-  }
-
-  /**Omits the last item of the provided array if there are more items than the defined page size of the repository. */
-  pruneData(data: any[]) {
-    return data.length > this.pageSize ? data.slice(0, -1) : data;
-  }
-
-  /**Prunes the data and creates a cursor pointing to the pruned item; allowing pagination. */
-  withCursor(data: any[]) {
-    return {
-      tracks: this.pruneData(data),
-      cursor: createCursor(data, this.pageSize),
-    };
-  }
-
-  /**Returns a basic feed query including relevant post, track and author data. */
-  getFeedQuery(
-    cursor: TCursor | null,
-    session: TSession | null,
-    tag: string | null,
-    ctx: DBContext,
-  ) {
-    const query = this.getBaseQuery(ctx);
-    this.selectPost(query, session);
-    this.selectTrack(query);
-    query.limit(this.pageSize + 1);
-    if (cursor) {
-      query.where('post.created_at', '<=', cursor.timestamp).whereNot({ 'post.id': cursor.id });
-    }
-    if (tag) {
-      query.where(function () {
-        this.whereILike('track_tags.label', `%${tag}%`);
-      });
-    }
-    return query;
   }
 
   /**Creates a track and a post for the track. */

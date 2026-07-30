@@ -6,7 +6,7 @@ import { apiService } from '../../../utils/api-service';
 export function useAudioPlayer() {
   const [currentPlayback, setCurrentPlayback] = useState<TPlayback | null>(null);
   const playbackSrc = currentPlayback
-    ? `http://localhost:3002/api/v1/tracks/stream/${currentPlayback.id}`
+    ? `http://localhost:3002/api/v1/tracks/${currentPlayback.id}/stream`
     : null;
 
   const [playbackState, setPlaybackState] = useState<'playing' | 'paused' | 'buffering'>('paused');

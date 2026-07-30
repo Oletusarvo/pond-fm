@@ -6,6 +6,7 @@ export type TTrack = {
   duration: number;
   filename: string;
   waveform: number[];
+  is_discovered?: boolean;
 };
 
 export type TrackAndUserId = {

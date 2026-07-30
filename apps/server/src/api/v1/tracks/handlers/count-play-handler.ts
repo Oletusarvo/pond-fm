@@ -1,5 +1,5 @@
 import { serverConfig } from '../../../../../server-config';
-import { postService } from '../../../../container';
+import { scrobbleService } from '../../../../container';
 import { db } from '../../../../db-config';
 import { AuthenticatedExpressRequest } from '../../../../types/express';
 import { createHandler } from '../../../../utils/create-handler';
@@ -18,21 +18,18 @@ export const countPlayHandler = createHandler(async (req: AuthenticatedExpressRe
     return res.status(204).end();
   }
 
-  const result = await postService.countPlay(trackId, db);
-
+  await db.transaction(
+    async trx =>
+      await scrobbleService.countPlay(
+        { track_id: trackId, user_id: session?.user.id, session_id: req.sessionToken.id },
+        trx,
+      ),
+  );
   //Fire and forget
-  db.transaction(async trx => {
-    await postService.updateUniqueListeners(
-      {
-        playCount: result.data,
-        userId: session?.user.id,
-        trackId,
-      },
-      trx,
-    );
-  }).catch(err => {
+  const pruningPromise = scrobbleService.pruneUniqueListeners(trackId, db);
+  pruningPromise.catch(err => {
     console.log(
-      formatErrorMessage('countPlayHandler', 'Updating of unique listeners failed!'),
+      formatErrorMessage('countPlayHandler', 'Pruning of unique listeners failed!'),
       err.message,
     );
   });

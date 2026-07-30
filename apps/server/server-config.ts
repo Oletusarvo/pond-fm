@@ -3,8 +3,8 @@ import { CookieOptions } from 'express';
 export const serverConfig = {
   artistAuthString: 'middleman-service-artist-auth',
   accessTokenName: 'amplitune-access-token',
-  streamTokenName: 'pondfm-stream-cookie',
-  anonymousSessionCookieName: 'pondfm-anon-cookie',
+  streamTokenName: 'pondfm-stream-token',
+  anonymousSessionCookieName: 'pondfm-anon-token',
   streamCookieSettings: {
     httpOnly: true,
     secure: true,

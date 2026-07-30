@@ -12,4 +12,7 @@ export const tablenames = {
   authTokens: 'auth_token_data',
   posts: 'post_data',
   tags: 'tag_data',
+  uniqueListeners: 'unique_listener_data',
+  notifications: 'notification_data',
+  notificationTypes: 'notification_type',
 };

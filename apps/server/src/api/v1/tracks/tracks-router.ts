@@ -36,9 +36,9 @@ router.delete('/like', checkAuth(), unlikeTrackHandler);
 
 router.post('/repost', checkAuth(), repostTrackHandler);
 router.delete('/repost', checkAuth(), unrepostTrackHandler);
-router.post('/play/:trackId', verifyStreamToken, countPlayHandler);
-router.get('/stream/:trackId/token', getStreamTokenHandler);
-router.get('/stream/:trackId', verifyStreamToken, streamTrackHandler);
+router.post('/:trackId/play', verifyStreamToken, countPlayHandler);
+router.get('/:trackId/stream/token', getStreamTokenHandler);
+router.get('/:trackId/stream', verifyStreamToken, streamTrackHandler);
 router.get('/:trackId', getTrackByIdHandler);
 
 export { router as tracksRouter };

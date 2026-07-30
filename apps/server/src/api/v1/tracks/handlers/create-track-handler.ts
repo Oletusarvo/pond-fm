@@ -15,7 +15,7 @@ export const createTrackHandler = createHandler(
     const waveform = await generateWaveformData(req.file.path);
 
     await db.transaction(async trx => {
-      await postService.create(
+      await postService.createTrack(
         {
           title: req.body.title,
           user_id: session.user.id,

@@ -1,4 +1,4 @@
-import { postService } from '../../../../container';
+import { feedService, postService } from '../../../../container';
 import { db } from '../../../../db-config';
 import { AuthenticatedExpressRequest } from '../../../../types/express';
 import { createHandler } from '../../../../utils/create-handler';
@@ -10,6 +10,6 @@ export const getDiscoveryFeed = createHandler(async (req: AuthenticatedExpressRe
   const cursor = getCursor(req);
   const { tag } = req.query as { tag: string };
   const session = req.session || null;
-  const result = await postService.getUndiscoveredFeed(cursor, session, tag, db);
+  const result = await feedService.getUndiscoveredFeed(cursor, session, tag, db);
   return res.json(result.data);
 });

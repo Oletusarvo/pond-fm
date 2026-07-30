@@ -4,7 +4,7 @@
  */
 exports.up = function (knex) {
   return knex.schema.alterTable('track_data', tbl => {
-    tbl.boolean('is_discovered').defaultTo(false);
+    tbl.integer('unique_play_count').defaultTo(0);
   });
 };
 
@@ -14,6 +14,6 @@ exports.up = function (knex) {
  */
 exports.down = function (knex) {
   return knex.schema.alterTable('track_data', tbl => {
-    tbl.dropColumn('is_discovered');
+    tbl.dropColumn('unique_play_count');
   });
 };

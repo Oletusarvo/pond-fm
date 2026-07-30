@@ -12,6 +12,9 @@ export type ExpressRequest<T extends TData = any> = Request & {
     streamStarted: number;
     countValidAt: number;
   };
+  sessionToken: {
+    id: string;
+  };
 };
 
 export type AuthenticatedExpressRequest<T extends TData = any> = ExpressRequest<T> & {

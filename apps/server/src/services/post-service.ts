@@ -9,13 +9,11 @@ import {
   ServiceSuccessResponse,
 } from '../types/service-response';
 import { tryCatch } from '../utils/try-catch';
-import { TSession } from '../types/session';
 import { createJWT } from '../utils/jwt';
 import { v4 } from 'uuid';
 import { TrackAndUserId, TTrack } from '../types/track-type';
-import { formatError } from 'zod';
-import { formatErrorMessage } from '../utils/format-error-message';
-/**Responsible for handling business-logic related to tracks, and to call a TrackRepository to intercat with the database. */
+
+/**Responsible for handling business-logic related to individual posts and tracks. */
 export class PostService {
   constructor(private repo: PostRepository) {}
 
@@ -24,84 +22,8 @@ export class PostService {
     return { success: true, data } as ServiceSuccessResponse<any>;
   }
 
-  /**Returns the global feed ordered by upload date in descending order. */
-  async getMainFeed(
-    cursor: TCursor | null,
-    session: TSession | null,
-    tag: string | null,
-    ctx: DBContext,
-  ) {
-    const query = this.repo.getFeedQuery(cursor, session, tag, ctx);
-    query.orderBy('created_at', 'desc');
-    const data = await query;
-    return { success: true, data: this.repo.withCursor(data) } as ServiceSuccessResponse<{
-      tracks: any[];
-      cursor: string | null;
-    }>;
-  }
-
-  /**Returns the feed of undiscovered tracks; tracks with less than 100 unique listeners. */
-  async getUndiscoveredFeed(
-    cursor: TCursor | null,
-    session: TSession | null,
-    tag: string | null,
-    ctx: DBContext,
-  ) {
-    const query = this.repo.getFeedQuery(cursor, session, tag, ctx);
-    query.where({ 'track.is_discovered': false }).orderBy('created_at', 'desc');
-    const data = await query;
-
-    return {
-      success: true,
-      data: this.repo.withCursor(data),
-    } as ServiceSuccessResponse<{
-      tracks: any[];
-      cursor: string | null;
-    }>;
-  }
-
-  /**Returns tracks by a specific author. */
-  async getAuthorFeed(
-    authorId: string,
-    cursor: TCursor | null,
-    session: TSession | null,
-    ctx: DBContext,
-  ) {
-    const query = this.repo.getFeedQuery(cursor, session, null, ctx);
-    query.where({ 'track_author.id': authorId });
-    query.orderBy('created_at', 'desc');
-    const data = await query;
-    return {
-      success: true,
-      data: this.repo.withCursor(data),
-    } as ServiceSuccessResponse<{
-      tracks: any[];
-      cursor: string | null;
-    }>;
-  }
-
-  async create(payload: TTrack, trx: Knex.Transaction) {
+  async createTrack(payload: TTrack, trx: Knex.Transaction) {
     await this.repo.createTrack(payload, trx);
-    return { success: true } as ServiceSuccessResponse;
-  }
-
-  /**Counts a play for the given track id. */
-  async countPlay(trackId: string, ctx: DBContext) {
-    const [{ play_count }] = await this.repo.countPlay(trackId, ctx).returning('play_count');
-    return { success: true, data: play_count } as ServiceSuccessResponse<number>;
-  }
-
-  async updateUniqueListeners(...args: Parameters<PostRepository['updateUniqueListeners']>) {
-    const [result, err] = await tryCatch(
-      async () => await this.repo.updateUniqueListeners(...args),
-    );
-    if (err) {
-      console.log(formatErrorMessage('PostRepository.updateUniqueListeners', err.message));
-      return {
-        success: false,
-        data: serviceError.post.uniqueListenerUpdateFail,
-      };
-    }
     return { success: true } as ServiceSuccessResponse;
   }
 

@@ -125,7 +125,7 @@ export class ApiService {
   /**Counts a play by track id. */
   async countPlay(trackId: string) {
     const req = requestBuilder.post().includeCredentials().build();
-    return await fetch(this.withEndpoint(`tracks/play/${trackId}`), req);
+    return await fetch(this.withEndpoint(`tracks/${trackId}/play`), req);
   }
 
   /**Logs the user out. */
@@ -136,7 +136,7 @@ export class ApiService {
 
   async requestStreamToken(trackId: string) {
     const req = requestBuilder.get().includeCredentials().build();
-    return await fetch(this.withEndpoint(`tracks/stream/${trackId}/token`), req);
+    return await fetch(this.withEndpoint(`tracks/${trackId}/stream/token`), req);
   }
 }
 

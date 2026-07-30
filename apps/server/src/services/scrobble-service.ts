@@ -1,0 +1,28 @@
+import { ScrobbleRepository } from '../repositories/scrobble-repository';
+import { DBContext } from '../types/db-context';
+import { ServiceSuccessResponse } from '../types/service-response';
+import { TrackAndUserId } from '../types/track-type';
+
+export class ScrobbleService {
+  constructor(private repo: ScrobbleRepository) {}
+
+  /**Counts a play on a track and attempts to create a unique listener. If a listener is created, increments the unique listener count of the track. */
+  async countPlay(listener: TrackAndUserId & { session_id: string }, ctx: DBContext) {
+    await this.repo.incrementPlayCount(listener.track_id, ctx);
+    const listenerCreated = await this.repo.createUniqueListener(listener, ctx);
+    if (listenerCreated) {
+      await this.repo.incrementUniquePlayCount(listener.track_id, ctx);
+    }
+    return { success: true } as ServiceSuccessResponse<void>;
+  }
+
+  /**Prunes unique listener records of tracks with at least 100 unique listens. */
+  async pruneUniqueListeners(trackId: string, ctx: DBContext) {
+    const counts = await this.repo.getPlayCounts(trackId, ctx);
+
+    if (counts.uniquePlayCount >= 100) {
+      await this.repo.deleteUniqueListeners(trackId, ctx);
+    }
+    return { success: true };
+  }
+}
