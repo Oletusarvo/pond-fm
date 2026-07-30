@@ -1,7 +1,11 @@
-import { ArrowUpCircle, Menu } from 'lucide-react';
+import { ArrowUpCircle, Bell, Menu } from 'lucide-react';
 import { Button } from './button';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useAuthContext } from '../features/auth/providers/auth-provider';
+import {
+  NotificationsProvider,
+  useNotificationsContext,
+} from '../features/notifications/providers/notifications-provider';
 
 export function MainHeader() {
   const navigate = useNavigate();
@@ -24,12 +28,18 @@ export function MainHeader() {
       </div>
 
       <div className='flex gap-4 items-center'>
-        {status === 'authorized' ? (
-          <Button
-            variant='ghost'
-            onClick={() => navigate('/upload')}>
-            <ArrowUpCircle />
-          </Button>
+        {status === 'authenticated' ? (
+          <>
+            <NotificationsProvider>
+              <NotificationsButton />
+            </NotificationsProvider>
+
+            <Button
+              variant='ghost'
+              onClick={() => navigate('/upload')}>
+              <ArrowUpCircle />
+            </Button>
+          </>
         ) : null}
 
         <Button variant='ghost'>
@@ -37,5 +47,22 @@ export function MainHeader() {
         </Button>
       </div>
     </header>
+  );
+}
+
+function NotificationsButton() {
+  const { toggleShowNotificationsModal, hasUnseen } = useNotificationsContext();
+  return (
+    <Button
+      variant='ghost'
+      shape='circle'
+      onClick={() => toggleShowNotificationsModal(true)}>
+      <div className='relative'>
+        <Bell />
+        {hasUnseen ? (
+          <div className='bg-red-500 w-2 h-2 rounded-full absolute z-10 right-0 bottom-1' />
+        ) : null}
+      </div>
+    </Button>
   );
 }

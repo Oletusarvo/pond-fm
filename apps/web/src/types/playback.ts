@@ -1,6 +1,7 @@
 import { TTrack } from './track';
 
 export type TPlayback = TTrack & {
+  start_position?: number;
   stats: {
     liked_by_me?: boolean;
     reposted_by_me?: boolean;

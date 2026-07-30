@@ -8,7 +8,7 @@ import { useAuthContext } from '../../auth/providers/auth-provider';
 
 export function StatsArea() {
   const { post } = usePostContext();
-  const { status } = useAuthContext();
+
   return (
     <div className='flex gap-8 items-center'>
       <Count

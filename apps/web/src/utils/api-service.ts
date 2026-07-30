@@ -138,6 +138,15 @@ export class ApiService {
     const req = requestBuilder.get().includeCredentials().build();
     return await fetch(this.withEndpoint(`tracks/${trackId}/stream/token`), req);
   }
+
+  async getNotifications(cursor?: string) {
+    const req = requestBuilder.get().includeCredentials().build();
+    const url = new URL(this.withEndpoint(`users/notifications`));
+    if (cursor) {
+      url.searchParams.set('cursor', cursor);
+    }
+    return await fetch(url, req);
+  }
 }
 
 /**Provides methods to perform actions on the server. */

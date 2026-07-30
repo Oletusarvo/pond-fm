@@ -1,7 +1,10 @@
-import { useAppContext } from '../../../providers/app-provider';
+import { usePlaybackContext } from '../providers/playback-provider';
+import { useScrobbleContext } from '../providers/scrobble-provider';
 
 export function MiniPlayer() {
-  const { playbackService, scrobbleService } = useAppContext();
+  const playbackService = usePlaybackContext();
+  const scrobbleService = useScrobbleContext();
+
   return (
     <audio
       onPlay={() => playbackService.updatePlaybackState('playing')}

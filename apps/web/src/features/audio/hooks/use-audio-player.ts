@@ -14,40 +14,39 @@ export function useAudioPlayer() {
   const audioRef = useRef<HTMLAudioElement>(null);
 
   /**Updates the current playback if it is different. */
-  const updateCurrentPlayback = useCallback((playback: TPlayback | null) => {
+  const updateCurrentPlayback = (playback: TPlayback | null) => {
     //Request a stream token.
-    setCurrentPlayback(playback);
-  }, []);
+    if (currentPlayback?.id !== playback.id) {
+      apiService
+        .requestStreamToken(playback.id)
+        .then(() => {
+          setCurrentPlayback(playback);
+        })
+        .catch(err => {
+          console.log('Fetching of stream token failed!', err.message);
+        });
+    }
+  };
 
   const updatePlaybackState = useCallback((newState: typeof playbackState) => {
     setPlaybackState(newState);
   }, []);
 
-  const updatePlaybackPosition = useCallback((pos: number) => {
-    setPlaybackPosition(pos);
-  }, []);
+  const updatePlaybackPosition = (pos: number) => {
+    //setPlaybackPosition(pos);
+    audioRef.current.currentTime = pos;
+  };
 
-  const togglePlayback = useCallback(
-    async (playback: TPlayback) => {
-      if (!audioRef.current) return;
+  /**Toggles the state of the current playback. */
+  const togglePlayback = async () => {
+    if (!audioRef.current) return;
 
-      if (currentPlayback?.id === playback.id) {
-        //Toggle the playback state of a track if the track.id matches.
-        if (audioRef.current.paused) {
-          await onPlay();
-        } else {
-          onPause();
-        }
-      } else {
-        apiService.requestStreamToken(playback.id).then(res => {
-          if (res.status === 200) {
-            setCurrentPlayback(playback);
-          }
-        });
-      }
-    },
-    [audioRef.current, currentPlayback?.id, apiService],
-  );
+    if (audioRef.current.paused) {
+      await onPlay();
+    } else {
+      onPause();
+    }
+  };
 
   const onPlay = useCallback(async () => {
     if (!audioRef.current) return;
@@ -68,6 +67,7 @@ export function useAudioPlayer() {
   //Automatically play tracks when they are selected. Must be done here; the hidden audio-tag must be rendered before play is hit.
   useEffect(() => {
     if (currentPlayback) {
+      audioRef.current.currentTime = currentPlayback.start_position || 0;
       onPlay();
     }
   }, [currentPlayback?.id]);

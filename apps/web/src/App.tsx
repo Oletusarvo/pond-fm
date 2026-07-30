@@ -11,58 +11,62 @@ import { UploadTrackScreen } from './features/posts/screens/upload-track-screen'
 import { AppProvider } from './providers/app-provider';
 import { MainScreenFeed } from './features/posts/screens/main-feed-screen';
 import { UserScreen } from './features/posts/screens/user-screen';
+import { ScrobbleProvider } from './features/audio/providers/scrobble-provider';
+import { PlayCountProvider } from './features/audio/providers/playcount-provider';
 
 function App() {
   return (
     <QueryClientProvider client={new QueryClient()}>
-      <AppProvider>
-        <AuthProvider>
-          <PlaybackProvider>
-            <div className='flex flex-col w-full h-full'>
-              <BrowserRouter>
-                <Routes>
-                  <Route
-                    path='/'
-                    element={<MainLayout />}>
+      <AuthProvider>
+        <PlaybackProvider>
+          <PlayCountProvider>
+            <ScrobbleProvider>
+              <div className='flex flex-col w-full h-full'>
+                <BrowserRouter>
+                  <Routes>
                     <Route
                       path='/'
-                      element={<HomeLayout />}>
+                      element={<MainLayout />}>
+                      <Route
+                        path='/'
+                        element={<HomeLayout />}>
+                        <Route
+                          path='login'
+                          element={<LoginScreen />}
+                        />
+                        <Route
+                          path='authorize/:code'
+                          element={<AuthorizationScreen />}
+                        />
+                      </Route>
+                      <Route
+                        path='undiscovered'
+                        element={<UndiscoveredFeedScreen />}
+                      />
+                      <Route
+                        path='user/:userDataBase64Url'
+                        element={<UserScreen />}
+                      />
+                      <Route
+                        path='new'
+                        element={<MainScreenFeed />}
+                      />
+                      <Route
+                        path='upload'
+                        element={<UploadTrackScreen />}
+                      />
                       <Route
                         path='login'
                         element={<LoginScreen />}
                       />
-                      <Route
-                        path='authorize/:code'
-                        element={<AuthorizationScreen />}
-                      />
                     </Route>
-                    <Route
-                      path='undiscovered'
-                      element={<UndiscoveredFeedScreen />}
-                    />
-                    <Route
-                      path='user/:userDataBase64Url'
-                      element={<UserScreen />}
-                    />
-                    <Route
-                      path='new'
-                      element={<MainScreenFeed />}
-                    />
-                    <Route
-                      path='upload'
-                      element={<UploadTrackScreen />}
-                    />
-                    <Route
-                      path='login'
-                      element={<LoginScreen />}
-                    />
-                  </Route>
-                </Routes>
-              </BrowserRouter>
-            </div>
-          </PlaybackProvider>
-        </AuthProvider>
-      </AppProvider>
+                  </Routes>
+                </BrowserRouter>
+              </div>
+            </ScrobbleProvider>
+          </PlayCountProvider>
+        </PlaybackProvider>
+      </AuthProvider>
     </QueryClientProvider>
   );
 }

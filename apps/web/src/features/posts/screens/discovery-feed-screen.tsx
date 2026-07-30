@@ -9,7 +9,12 @@ export function UndiscoveredFeedScreen() {
   return (
     <div className='flex flex-col w-full max-h-full'>
       <div className='py-2 w-full h-pad'>
-        <h2 className='font-semibold text-primary'>Undiscovered Tracks</h2>
+        <div className='flex flex-col pb-2'>
+          <h2 className='font-semibold text-primary'>Undiscovered Tracks</h2>
+          <p className='text-slate-500 text-sm'>
+            Browse tracks with less than 100 unique listeners.
+          </p>
+        </div>
         <MainGenreTagList
           selectedTag={selectedTag}
           onSelected={tag =>

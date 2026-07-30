@@ -6,7 +6,7 @@ export function BottomNav() {
   const navigate = useNavigate();
   const location = useLocation();
   return (
-    <footer className='flex items-center gap-16 w-full bg-primary text-white p-4 justify-center border-t-slate-200 border-t'>
+    <footer className='flex items-center gap-16 w-full bg-primary text-white p-4 justify-center border-t-green-800 border-t'>
       <Button
         variant={'ghost'}
         shape='circle'

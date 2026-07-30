@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { apiService } from '../../../utils/api-service';
 import { useQuery } from '@tanstack/react-query';
 
-type TSessionStatus = 'loading' | 'authorized' | 'unauthorized';
+type TSessionStatus = 'loading' | 'authenticated' | 'unauthenticated';
 
 export function useAuth() {
   const [showLogoutModal, setShowLogoutModal] = useState(false);
@@ -21,8 +21,8 @@ export function useAuth() {
   const status: TSessionStatus = isPending
     ? 'loading'
     : session !== null
-      ? 'authorized'
-      : 'unauthorized';
+      ? 'authenticated'
+      : 'unauthenticated';
 
   const toggleLogoutModal = (state: boolean) => setShowLogoutModal(state);
 

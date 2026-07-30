@@ -1,9 +1,5 @@
-import { useEffect, useRef } from 'react';
+import React, { useEffect, useRef } from 'react';
 import WaveSurfer from 'wavesurfer.js';
-
-import React from 'react';
-import { useAppContext } from '../../../providers/app-provider';
-import { usePostContext } from '../providers/post-provider';
 
 type WaveformProps = {
   waveform: number[];
@@ -12,7 +8,7 @@ type WaveformProps = {
   onWaveformClicked?: (currentTime: number) => void;
 };
 
-export default React.memo(function Waveform({
+export const Waveform = React.memo(function Waveform({
   duration,
   waveform,
   playbackPosition,
@@ -20,10 +16,11 @@ export default React.memo(function Waveform({
 }: WaveformProps) {
   const containerRef = useRef(null);
   const waveSurferRef = useRef<WaveSurfer>(null);
+
   useEffect(() => {
     if (!containerRef.current) return;
 
-    const ws = WaveSurfer.create({
+    waveSurferRef.current = WaveSurfer.create({
       container: containerRef.current,
       peaks: [waveform],
       // Appearance
@@ -46,24 +43,36 @@ export default React.memo(function Waveform({
       interact: true,
       duration,
     });
-    ws.on('click', t => {
-      const currentTime = t * duration;
-      onWaveformClicked(currentTime);
-    });
-
-    waveSurferRef.current = ws;
 
     return () => {
-      ws.destroy();
+      waveSurferRef.current.destroy();
     };
-  }, [containerRef.current]);
+  }, []);
 
   useEffect(() => {
     if (!waveSurferRef.current) {
       return;
     }
+    const unsubscribe = waveSurferRef.current.on('ready', () =>
+      waveSurferRef.current.setTime(playbackPosition),
+    );
     waveSurferRef.current.setTime(playbackPosition);
+    return () => {
+      unsubscribe();
+    };
   }, [playbackPosition]);
+
+  useEffect(() => {
+    if (!waveSurferRef.current) return;
+    const unsubscribe = waveSurferRef.current.on('click', t => {
+      const currentTime = t * duration;
+      onWaveformClicked(currentTime);
+    });
+
+    return () => {
+      unsubscribe();
+    };
+  }, [onWaveformClicked]);
 
   return (
     <div

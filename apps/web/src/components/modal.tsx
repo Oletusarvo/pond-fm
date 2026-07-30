@@ -30,7 +30,7 @@ export function Modal({ children, onClose, title, fullScreen }: ModalProps) {
     );
     return (
       <div className={className}>
-        <div className='flex items-center w-full justify-between pt-2 pb-4'>
+        <div className='flex items-center w-full justify-between pt-2 pb-4 text-slate-500'>
           <h3 className='font-semibold'>{title}</h3>
           <Button
             paddingEnabled

@@ -8,6 +8,7 @@ import { Button } from '../../../components/button';
 import { useAppContext } from '../../../providers/app-provider';
 import { useEventHandler } from '../../../hooks/use-event-handler';
 import { TippingProvider } from '../../tipping/providers/tipping-provider';
+import { usePlayCountContext } from '../../audio/providers/playcount-provider';
 
 const [PostContext, usePostContext] = setupContext<{
   post: TPost;
@@ -22,7 +23,7 @@ type PostProviderProps = React.PropsWithChildren & {
 export function PostProvider({ children, initialPost }: PostProviderProps) {
   const [post, setPost] = useState(initialPost);
   const [showRepostModal, setShowRepostModal] = useState(false);
-  const { playcountService } = useAppContext();
+  const playcountService = usePlayCountContext();
   const { toggleLike, repost } = usePostActions({
     post,
     onChange: newState => setPost(newState),

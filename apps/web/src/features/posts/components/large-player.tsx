@@ -1,29 +1,37 @@
-import { useCallback, useEffect, useMemo, useState } from 'react';
-import { useAppContext } from '../../../providers/app-provider';
+import { useCallback, useState } from 'react';
 import { postToPlayback } from '../../../utils/post-to-playback';
 import { usePostContext } from '../providers/post-provider';
 import { PlayButton } from './play-button';
-import SoundCloudWaveform from './waveform';
+import { Waveform } from './waveform';
 import { useEventHandler } from '../../../hooks/use-event-handler';
+import { usePlaybackContext } from '../../audio/providers/playback-provider';
 
 export function LargePlayer() {
-  const [playbackPosition, setPlaybackPosition] = useState(0);
-  const { playbackService } = useAppContext();
-  const { playbackState, togglePlayback, currentPlayback, audioRef } = playbackService;
+  const { playbackState, togglePlayback, currentPlayback, audioRef, updateCurrentPlayback } =
+    usePlaybackContext();
+  const [playbackPosition, setPlaybackPosition] = useState(
+    () => audioRef.current?.currentTime || 0,
+  );
   const { post } = usePostContext();
 
   const onWaveformClicked = useCallback(
     (currentTime: number) => {
-      playbackService.updateCurrentPlayback(postToPlayback(post));
-      playbackService.audioRef.current.currentTime = currentTime;
-      playbackService.updatePlaybackPosition(currentTime);
+      if (currentPlayback?.id === post.track.id) {
+        audioRef.current.currentTime = currentTime;
+      } else {
+        updateCurrentPlayback({ ...postToPlayback(post), start_position: currentTime });
+      }
     },
-    [playbackService.currentPlayback?.id],
+    [post.track.id, currentPlayback?.id, updateCurrentPlayback],
   );
 
   const onPlayButtonClicked = useCallback(async () => {
-    await togglePlayback(postToPlayback(post));
-  }, [togglePlayback, postToPlayback]);
+    if (currentPlayback?.id === post.track.id) {
+      togglePlayback();
+    } else {
+      updateCurrentPlayback({ ...postToPlayback(post) });
+    }
+  }, [currentPlayback?.id, post.track.id, togglePlayback, updateCurrentPlayback]);
 
   useEventHandler({
     type: 'timeupdate',
@@ -41,7 +49,7 @@ export function LargePlayer() {
         state={currentPlayback?.id === post.track.id ? playbackState : 'paused'}
         onClick={onPlayButtonClicked}
       />
-      <SoundCloudWaveform
+      <Waveform
         waveform={post.track.waveform}
         duration={post.track.duration}
         playbackPosition={playbackPosition}

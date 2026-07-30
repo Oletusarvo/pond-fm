@@ -11,7 +11,7 @@ export function RepostButton() {
   const color = 'var(--color-blue-500)';
   return (
     <Count
-      disabled={status !== 'authorized'}
+      disabled={status !== 'authenticated'}
       icon={props => (
         <Repeat
           {...props}

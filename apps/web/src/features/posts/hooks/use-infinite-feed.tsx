@@ -5,9 +5,10 @@ import { useInView } from 'react-intersection-observer';
 type UseFeedProps = {
   queryFn: (config: { pageParam?: string }) => Promise<any>;
   key: string[];
+  enabled?: boolean;
 };
 
-export function useInfiniteFeed({ queryFn, key }: UseFeedProps) {
+export function useInfiniteFeed({ queryFn, key, enabled }: UseFeedProps) {
   const { ref, inView } = useInView({
     threshold: 0,
   });
@@ -18,9 +19,10 @@ export function useInfiniteFeed({ queryFn, key }: UseFeedProps) {
     initialPageParam: undefined,
     getNextPageParam: lastPage => lastPage?.cursor,
     placeholderData: previousData => previousData,
+    enabled,
   });
 
-  const items = useMemo(() => data?.pages.flatMap(page => page.tracks) ?? [], [data]);
+  const items = useMemo(() => data?.pages.flatMap(page => page.items) ?? [], [data]);
   const hasContent = useMemo(() => items.length > 0, [items.length]);
 
   useEffect(() => {

@@ -8,7 +8,7 @@ export function HomeScreen() {
   const { status } = useAuthContext();
   const { toggleLogoutModal } = useAuthContext();
   const heroButtonAction = () => {
-    if (status === 'authorized') {
+    if (status === 'authenticated') {
       toggleLogoutModal(true);
     } else if (status === 'unauthorized') {
       navigate('/login');
@@ -30,7 +30,7 @@ export function HomeScreen() {
           paddingEnabled
           variant='contained'
           shape='rounded'>
-          {status === 'authorized' ? (
+          {status === 'authenticated' ? (
             'Logout'
           ) : status === 'unauthorized' ? (
             'Request Login'

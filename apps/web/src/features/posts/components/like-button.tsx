@@ -9,7 +9,7 @@ export function LikeButton() {
   const color = 'var(--color-red-500)';
   return (
     <Count
-      disabled={status !== 'authorized'}
+      disabled={status !== 'authenticated'}
       icon={props => (
         <Heart
           {...props}
