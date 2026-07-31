@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { apiService } from '../../../utils/api-service';
 import { useQuery } from '@tanstack/react-query';
+import { LogoutModal } from '../components/logout-modal';
 
 type TSessionStatus = 'loading' | 'authenticated' | 'unauthenticated';
 

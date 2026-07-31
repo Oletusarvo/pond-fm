@@ -147,6 +147,16 @@ export class ApiService {
     }
     return await fetch(url, req);
   }
+
+  async markNotificationsAsSeen(notifications: any[]) {
+    const req = requestBuilder
+      .post()
+      .body({ items: notifications })
+      .json()
+      .includeCredentials()
+      .build();
+    return await fetch(this.withEndpoint(`users/notifications/mark-as-seen`), req);
+  }
 }
 
 /**Provides methods to perform actions on the server. */

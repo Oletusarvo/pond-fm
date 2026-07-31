@@ -5,11 +5,12 @@ import { Input } from '../../../components/input';
 import { Form } from '../../../components/form';
 import { useStatus } from '../../../hooks/use-status';
 import { useAppContext } from '../../../providers/app-provider';
+import { useAuthContext } from '../providers/auth-provider';
 
 export function LoginScreen() {
   const navigate = useNavigate();
   const close = () => navigate('/');
-  const { authService } = useAppContext();
+  const authService = useAuthContext();
   const { status, loading, setStatus } = useStatus();
 
   const onSubmit = async e => {

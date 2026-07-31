@@ -29,7 +29,7 @@ export class UserRepository extends Repository<{ data: string; status: string; t
   }
 
   activateById(userId: string, ctx: DBContext) {
-    return ctx(this.tablename)
+    return ctx(this.tablename.data)
       .where({ id: userId })
       .update({
         user_status_id: db

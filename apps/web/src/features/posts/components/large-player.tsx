@@ -9,10 +9,10 @@ import { usePlaybackContext } from '../../audio/providers/playback-provider';
 export function LargePlayer() {
   const { playbackState, togglePlayback, currentPlayback, audioRef, updateCurrentPlayback } =
     usePlaybackContext();
-  const [playbackPosition, setPlaybackPosition] = useState(
-    () => audioRef.current?.currentTime || 0,
-  );
   const { post } = usePostContext();
+  const [playbackPosition, setPlaybackPosition] = useState(() =>
+    currentPlayback?.id === post.track.id ? audioRef.current?.currentTime : 0,
+  );
 
   const onWaveformClicked = useCallback(
     (currentTime: number) => {

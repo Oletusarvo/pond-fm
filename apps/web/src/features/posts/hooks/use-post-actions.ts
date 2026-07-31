@@ -20,7 +20,7 @@ export function usePostActions({
 }: UsePostActionsProps) {
   const toggleLike = async () => {
     const initialIsLiked = post.liked_by_me;
-    const initialLikeCount = post.like_count;
+    const initialLikeCount = Number(post.like_count);
     const initialPost = { ...post };
     onChange({
       ...post,
@@ -44,7 +44,7 @@ export function usePostActions({
   const repost = async () => {
     const initialPost = { ...post };
     const initialIsReposted = post.reposted_by_me;
-    const initialCount = post.repost_count;
+    const initialCount = Number(post.repost_count);
     if (initialIsReposted) {
       return;
     }

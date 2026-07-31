@@ -9,6 +9,7 @@ export function RepostButton() {
 
   const { status } = useAuthContext();
   const color = 'var(--color-blue-500)';
+
   return (
     <Count
       disabled={status !== 'authenticated'}

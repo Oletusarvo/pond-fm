@@ -22,6 +22,7 @@ export class PostRepository extends Repository<{ data: string; status: string; l
           .with('author_json', qb => {
             qb.select(
               'id',
+
               db.raw("JSON_BUILD_OBJECT('id', id, 'username', username) AS json"),
             ).from(tablenames.users);
           })
@@ -79,6 +80,18 @@ export class PostRepository extends Repository<{ data: string; status: string; l
         db.raw(
           'EXISTS (SELECT 1 FROM ?? likes WHERE track_id = track.id AND user_id = ?) as liked_by_me',
           ['track_like_data', session.user.id],
+        ),
+      );
+
+      query.select(
+        db.raw(
+          `
+            EXISTS (
+              SELECT 1 
+              FROM ?? repost 
+              WHERE repost.track_id = track.id AND repost.user_id = ? AND NOT track.user_id = ?
+              ) as reposted_by_me`,
+          ['post_data', session.user.id, session.user.id],
         ),
       );
     }

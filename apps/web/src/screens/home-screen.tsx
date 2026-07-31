@@ -5,12 +5,12 @@ import { Spinner } from '../components/spinner';
 
 export function HomeScreen() {
   const navigate = useNavigate();
-  const { status } = useAuthContext();
-  const { toggleLogoutModal } = useAuthContext();
+  const { toggleLogoutModal, status } = useAuthContext();
+
   const heroButtonAction = () => {
     if (status === 'authenticated') {
       toggleLogoutModal(true);
-    } else if (status === 'unauthorized') {
+    } else if (status === 'unauthenticated') {
       navigate('/login');
     }
   };
@@ -32,7 +32,7 @@ export function HomeScreen() {
           shape='rounded'>
           {status === 'authenticated' ? (
             'Logout'
-          ) : status === 'unauthorized' ? (
+          ) : status === 'unauthenticated' ? (
             'Request Login'
           ) : (
             <Spinner />

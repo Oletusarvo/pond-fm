@@ -3,11 +3,12 @@ import { Modal } from '../../../components/modal';
 import { Spinner } from '../../../components/spinner';
 import { useEffect } from 'react';
 import { useAppContext } from '../../../providers/app-provider';
+import { useAuthContext } from '../providers/auth-provider';
 
 export function AuthorizationScreen() {
   const { code } = useParams();
   const navigate = useNavigate();
-  const { authService } = useAppContext();
+  const authService = useAuthContext();
   const onAuthorize = async () => {
     try {
       const res = await authService.authorize(code);

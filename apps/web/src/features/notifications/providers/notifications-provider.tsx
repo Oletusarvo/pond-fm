@@ -6,6 +6,10 @@ import { createProvider } from '../../../utils/create-provider';
 
 export const [NotificationsProvider, useNotificationsContext] = createProvider({
   contextName: 'NotificationsProvider',
+  childComponent: () => {
+    const { showNotificationsModal } = useNotificationsContext();
+    return showNotificationsModal ? <NotificationsModal /> : null;
+  },
   hook: () => {
     const authService = useAuthContext();
 
@@ -18,7 +22,7 @@ export const [NotificationsProvider, useNotificationsContext] = createProvider({
     const toggleShowNotificationsModal = (state: boolean) => {
       setShowNotificationsModal(state);
     };
-    const hookChildren = showNotificationsModal ? <NotificationsModal /> : null;
+
     const hasUnseen = notifications?.some(n => n.seen_at === null) || false;
 
     return {
@@ -27,7 +31,7 @@ export const [NotificationsProvider, useNotificationsContext] = createProvider({
       isPending,
       nextPageTriggerRef,
       toggleShowNotificationsModal,
-      hookChildren,
+      showNotificationsModal,
     };
   },
 });

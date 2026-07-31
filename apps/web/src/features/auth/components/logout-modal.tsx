@@ -1,15 +1,11 @@
-import { useNavigate } from 'react-router-dom';
 import { Modal } from '../../../components/modal';
-import { Form } from '../../../components/form';
 import { Button, LoaderButton } from '../../../components/button';
 import { useStatus } from '../../../hooks/use-status';
-import { apiService } from '../../../utils/api-service';
-import { ErrorMessage, SuccessMessage } from '../../../components/helper-message';
+import { ErrorMessage } from '../../../components/helper-message';
 import { useAuthContext } from '../providers/auth-provider';
-import { useAppContext } from '../../../providers/app-provider';
 
 export function LogoutModal() {
-  const { authService } = useAppContext();
+  const authService = useAuthContext();
   const { status, loading, setStatus } = useStatus();
   const buttonsDisabled = loading || status === 'success';
 
