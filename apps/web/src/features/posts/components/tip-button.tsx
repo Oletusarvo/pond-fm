@@ -15,7 +15,7 @@ export function TipButton() {
             color: 'var(--color-primary)',
           }}
         />
-        <span className='text-sm text-primary'>Tip</span>
+        <span className='text-sm text-primary'>Tip Artist</span>
       </div>
     </Button>
   );

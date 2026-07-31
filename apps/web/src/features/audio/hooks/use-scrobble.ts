@@ -15,7 +15,7 @@ export function useScrobble({ threshold, duration, onPlayTimeReached }: UseScrob
   const playCounted = useRef(false);
 
   const targetTime = useMemo(() => {
-    return threshold ? threshold * duration : 240;
+    return threshold ? threshold * duration : 159;
   }, [duration, threshold]);
 
   const updateTimeListened = useCallback(() => {

@@ -23,7 +23,7 @@ export function Modal({ children, onClose, title, fullScreen }: ModalProps) {
 
   function Body() {
     const className = useClassName(
-      'bg-white p-4 flex flex-col animate-fade-in',
+      'bg-white p-4 flex flex-col animate-fade-in max-h-full',
       fullScreen
         ? 'w-full h-full'
         : 'xs:min-w-full md:min-w-[50%] lg:min-w-[35%] xl:min-w-[25%] rounded-md',
@@ -40,7 +40,7 @@ export function Modal({ children, onClose, title, fullScreen }: ModalProps) {
             <X />
           </Button>
         </div>
-        {children}
+        <div className='overflow-hidden overflow-y-scroll'>{children}</div>
       </div>
     );
   }

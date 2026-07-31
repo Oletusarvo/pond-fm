@@ -99,9 +99,9 @@ export class PostService {
         : track.duration <= 60
           ? 30 / track.duration
           : track.duration <= 480
-            ? 0.5
+            ? 0.33
             : null;
-    const requiredListenTime = threshold ? threshold * track.duration : 240;
+    const requiredListenTime = threshold ? threshold * track.duration : 159;
     const countValidAt = streamStarted + requiredListenTime * 1000;
     const token = createJWT({
       id: v4(),

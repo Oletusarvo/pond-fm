@@ -4,7 +4,12 @@ import { useScrobble } from '../features/audio/hooks/use-scrobble';
 import { useAuth } from '../features/auth/hooks/use-auth';
 import { createProvider } from '../utils/create-provider';
 
-const [AppProvider, useAppContext] = createProvider({
+const [
+  /**@deprecated */
+  AppProvider,
+  /**@deprecated */
+  useAppContext,
+] = createProvider({
   hook: () => {
     const playcountService = usePlayCount();
     const playbackService = useAudioPlayer();

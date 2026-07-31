@@ -11,7 +11,8 @@ export const [ScrobbleProvider, useScrobbleContext] = createProvider({
     const duration = playbackService.currentPlayback?.duration || 1;
     const service = useScrobble({
       duration,
-      threshold: duration <= 30 ? 1 : duration <= 60 ? 30 / duration : duration <= 480 ? 0.5 : null,
+      threshold:
+        duration <= 30 ? 1 : duration <= 60 ? 30 / duration : duration <= 480 ? 0.33 : null,
       onPlayTimeReached: () => playcountService.countPlay(playbackService.currentPlayback.id),
     });
     return service;

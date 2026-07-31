@@ -1,11 +1,12 @@
 import { ArrowUpCircle, Bell, Menu } from 'lucide-react';
 import { Button } from './button';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useAuthContext } from '../features/auth/providers/auth-provider';
 import {
   NotificationsProvider,
   useNotificationsContext,
 } from '../features/notifications/providers/notifications-provider';
+import { ResponsiveLink } from './responsive-link';
 
 export function MainHeader() {
   const navigate = useNavigate();
@@ -17,14 +18,24 @@ export function MainHeader() {
         <h2 className='font-semibold cursive text-lg'>
           🐸<span className='text-lg'>Pond.fm</span>
         </h2>
-        |
-        <span>
-          {location.pathname === '/undiscovered'
-            ? 'Undiscovered'
-            : location.pathname === '/new'
-              ? 'New'
-              : ''}
-        </span>
+        |{' '}
+        <div className='md:flex items-center gap-4 xs:hidden'>
+          <ResponsiveLink
+            to='/undiscovered'
+            className='font-semibold'>
+            Undiscovered
+          </ResponsiveLink>
+          <ResponsiveLink
+            to='/new'
+            className='font-semibold'>
+            New
+          </ResponsiveLink>
+          <ResponsiveLink
+            to='/followed'
+            className='font-semibold'>
+            Followed
+          </ResponsiveLink>
+        </div>
       </div>
 
       <div className='flex gap-4 items-center'>

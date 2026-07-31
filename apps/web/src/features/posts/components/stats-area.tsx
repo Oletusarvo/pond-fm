@@ -10,7 +10,7 @@ export function StatsArea() {
   const { post } = usePostContext();
 
   return (
-    <div className='flex gap-8 items-center'>
+    <div className='flex gap-5 items-center'>
       <Count
         icon={Play}
         value={post.play_count}
