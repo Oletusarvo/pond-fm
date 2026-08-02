@@ -13,8 +13,8 @@ export class NotificationService {
 
   async markNotificationAs(
     payload: {
-      id: string;
-      isSeen: boolean;
+      user_id: string;
+      seen: boolean;
     },
     ctx: DBContext,
   ) {
@@ -24,7 +24,7 @@ export class NotificationService {
 
   async getNotifications(cursor: TCursor | null, userId: string, ctx: DBContext) {
     const feedBuilder = new FeedBuilder(10);
-    const data = await this.repo.getBaseFeedQuery(cursor, userId, ctx);
+    const data = await this.repo.getBaseFeedQuery(cursor, userId, 'desc', ctx);
     return { success: true, data: feedBuilder.withCursor(data) };
   }
 }

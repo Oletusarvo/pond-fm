@@ -1,31 +1,30 @@
-import { useState } from 'react';
-import { MainGenreTagList } from '../components/main-genre-tag-list';
-import { useDiscoveryFeed } from '../hooks/use-discovery-feed';
-import { Feed } from '../components/feed';
+import { useState, useTransition } from 'react';
 import { Separator } from '../../../components/separator';
+import { PostFeed } from '../components/post-feed';
+import { FeedProvider } from '../../../providers/feed-provider';
+import { PostFeedScreenContainer } from '../components/post-feed-screen-container';
+import { PostFeedHeader } from '../components/post-feed-header';
+import { GenreSelector } from '../components/genre-selector';
+import { apiService } from '../../../utils/api-service';
 
 export function UndiscoveredFeedScreen() {
-  const [selectedTag, setSelectedTag] = useState(null);
+  const [mainGenre, setMainGenre] = useState(null);
+  const [transition, startTransition] = useTransition();
+
   return (
-    <div className='flex flex-col w-full max-h-full'>
-      <div className='py-2 w-full h-pad'>
-        <div className='flex flex-col pb-2'>
-          <h2 className='font-semibold text-primary'>Undiscovered Tracks</h2>
-          <p className='text-slate-500 text-sm'>
-            Browse tracks with less than 100 unique listeners.
-          </p>
-        </div>
-        <MainGenreTagList
-          selectedTag={selectedTag}
-          onSelected={tag =>
-            setSelectedTag(prev => {
-              return tag === prev ? null : tag;
-            })
-          }
-        />
-      </div>
+    <PostFeedScreenContainer>
+      <PostFeedHeader
+        title='Undiscovered tracks'
+        description='Discover tracks with less than 100 unique listeners.'>
+        <GenreSelector onMainGenreChanged={genre => setMainGenre(genre)} />
+      </PostFeedHeader>
+
       <Separator />
-      <Feed queryHook={() => useDiscoveryFeed(selectedTag)} />
-    </div>
+      <FeedProvider
+        queryFn={(cursor?: string) => apiService.getDiscoveryFeed(cursor, mainGenre)}
+        queryKey={['feed', 'undiscovered', mainGenre]}>
+        <PostFeed />
+      </FeedProvider>
+    </PostFeedScreenContainer>
   );
 }

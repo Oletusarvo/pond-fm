@@ -7,19 +7,23 @@ import {
   useNotificationsContext,
 } from '../features/notifications/providers/notifications-provider';
 import { ResponsiveLink } from './responsive-link';
+import { FeedProvider } from '../providers/feed-provider';
+import { useNotifications } from '../features/notifications/hooks/use-notifications';
+import { apiService } from '../utils/api-service';
 
 export function MainHeader() {
   const navigate = useNavigate();
-  const { status } = useAuthContext();
-  const location = useLocation();
+  const authService = useAuthContext();
   return (
     <header className='bg-primary text-white py-2 h-pad w-full flex items-center justify-between'>
       <div className='flex items-center gap-2 text-sm'>
-        <h2 className='font-semibold cursive text-lg'>
-          🐸<span className='text-lg'>Pond.fm</span>
-        </h2>
+        <Link to='/'>
+          <h2 className='font-semibold cursive text-lg'>
+            🐸<span className='text-lg'>Pond Fm</span>
+          </h2>
+        </Link>
         |{' '}
-        <div className='md:flex items-center gap-4 xs:hidden'>
+        <nav className='md:flex items-center gap-4 xs:hidden'>
           <ResponsiveLink
             to='/undiscovered'
             className='font-semibold'>
@@ -30,16 +34,11 @@ export function MainHeader() {
             className='font-semibold'>
             New
           </ResponsiveLink>
-          <ResponsiveLink
-            to='/followed'
-            className='font-semibold'>
-            Followed
-          </ResponsiveLink>
-        </div>
+        </nav>
       </div>
 
       <div className='flex gap-4 items-center'>
-        {status === 'authenticated' ? (
+        {authService.status === 'authenticated' ? (
           <>
             <NotificationsProvider>
               <NotificationsButton />
@@ -52,10 +51,6 @@ export function MainHeader() {
             </Button>
           </>
         ) : null}
-
-        <Button variant='ghost'>
-          <Menu />
-        </Button>
       </div>
     </header>
   );
@@ -71,7 +66,7 @@ function NotificationsButton() {
       <div className='relative'>
         <Bell />
         {hasUnseen ? (
-          <div className='bg-red-500 w-2 h-2 rounded-full absolute z-10 right-0 bottom-1' />
+          <div className='bg-red-500 p-1 aspect-square w-2 h-2 rounded-full absolute z-10 right-0 bottom-1 text-red text-center'></div>
         ) : null}
       </div>
     </Button>

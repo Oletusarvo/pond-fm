@@ -4,9 +4,15 @@ import { Form } from '../../../components/form';
 import { Input } from '../../../components/input';
 import { useSubmit } from '../../../hooks/use-submit';
 import { apiService } from '../../../utils/api-service';
+import { TagList } from '../components/tag-list';
+import { useState } from 'react';
+import { genreMap } from '../../../utils/genre-map';
+import { useGenreSelector } from '../hooks/use-genre-selector';
 
 export function UploadTrackScreen() {
   const navigate = useNavigate();
+  const { mainGenre, styles, updateMainGenre, updateStyles } = useGenreSelector({ styleLimit: 3 });
+
   const { submit, loading } = useSubmit({
     fetchFn: async payload => {
       console.log(payload);
@@ -43,10 +49,18 @@ export function UploadTrackScreen() {
               name='file'
             />
           </Form.Group>
-          <Form.Group label='Tags'>
-            <Input
-              required
-              name='tags'
+          <Form.Group label='Main Genre'>
+            <TagList
+              tags={Object.keys(genreMap)}
+              onTagSelected={tag => updateMainGenre(tag)}
+              selectedTags={[mainGenre]}
+            />
+          </Form.Group>
+          <Form.Group label='Style (Max 3)'>
+            <TagList
+              tags={genreMap[mainGenre]}
+              onTagSelected={tag => updateStyles(tag)}
+              selectedTags={styles}
             />
           </Form.Group>
           <Form.Controls

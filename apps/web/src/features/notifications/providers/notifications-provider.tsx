@@ -1,8 +1,8 @@
 import { useState } from 'react';
-import { useNotifications } from '../hooks/use-notifications';
 import { NotificationsModal } from '../components/notifications-modal';
-import { useAuthContext } from '../../auth/providers/auth-provider';
 import { createProvider } from '../../../utils/create-provider';
+import { useFeedContext } from '../../../providers/feed-provider';
+import { useAuthContext } from '../../auth/providers/auth-provider';
 
 export const [NotificationsProvider, useNotificationsContext] = createProvider({
   contextName: 'NotificationsProvider',
@@ -12,25 +12,19 @@ export const [NotificationsProvider, useNotificationsContext] = createProvider({
   },
   hook: () => {
     const authService = useAuthContext();
-
-    const {
-      data: notifications,
-      isPending,
-      nextPageTriggerRef,
-    } = useNotifications(authService.session);
     const [showNotificationsModal, setShowNotificationsModal] = useState(false);
+    const [hasUnseen, setHasUnseen] = useState(
+      () => authService.session?.user.unseen_notification_count > 0 || false,
+    );
     const toggleShowNotificationsModal = (state: boolean) => {
       setShowNotificationsModal(state);
     };
-
-    const hasUnseen = notifications?.some(n => n.seen_at === null) || false;
+    const updateHasUnseen = (state: boolean) => setHasUnseen(state);
 
     return {
-      notifications,
       hasUnseen,
-      isPending,
-      nextPageTriggerRef,
       toggleShowNotificationsModal,
+      updateHasUnseen,
       showNotificationsModal,
     };
   },

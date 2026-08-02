@@ -1,46 +1,50 @@
 import { Heart, Repeat } from 'lucide-react';
 import { Modal } from '../../../components/modal';
-import { Spinner } from '../../../components/spinner';
 import { useNotificationsContext } from '../providers/notifications-provider';
-import React, { useEffect } from 'react';
-import { Separator } from '../../../components/separator';
+import { useEffect } from 'react';
 import { formatDistanceToNow } from 'date-fns';
 import { apiService } from '../../../utils/api-service';
+import { Feed } from '../../posts/components/feed';
+import { FeedProvider, useFeedContext } from '../../../providers/feed-provider';
+import React from 'react';
+import { Separator } from '../../../components/separator';
+import { useAuthContext } from '../../auth/providers/auth-provider';
 
+// TODO:
+// Infinite scrolling for notifications causes the sentinel ref to repeatedly
+// mount/unmount when the notifications modal is opened, leading to a
+// "Maximum update depth exceeded" error. Other FeedProvider usages are
+// unaffected. Temporarily limiting notifications to the first page.
 export function NotificationsModal() {
-  const { toggleShowNotificationsModal, nextPageTriggerRef, isPending, notifications } =
-    useNotificationsContext();
-
+  const { toggleShowNotificationsModal, hasUnseen, updateHasUnseen } = useNotificationsContext();
+  const authService = useAuthContext();
   useEffect(() => {
-    apiService.markNotificationsAsSeen(notifications.filter(n => n.seen_at == null)).catch(err => {
-      console.log('Failed to mark notifications as seen!', err.message);
-    });
-  }, [notifications]);
+    if (hasUnseen) {
+      apiService
+        .markNotificationsAsSeen()
+        .then(res => {
+          if (res.ok) {
+            updateHasUnseen(false);
+          }
+        })
+        .catch(err => {
+          console.log('Failed to mark notifications as seen!', err.message);
+        });
+    }
+  }, [updateHasUnseen]);
 
   return (
     <Modal
       title='Notifications'
       onClose={() => toggleShowNotificationsModal(false)}>
-      <div className='flex flex-col w-full'>
-        {isPending ? (
-          <Spinner />
-        ) : (
-          <>
-            {notifications?.length > 0 ? (
-              notifications.map(n => {
-                return (
-                  <React.Fragment key={n.id}>
-                    <Notification notification={n} />
-                    <Separator />
-                  </React.Fragment>
-                );
-              })
-            ) : (
-              <span>No notifications yet.</span>
-            )}
-          </>
-        )}
-      </div>
+      <FeedProvider
+        queryFn={cursor => apiService.getNotifications(cursor)}
+        queryKey={['notifications', authService.session?.user.id]}>
+        <Feed
+          renderComponent={({ item }) => <Notification notification={item} />}
+          keyExtractor={item => item.id}
+        />
+      </FeedProvider>
     </Modal>
   );
 }

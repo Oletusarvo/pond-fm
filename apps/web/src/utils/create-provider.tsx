@@ -6,7 +6,7 @@ type CreateProviderProps<THookReturn, THookProps = void> = {
   childComponent?: React.FC<any>;
   contextName: string;
 };
-export function createProvider<THookReturn, THookProps = {}>({
+export function createProvider<THookReturn, THookProps>({
   hook,
   contextName,
   childComponent: ChildComponent,

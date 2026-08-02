@@ -4,6 +4,7 @@ import { UserRepository } from '../repositories/user-repository';
 import { tablenames } from '../tablenames';
 import { DBContext } from '../types/db-context';
 import { ServiceResponse, ServiceSuccessResponse } from '../types/service-response';
+import crypto from 'crypto';
 
 export class UserService {
   constructor(private repo: UserRepository) {}
@@ -19,15 +20,19 @@ export class UserService {
     } as ServiceSuccessResponse;
   }
 
-  async createIfNotExists(payload: { email: string; username?: string }, ctx: DBContext) {
+  async createIfNotExists(payload: { email: string }, ctx: DBContext) {
     let user = await this.repo.findByEmail(payload.email, ctx);
     if (!user) {
       //Create a new pending user record.
+      const defaultUserId = crypto.randomBytes(8).toString('hex');
+      const userNumber = BigInt('0x' + defaultUserId).toString();
+      const defaultUserName = `user-${userNumber}`;
+
       [user] = await this.repo
         .create(
           {
             email: payload.email,
-            username: payload.username,
+            username: defaultUserName,
             user_status_id: db
               .select('id')
               .from(tablenames.userStatuses)

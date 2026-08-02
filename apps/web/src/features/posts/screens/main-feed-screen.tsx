@@ -1,29 +1,36 @@
-import { useState } from 'react';
-import { useMainFeed } from '../hooks/use-main-feed';
-import { Feed } from '../components/feed';
-import { MainGenreTagList } from '../components/main-genre-tag-list';
+import { useCallback, useState, useTransition } from 'react';
 import { Separator } from '../../../components/separator';
+import { PostFeed } from '../components/post-feed';
+import { FeedProvider } from '../../../providers/feed-provider';
+import { PostFeedScreenContainer } from '../components/post-feed-screen-container';
+import { PostFeedHeader } from '../components/post-feed-header';
+import { GenreSelector } from '../components/genre-selector';
+import { apiService } from '../../../utils/api-service';
 
 export function MainScreenFeed() {
-  const [selectedTag, setSelectedTag] = useState(null);
+  const [mainGenre, setMainGenre] = useState(null);
+  const [transition, startTransition] = useTransition();
+  const updateMainGenre = useCallback(
+    (genre: string) => {
+      startTransition(() => setMainGenre(genre));
+    },
+    [setMainGenre, startTransition],
+  );
+
   return (
-    <div className='flex flex-col w-full max-h-full'>
-      <div className='py-2 w-full h-pad'>
-        <div className='flex flex-col pb-2'>
-          <h2 className='font-semibold text-primary'>New Tracks</h2>
-          <p className='text-slate-500 text-sm'>The newest of the new.</p>
-        </div>
-        <MainGenreTagList
-          selectedTag={selectedTag}
-          onSelected={tag =>
-            setSelectedTag(prev => {
-              return tag === prev ? null : tag;
-            })
-          }
-        />
-      </div>
+    <PostFeedScreenContainer>
+      <PostFeedHeader
+        title='New'
+        description='Recently uploaded or reposted tracks in chronological order.'>
+        <GenreSelector onMainGenreChanged={updateMainGenre} />
+      </PostFeedHeader>
+
       <Separator></Separator>
-      <Feed queryHook={() => useMainFeed(selectedTag)} />
-    </div>
+      <FeedProvider
+        queryFn={cursor => apiService.getMainFeed(cursor, mainGenre)}
+        queryKey={['feed', 'main', mainGenre]}>
+        <PostFeed />
+      </FeedProvider>
+    </PostFeedScreenContainer>
   );
 }

@@ -1,12 +1,13 @@
 import { useState } from 'react';
 import { apiService } from '../../../utils/api-service';
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { LogoutModal } from '../components/logout-modal';
 
 type TSessionStatus = 'loading' | 'authenticated' | 'unauthenticated';
 
 export function useAuth() {
   const [showLogoutModal, setShowLogoutModal] = useState(false);
+  const queryClient = useQueryClient();
   const {
     data: session,
     isPending,
@@ -47,11 +48,20 @@ export function useAuth() {
     return res;
   };
 
+  const refreshSession = async (newSession: any) => {
+    queryClient.setQueryData(['session'], oldData => {
+      const newData = { ...(oldData as any) };
+      newData.user.username = newSession.user.username;
+      return newData;
+    });
+  };
+
   return {
     authorize,
     requestAuthorization,
     logout,
     toggleLogoutModal,
+    refreshSession,
     status,
     session,
     showLogoutModal,

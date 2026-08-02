@@ -13,6 +13,9 @@ import { MainScreenFeed } from './features/posts/screens/main-feed-screen';
 import { UserScreen } from './features/posts/screens/user-screen';
 import { ScrobbleProvider } from './features/audio/providers/scrobble-provider';
 import { PlayCountProvider } from './features/audio/providers/playcount-provider';
+import { SearchScreen } from './features/posts/screens/search-screen';
+import { OnboardingProvider } from './features/auth/providers/onboarding-provider';
+import { SetUsernameModal } from './features/auth/components/set-username-modal';
 
 function App() {
   return (
@@ -23,44 +26,50 @@ function App() {
             <ScrobbleProvider>
               <div className='flex flex-col w-full h-full'>
                 <BrowserRouter>
-                  <Routes>
-                    <Route
-                      path='/'
-                      element={<MainLayout />}>
+                  <OnboardingProvider>
+                    <Routes>
                       <Route
                         path='/'
-                        element={<HomeLayout />}>
+                        element={<MainLayout />}>
+                        <Route
+                          path='/'
+                          element={<HomeLayout />}>
+                          <Route
+                            path='login'
+                            element={<LoginScreen />}
+                          />
+                          <Route
+                            path='authorize/:code'
+                            element={<AuthorizationScreen />}
+                          />
+                        </Route>
+                        <Route
+                          path='undiscovered'
+                          element={<UndiscoveredFeedScreen />}
+                        />
+                        <Route
+                          path='user/:userDataBase64Url'
+                          element={<UserScreen />}
+                        />
+                        <Route
+                          path='new'
+                          element={<MainScreenFeed />}
+                        />
+                        <Route
+                          path='search'
+                          element={<SearchScreen />}
+                        />
+                        <Route
+                          path='upload'
+                          element={<UploadTrackScreen />}
+                        />
                         <Route
                           path='login'
                           element={<LoginScreen />}
                         />
-                        <Route
-                          path='authorize/:code'
-                          element={<AuthorizationScreen />}
-                        />
                       </Route>
-                      <Route
-                        path='undiscovered'
-                        element={<UndiscoveredFeedScreen />}
-                      />
-                      <Route
-                        path='user/:userDataBase64Url'
-                        element={<UserScreen />}
-                      />
-                      <Route
-                        path='new'
-                        element={<MainScreenFeed />}
-                      />
-                      <Route
-                        path='upload'
-                        element={<UploadTrackScreen />}
-                      />
-                      <Route
-                        path='login'
-                        element={<LoginScreen />}
-                      />
-                    </Route>
-                  </Routes>
+                    </Routes>
+                  </OnboardingProvider>
                 </BrowserRouter>
               </div>
             </ScrobbleProvider>

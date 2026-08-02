@@ -1,12 +1,12 @@
 import { apiService } from '../../../utils/api-service';
 import { useInfiniteFeed } from './use-infinite-feed';
 
-export function useMainFeed(tag?: string) {
+export function useSearchableFeed(currentSearch: string | null) {
   const query = useInfiniteFeed({
-    key: ['main', tag],
+    key: ['search', currentSearch],
     queryFn: async ({ pageParam: cursor }) => {
-      const res = await apiService.getMainFeed(cursor, tag);
-      return res.ok ? await res.json() : [];
+      const res = await apiService.getSearchableFeed(currentSearch, cursor);
+      return res.ok ? await res.json() : null;
     },
   });
   return query;

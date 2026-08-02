@@ -24,7 +24,6 @@ export function LoginScreen() {
     try {
       await authService.requestAuthorization(credentials);
       setStatus('success');
-      navigate('/');
     } catch (err) {
       console.log(err.message);
       setStatus('error');
@@ -35,51 +34,53 @@ export function LoginScreen() {
     <Modal
       title='Login'
       onClose={close}>
-      <Form onSubmit={onSubmit}>
-        <Form.Group label='Username'>
-          <Input
-            name='username'
-            placeholder='Enter your username...'
-            required
-          />
-        </Form.Group>
+      {status !== 'success' ? (
+        <Form onSubmit={onSubmit}>
+          <Form.Group label='Email'>
+            <Input
+              name='email'
+              placeholder='Enter your email...'
+              type='email'
+              required
+            />
+            <span className='text-slate-500 text-xs'>
+              We will send you a link into your inbox through which to authenticate. The link is
+              valid for 15 minutes.
+            </span>
+          </Form.Group>
 
-        <Form.Group label='Email'>
-          <Input
-            name='email'
-            placeholder='Enter your email...'
-            type='email'
-            required
-          />
-          <span className='text-slate-500 text-xs'>
-            We will send you a link into your inbox through which to authenticate. The link is valid
-            for 15 minutes.
-          </span>
-        </Form.Group>
-
-        <div className='flex gap-2 w-full'>
-          <Button
-            disabled={status === 'success' || loading}
-            type='button'
-            onClick={close}
-            fullWidth
-            paddingEnabled
-            variant='outlined'
-            shape='rounded'>
-            Cancel
-          </Button>
-          <LoaderButton
-            disabled={loading || status === 'success'}
-            loading={loading}
-            type='submit'
-            fullWidth
-            paddingEnabled
-            variant='contained'
-            shape='rounded'>
-            Login
-          </LoaderButton>
+          <div className='flex gap-2 w-full'>
+            <Button
+              disabled={status === 'success' || loading}
+              type='button'
+              onClick={close}
+              fullWidth
+              paddingEnabled
+              variant='outlined'
+              shape='rounded'>
+              Cancel
+            </Button>
+            <LoaderButton
+              disabled={loading || status === 'success'}
+              loading={loading}
+              type='submit'
+              fullWidth
+              paddingEnabled
+              variant='contained'
+              shape='rounded'>
+              Login
+            </LoaderButton>
+          </div>
+        </Form>
+      ) : (
+        <div className='flex w-full items-center flex-col pb-4'>
+          <h2 className='font-semibold text-xl mb-2'>Login link sent!</h2>
+          <p className='text-slate-500 text-center'>
+            Please check your email. We have sent you a link through which to complete your login
+            process.
+          </p>
         </div>
-      </Form>
+      )}
     </Modal>
   );
 }

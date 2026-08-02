@@ -1,6 +1,7 @@
 import { X } from 'lucide-react';
 import { Button } from './button';
 import { useClassName } from '../hooks/use-class-name';
+import React from 'react';
 
 type ModalProps = React.PropsWithChildren & {
   onClose: () => void;
@@ -8,7 +9,12 @@ type ModalProps = React.PropsWithChildren & {
   fullScreen?: boolean;
 };
 
-export function Modal({ children, onClose, title, fullScreen }: ModalProps) {
+export const Modal = React.memo(function Modal({
+  children,
+  onClose,
+  title,
+  fullScreen,
+}: ModalProps) {
   function Container() {
     const className = useClassName(
       'w-full flex h-full z-90 bg-black/20 backdrop-blur-lg absolute top-0 left-0',
@@ -21,12 +27,10 @@ export function Modal({ children, onClose, title, fullScreen }: ModalProps) {
     );
   }
 
-  function Body() {
+  const Body = React.memo(function Body() {
     const className = useClassName(
-      'bg-white p-4 flex flex-col animate-fade-in max-h-full',
-      fullScreen
-        ? 'w-full h-full'
-        : 'xs:min-w-full md:min-w-[50%] lg:min-w-[35%] xl:min-w-[25%] rounded-md',
+      'bg-white p-4 flex flex-col overflow-y-scroll max-h-full',
+      fullScreen ? 'w-full h-full' : 'xs:w-full md:w-[50%] lg:w-[30%] xl:min-w-[40%] rounded-md',
     );
     return (
       <div className={className}>
@@ -40,10 +44,10 @@ export function Modal({ children, onClose, title, fullScreen }: ModalProps) {
             <X />
           </Button>
         </div>
-        <div className='overflow-hidden overflow-y-scroll'>{children}</div>
+        <div className='flex flex-col overflow-hidden overflow-y-scroll py-4'>{children}</div>
       </div>
     );
-  }
+  });
 
   return <Container />;
-}
+});

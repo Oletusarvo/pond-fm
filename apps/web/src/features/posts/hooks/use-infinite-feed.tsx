@@ -1,5 +1,5 @@
 import { useInfiniteQuery } from '@tanstack/react-query';
-import { useEffect, useMemo } from 'react';
+import { useCallback, useEffect, useMemo } from 'react';
 import { useInView } from 'react-intersection-observer';
 
 type UseFeedProps = {
@@ -9,10 +9,6 @@ type UseFeedProps = {
 };
 
 export function useInfiniteFeed({ queryFn, key, enabled }: UseFeedProps) {
-  const { ref, inView } = useInView({
-    threshold: 0,
-  });
-
   const { data, fetchNextPage, ...query } = useInfiniteQuery({
     queryKey: key,
     queryFn,
@@ -25,16 +21,10 @@ export function useInfiniteFeed({ queryFn, key, enabled }: UseFeedProps) {
   const items = useMemo(() => data?.pages.flatMap(page => page.items) ?? [], [data]);
   const hasContent = useMemo(() => items.length > 0, [items.length]);
 
-  useEffect(() => {
-    if (inView && query.hasNextPage) {
-      fetchNextPage();
-    }
-  }, [inView]);
-
   return {
     ...query,
     data: items,
     hasContent,
-    nextPageTriggerRef: ref,
+    fetchNextPage,
   };
 }

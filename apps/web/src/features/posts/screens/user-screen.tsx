@@ -1,9 +1,11 @@
-import { useParams, useSearchParams } from 'react-router-dom';
-import { useAuthorFeed } from '../hooks/use-author-feed';
-import { Feed } from '../components/feed';
+import { useParams } from 'react-router-dom';
 import { Separator } from '../../../components/separator';
 import { ObjectEncoder } from '../../../utils/object-encoder';
+import { FeedProvider } from '../../../providers/feed-provider';
+import { PostFeed } from '../components/post-feed';
+import { apiService } from '../../../utils/api-service';
 
+/**@todo Implement fetching of the user from the database instead of passing an encoded object in the page params. */
 export function UserScreen() {
   const { userDataBase64Url } = useParams();
   const user = ObjectEncoder.decodeFromBase64Url(userDataBase64Url);
@@ -15,7 +17,11 @@ export function UserScreen() {
         <h2 className='text-lg font-semibold text-primary'>{user.username}</h2>
       </div>
       <Separator />
-      <Feed queryHook={() => useAuthorFeed(user.id)} />
+      <FeedProvider
+        queryFn={cursor => apiService.getAuthorFeed(user.id, cursor)}
+        queryKey={['feed', 'author', user.id]}>
+        <PostFeed />
+      </FeedProvider>
     </div>
   );
 }

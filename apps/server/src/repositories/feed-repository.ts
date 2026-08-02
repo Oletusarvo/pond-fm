@@ -13,19 +13,12 @@ export class FeedRepository extends PostRepository {
   }
 
   /**Returns a basic feed query including relevant post, track and author data. */
-  getFeedQuery(
-    cursor: TCursor | null,
-    session: TSession | null,
-    tag: string | null,
-    ctx: DBContext,
-  ) {
+  getFeedQuery(session: TSession | null, tag: string | null, ctx: DBContext) {
     const query = this.getBaseQuery(ctx);
     this.selectPost(query, session);
     this.selectTrack(query);
     query.limit(this.pageSize + 1);
-    if (cursor) {
-      query.where('post.created_at', '<=', cursor.timestamp).whereNot({ 'post.id': cursor.id });
-    }
+
     if (tag) {
       query.where(function () {
         this.whereILike('track_tags.label', `%${tag}%`);

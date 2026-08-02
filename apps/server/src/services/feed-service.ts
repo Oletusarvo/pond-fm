@@ -1,3 +1,4 @@
+import { getSearchableFeedHandler } from '../api/v1/tracks/handlers/get-searchable-feed';
 import { FeedRepository } from '../repositories/feed-repository';
 import { TCursor } from '../types/cursor';
 import { DBContext } from '../types/db-context';
@@ -15,7 +16,11 @@ export class FeedService {
     tag: string | null,
     ctx: DBContext,
   ) {
-    const query = this.repo.getFeedQuery(cursor, session, tag, ctx);
+    const query = this.repo.getFeedQuery(session, tag, ctx);
+    query.from({ post: 'post_distinct' });
+    if (cursor) {
+      this.repo.orderByCursor(query, cursor, 'desc');
+    }
     query.orderBy('created_at', 'desc');
     const data = await query;
     const feedBuilder = new FeedBuilder(10);
@@ -25,15 +30,26 @@ export class FeedService {
     }>;
   }
 
-  /**Returns the feed of undiscovered tracks; tracks with less than 100 unique listeners. */
+  /**Returns the feed of undiscovered tracks; tracks with less than 100 unique listeners, ordered in ascending order by upload time */
   async getUndiscoveredFeed(
     cursor: TCursor | null,
     session: TSession | null,
     tag: string | null,
     ctx: DBContext,
   ) {
-    const query = this.repo.getFeedQuery(cursor, session, tag, ctx);
-    query.where('track.unique_play_count', '<', 100).orderBy('created_at', 'desc');
+    const query = this.repo.getFeedQuery(session, tag, ctx);
+    query.from({ post: 'post_undistinct' });
+
+    query
+      /*Exclude reposts. */
+      .where(function () {
+        this.whereRaw('post.user_id = track.user_id');
+      })
+      .where('track.unique_play_count', '<', 100)
+      .orderBy('post.created_at', 'asc');
+    if (cursor) {
+      this.repo.orderByCursor(query, cursor, 'asc');
+    }
     const data = await query;
     const feedBuilder = new FeedBuilder(10);
     return {
@@ -52,9 +68,12 @@ export class FeedService {
     session: TSession | null,
     ctx: DBContext,
   ) {
-    const query = this.repo.getFeedQuery(cursor, session, null, ctx);
+    const query = this.repo.getFeedQuery(session, null, ctx);
     query.where({ 'track_author.id': authorId });
     query.orderBy('created_at', 'desc');
+    if (cursor) {
+      this.repo.orderByCursor(query, cursor, 'desc');
+    }
     const data = await query;
     const feedBuilder = new FeedBuilder(10);
     return {
@@ -64,5 +83,29 @@ export class FeedService {
       items: any[];
       cursor: string | null;
     }>;
+  }
+
+  async getSearchableFeed(
+    q: string | null,
+    cursor: TCursor | null,
+    session: TSession | null,
+    ctx: DBContext,
+  ) {
+    let data: any = {
+      cursor: null,
+      data: [],
+    };
+    if (q) {
+      const query = await this.repo.getFeedQuery(session, null, ctx);
+      query.where(function () {
+        const str = `%${q}%`;
+        this.whereILike('track.title', str)
+          .orWhereILike('post_author.username', str)
+          .orWhereILike('track_author.username', str);
+      });
+      const feedBuilder = new FeedBuilder(10);
+      data = feedBuilder.withCursor(await query);
+    }
+    return { success: true, data } as ServiceSuccessResponse<any>;
   }
 }

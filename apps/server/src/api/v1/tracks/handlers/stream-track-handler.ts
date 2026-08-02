@@ -5,6 +5,8 @@ import { postService } from '../../../../container';
 import { db } from '../../../../db-config';
 import { serverConfig } from '../../../../../server-config';
 import { verifyJWT } from '../../../../utils/jwt';
+import { parseFile } from 'music-metadata';
+import mime from 'mime-types';
 
 export const streamTrackHandler = createHandler(async (req, res) => {
   const trackId = req.params.trackId as string;
@@ -28,12 +30,13 @@ export const streamTrackHandler = createHandler(async (req, res) => {
   const filePath = path.join(process.cwd(), 'uploads', `${track.data.filename}`);
 
   const fileSize = statSync(filePath).size;
+  const fileType = mime.lookup(filePath) as string;
   const range = req.headers.range;
 
   // Browser requested the entire file
   if (!range) {
     res.writeHead(200, {
-      'Content-Type': 'audio/mpeg',
+      'Content-Type': fileType,
       'Content-Length': fileSize,
       'Accept-Ranges': 'bytes',
     });
@@ -60,7 +63,7 @@ export const streamTrackHandler = createHandler(async (req, res) => {
     'Content-Range': `bytes ${start}-${end}/${fileSize}`,
     'Accept-Ranges': 'bytes',
     'Content-Length': chunkSize,
-    'Content-Type': 'audio/mpeg',
+    'Content-Type': fileType,
   });
 
   createReadStream(filePath, {

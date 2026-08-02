@@ -148,14 +148,24 @@ export class ApiService {
     return await fetch(url, req);
   }
 
-  async markNotificationsAsSeen(notifications: any[]) {
-    const req = requestBuilder
-      .post()
-      .body({ items: notifications })
-      .json()
-      .includeCredentials()
-      .build();
+  async markNotificationsAsSeen() {
+    const req = requestBuilder.put().json().includeCredentials().build();
     return await fetch(this.withEndpoint(`users/notifications/mark-as-seen`), req);
+  }
+
+  async getSearchableFeed(currentSearch: string | null, cursor?: string) {
+    const req = requestBuilder.get().includeCredentials().build();
+    const url = new URL(this.withEndpoint(`tracks/search`));
+    url.searchParams.set('q', currentSearch);
+    if (cursor) {
+      url.searchParams.set('cursor', cursor);
+    }
+    return await fetch(url, req);
+  }
+
+  async changeUsername(username: string) {
+    const req = requestBuilder.put().body({ username }).json().includeCredentials().build();
+    return await fetch(this.withEndpoint('users/username'), req);
   }
 }
 

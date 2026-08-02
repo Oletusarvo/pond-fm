@@ -52,7 +52,19 @@ export class NotificationRepository extends Repository<{ data: string }> {
     query.select('sender.json AS sender');
   }
 
-  async getBaseFeedQuery(cursor: TCursor | null, userId: string, ctx: DBContext) {
+  orderByCursor(query: Knex.QueryBuilder, cursor: TCursor, dir: 'desc' | 'asc') {
+    const comparator = dir === 'asc' ? '>=' : '<=';
+    query
+      .where('notifications.created_at', comparator, cursor.timestamp)
+      .whereNot({ 'notifications.id': cursor.id });
+  }
+
+  async getBaseFeedQuery(
+    cursor: TCursor | null,
+    userId: string,
+    orderDir: 'asc' | 'desc',
+    ctx: DBContext,
+  ) {
     const query = this.getBaseQuery(ctx);
     this.selectNotification(query);
     this.selectRecipient(query);
@@ -60,18 +72,18 @@ export class NotificationRepository extends Repository<{ data: string }> {
     this.selectTrack(query);
     query.where({ recipient_id: userId });
     if (cursor) {
-      query.where({ 'notifications.id': cursor.id });
+      this.orderByCursor(query, cursor, orderDir);
     }
     query.orderBy('notifications.created_at', 'desc');
     query.limit(this.pageSize + 1);
     return query;
   }
 
-  async markNotificationAs(payload: { id: string; isSeen: boolean }, ctx: DBContext) {
+  async markNotificationAs(payload: { user_id: string; seen: boolean }, ctx: DBContext) {
     await ctx(tablenames.notifications)
-      .where({ id: payload.id })
+      .where({ recipient_id: payload.user_id })
       .update({
-        seen_at: payload.isSeen ? new Date() : null,
+        seen_at: payload.seen ? new Date() : null,
       });
   }
 

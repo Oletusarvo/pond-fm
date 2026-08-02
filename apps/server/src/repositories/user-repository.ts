@@ -14,8 +14,35 @@ export class UserRepository extends Repository<{ data: string; status: string; t
       },
       ctx => {
         return ctx({ user: this.tablename.data })
+          .with('unseen_notification_count', qb => {
+            qb.select('recipient_id')
+              .from({ user: tablenames.users })
+              .leftJoin(
+                { notifications: tablenames.notifications },
+                'notifications.recipient_id',
+                'user.id',
+              )
+              .count('notifications.* as notification_count')
+              .where({
+                seen_at: null,
+              })
+              .groupBy('notifications.recipient_id');
+          })
           .join({ user_status: this.tablename.status }, 'user.user_status_id', 'user_status.id')
-          .select('user.id', 'user.email', 'user.username', 'user_status.label as status');
+          .leftJoin(
+            { notifications_count: 'unseen_notification_count' },
+            'notifications_count.recipient_id',
+            'user.id',
+          )
+          .select(
+            'user.id',
+            'user.email',
+            'user.username',
+            'user_status.label as status',
+            db.raw(
+              'COALESCE(notifications_count.notification_count, 0) AS unseen_notification_count',
+            ),
+          );
       },
     );
   }

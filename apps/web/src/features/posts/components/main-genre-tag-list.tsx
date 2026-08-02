@@ -1,25 +1,11 @@
+import { genreMap } from '../../../utils/genre-map';
 import { TagList } from './tag-list';
 
-const mainGenreTags = [
-  'Electronic',
-  'Rock',
-  'Metal',
-  'Rap',
-  'Hip-Hop',
-  'Ambient',
-  'Experimental',
-  'Techno',
-  'Trance',
-  'EBM',
-  'Industrial',
-  'Noise',
-];
-
-export function MainGenreTagList({ selectedTag, onSelected }) {
+export function MainGenreTagList({ selectedTags, onSelected }) {
   return (
     <TagList
-      tags={mainGenreTags}
-      selectedTag={selectedTag}
+      tags={Object.keys(genreMap)}
+      selectedTags={selectedTags}
       onTagSelected={onSelected}
     />
   );

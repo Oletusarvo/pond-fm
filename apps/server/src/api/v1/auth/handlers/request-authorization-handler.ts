@@ -7,7 +7,7 @@ import { createHandler } from '../../../../utils/create-handler';
 export const requestAuthorizationHandler = createHandler(async (req, res) => {
   const { email, username } = req.body;
   await db.transaction(async trx => {
-    const user = await userService.createIfNotExists({ email, username }, trx);
+    const user = await userService.createIfNotExists({ email }, trx);
 
     //Create an auth token and a database entry with a temporary code.
     const code = await authService.createAuthorizationCode(user.data.id, trx);

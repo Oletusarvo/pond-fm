@@ -19,7 +19,7 @@ exports.up = function (knex) {
       .onDelete('CASCADE')
       .onUpdate('CASCADE');
     tbl.uuid('session_id').notNullable();
-    tbl.timestamp('created_at');
+    tbl.timestamp('created_at').defaultTo(knex.fn.now());
     tbl.unique(['track_id', 'user_id']);
     tbl.unique(['track_id', 'session_id']);
   });

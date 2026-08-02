@@ -1,19 +1,22 @@
-import { useState } from 'react';
-import { Spinner } from '../../../components/spinner';
+import { ReactNode, useEffect } from 'react';
 import { useInfiniteFeed } from '../hooks/use-infinite-feed';
-import { TagList } from './tag-list';
 import { Separator } from '../../../components/separator';
-import { PostProvider } from '../providers/post-provider';
-import { TippingProvider } from '../../tipping/providers/tipping-provider';
-import { Post } from './post';
 import React from 'react';
 import { LoadingFiller } from '../../../components/loading-filler';
+import { useFeedContext } from '../../../providers/feed-provider';
+import { Sentinel } from '../../../components/sentinel';
 
 type FeedScreenProps = {
-  queryHook: () => ReturnType<typeof useInfiniteFeed>;
+  keyExtractor?: (item: any) => string;
+  renderComponent: (item: any) => ReactNode;
+  onEmptyComponent?: () => ReactNode;
 };
-export function Feed({ queryHook }: FeedScreenProps) {
-  const { data, isPending, nextPageTriggerRef } = queryHook();
+export function Feed({
+  renderComponent: RenderComponent,
+  keyExtractor,
+  onEmptyComponent: OnEmptyComponent,
+}: FeedScreenProps) {
+  const { data, isPending, fetchNextPage } = useFeedContext();
 
   if (isPending) {
     return <LoadingFiller />;
@@ -22,34 +25,32 @@ export function Feed({ queryHook }: FeedScreenProps) {
   if (!data.length) {
     return (
       <div className='flex w-full flex-1 h-full justify-center'>
-        <span className='text-slate-500'>No tracks found.</span>
+        {OnEmptyComponent ? (
+          <OnEmptyComponent />
+        ) : (
+          <span className='text-slate-500'>No items.</span>
+        )}
       </div>
     );
   }
 
   return (
-    <div className='flex flex-col w-full flex-1 overflow-y-scroll'>
-      {!isPending ? (
-        <>
-          {data.map((post, i) => {
-            return (
-              <React.Fragment key={post.id}>
-                <PostProvider initialPost={post}>
-                  <TippingProvider recipient={post.track.author}>
-                    <Post />
-                  </TippingProvider>
-                </PostProvider>
-                {i < data.length - 1 ? <Separator /> : null}
-              </React.Fragment>
-            );
-          })}
-
-          <div
-            ref={nextPageTriggerRef}
-            id='infinte-scroll-sentinel'
-          />
-        </>
-      ) : null}
-    </div>
+    <>
+      <div className='flex flex-col w-full flex-1 overflow-y-scroll max-h-full'>
+        {!isPending ? (
+          <>
+            {data.map((item, i) => {
+              return (
+                <React.Fragment key={keyExtractor?.(item)}>
+                  <RenderComponent item={item} />
+                  {i < data.length - 1 ? <Separator /> : null}
+                </React.Fragment>
+              );
+            })}
+            <Sentinel onVisible={() => fetchNextPage()} />
+          </>
+        ) : null}
+      </div>
+    </>
   );
 }

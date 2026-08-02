@@ -16,17 +16,20 @@ import { getStreamTokenHandler } from './handlers/get-stream-token-handler';
 import { verifyStreamToken } from './middleware/verify-stream-token';
 import { createBodyParser } from '../../../utils/create-body-parser';
 import { trackSchema } from '../../../schemas/track-schema';
+import { getSearchableFeedHandler } from './handlers/get-searchable-feed';
+import { getMainFeedHandler } from './handlers/get-main-feed';
 
 const router = getRouter();
 router.post(
   '/',
   checkAuth(),
-  createBodyParser(trackSchema),
+  //createBodyParser(trackSchema),
   upload.single('file'),
   createTrackHandler,
 );
-router.get('/feed/main', checkAuth(false), getDiscoveryFeed);
+router.get('/feed/main', checkAuth(false), getMainFeedHandler);
 router.get('/feed/discover', checkAuth(false), getDiscoveryFeed);
+router.get('/feed/search', getSearchableFeedHandler);
 router.get('/feed/:authorId', checkAuth(false), getAuthorFeed);
 
 router.post('/tags', checkAuth(), updateTrackTagsHandler);

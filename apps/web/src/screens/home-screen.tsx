@@ -39,7 +39,7 @@ export function HomeScreen() {
           )}
         </Button>
       </section>
-      <section className='h-pad py-16 bg-primary text-white'>
+      <section className='h-pad py-16 bg-primary text-white flex-1'>
         <h2 className='text-xl font-semibold mb-4'>What is Pond.fm?</h2>
         <p>
           A place where every track gets a fair chance to be heard. The main feed is completely
@@ -49,10 +49,9 @@ export function HomeScreen() {
           genuinely enjoy.
           <br />
           <br /> Looking for something truly new? Visit the <strong>Undiscovered</strong> feed,
-          where every track has been heard by fewer than 100 unique listeners. It's a place to find
-          artists before everyone else does, and to help shape what the community discovers next.
-          Support the artists you love directly through tips, knowing exactly how the platform is
-          funded.
+          where every track has been heard by fewer than 100 unique listeners. Unlike the main feed,
+          the undiscovered feed displays tracks in descending order - oldest first - giving every
+          newly uploaded track a fair chance to get heard.
           <br />
           <br /> We believe in transparent incentives, community-driven discovery, and giving
           creators an opportunity to be seen without competing against opaque algorithms. Whether

@@ -1,0 +1,16 @@
+type PostFeedHeaderProps = React.PropsWithChildren & {
+  title: string;
+  description: string;
+};
+
+export function PostFeedHeader({ children, title, description }: PostFeedHeaderProps) {
+  return (
+    <div className='py-2 w-full h-pad'>
+      <div className='flex flex-col pb-2'>
+        <h2 className='font-semibold text-primary'>{title}</h2>
+        <p className='text-slate-500 text-sm'>{description}</p>
+      </div>
+      {children}
+    </div>
+  );
+}

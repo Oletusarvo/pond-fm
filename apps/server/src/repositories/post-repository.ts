@@ -18,19 +18,30 @@ export class PostRepository extends Repository<{ data: string; status: string; l
         likes: 'track_like_data',
       },
       ctx => {
-        return ctx
-          .with('author_json', qb => {
-            qb.select(
-              'id',
-
-              db.raw("JSON_BUILD_OBJECT('id', id, 'username', username) AS json"),
-            ).from(tablenames.users);
-          })
-          .with('track_tags', qb => {
-            qb.select('track_tag.track_id', 'tag.label')
-              .from({ track_tag: 'track_tag_data' })
-              .join({ tag: 'tag_data' }, 'tag.id', 'track_tag.tag_id');
-          })
+        return (
+          ctx
+            .with('author_json', qb => {
+              qb.select(
+                'id',
+                'username',
+                db.raw("JSON_BUILD_OBJECT('id', id, 'username', username) AS json"),
+              ).from(tablenames.users);
+            })
+            .with('track_tags', qb => {
+              qb.select('track_tag.track_id', 'tag.label')
+                .from({ track_tag: 'track_tag_data' })
+                .join({ tag: 'tag_data' }, 'tag.id', 'track_tag.tag_id');
+            })
+            .with('post_undistinct', qb => {
+              qb.select('*').from(tablenames.posts).orderBy('created_at', 'asc');
+            })
+            .with('post_distinct', qb => {
+              qb.select('*')
+                .distinctOn('track_id')
+                .from(tablenames.posts)
+                .orderBy(db.raw('track_id, created_at'), 'desc');
+            })
+            /*
           .from(
             db.raw(
               `(
@@ -41,23 +52,29 @@ export class PostRepository extends Repository<{ data: string; status: string; l
           `,
               [this.tablename.data],
             ),
-          )
+          )*/
 
-          .join({ author: 'author_json' }, 'author.id', 'post.user_id')
-          .join({ track: tablenames.tracks }, 'track.id', 'post.track_id')
-          .join({ track_author: 'author_json' }, 'track_author.id', 'track.user_id')
-          .join('track_tags', 'track_tags.track_id', 'track.id')
-          .join(
-            { track_status: tablenames.contentStatuses },
-            'track_status.id',
-            'track.track_status_id',
-          );
+            .join({ author: 'author_json' }, 'author.id', 'post.user_id')
+            .join({ track: tablenames.tracks }, 'track.id', 'post.track_id')
+            .join({ track_author: 'author_json' }, 'track_author.id', 'track.user_id')
+            .join('track_tags', 'track_tags.track_id', 'track.id')
+            .join(
+              { track_status: tablenames.contentStatuses },
+              'track_status.id',
+              'track.track_status_id',
+            )
+        );
       },
     );
   }
 
   findTrackById(id: string, ctx: DBContext) {
     return ctx(tablenames.tracks).where({ id }).first();
+  }
+
+  orderByCursor(query: Knex.QueryBuilder, cursor: TCursor, dir: 'desc' | 'asc') {
+    const comparator = dir === 'asc' ? '>=' : '<=';
+    query.where('post.created_at', comparator, cursor.timestamp).whereNot({ 'post.id': cursor.id });
   }
 
   selectPost(query: Knex.QueryBuilder, session?: TSession) {
