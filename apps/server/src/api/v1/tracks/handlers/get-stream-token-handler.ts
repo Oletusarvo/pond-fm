@@ -6,7 +6,7 @@ import { createHandler } from '../../../../utils/create-handler';
 /**Sets a token as a cookie, allowing starting of streams and counting of plays. */
 export const getStreamTokenHandler = createHandler(async (req, res) => {
   const { trackId } = req.params as { trackId: string };
-  const result = await postService.createStreamToken(trackId, db);
+  const result = await postService.createStreamToken(db, { trackId });
   return res
     .cookie(serverConfig.streamTokenName, result.data, serverConfig.streamCookieSettings)
     .end();

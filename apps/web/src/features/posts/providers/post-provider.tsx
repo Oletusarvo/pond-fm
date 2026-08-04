@@ -1,14 +1,13 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { setupContext } from '../../../utils/setup-context';
 import type { TPost } from '../../../types/post';
 import { usePostActions } from '../hooks/use-post-actions';
 import { Modal } from '../../../components/modal';
 import { Repeat } from 'lucide-react';
 import { Button } from '../../../components/button';
-import { useAppContext } from '../../../providers/app-provider';
 import { useEventHandler } from '../../../hooks/use-event-handler';
-import { TippingProvider } from '../../tipping/providers/tipping-provider';
-import { usePlayCountContext } from '../../audio/providers/playcount-provider';
+import { useEventsContext } from '../../../providers/events-provider';
+import { apiService } from '../../../utils/api-service';
 
 const [PostContext, usePostContext] = setupContext<{
   post: TPost;
@@ -23,7 +22,7 @@ type PostProviderProps = React.PropsWithChildren & {
 export function PostProvider({ children, initialPost }: PostProviderProps) {
   const [post, setPost] = useState(initialPost);
   const [showRepostModal, setShowRepostModal] = useState(false);
-  const playcountService = usePlayCountContext();
+  const eventsService = useEventsContext();
   const { toggleLike, repost } = usePostActions({
     post,
     onChange: newState => setPost(newState),
@@ -35,7 +34,7 @@ export function PostProvider({ children, initialPost }: PostProviderProps) {
 
   useEventHandler({
     type: 'track-played',
-    service: playcountService,
+    service: eventsService,
     handler: (e: CustomEvent) => {
       if (e.detail.id === post.track.id) {
         setPost({

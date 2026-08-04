@@ -5,10 +5,13 @@ import { Modal } from '../../../components/modal';
 import { useAuthContext } from '../providers/auth-provider';
 import { useSubmit } from '../../../hooks/use-submit';
 import { apiService } from '../../../utils/api-service';
+import { useSettingsContext } from '../providers/settings-provider';
 
-export function SetUsernameModal() {
+export function SettingsModal() {
   const navigate = useNavigate();
   const authService = useAuthContext();
+  const settingsService = useSettingsContext();
+
   const { submit, status } = useSubmit({
     fetchFn: async payload => {
       const p = Object.fromEntries(payload) as { username: string };
@@ -24,38 +27,31 @@ export function SetUsernameModal() {
           username,
         },
       });
+
     },
   });
+
   return (
     <Modal
-      title='Onboarding'
-      onClose={() => null}>
-      <div className='flex flex-col gap-4'>
-        <div className='flex flex-col'>
-          <h2 className='text-xl font-semibold'>Please choose a username</h2>
-          <p className='text-slate-500'>First things first; choose yourself a username.</p>
-        </div>
-        <Form onSubmit={submit}>
-          <Form.Group label='Username'>
-            <Input
-              name='username'
-              required
-            />
-          </Form.Group>
-          <Form.Controls
-            loading={status === 'loading'}
-            cancelText='Logout'
-            acceptText='Confirm'
-            onCancel={async () =>
-              await authService.logout().then(res => {
-                if (res.ok) {
-                  navigate('/');
-                }
-              })
-            }
+      title='Settings'
+      onClose={() => settingsService.toggleSettingsModal(false)}>
+      <Form onSubmit={submit}>
+        <Form.Group label='Username'>
+          <Input
+            defaultValue={authService.session?.user.username}
+            name='username'
+            required
           />
-        </Form>
-      </div>
+        </Form.Group>
+        <Form.Controls
+          loading={status === 'loading'}
+          cancelText='Cancel'
+          acceptText='Confirm'
+          onCancel={() => settingsService.toggleSettingsModal(false)
+          }
+        />
+      </Form>
+
     </Modal>
   );
 }

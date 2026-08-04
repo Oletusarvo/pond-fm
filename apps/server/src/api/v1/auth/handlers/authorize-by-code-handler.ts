@@ -6,8 +6,9 @@ import { createHandler } from '../../../../utils/create-handler';
 /**Authorizes a user by their auth code, returning the session token as a cookie and as part of the response body. */
 export const authorizeByCodeHandler = createHandler(async (req, res) => {
   const { code } = req.body;
-  const result = await authService.authorizeUserByCode(code, db);
+  const result = await authService.authorizeUserByCode(db, { code });
   if (result.success === false) {
+    console.log(result.error);
     return res.status(401).end();
   }
 

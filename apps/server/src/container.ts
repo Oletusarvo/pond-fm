@@ -1,22 +1,19 @@
 import { AuthRepository } from './repositories/auth-repository';
-import { FeedRepository } from './repositories/feed-repository';
-import { NotificationRepository } from './repositories/notification-repository';
 import { PaymentRepository } from './repositories/payment-repository';
 import { PostRepository } from './repositories/post-repository';
 import { ScrobbleRepository } from './repositories/scrobble-repository';
 import { UserRepository } from './repositories/user-repository';
 import { AuthService } from './services/auth-service';
-import { FeedService } from './services/feed-service';
-import { NotificationService } from './services/notification-service';
 import { PaymentService } from './services/payment-service';
 import { PostService } from './services/post-service';
 import { ScrobbleService } from './services/scrobble-service';
 import { UserService } from './services/user-service';
 
-export const postService = new PostService(new PostRepository());
+export const postService = new PostService({ postRepo: new PostRepository() });
 export const userService = new UserService(new UserRepository());
-export const authService = new AuthService(new AuthRepository());
+export const authService = new AuthService({
+  authRepo: new AuthRepository(),
+  userRepo: new UserRepository(),
+});
 export const paymentService = new PaymentService(new PaymentRepository());
 export const scrobbleService = new ScrobbleService(new ScrobbleRepository());
-export const feedService = new FeedService(new FeedRepository());
-export const notificationService = new NotificationService(new NotificationRepository());

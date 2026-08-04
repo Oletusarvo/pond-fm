@@ -7,13 +7,18 @@ import { createHandler } from '../../../../utils/create-handler';
 export const requestAuthorizationHandler = createHandler(async (req, res) => {
   const { email, username } = req.body;
   await db.transaction(async trx => {
-    const user = await userService.createIfNotExists({ email }, trx);
-
+    const user = await userService.createIfNotExists(trx, { user: { email } });
     //Create an auth token and a database entry with a temporary code.
-    const code = await authService.createAuthorizationCode(user.data.id, trx);
+    console.log(user.data)
+    const code = await authService.createAuthorizationCode(trx, { user: { id: user.data.id } });
+    console.log('Malja')
+    if (process.env.AUTH_ENVIRONMENT === 'production') {
+      await emailService.sendMagicLink(email, code.data);
 
-    console.log('Temporary code log(remove once email is implemented): ', code);
-    //await emailService.sendMagicLink(email, code.data);
+    }
+    else {
+      console.log('Temporary code log(remove once email is implemented): ', code);
+    }
   });
   return res.end();
 });

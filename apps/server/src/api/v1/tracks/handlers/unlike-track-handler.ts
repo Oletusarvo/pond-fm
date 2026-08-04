@@ -7,11 +7,11 @@ import { createHandler } from '../../../../utils/create-handler';
 export const unlikeTrackHandler = createHandler(async (req: AuthenticatedExpressRequest, res) => {
   const session = req.session;
   await postService.unlikeTrack(
+    db,
     {
       user_id: session.user.id,
       track_id: req.body.trackId,
     },
-    db,
   );
   return res.end();
 });

@@ -11,8 +11,12 @@ export const tablenames = {
   paymentTypes: 'payment_type',
   authTokens: 'auth_token_data',
   posts: 'post_data',
-  tags: 'tag_data',
+  tagLabels: 'tag_data',
   uniqueListeners: 'unique_listener_data',
   notifications: 'notification_data',
   notificationTypes: 'notification_type',
+  genres: 'genre_type',
+  moods: 'mood_type',
+  trackMoods: 'track_mood_data',
+  likes: 'track_like_data'
 };

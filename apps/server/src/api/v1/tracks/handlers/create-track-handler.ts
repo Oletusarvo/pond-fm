@@ -7,6 +7,7 @@ import { createHandler } from '../../../../utils/create-handler';
 import { tryCatch } from '../../../../utils/try-catch';
 import { parseFile } from 'music-metadata';
 import { generateWaveformData } from '../../../../utils/generate-waveform-data';
+import { createCanonicalTrack } from '../../../../query/posts/create-canonical-track';
 
 export const createTrackHandler = createHandler(
   async (req: AuthenticatedExpressRequest & { file: any }, res) => {
@@ -15,17 +16,17 @@ export const createTrackHandler = createHandler(
     const waveform = await generateWaveformData(req.file.path);
 
     await db.transaction(async trx => {
-      await postService.createTrack(
-        {
+      await postService.createCanonicalTrack(trx, {
+        track: {
           title: req.body.title,
           user_id: session.user.id,
           filename: req.file.filename,
-          tags: ['Electronic'],
+          genre: req.body.genre,
+          moods: JSON.parse(req.body.moods),
           duration: metadata.format.duration,
           waveform,
-        },
-        trx,
-      );
+        }
+      });
     });
     return res.status(200).end();
   },

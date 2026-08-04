@@ -1,82 +1,11 @@
-import { Knex } from 'knex';
-import { tablenames } from '../tablenames';
-import { DBContext } from '../types/db-context';
-import { Repository } from './repository';
-import { db } from '../db-config';
+import { activateUserById } from '../query/users/activate-by-id';
+import { findUserByEmail } from '../query/users/find-user-by-email';
+import { findUserById } from '../query/users/find-user-by-id';
+import { createNewUser } from '../query/users/create-new-user';
 
-export class UserRepository extends Repository<{ data: string; status: string; tags: string }> {
-  constructor() {
-    super(
-      {
-        data: tablenames.users,
-        status: tablenames.userStatuses,
-        tags: tablenames.userTags,
-      },
-      ctx => {
-        return ctx({ user: this.tablename.data })
-          .with('unseen_notification_count', qb => {
-            qb.select('recipient_id')
-              .from({ user: tablenames.users })
-              .leftJoin(
-                { notifications: tablenames.notifications },
-                'notifications.recipient_id',
-                'user.id',
-              )
-              .count('notifications.* as notification_count')
-              .where({
-                seen_at: null,
-              })
-              .groupBy('notifications.recipient_id');
-          })
-          .join({ user_status: this.tablename.status }, 'user.user_status_id', 'user_status.id')
-          .leftJoin(
-            { notifications_count: 'unseen_notification_count' },
-            'notifications_count.recipient_id',
-            'user.id',
-          )
-          .select(
-            'user.id',
-            'user.email',
-            'user.username',
-            'user_status.label as status',
-            db.raw(
-              'COALESCE(notifications_count.notification_count, 0) AS unseen_notification_count',
-            ),
-          );
-      },
-    );
-  }
-
-  findById(id: string, ctx: DBContext) {
-    return this.baseQuery(ctx).where({ 'user.id': id }).first();
-  }
-
-  findByEmail(email: string, ctx: DBContext) {
-    return this.baseQuery(ctx).where({ email }).first();
-  }
-
-  activateById(userId: string, ctx: DBContext) {
-    return ctx(this.tablename.data)
-      .where({ id: userId })
-      .update({
-        user_status_id: db
-          .select('id')
-          .from(this.tablename.status)
-          .where({ label: 'active' })
-          .limit(1),
-      });
-  }
-
-  /**Creates or updates the tags of a user. */
-  async updateUserTags(payload: { userId: string; tags: string[] }, trx: Knex.Transaction) {
-    await trx(this.tablename.tags).where({ user_id: payload.userId }).del();
-    await trx(this.tablename.tags).insert(
-      payload.tags.map(tag => {
-        return {
-          user_id: payload.userId,
-          tag_id: db.select('id').from(tablenames.tags).where({ label: tag }).limit(1),
-        };
-      }),
-    );
-  }
+export class UserRepository {
+  findById = findUserById
+  findByEmail = findUserByEmail
+  activateById = activateUserById
+  createNewUser = createNewUser
 }

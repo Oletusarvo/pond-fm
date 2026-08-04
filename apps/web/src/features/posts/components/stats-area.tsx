@@ -18,8 +18,6 @@ export function StatsArea() {
 
       <LikeButton />
       <RepostButton />
-
-      <TipButton />
     </div>
   );
 }

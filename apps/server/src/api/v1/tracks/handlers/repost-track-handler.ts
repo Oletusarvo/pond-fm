@@ -1,5 +1,6 @@
-import { notificationService, postService } from '../../../../container';
+import { postService } from '../../../../container';
 import { db } from '../../../../db-config';
+import { createNotification } from '../../../../query/notifications/create-notification';
 import { tablenames } from '../../../../tablenames';
 import { AuthenticatedExpressRequest } from '../../../../types/express';
 import { createHandler } from '../../../../utils/create-handler';
@@ -12,11 +13,13 @@ export const repostTrackHandler = createHandler(
     const session = req.session;
     const { trackId } = req.body as { trackId: string };
     const result = await postService.repostTrack(
-      {
-        user_id: session.user.id,
-        track_id: trackId,
-      },
       db,
+      {
+        post: {
+          user_id: session.user.id,
+          track_id: trackId,
+        }
+      },
     );
 
     if (result.success === false && result.error === serviceError.post.duplicateRepost) {
@@ -28,14 +31,16 @@ export const repostTrackHandler = createHandler(
           .where({ id: req.body.trackId })
           .select('user_id AS author_id')
           .first();
-        await notificationService.createNotification(
-          {
-            recipient_id: track.author_id,
-            sender_id: session?.user.id,
-            track_id: req.body.trackId,
-            type: 'repost',
-          },
+        await createNotification(
           db,
+          {
+            notification: {
+              recipient_id: track.author_id,
+              sender_id: session?.user.id,
+              track_id: req.body.trackId,
+              type: 'repost',
+            }
+          },
         );
       });
 

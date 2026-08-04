@@ -4,11 +4,23 @@ import { ObjectEncoder } from '../../../utils/object-encoder';
 import { FeedProvider } from '../../../providers/feed-provider';
 import { PostFeed } from '../components/post-feed';
 import { apiService } from '../../../utils/api-service';
+import { useQuery } from '@tanstack/react-query';
+import { Spinner } from '../../../components/spinner';
 
 /**@todo Implement fetching of the user from the database instead of passing an encoded object in the page params. */
 export function UserScreen() {
-  const { userDataBase64Url } = useParams();
-  const user = ObjectEncoder.decodeFromBase64Url(userDataBase64Url);
+  const { id } = useParams();
+  const { data: user, isPending } = useQuery({
+    queryKey: ['user', id],
+    queryFn: async () => {
+      const res = await apiService.getUser(id);
+      return res.ok ? await res.json() : null;
+    }
+  });
+
+  if (isPending) {
+    return <Spinner />
+  }
 
   return (
     <div className='flex flex-col w-full max-h-full'>

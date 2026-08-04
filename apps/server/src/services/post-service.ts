@@ -1,7 +1,6 @@
 import { DBContext } from '../types/db-context';
 import { Knex } from 'knex';
 import { PostRepository } from '../repositories/post-repository';
-import { TCursor } from '../types/cursor';
 import { serviceError } from '../utils/service-error';
 import {
   ServiceErrorResponse,
@@ -11,24 +10,28 @@ import {
 import { tryCatch } from '../utils/try-catch';
 import { createJWT } from '../utils/jwt';
 import { v4 } from 'uuid';
-import { TrackAndUserId, TTrack } from '../types/track-type';
+import { createCanonicalTrack } from '../query/posts/create-canonical-track';
+import { createPost } from '../query/posts/create-post';
+import { createTrackLike } from '../query/posts/create-track-like';
+import { deleteTrackLike } from '../query/posts/delete-track-like';
+import { getPostQuery } from '../query/posts/get-post-query';
+
 
 /**Responsible for handling business-logic related to individual posts and tracks. */
 export class PostService {
-  constructor(private repo: PostRepository) {}
+  constructor(private repos: {
+    postRepo: PostRepository,
+  }) { }
 
-  async findTrackById(id: string, ctx: DBContext) {
-    const data = await this.repo.findTrackById(id, ctx);
-    return { success: true, data } as ServiceSuccessResponse<any>;
-  }
-
-  async createTrack(payload: TTrack, trx: Knex.Transaction) {
-    await this.repo.createTrack(payload, trx);
+  async createCanonicalTrack(ctx: DBContext, config: Parameters<typeof createCanonicalTrack>[1]) {
+    //Related business logic...
+    await this.repos.postRepo.createCanonicalTrack(ctx, config);
     return { success: true } as ServiceSuccessResponse;
   }
 
-  async repostTrack(payload: TrackAndUserId, ctx: DBContext) {
-    const [result, err] = await tryCatch(async () => await this.repo.createPost(payload, ctx));
+  async repostTrack(ctx: DBContext, config: Parameters<typeof createPost>[1]) {
+    //Related business logic.
+    const [result, err] = await tryCatch(async () => await this.repos.postRepo.createPost(ctx, config));
     if (err) {
       if (err.message.toLowerCase().includes('duplicate')) {
         return { success: false, error: serviceError.post.duplicateRepost };
@@ -39,15 +42,23 @@ export class PostService {
     return { success: true };
   }
 
-  async unrepostTrack(payload: TrackAndUserId, ctx: DBContext) {
-    await this.repo.deletePost(payload, ctx);
+  async unrepostTrack(ctx: DBContext, config: { editor: { id: string }; track: { id: string } }) {
+    //Prevent unreposting if the post isn't a repost, or if the editor isn't the one who reposted.
+    const query = getPostQuery(ctx);
+    query
+      .where(function () {
+        this.whereRaw("post_author.id <> track_author.id")
+      })
+      .where({ 'post.track_id': config.track.id, 'post_author.id': config.editor.id })
+      .del();
+
     return { success: true } as ServiceSuccessResponse;
   }
 
   /**Likes a posted track. */
-  async likeTrack(payload: TrackAndUserId, ctx: DBContext) {
-    return await this.repo
-      .createTrackLike(payload, ctx)
+  async likeTrack(ctx: DBContext, config: Parameters<typeof createTrackLike>[1]) {
+    return await this.repos.postRepo
+      .createTrackLike(ctx, config)
       .then(() => {
         return { success: true } as ServiceSuccessResponse;
       })
@@ -62,34 +73,29 @@ export class PostService {
       });
   }
 
-  async unlikeTrack(payload: TrackAndUserId, ctx: DBContext) {
-    await this.repo.deleteTrackLike(payload, ctx);
+  async unlikeTrack(ctx: DBContext, config: Parameters<typeof deleteTrackLike>[1]) {
+    await this.repos.postRepo.deleteTrackLike(ctx, config);
     return { success: true } as ServiceSuccessResponse<void>;
   }
 
-  findMany(cursor: TCursor | null, ctx: DBContext) {
-    const data = this.repo.findMany(cursor, ctx);
-    return { success: true, data } as ServiceSuccessResponse;
-  }
-
-  async updateTrackTags(
-    payload: { editorId: string; trackId: string; tags: string[] },
+  async updateTrackMoods(
     trx: Knex.Transaction,
+    config: { editor: { id: string }; track: { id: string; moods: string[] } },
   ): Promise<ServiceResponse> {
-    const track = await this.repo.getAuthorByTrackId(payload.trackId, trx);
-    if (track.user_id !== payload.editorId) {
+    const track = await this.repos.postRepo.findTrackById(trx, { id: config.track.id });
+    if (track.user_id !== config.editor.id) {
       return {
         success: false,
         error: serviceError.auth.forbidden,
       };
     }
-    await this.repo.updateTrackTags({ track_id: payload.trackId, tags: payload.tags }, trx);
+    await this.repos.postRepo.updateTrackMoods(trx, { track: config.track });
     return { success: true, data: null };
   }
 
   /**Returns a token allowing fetching of streams and counting plays.**/
-  async createStreamToken(trackId: string, ctx: DBContext) {
-    const track = await this.repo.findTrackById(trackId, ctx);
+  async createStreamToken(ctx: DBContext, config: { trackId: string }) {
+    const track = await this.repos.postRepo.findTrackById(ctx, { id: config.trackId });
     const streamStarted = Date.now();
     //Stream start + duration of the track + a grace period of 10 seconds, in milliseconds.
     const expires = streamStarted + track.duration * 1000 + 10000;

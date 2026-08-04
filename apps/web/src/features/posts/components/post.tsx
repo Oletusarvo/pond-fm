@@ -6,6 +6,7 @@ import { TagList } from './tag-list';
 import { TipButton } from './tip-button';
 import { UploadTime } from './upload-time';
 import { usePostContext } from '../providers/post-provider';
+import { Tag } from './tag';
 
 export function Post() {
   const { post } = usePostContext();
@@ -16,13 +17,16 @@ export function Post() {
           <PostAuthor />
           <Title />
         </div>
+        <div className='flex flex-col items-end gap-1'>
+          <UploadTime />
+          <Tag value={post.track.genre} size="small" selected={true} />
+        </div>
 
-        <UploadTime />
       </div>
       <LargePlayer />
       <div className='flex justify-between w-full'>
         <StatsArea />
-        <TagList tags={post.track.tags} />
+        <TagList tags={post.track.moods} size={'small'} color='secondary' />
       </div>
     </div>
   );

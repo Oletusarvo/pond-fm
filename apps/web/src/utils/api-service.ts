@@ -2,7 +2,7 @@ import { joinStrings } from './join-strings';
 import { requestBuilder } from './request-builder';
 
 export class ApiService {
-  constructor(private endpoint: string) {}
+  constructor(private endpoint: string) { }
   private withEndpoint(...args: string[]) {
     return joinStrings([this.endpoint, ...args], '/');
   }
@@ -81,28 +81,32 @@ export class ApiService {
     return await fetch(this.withEndpoint('tracks/tags'), req);
   }
 
-  private buildFeedUrl(endpoint: string, cursor?: string, tag?: string) {
+  private buildFeedUrl(endpoint: string, cursor?: string, genres?: string[], moods?: string[]) {
     const url = new URL(this.withEndpoint(endpoint));
     if (cursor) {
       url.searchParams.set('cursor', cursor);
     }
-    if (tag) {
-      url.searchParams.set('tag', tag);
+    if (genres && genres.length > 0) {
+      genres.forEach(g => url.searchParams.append('genres', g))
+    }
+
+    if (moods && moods.length > 0) {
+      moods.forEach(m => url.searchParams.append('moods', m));
     }
     return url;
   }
 
   /**Returns the discovery feed. */
-  async getDiscoveryFeed(cursor?: string, tag?: string) {
+  async getDiscoveryFeed(cursor?: string, genres?: string[], moods?: string[]) {
     const req = requestBuilder.get().includeCredentials().build();
-    const url = this.buildFeedUrl(`tracks/feed/discover`, cursor, tag);
+    const url = this.buildFeedUrl(`tracks/feed/discover`, cursor, genres, moods);
     return await fetch(url, req);
   }
 
   /**Returns the main feed. */
-  async getMainFeed(cursor?: string, tag?: string) {
+  async getMainFeed(cursor?: string, genres?: string[], moods?: string[]) {
     const req = requestBuilder.get().includeCredentials().build();
-    const url = this.buildFeedUrl(`tracks/feed/main`, cursor, tag);
+    const url = this.buildFeedUrl(`tracks/feed/main`, cursor, genres, moods);
     return await fetch(url, req);
   }
 
@@ -166,6 +170,21 @@ export class ApiService {
   async changeUsername(username: string) {
     const req = requestBuilder.put().body({ username }).json().includeCredentials().build();
     return await fetch(this.withEndpoint('users/username'), req);
+  }
+
+  async getMainGenres() {
+    const req = requestBuilder.get().includeCredentials().build();
+    return await fetch(this.withEndpoint('tags/genres'), req);
+  }
+
+  async getMoods() {
+    const req = requestBuilder.get().includeCredentials().build();
+    return await fetch(this.withEndpoint('tags/moods'), req);
+  }
+
+  async getUser(id: string) {
+    const req = requestBuilder.get().includeCredentials().build();
+    return await fetch(this.withEndpoint(`users/${id}`), req);
   }
 }
 

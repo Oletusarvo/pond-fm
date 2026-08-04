@@ -3,6 +3,7 @@ import { BottomNav } from '../components/bottom-nav';
 import { MainHeader } from '../components/main-header';
 import { MiniPlayer } from '../features/audio/components/mini-player';
 import { WindowResizeManager } from '../managers/window-resize-manager';
+import { MiniPlayerWithInfo } from '../features/audio/components/mini-player-with-info';
 
 export function MainLayout() {
   return (
@@ -11,7 +12,7 @@ export function MainLayout() {
       <main className='flex flex-col w-full flex-1 overflow-y-scroll'>
         <Outlet />
       </main>
-      <MiniPlayer />
+      <MiniPlayerWithInfo />
       <BottomNav />
       <WindowResizeManager />
     </div>

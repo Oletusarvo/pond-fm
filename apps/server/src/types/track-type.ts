@@ -2,10 +2,11 @@ export type TTrack = {
   id?: string;
   title: string;
   user_id: string;
-  tags: string[];
   duration: number;
   filename: string;
   waveform: number[];
+  genre?: string;
+  moods?: string[]
   is_discovered?: boolean;
 };
 

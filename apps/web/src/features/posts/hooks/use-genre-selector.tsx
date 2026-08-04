@@ -1,41 +1,28 @@
-import { useState, useTransition } from 'react';
+import { useRef, useState, useTransition } from 'react';
+import { useToggleList } from '../../../hooks/use-toggle-list';
 
 type GenreSelectorProps = {
-  styleLimit?: number;
-  onMainGenreChanged?: (genre: string) => void;
-  onStylesChanged?: (styles: string[]) => void;
+  onGenresChanged?: (genre: string[]) => void;
+  onMoodsChanged?: (styles: string[]) => void;
+  onGenreAdded?: (genre: string) => void;
+  onGenreRemoved?: (genre: string) => void;
+  onMoodAdded?: (mood: string) => void;
+  onMoodRemoved?: (mood: string) => void;
 };
 
 export function useGenreSelector({
-  styleLimit,
-  onMainGenreChanged,
-  onStylesChanged,
+  onGenreAdded, onGenreRemoved, onMoodAdded, onMoodRemoved,
+  onGenresChanged,
+  onMoodsChanged,
 }: GenreSelectorProps = {}) {
-  const [mainGenre, setMainGenre] = useState('electronic');
-  const [styles, setStyles] = useState<string[]>([]);
-
-  const updateStyles = (tag: string) => {
-    const nextStyles = styles.includes(tag)
-      ? styles.filter(t => t != tag)
-      : styleLimit && styles.length + 1 > styleLimit
-        ? styles
-        : [...styles, tag];
-    setStyles(nextStyles);
-    onStylesChanged?.(nextStyles);
-  };
-
-  const updateMainGenre = (tag: string) => {
-    if (tag !== mainGenre) {
-      setMainGenre(tag);
-      setStyles([]);
-      onMainGenreChanged?.(tag);
-    }
-  };
+  const { items: genres, toggleItem: toggleGenre } = useToggleList<string>({
+    onChanged: genres => onGenresChanged?.(genres)
+  });
+  const { items: moods, toggleItem: toggleMood } = useToggleList<string>({
+    onChanged: moods => onMoodsChanged?.(moods)
+  });
 
   return {
-    mainGenre,
-    styles,
-    updateMainGenre,
-    updateStyles,
+    genres, moods, toggleGenre, toggleMood
   };
 }

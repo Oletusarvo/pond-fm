@@ -5,6 +5,6 @@ import { createHandler } from '../../../../utils/create-handler';
 
 export const unrepostTrackHandler = createHandler(async (req: AuthenticatedExpressRequest, res) => {
   const session = req.session;
-  await postService.unrepostTrack({ user_id: session.user.id, track_id: req.body.trackId }, db);
+  await postService.unrepostTrack(db, { editor: { id: session.user.id }, track: { id: req.body.trackId } });
   return res.end();
 });

@@ -5,6 +5,7 @@ export type TTrack = {
   title: string;
   duration: number;
   author: TAuthor;
-  tags: string[];
+  genre: string;
+  moods: string[];
   waveform: number[];
 };

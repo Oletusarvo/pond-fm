@@ -7,6 +7,7 @@ import { serverConfig } from '../../../../../server-config';
 import { verifyJWT } from '../../../../utils/jwt';
 import { parseFile } from 'music-metadata';
 import mime from 'mime-types';
+import { tablenames } from '../../../../tablenames';
 
 export const streamTrackHandler = createHandler(async (req, res) => {
   const trackId = req.params.trackId as string;
@@ -26,8 +27,8 @@ export const streamTrackHandler = createHandler(async (req, res) => {
   }
     */
 
-  const track = await postService.findTrackById(trackId, db);
-  const filePath = path.join(process.cwd(), 'uploads', `${track.data.filename}`);
+  const track = await db(tablenames.tracks).where({ id: trackId }).select('filename').first();
+  const filePath = path.join(process.cwd(), 'uploads', `${track.filename}`);
 
   const fileSize = statSync(filePath).size;
   const fileType = mime.lookup(filePath) as string;

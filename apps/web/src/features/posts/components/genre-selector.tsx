@@ -2,27 +2,47 @@ import React, { useEffect, useMemo } from 'react';
 import { genreMap } from '../../../utils/genre-map';
 import { useGenreSelector } from '../hooks/use-genre-selector';
 import { TagList } from './tag-list';
+import { useMainGenres } from '../hooks/use-main-genres';
+import { useMoods } from '../hooks/use-moods';
+import { useToggleList } from '../../../hooks/use-toggle-list';
 
 type GenreSelectorProps = Parameters<typeof useGenreSelector>[0];
 
 export const GenreSelector = React.memo(function GenreSelector(props: GenreSelectorProps) {
-  const genreSelector = useGenreSelector(props);
-  const mainGenres = useMemo(() => Object.keys(genreMap), []);
-  const styles = useMemo(() => genreMap[genreSelector.mainGenre], [genreSelector.mainGenre]);
-
   return (
     <div className='flex flex-col gap-1'>
-      <TagList
-        tags={mainGenres}
-        selectedTags={[genreSelector.mainGenre]}
-        onTagSelected={tag => genreSelector.updateMainGenre(tag)}
-      />
-      <TagList
-        color='secondary'
-        tags={styles}
-        selectedTags={genreSelector.styles}
-        onTagSelected={tag => genreSelector.updateStyles(tag)}
-      />
+      <GenreFilter onChange={props.onGenresChanged} />
+      <MoodFilter onChange={props.onMoodsChanged} />
     </div>
   );
 });
+
+function GenreFilter({ onChange }) {
+  const { items, toggleItem } = useToggleList<string>({
+    onChanged: genres => onChange(genres)
+  });
+  const { data: genres, isPending: genresPending } = useMainGenres();
+
+  return (
+    <TagList
+      tags={genres || []}
+      selectedTags={items}
+      onTagSelected={tag => toggleItem(tag)}
+    />
+  )
+}
+
+function MoodFilter({ onChange }) {
+  const { items, toggleItem } = useToggleList<string>({
+    onChanged: moods => onChange(moods)
+  });
+  const { data: moods, isPending: moodsPending } = useMoods();
+  return (
+    <TagList
+      color='secondary'
+      tags={moods || []}
+      selectedTags={items}
+      onTagSelected={tag => toggleItem(tag)}
+    />
+  )
+}

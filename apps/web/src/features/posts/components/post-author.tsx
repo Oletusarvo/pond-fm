@@ -8,13 +8,14 @@ export function PostAuthor() {
   const { post } = usePostContext();
   const isCanonicalAuthor = post.is_canonical;
   const canonicalAuthorLink = (
-    <Link to={`/user/${ObjectEncoder.encodeToBase64Url(post.track.author)}`}>
+    <Link to={`/user/${post.track.author.id}`}>
       {post.track.author.username}
     </Link>
   );
   const posterLink = (
-    <Link to={`/user/${ObjectEncoder.encodeToBase64Url(post.author)}`}>{post.author.username}</Link>
+    <Link to={`/user/${post.author.id}`}>{post.author.username}</Link>
   );
+
   return (
     <UsernameLabel>
       <div className='flex gap-2 items-baseline'>

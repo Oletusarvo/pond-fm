@@ -29,7 +29,7 @@ export const Modal = React.memo(function Modal({
 
   const Body = React.memo(function Body() {
     const className = useClassName(
-      'bg-white p-4 flex flex-col overflow-y-scroll max-h-full',
+      'bg-white p-4 flex flex-col overflow-y-scroll max-h-full animate-fade-in',
       fullScreen ? 'w-full h-full' : 'xs:w-full md:w-[50%] lg:w-[30%] xl:min-w-[40%] rounded-md',
     );
     return (

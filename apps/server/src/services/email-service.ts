@@ -6,7 +6,7 @@ class EmailService {
   constructor(
     private endpoint: string,
     private apiKey: string,
-  ) {}
+  ) { }
 
   sendMagicLink(to: string, code: string) {
     const domainUrl = getDomainUrl();
