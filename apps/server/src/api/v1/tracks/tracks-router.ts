@@ -13,6 +13,9 @@ import { getAuthorFeed } from './handlers/get-author-feed-handler';
 import { getStreamTokenHandler } from './handlers/get-stream-token-handler';
 import { verifyStreamToken } from './middleware/verify-stream-token';
 import { getMainFeedHandler } from './handlers/get-main-feed';
+import { createBodyParser } from '../../../utils/create-body-parser';
+import { updateTrackHandler } from './handlers/update-track-handler';
+import { updateTrackScema } from '../../../schemas/update-track-schema';
 
 const router = getRouter();
 router.post(
@@ -22,6 +25,7 @@ router.post(
   upload.single('file'),
   createTrackHandler,
 );
+
 router.get('/feed/main', checkAuth(false), getMainFeedHandler);
 router.get('/feed/discover', checkAuth(false), getDiscoveryFeed);
 router.get('/feed/:authorId', checkAuth(false), getAuthorFeed);
@@ -34,5 +38,6 @@ router.delete('/repost', checkAuth(), unrepostTrackHandler);
 router.post('/:trackId/play', verifyStreamToken, countPlayHandler);
 router.get('/:trackId/stream/token', getStreamTokenHandler);
 router.get('/:trackId/stream', streamTrackHandler);
+router.put('/:trackId', checkAuth(), createBodyParser(updateTrackScema), updateTrackHandler);
 
 export { router as tracksRouter };

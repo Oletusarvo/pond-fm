@@ -6,8 +6,9 @@ import { useAuthContext } from '../providers/auth-provider';
 import { useSubmit } from '../../../hooks/use-submit';
 import { apiService } from '../../../utils/api-service';
 import { useSettingsContext } from '../providers/settings-provider';
+import { ErrorMessage, SuccessMessage } from '../../../components/helper-message';
 
-export function SettingsModal() {
+export function ProfileSettingsModal() {
   const navigate = useNavigate();
   const authService = useAuthContext();
   const settingsService = useSettingsContext();
@@ -15,7 +16,7 @@ export function SettingsModal() {
   const { submit, status } = useSubmit({
     fetchFn: async payload => {
       const p = Object.fromEntries(payload) as { username: string };
-      const res = await apiService.changeUsername(p.username);
+      const res = await apiService.updateUser(p);
       return {
         success: res.ok,
         data: p.username,
@@ -27,7 +28,6 @@ export function SettingsModal() {
           username,
         },
       });
-
     },
   });
 
@@ -50,6 +50,14 @@ export function SettingsModal() {
           onCancel={() => settingsService.toggleSettingsModal(false)
           }
         />
+        {status === 'error'
+          ?
+          <ErrorMessage>Something went wrong!</ErrorMessage>
+          : status === 'success'
+            ?
+            <SuccessMessage>Profile updated</SuccessMessage>
+            :
+            null}
       </Form>
 
     </Modal>

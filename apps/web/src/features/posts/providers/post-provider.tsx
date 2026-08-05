@@ -8,11 +8,14 @@ import { Button } from '../../../components/button';
 import { useEventHandler } from '../../../hooks/use-event-handler';
 import { useEventsContext } from '../../../providers/events-provider';
 import { apiService } from '../../../utils/api-service';
+import { TrackModal } from '../components/track-modal';
+import { useAuthContext } from '../../auth/providers/auth-provider';
 
 const [PostContext, usePostContext] = setupContext<{
   post: TPost;
   toggleLike: () => Promise<void>;
   toggleRepost: (state: boolean) => void;
+  toggleEdit: (state: boolean) => void;
 }>({ name: 'PostContext' });
 
 type PostProviderProps = React.PropsWithChildren & {
@@ -22,6 +25,8 @@ type PostProviderProps = React.PropsWithChildren & {
 export function PostProvider({ children, initialPost }: PostProviderProps) {
   const [post, setPost] = useState(initialPost);
   const [showRepostModal, setShowRepostModal] = useState(false);
+  const authService = useAuthContext();
+  const [showEditModal, setShowEditModal] = useState(false);
   const eventsService = useEventsContext();
   const { toggleLike, repost } = usePostActions({
     post,
@@ -31,6 +36,8 @@ export function PostProvider({ children, initialPost }: PostProviderProps) {
   const toggleRepost = (state: boolean) => {
     setShowRepostModal(state);
   };
+
+  const toggleEdit = (state: boolean) => setShowEditModal(state);
 
   useEventHandler({
     type: 'track-played',
@@ -46,7 +53,7 @@ export function PostProvider({ children, initialPost }: PostProviderProps) {
   });
 
   return (
-    <PostContext.Provider value={{ post, toggleLike, toggleRepost }}>
+    <PostContext.Provider value={{ post, toggleLike, toggleRepost, toggleEdit }}>
       {children}
 
       {showRepostModal ? (
@@ -89,6 +96,9 @@ export function PostProvider({ children, initialPost }: PostProviderProps) {
           </div>
         </Modal>
       ) : null}
+      {
+        authService.status === 'authenticated' ? (showEditModal ? <TrackModal track={post.track} onClose={() => toggleEdit(false)} /> : null) : null
+      }
     </PostContext.Provider>
   );
 }

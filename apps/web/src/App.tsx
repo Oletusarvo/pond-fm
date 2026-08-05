@@ -15,7 +15,7 @@ import { ScrobbleProvider } from './features/audio/providers/scrobble-provider';
 import { PlayCountProvider } from './features/audio/providers/playcount-provider';
 import { SearchScreen } from './features/posts/screens/search-screen';
 import { SettingsProvider } from './features/auth/providers/settings-provider';
-import { SettingsModal } from './features/auth/components/settings-modal';
+import { ProfileSettingsModal } from './features/auth/components/settings-modal';
 import { EventsProvider } from './providers/events-provider';
 
 function App() {

@@ -167,8 +167,8 @@ export class ApiService {
     return await fetch(url, req);
   }
 
-  async changeUsername(username: string) {
-    const req = requestBuilder.put().body({ username }).json().includeCredentials().build();
+  async updateUser(payload: { username?: string }) {
+    const req = requestBuilder.put().body(payload).json().includeCredentials().build();
     return await fetch(this.withEndpoint('users/username'), req);
   }
 
@@ -185,6 +185,11 @@ export class ApiService {
   async getUser(id: string) {
     const req = requestBuilder.get().includeCredentials().build();
     return await fetch(this.withEndpoint(`users/${id}`), req);
+  }
+
+  async updateTrack(id: string, payload: Record<string, any>) {
+    const req = requestBuilder.body(payload).json().includeCredentials().put().build();
+    return await fetch(this.withEndpoint(`tracks/${id}`), req);
   }
 }
 

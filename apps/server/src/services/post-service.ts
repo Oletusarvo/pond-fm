@@ -15,6 +15,9 @@ import { createPost } from '../query/posts/create-post';
 import { createTrackLike } from '../query/posts/create-track-like';
 import { deleteTrackLike } from '../query/posts/delete-track-like';
 import { getPostQuery } from '../query/posts/get-post-query';
+import { TTrack } from '../types/track-type';
+import { tablenames } from '../tablenames';
+import { db } from '../db-config';
 
 
 /**Responsible for handling business-logic related to individual posts and tracks. */
@@ -117,5 +120,36 @@ export class PostService {
       countValidAt,
     });
     return { success: true, data: token } as ServiceSuccessResponse<string>;
+  }
+
+  async updateTrack(ctx: Knex.Transaction, config: {
+    editor: {
+      id: string;
+    }
+    track: Omit<Partial<TTrack>, 'waveform' | 'filename'>
+  }) {
+    const track = await ctx(tablenames.tracks).where({ id: config.track.id }).select('user_id').first();
+    if (track.user_id !== config.editor.id) {
+      return;
+    }
+    const { moods, genre, ...rest } = config.track;
+    const payload: Record<string, any> = { ...rest };
+    if (genre) {
+      payload.genre_type_id = db.select('id').from(tablenames.genres).where({ label: genre }).limit(1)
+    }
+
+    await ctx(tablenames.tracks).where({ id: config.track.id }).update({
+      ...payload,
+    });
+
+    if (moods) {
+      await ctx(tablenames.trackMoods).where({ track_id: config.track.id }).del();
+      await ctx(tablenames.trackMoods).insert(moods.map(m => {
+        return {
+          track_id: config.track.id,
+          mood_type_id: db.select('id').from(tablenames.moods).where({ label: m }).limit(1)
+        }
+      }));
+    }
   }
 }
