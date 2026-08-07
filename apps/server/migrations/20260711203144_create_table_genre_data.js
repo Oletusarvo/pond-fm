@@ -1,10 +1,13 @@
+const createLookupTable = require('../migration-utils/create-lookup-table');
+
+const tablename = 'genre_type';
 /**
  * @param { import("knex").Knex } knex
  * @returns { Promise<void> }
  */
 exports.up = function (knex) {
-  return knex('genre_type').insert(
-    [
+  return knex.schema.withSchema('post').createTable(tablename, createLookupTable).then(async () => {
+    await knex(`post.${tablename}`).insert([
       { label: 'electronic' },
       { label: 'house' },
       { label: 'techno' },
@@ -25,8 +28,8 @@ exports.up = function (knex) {
       { label: 'reggae' },
       { label: 'ambient' },
       { label: 'classical' },
-    ]
-  )
+    ]);
+  });
 };
 
 /**
@@ -34,5 +37,5 @@ exports.up = function (knex) {
  * @returns { Promise<void> }
  */
 exports.down = function (knex) {
-  return knex('genre_type').del()
+  return knex.schema.withSchema('post').dropTableIfExists(tablename);
 };

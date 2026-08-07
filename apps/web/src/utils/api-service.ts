@@ -1,3 +1,4 @@
+import { TTrack } from '../types/track';
 import { joinStrings } from './join-strings';
 import { requestBuilder } from './request-builder';
 
@@ -190,6 +191,27 @@ export class ApiService {
   async updateTrack(id: string, payload: Record<string, any>) {
     const req = requestBuilder.body(payload).json().includeCredentials().put().build();
     return await fetch(this.withEndpoint(`tracks/${id}`), req);
+  }
+
+  async requestUploadUrl(payload: { filename: string; mimeType: string; size: number }) {
+    const req = requestBuilder.body(payload).json().includeCredentials().post().build();
+    return await fetch(this.withEndpoint('upload/create'), req);
+  }
+
+  async uploadToUrl(file: File, config: { uploadUrl: string; token: string }) {
+    const fd = new FormData();
+    fd.append('file', file);
+    const req = requestBuilder
+      .authorization(config.token)
+      .formData(fd)
+      .includeCredentials().post().build();
+    return await fetch(config.uploadUrl, req);
+  }
+
+  async completeUpload(payload: { token: string; title: string; moods: string[]; genre: string }) {
+    const { token, ...rest } = payload;
+    const req = requestBuilder.post().authorization(token).body(rest).json().includeCredentials().build();
+    return await fetch(this.withEndpoint('upload/complete'), req);
   }
 }
 

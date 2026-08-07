@@ -12,6 +12,11 @@ export type ExpressRequest<T extends TData = any> = Request & {
     streamStarted: number;
     countValidAt: number;
   };
+  uploadToken?: {
+    uploadId: string;
+    userId: string;
+    code: string;
+  };
   sessionToken: {
     id: string;
   };

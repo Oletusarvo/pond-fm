@@ -10,7 +10,7 @@ import {
 import { tryCatch } from '../utils/try-catch';
 import { createJWT } from '../utils/jwt';
 import { v4 } from 'uuid';
-import { createCanonicalTrack } from '../query/posts/create-canonical-track';
+import { createCanonicalPost } from '../query/posts/create-canonical-post';
 import { createPost } from '../query/posts/create-post';
 import { createTrackLike } from '../query/posts/create-track-like';
 import { deleteTrackLike } from '../query/posts/delete-track-like';
@@ -26,10 +26,10 @@ export class PostService {
     postRepo: PostRepository,
   }) { }
 
-  async createCanonicalTrack(ctx: DBContext, config: Parameters<typeof createCanonicalTrack>[1]) {
+  async createCanonicalTrack(ctx: Knex.Transaction, config: Parameters<typeof createCanonicalPost>[1]) {
     //Related business logic...
-    await this.repos.postRepo.createCanonicalTrack(ctx, config);
-    return { success: true } as ServiceSuccessResponse;
+    const track = await this.repos.postRepo.createCanonicalTrack(ctx, config);
+    return { success: true, data: track } as ServiceSuccessResponse<any>;
   }
 
   async repostTrack(ctx: DBContext, config: Parameters<typeof createPost>[1]) {
@@ -81,21 +81,6 @@ export class PostService {
     return { success: true } as ServiceSuccessResponse<void>;
   }
 
-  async updateTrackMoods(
-    trx: Knex.Transaction,
-    config: { editor: { id: string }; track: { id: string; moods: string[] } },
-  ): Promise<ServiceResponse> {
-    const track = await this.repos.postRepo.findTrackById(trx, { id: config.track.id });
-    if (track.user_id !== config.editor.id) {
-      return {
-        success: false,
-        error: serviceError.auth.forbidden,
-      };
-    }
-    await this.repos.postRepo.updateTrackMoods(trx, { track: config.track });
-    return { success: true, data: null };
-  }
-
   /**Returns a token allowing fetching of streams and counting plays.**/
   async createStreamToken(ctx: DBContext, config: { trackId: string }) {
     const track = await this.repos.postRepo.findTrackById(ctx, { id: config.trackId });
@@ -126,30 +111,12 @@ export class PostService {
     editor: {
       id: string;
     }
-    track: Omit<Partial<TTrack>, 'waveform' | 'filename'>
+    track: Partial<TTrack>
   }) {
-    const track = await ctx(tablenames.tracks).where({ id: config.track.id }).select('user_id').first();
-    if (track.user_id !== config.editor.id) {
+    const track = await ctx(tablenames.tracks).where({ id: config.track.id }).select('author_id').first();
+    if (track.author_id !== config.editor.id) {
       return;
     }
-    const { moods, genre, ...rest } = config.track;
-    const payload: Record<string, any> = { ...rest };
-    if (genre) {
-      payload.genre_type_id = db.select('id').from(tablenames.genres).where({ label: genre }).limit(1)
-    }
-
-    await ctx(tablenames.tracks).where({ id: config.track.id }).update({
-      ...payload,
-    });
-
-    if (moods) {
-      await ctx(tablenames.trackMoods).where({ track_id: config.track.id }).del();
-      await ctx(tablenames.trackMoods).insert(moods.map(m => {
-        return {
-          track_id: config.track.id,
-          mood_type_id: db.select('id').from(tablenames.moods).where({ label: m }).limit(1)
-        }
-      }));
-    }
+    await this.repos.postRepo.updateTrack(ctx, { ...config.track });
   }
 }

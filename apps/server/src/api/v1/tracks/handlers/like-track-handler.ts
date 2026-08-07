@@ -16,7 +16,7 @@ export const likeTrackHandler = createHandler(async (req: AuthenticatedExpressRe
     const [result, err] = await tryCatch(async () => {
       const track = await db(tablenames.tracks)
         .where({ id: req.body.trackId })
-        .select('user_id AS author_id')
+        .select('author_id')
         .first();
       await createNotification(
         db, {

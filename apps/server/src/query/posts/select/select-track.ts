@@ -9,14 +9,14 @@ export function selectTrack(query: Knex.QueryBuilder) {
             'id', track.id, 
             'title', track.title, 
             'author', track_author.json,
-            'duration', track.duration,
+            'duration', audio.duration,
             'genre', track_genre.label,
             'moods', (
               SELECT JSON_AGG(label) FROM moods
               WHERE 
               moods.track_id = track.id
             ),
-            'waveform', track.waveform
+            'waveform', audio.waveform
           ) AS track
         `,
     ),

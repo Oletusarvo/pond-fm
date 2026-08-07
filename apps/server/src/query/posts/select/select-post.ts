@@ -6,7 +6,7 @@ import { tablenames } from "../../../tablenames";
 export function selectPost(query: Knex.QueryBuilder, session?: TSession) {
   query.select(
     'post.id as id',
-    'track_status.label as status',
+    'track.status',
     'post.created_at',
     'track.play_count',
     db.raw('(SELECT COUNT(*) FROM ?? AS likes WHERE likes.track_id = track.id) AS like_count', [
@@ -15,7 +15,7 @@ export function selectPost(query: Knex.QueryBuilder, session?: TSession) {
     db.raw('(SELECT COUNT(*) - 1 FROM ?? WHERE post_data.track_id = track.id) AS repost_count', [
       tablenames.posts,
     ]),
-    db.raw('post.user_id = track_author.id AS is_canonical'),
+    db.raw('post.author_id = track_author.id AS is_canonical'),
   );
 
   if (session) {
@@ -32,7 +32,7 @@ export function selectPost(query: Knex.QueryBuilder, session?: TSession) {
               EXISTS (
                 SELECT 1 
                 FROM ?? repost 
-                WHERE repost.track_id = track.id AND repost.user_id = ? AND NOT track.user_id = ?
+                WHERE repost.track_id = track.id AND repost.author_id = ? AND NOT track.author_id = ?
                 ) as reposted_by_me`,
         [tablenames.posts, session.user.id, session.user.id],
       ),

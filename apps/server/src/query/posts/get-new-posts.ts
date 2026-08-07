@@ -7,12 +7,14 @@ import { FeedQueryConfig } from "./types/feed-config";
 import { applyCursor } from "./utils/apply-cursor";
 import { filterByGenres } from "./utils/filter-by-genres";
 import { filterByMoods } from "./utils/filter-by-moods";
+import { onlyReadyUploads } from "./utils/only-ready-uploads";
 import { resolveQueryWithCursor } from "./utils/resolve-query-with-cursor";
 
 export async function getNewPosts(ctx: DBContext, config: FeedQueryConfig) {
   const query = getDistinctPostQuery(ctx);
   filterByGenres(query, config.genres);
   filterByMoods(query, config.moods);
+  onlyReadyUploads(query);
   applyCursor(query, {
     ...config,
     dir: 'desc',

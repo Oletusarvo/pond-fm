@@ -11,15 +11,12 @@ export function getPostQuery(ctx: DBContext) {
   withAuthor(query);
   withMoods(query);
   query
-    .join({ author: 'author_json' }, 'author.id', 'post.user_id')
+    .join({ author: 'author_json' }, 'author.id', 'post.author_id')
     .join({ track: tablenames.tracks }, 'track.id', 'post.track_id')
-    .join({ track_author: 'author_json' }, 'track_author.id', 'track.user_id')
-    .join({ track_genre: tablenames.genres }, 'track_genre.id', 'track.genre_type_id')
-    .join(
-      { track_status: tablenames.contentStatuses },
-      'track_status.id',
-      'track.track_status_id',
-    )
+    .join({ track_author: 'author_json' }, 'track_author.id', 'track.author_id')
+    .join({ track_genre: tablenames.genres }, 'track_genre.id', 'track.genre_id')
+    .join({ upload: tablenames.uploads }, 'upload.id', 'track.primary_audio_id')
+    .join({ audio: tablenames.audio }, 'audio.upload_id', 'track.primary_audio_id')
 
   return query;
 }

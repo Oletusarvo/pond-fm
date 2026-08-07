@@ -4,26 +4,31 @@ const tablename = 'post_data';
  * @returns { Promise<void> }
  */
 exports.up = function (knex) {
-  return knex.schema.createTable(tablename, tbl => {
-    tbl.uuid('id').primary().defaultTo(knex.fn.uuid());
-    tbl
-      .uuid('track_id')
-      .references('id')
-      .inTable('track_data')
-      .onDelete('CASCADE')
-      .onUpdate('CASCADE');
-    tbl
-      .uuid('user_id')
-      .notNullable()
-      .references('id')
-      .inTable('user_data')
-      .onDelete('CASCADE')
-      .onUpdate('CASCADE');
-    tbl.integer('post_status_id').notNullable().references('id').inTable('content_status');
-    tbl.string('body');
-    tbl.timestamps(true, true);
-    tbl.unique(['track_id', 'user_id']);
-  });
+  return knex
+    .schema
+    .withSchema('post')
+    .raw("CREATE TYPE post.post_status AS ENUM ('active', 'pending_review', 'deleted')")
+    .createTable(tablename, tbl => {
+      tbl.uuid('id').primary().defaultTo(knex.fn.uuid());
+      tbl
+        .uuid('author_id')
+        .notNullable()
+        .references('id')
+        .inTable('auth.user_data')
+        .onDelete('CASCADE')
+        .onUpdate('CASCADE');
+      tbl
+        .uuid('track_id')
+        .references('id')
+        .inTable('post.track_data')
+        .onDelete('CASCADE')
+        .onUpdate('CASCADE');
+
+      tbl.specificType('status', 'post.post_status').notNullable().defaultTo('active')
+      tbl.string('body');
+      tbl.timestamps(true, true);
+      tbl.unique(['author_id', 'track_id']);
+    });
 };
 
 /**
@@ -31,5 +36,8 @@ exports.up = function (knex) {
  * @returns { Promise<void> }
  */
 exports.down = function (knex) {
-  return knex.schema.dropTableIfExists(tablename);
+  return knex.schema
+    .withSchema('post')
+    .dropTableIfExists(tablename)
+    .raw("DROP TYPE IF EXISTS post.post_status");
 };

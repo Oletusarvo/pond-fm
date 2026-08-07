@@ -6,6 +6,7 @@ import { budgetRouter } from './budget/budget-router';
 import { paymentsRouter } from './payments/payments-router';
 import { tagsRouter } from './tags/tags-router';
 import { tracksRouter } from './tracks/tracks-router';
+import { uploadRouter } from './upload/upload-router';
 import { usersRouter } from './users/users-router';
 
 const router = getRouter();
@@ -16,5 +17,6 @@ router.use('/payments', paymentsRouter);
 router.use('/budget', budgetRouter);
 router.use('/users', usersRouter);
 router.use('/tags', tagsRouter);
+router.use('/upload', uploadRouter);
 
 export { router as apiV1Router };

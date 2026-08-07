@@ -1,4 +1,4 @@
-import { ArrowUpCircle, Bell, Menu, Settings } from 'lucide-react';
+import { ArrowUpCircle, Bell, Menu, Settings, User } from 'lucide-react';
 import { Button } from './button';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useAuthContext } from '../features/auth/providers/auth-provider';
@@ -42,6 +42,12 @@ export function MainHeader() {
       <div className='flex gap-4 items-center'>
         {authService.status === 'authenticated' ? (
           <>
+            <Button
+              variant='ghost'
+              onClick={() => navigate(`/user/${authService.session.user.id}`)}>
+              <User />
+            </Button>
+
             <NotificationsProvider>
               <NotificationsButton />
             </NotificationsProvider>

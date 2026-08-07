@@ -1,11 +1,15 @@
 import multer from 'multer';
+import { extname } from 'path';
+import { ExpressRequest } from './types/express';
 
 const allowedMimetypes = ['audio/mpeg', 'audio/wav'];
 
 const storage = multer.diskStorage({
   destination: './uploads',
-  filename: (req, file, cb) => {
-    cb(null, `${Date.now()}-${file.originalname}`);
+  filename: (req: ExpressRequest, file, cb) => {
+    const ext = extname(file.originalname);
+    const filename = `${req.uploadToken.uploadId}${ext}`;
+    cb(null, filename);
   },
 });
 

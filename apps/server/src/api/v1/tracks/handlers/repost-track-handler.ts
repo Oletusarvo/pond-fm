@@ -16,8 +16,8 @@ export const repostTrackHandler = createHandler(
       db,
       {
         post: {
-          user_id: session.user.id,
-          track_id: trackId,
+          authorId: session.user.id,
+          trackId: trackId,
         }
       },
     );
@@ -29,7 +29,7 @@ export const repostTrackHandler = createHandler(
       const [result, err] = await tryCatch(async () => {
         const track = await db(tablenames.tracks)
           .where({ id: req.body.trackId })
-          .select('user_id AS author_id')
+          .select('author_id')
           .first();
         await createNotification(
           db,

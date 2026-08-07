@@ -1,6 +1,7 @@
 import { db } from "../../db-config";
 import { tablenames } from "../../tablenames";
 import { DBContext } from "../../types/db-context";
+import { getLookupQuery } from "../util/get-lookup-query";
 
 export async function createNewUser(ctx: DBContext, config: { user: { email: string; username: string } }) {
   const [user] = await ctx(tablenames.users)
@@ -8,11 +9,7 @@ export async function createNewUser(ctx: DBContext, config: { user: { email: str
       {
         email: config.user.email,
         username: config.user.username,
-        user_status_id: db
-          .select('id')
-          .from(tablenames.userStatuses)
-          .where({ label: 'pending' })
-          .limit(1),
+        status: 'pending',
       }
     )
     .returning('id');

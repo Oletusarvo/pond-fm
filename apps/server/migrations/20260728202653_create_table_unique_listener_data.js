@@ -4,18 +4,18 @@ const tablename = 'unique_listener_data';
  * @returns { Promise<void> }
  */
 exports.up = function (knex) {
-  return knex.schema.createTable(tablename, tbl => {
+  return knex.schema.withSchema('post').createTable(tablename, tbl => {
     tbl.uuid('id').primary().defaultTo(knex.fn.uuid());
     tbl
       .uuid('track_id')
       .references('id')
-      .inTable('track_data')
+      .inTable('post.track_data')
       .onDelete('CASCADE')
       .onUpdate('CASCADE');
     tbl
       .uuid('user_id')
       .references('id')
-      .inTable('user_data')
+      .inTable('auth.user_data')
       .onDelete('CASCADE')
       .onUpdate('CASCADE');
     tbl.uuid('session_id').notNullable();
@@ -30,5 +30,5 @@ exports.up = function (knex) {
  * @returns { Promise<void> }
  */
 exports.down = function (knex) {
-  return knex.schema.dropTableIfExists(tablename);
+  return knex.schema.withSchema('post').dropTableIfExists(tablename);
 };

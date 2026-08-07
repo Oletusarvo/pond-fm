@@ -7,7 +7,7 @@ export function getUserQuery(ctx: DBContext) {
   const query = ctx.queryBuilder();
   fromUsers(query);
   withUnseenNotificationCount(query);
-  query.join({ user_status: tablenames.userStatuses }, 'users.user_status_id', 'user_status.id')
+  query
     .leftJoin(
       { notifications_count: 'unseen_notification_count' },
       'notifications_count.recipient_id',

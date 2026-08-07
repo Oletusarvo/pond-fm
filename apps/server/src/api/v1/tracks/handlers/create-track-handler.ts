@@ -7,7 +7,7 @@ import { createHandler } from '../../../../utils/create-handler';
 import { tryCatch } from '../../../../utils/try-catch';
 import { parseFile } from 'music-metadata';
 import { generateWaveformData } from '../../../../utils/generate-waveform-data';
-import { createCanonicalTrack } from '../../../../query/posts/create-canonical-track';
+import { createCanonicalPost } from '../../../../query/posts/create-canonical-post';
 
 export const createTrackHandler = createHandler(
   async (req: AuthenticatedExpressRequest & { file: any }, res) => {

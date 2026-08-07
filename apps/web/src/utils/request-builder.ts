@@ -61,6 +61,29 @@ class RequestBuilder {
     };
     return this;
   }
+
+  authorization(token: string) {
+    this.query = {
+      ...this.query,
+      headers: {
+        ...this.query.headers,
+        'Authorization': `Bearer ${token}`
+      }
+    }
+    return this;
+  }
+
+  file(f: File) {
+    this.query = {
+      ...this.query,
+      headers: {
+        ...this.query.headers,
+        'Content-Type': f.type,
+      },
+      body: f,
+    }
+    return this;
+  }
 }
 
 export const requestBuilder = new RequestBuilder();

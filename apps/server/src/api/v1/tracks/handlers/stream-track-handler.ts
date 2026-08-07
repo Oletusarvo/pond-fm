@@ -11,23 +11,11 @@ import { tablenames } from '../../../../tablenames';
 
 export const streamTrackHandler = createHandler(async (req, res) => {
   const trackId = req.params.trackId as string;
-  /*
-  const streamCookie = req.cookies[serverConfig.streamTokenName];
 
-  if (!streamCookie) {
-    const newToken = await postService.createStreamToken(trackId, db);
-    res.cookie(serverConfig.streamTokenName, newToken, serverConfig.streamCookieSettings);
-  } else {
-    const currentStreamToken = verifyJWT(streamCookie) as any;
-    if (currentStreamToken.trackId !== trackId) {
-      //Create a new token for this stream.
-      const newToken = await postService.createStreamToken(trackId, db);
-      res.cookie(serverConfig.streamTokenName, newToken, serverConfig.streamCookieSettings);
-    }
-  }
-    */
-
-  const track = await db(tablenames.tracks).where({ id: trackId }).select('filename').first();
+  const track = await db({ track: tablenames.tracks })
+    .where({ 'track.id': trackId })
+    .join({ upload: tablenames.uploads }, 'upload.id', 'track.primary_audio_id')
+    .select('upload.filename').first();
   const filePath = path.join(process.cwd(), 'uploads', `${track.filename}`);
 
   const fileSize = statSync(filePath).size;

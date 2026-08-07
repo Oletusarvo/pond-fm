@@ -1,9 +1,12 @@
+const createLookupTable = require('../migration-utils/create-lookup-table');
+
+const tablename = 'content_status';
 /**
  * @param { import("knex").Knex } knex
  * @returns { Promise<void> }
  */
 exports.up = function (knex) {
-  return knex('user_data').whereILike('username', '%user-%').update({ username: null });
+  return knex.schema.createSchema('post');
 };
 
 /**
@@ -11,5 +14,5 @@ exports.up = function (knex) {
  * @returns { Promise<void> }
  */
 exports.down = function (knex) {
-  return Promise.resolve();
+  return knex.schema.dropSchemaIfExists('post');
 };

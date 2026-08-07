@@ -7,27 +7,21 @@ const tablename = 'notification_data';
  */
 exports.up = function (knex) {
   return knex.schema
-    .createTable('notification_type', createLookupTable)
+    .raw("CREATE TYPE notification_type AS ENUM ('like', 'repost', 'follow')")
     .createTable(tablename, tbl => {
       tbl.uuid('id').primary().defaultTo(knex.fn.uuid());
       tbl
         .uuid('recipient_id')
         .notNullable()
         .references('id')
-        .inTable('user_data')
+        .inTable('auth.user_data')
         .onDelete('CASCADE');
-      tbl.uuid('sender_id').references('id').inTable('user_data').onDelete('CASCADE');
-      tbl.uuid('track_id').references('id').inTable('track_data').onDelete('CASCADE');
+      tbl.uuid('sender_id').references('id').inTable('auth.user_data').onDelete('CASCADE');
+      tbl.uuid('track_id').references('id').inTable('post.track_data').onDelete('CASCADE');
       tbl
-        .integer('notification_type_id')
-        .references('id')
-        .inTable('notification_type')
-        .onUpdate('CASCADE');
+        .specificType('type', 'notification_type').notNullable();
       tbl.timestamp('created_at').defaultTo(knex.fn.now());
       tbl.timestamp('seen_at');
-    })
-    .then(async () => {
-      await knex('notification_type').insert([{ label: 'like' }, { label: 'repost' }]);
     });
 };
 
@@ -36,5 +30,7 @@ exports.up = function (knex) {
  * @returns { Promise<void> }
  */
 exports.down = function (knex) {
-  return knex.schema.dropTableIfExists(tablename).dropTableIfExists('notification_type');
+  return knex.schema
+    .dropTableIfExists(tablename)
+    .raw("DROP TYPE IF EXISTS notification_type");
 };

@@ -3,9 +3,7 @@
  * @returns { Promise<void> }
  */
 exports.up = function (knex) {
-  return knex.schema.alterTable('track_data', tbl => {
-    tbl.json('waveform');
-  });
+  return knex.schema.createSchema('upload');
 };
 
 /**
@@ -13,7 +11,5 @@ exports.up = function (knex) {
  * @returns { Promise<void> }
  */
 exports.down = function (knex) {
-  return knex.schema.alterTable('track_data', tbl => {
-    tbl.dropColumn('waveform');
-  });
+  return knex.schema.dropSchemaIfExists('upload')
 };

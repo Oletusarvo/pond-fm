@@ -8,13 +8,16 @@ import { applyCursor } from "./utils/apply-cursor";
 import { filterByGenres } from "./utils/filter-by-genres";
 import { filterByMoods } from "./utils/filter-by-moods";
 import { onlyCanonicalPosts } from "./utils/only-canonical-posts";
+import { onlyReadyUploads } from "./utils/only-ready-uploads";
 import { resolveQueryWithCursor } from "./utils/resolve-query-with-cursor";
 
 export async function getUndiscoveredPosts(ctx: DBContext, config: FeedQueryConfig) {
   const query = getUndistinctPostQuery(ctx);
   onlyCanonicalPosts(query);
+  onlyReadyUploads(query);
   filterByGenres(query, config.genres);
   filterByMoods(query, config.moods);
+
   query.where('track.unique_play_count', '<', 100)
     .orderBy('post.created_at', 'asc');
   applyCursor(query, {

@@ -1,6 +1,7 @@
 import { db } from "../../db-config";
 import { tablenames } from "../../tablenames";
 import { DBContext } from "../../types/db-context";
+import { getLookupQuery } from "../util/get-lookup-query";
 
 export async function updateTrackMoods(ctx: DBContext, config: { track: { id: string; moods?: string[] } }) {
   await ctx(tablenames.trackMoods).where({ track_id: config.track.id }).del();
@@ -8,7 +9,7 @@ export async function updateTrackMoods(ctx: DBContext, config: { track: { id: st
     config.track.moods?.map(tag => {
       return {
         track_id: config.track.id,
-        mood_type_id: db.select('id').from(tablenames.tagLabels).where({ label: tag }).limit(1),
+        mood_id: getLookupQuery(tablenames.moods, tag),
       };
     }),
   );

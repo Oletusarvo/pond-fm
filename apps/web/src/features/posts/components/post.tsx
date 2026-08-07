@@ -7,6 +7,7 @@ import { TipButton } from './tip-button';
 import { UploadTime } from './upload-time';
 import { usePostContext } from '../providers/post-provider';
 import { Tag } from './tag';
+import { SettingsButton } from './track-settings-button';
 
 export function Post() {
   const { post } = usePostContext();
@@ -15,7 +16,11 @@ export function Post() {
       <div className='flex justify-between w-full items-start'>
         <div className='flex flex-col leading-none'>
           <PostAuthor />
-          <Title />
+          <div className="flex items-center gap-2">
+            <Title />
+            <SettingsButton />
+          </div>
+
         </div>
         <div className='flex flex-col items-end gap-1'>
           <UploadTime />

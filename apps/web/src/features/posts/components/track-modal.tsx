@@ -20,23 +20,48 @@ type TrackModalProps = {
 export function TrackModal({ track, onClose }: TrackModalProps) {
   const genreRef = useRef<string | null>(track?.genre);
   const moodsRef = useRef<string[]>(track?.moods || []);
+  const upload = async (data: any, file: File) => {
+    const uploadUrlRes = await apiService.requestUploadUrl({
+      filename: file.name,
+      mimeType: file.type,
+      size: file.size,
+    });
+    if (!uploadUrlRes.ok) {
+      return uploadUrlRes;
+    }
+    const uploadData = await uploadUrlRes.json();
+    const uploadRes = await apiService.uploadToUrl(file, {
+      uploadUrl: uploadData.uploadUrl,
+      token: uploadData.token,
+    });
+
+    if (!uploadRes.ok) {
+      return uploadRes;
+    }
+
+    return apiService.completeUpload({
+      title: data.title,
+      genre: data.genre,
+      moods: data.moods,
+      token: uploadData.token,
+    });
+  }
+
   const { submit, loading, status } = useSubmit({
     fetchFn: async payload => {
-
+      const trackPayload: { title: string; file: File; moods?: string[]; genre: string } = Object.fromEntries(payload) as unknown as any;
+      trackPayload.genre = genreRef.current;
+      trackPayload.moods = moodsRef.current;
+      const { file, ...rest } = trackPayload;
 
       let res;
       if (!track) {
-        payload.set('genre', genreRef.current);
-        payload.set('moods', JSON.stringify(moodsRef.current));
-        res = await apiService.createTrack(payload);
+        res = await upload(rest, file);
       }
       else {
-        const data = Object.fromEntries(payload) as Record<string, any>;
-        data.genre = genreRef.current;
-        data.moods = moodsRef.current;
-        res = await apiService.updateTrack(track.id, data);
+        res = await apiService.updateTrack(track.id, rest);
       }
-
+      console.log(res)
       if (!res.ok) {
         return { success: false };
       }

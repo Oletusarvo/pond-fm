@@ -1,25 +1,25 @@
-const tablename = 'user_tag_data';
+const tablename = 'mood_data';
 /**
  * @param { import("knex").Knex } knex
  * @returns { Promise<void> }
  */
 exports.up = function (knex) {
-  return knex.schema.createTable(tablename, tbl => {
+  return knex.schema.withSchema('post').createTable(tablename, tbl => {
     tbl
-      .uuid('user_id')
+      .uuid('track_id')
       .notNullable()
       .references('id')
-      .inTable('user_data')
+      .inTable('post.track_data')
       .onDelete('CASCADE')
       .onUpdate('CASCADE');
     tbl
-      .integer('tag_id')
+      .integer('mood_id')
       .notNullable()
       .references('id')
-      .inTable('tag_data')
+      .inTable('post.mood_type')
       .onDelete('CASCADE')
       .onUpdate('CASCADE');
-    tbl.primary(['user_id', 'tag_id']);
+    tbl.primary(['track_id', 'mood_id']);
   });
 };
 
@@ -28,5 +28,5 @@ exports.up = function (knex) {
  * @returns { Promise<void> }
  */
 exports.down = function (knex) {
-  return knex.schema.dropTableIfExists(tablename);
+  return knex.schema.withSchema('post').dropTableIfExists(tablename);
 };

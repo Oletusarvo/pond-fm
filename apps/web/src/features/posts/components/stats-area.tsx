@@ -19,13 +19,9 @@ export function StatsArea() {
 
       <LikeButton />
       <RepostButton />
-      <SettingsButton />
+
     </div>
   );
 }
 
-function SettingsButton() {
-  const authService = useAuthContext();
-  const postService = usePostContext();
-  return authService.session?.user.id === postService.post.track.author.id ? <Button onClick={() => postService.toggleEdit(true)} type="button" variant='ghost' shape='circle'><Settings size="1rem" /></Button> : null
-}
+

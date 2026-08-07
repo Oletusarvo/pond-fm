@@ -9,9 +9,7 @@ export const requestAuthorizationHandler = createHandler(async (req, res) => {
   await db.transaction(async trx => {
     const user = await userService.createIfNotExists(trx, { user: { email } });
     //Create an auth token and a database entry with a temporary code.
-    console.log(user.data)
     const code = await authService.createAuthorizationCode(trx, { user: { id: user.data.id } });
-    console.log('Malja')
     if (process.env.AUTH_ENVIRONMENT === 'production') {
       await emailService.sendMagicLink(email, code.data);
 
