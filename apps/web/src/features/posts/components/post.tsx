@@ -24,14 +24,14 @@ export function Post() {
         </div>
         <div className='flex flex-col items-end gap-1'>
           <UploadTime />
-          <Tag value={post.track.genre} size="small" selected={true} />
+          <Tag value={post?.track.genre} size="small" selected={true} />
         </div>
 
       </div>
       <LargePlayer />
       <div className='flex justify-between w-full'>
         <StatsArea />
-        <TagList tags={post.track.moods} size={'small'} color='secondary' />
+        <TagList tags={post?.track.moods} size={'small'} color='secondary' />
       </div>
     </div>
   );

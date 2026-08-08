@@ -1,6 +1,6 @@
 import { postService } from '../../../../container';
 import { db } from '../../../../db-config';
-import { createNotification } from '../../../../query/notifications/create-notification';
+import { createNotification } from '../../../../DAL/notifications/create-notification';
 import { tablenames } from '../../../../tablenames';
 import { AuthenticatedExpressRequest } from '../../../../types/express';
 import { createHandler } from '../../../../utils/create-handler';
@@ -22,7 +22,7 @@ export const repostTrackHandler = createHandler(
       },
     );
 
-    if (result.success === false && result.error === serviceError.post.duplicateRepost) {
+    if (result.success === false && result.error === serviceError.post?.duplicateRepost) {
       return res.status(409).json({ error: result.error });
     }
     const notificationPromise = new Promise<void>(async (resolve, reject) => {

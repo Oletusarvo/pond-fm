@@ -1,5 +1,5 @@
 import { db } from '../../../../db-config';
-import { getUndiscoveredPosts } from '../../../../query/posts/get-undiscovered-posts';
+import { getUndiscoveredPosts } from '../../../../DAL/posts/get-undiscovered-posts';
 import { AuthenticatedExpressRequest } from '../../../../types/express';
 import { asArray } from '../../../../utils/as-array';
 import { createHandler } from '../../../../utils/create-handler';

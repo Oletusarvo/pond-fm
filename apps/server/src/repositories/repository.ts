@@ -5,7 +5,7 @@ export abstract class Repository<TTable extends Record<string, string>> {
   constructor(
     protected tablename: TTable,
     protected baseQuery: (ctx: DBContext) => Knex.QueryBuilder,
-  ) {}
+  ) { }
 
   deleteById(id: string, ctx: DBContext) {
     return ctx(this.tablename).where({ id }).del();
@@ -19,8 +19,8 @@ export abstract class Repository<TTable extends Record<string, string>> {
     const query = this.baseQuery(ctx);
     if (cursor) {
       query
-        .whereRaw('post.created_at < ?', [cursor.timestamp])
-        .andWhereNot({ 'post.id': cursor.id });
+        .whereRaw('post?.created_at < ?', [cursor.timestamp])
+        .andWhereNot({ 'post?.id': cursor.id });
     }
     return query;
   }

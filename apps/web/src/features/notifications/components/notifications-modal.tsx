@@ -1,32 +1,28 @@
-import { Heart, Repeat } from 'lucide-react';
+import { Heart, Repeat, UserPlus } from 'lucide-react';
 import { Modal } from '../../../components/modal';
-import { useNotificationsContext } from '../providers/notifications-provider';
+import { NotificationsProvider, useNotificationsContext } from '../providers/notifications-provider';
 import { useEffect } from 'react';
 import { formatDistanceToNow } from 'date-fns';
 import { apiService } from '../../../utils/api-service';
-import { Feed } from '../../posts/components/feed';
+import { Feed } from '../../../components/feed';
 import { FeedProvider, useFeedContext } from '../../../providers/feed-provider';
 import React from 'react';
 import { Separator } from '../../../components/separator';
 import { useAuthContext } from '../../auth/providers/auth-provider';
+import { FeedModal } from '../../../components/feed-modal';
+import { Link, useNavigate } from 'react-router-dom';
 
-// TODO:
-// Infinite scrolling for notifications causes the sentinel ref to repeatedly
-// mount/unmount when the notifications modal is opened, leading to a
-// "Maximum update depth exceeded" error. Other FeedProvider usages are
-// unaffected. Temporarily limiting notifications to the first page.
 export function NotificationsModal() {
   const { toggleShowNotificationsModal, hasUnseen, updateHasUnseen } = useNotificationsContext();
   const authService = useAuthContext();
+  if (hasUnseen) {
+    updateHasUnseen(false);
+  }
+
   useEffect(() => {
     if (hasUnseen) {
       apiService
         .markNotificationsAsSeen()
-        .then(res => {
-          if (res.ok) {
-            updateHasUnseen(false);
-          }
-        })
         .catch(err => {
           console.log('Failed to mark notifications as seen!', err.message);
         });
@@ -34,33 +30,37 @@ export function NotificationsModal() {
   }, [updateHasUnseen]);
 
   return (
-    <Modal
+    <FeedModal
+      queryFn={cursor => apiService.getNotifications(cursor)}
+      queryKey={['notifications', authService.session?.user.id]}
       title='Notifications'
       onClose={() => toggleShowNotificationsModal(false)}>
-      <FeedProvider
-        queryFn={cursor => apiService.getNotifications(cursor)}
-        queryKey={['notifications', authService.session?.user.id]}>
-        <Feed
-          renderComponent={({ item }) => <Notification notification={item} />}
-          keyExtractor={item => item.id}
-        />
-      </FeedProvider>
-    </Modal>
+      <Feed
+        renderComponent={({ item }) => <Notification notification={item} />}
+        keyExtractor={item => item.id}
+      />
+    </FeedModal>
   );
 }
 
 function Notification({ notification }) {
+  const navigate = useNavigate();
+  const notificationsService = useNotificationsContext();
   const timestamp = formatDistanceToNow(new Date(notification.created_at), {
     addSuffix: true,
   });
 
-  const Icon = notification.type === 'like' ? Heart : Repeat;
-  const iconColor = notification.type === 'like' ? 'var(--color-red-500)' : 'var(--color-blue-500)';
+  const { type } = notification;
+  const Icon = type === 'like' ? Heart : type === 'repost' ? Repeat : UserPlus;
+  const iconColor = type === 'like' ? 'var(--color-red-500)' : type === 'repost' ? 'var(--color-blue-500)' : 'var(--color-primary)';
   const iconProps =
-    notification.type === 'like' ? { color: 'transparent', fill: iconColor } : { color: iconColor };
-  const message = notification.type === 'like' ? 'liked your track' : 'reposted your track';
+    type === 'like' ? { color: 'transparent', fill: iconColor } : { color: iconColor };
+  const message = type === 'like' ? 'liked your track' : type === 'repost' ? 'reposted your track' : 'followed you';
   return (
-    <div className='flex w-full items-center text-black gap-2 py-4'>
+    <div className='flex w-full items-center text-black gap-2 py-4' onClick={() => {
+      notificationsService.toggleShowNotificationsModal(false);
+      navigate(`/user/${notification.sender.id}`);
+    }}>
       <Icon
         {...iconProps}
         size='1.2rem'
@@ -69,7 +69,12 @@ function Notification({ notification }) {
         <div className='flex items-center gap-2 text-sm'>
           <strong>{notification.sender.username}</strong>
           <span>{message}</span>
-          <strong>{notification.track.title}</strong>
+          {
+            notification.type !== 'follow' ? (
+              <strong>{notification.track?.title}</strong>
+            ) : null
+          }
+
           {notification.seen_at === null ? (
             <div className='rounded-md px-1 border-primary/20 bg-primary/10 text-primary text-xs'>
               New

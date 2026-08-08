@@ -49,11 +49,20 @@ export function useAuth() {
   };
 
   const refreshSession = async (newSession: any) => {
-    queryClient.setQueryData(['session'], oldData => {
-      const newData = { ...(oldData as any) };
-      newData.user.username = newSession.user.username;
-      return newData;
+    let payload;
+    queryClient.setQueryData(['session'], (oldSession: any) => {
+      const newData = {
+        ...oldSession,
+        user: {
+          ...oldSession.user,
+          ...newSession.user,
+        }
+      };
+
+      return payload = newData;
     });
+    await apiService.refreshSession(payload);
+
   };
 
   return {

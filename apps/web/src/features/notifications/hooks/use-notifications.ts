@@ -1,10 +1,10 @@
 import { useAppContext } from '../../../providers/app-provider';
 import { apiService } from '../../../utils/api-service';
-import { useInfiniteFeed } from '../../posts/hooks/use-infinite-feed';
+import { useInfiniteFeed } from '../../../hooks/use-infinite-feed';
 
 export function useNotifications(session?: any) {
   const query = useInfiniteFeed({
-    key: ['notifications'],
+    queryKey: ['notifications'],
     queryFn: async ({ pageParam: cursor }) => {
       if (session) {
         const res = await apiService.getNotifications(cursor);

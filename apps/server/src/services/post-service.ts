@@ -10,11 +10,11 @@ import {
 import { tryCatch } from '../utils/try-catch';
 import { createJWT } from '../utils/jwt';
 import { v4 } from 'uuid';
-import { createCanonicalPost } from '../query/posts/create-canonical-post';
-import { createPost } from '../query/posts/create-post';
-import { createTrackLike } from '../query/posts/create-track-like';
-import { deleteTrackLike } from '../query/posts/delete-track-like';
-import { getPostQuery } from '../query/posts/get-post-query';
+import { createCanonicalPost } from '../DAL/posts/create-canonical-post';
+import { createPost } from '../DAL/posts/create-post';
+import { createTrackLike } from '../DAL/posts/create-track-like';
+import { deleteTrackLike } from '../DAL/posts/delete-track-like';
+import { getPostQuery } from '../DAL/posts/get-post-query';
 import { TTrack } from '../types/track-type';
 import { tablenames } from '../tablenames';
 import { db } from '../db-config';
@@ -37,7 +37,7 @@ export class PostService {
     const [result, err] = await tryCatch(async () => await this.repos.postRepo.createPost(ctx, config));
     if (err) {
       if (err.message.toLowerCase().includes('duplicate')) {
-        return { success: false, error: serviceError.post.duplicateRepost };
+        return { success: false, error: serviceError.post?.duplicateRepost };
       } else {
         throw err;
       }
@@ -52,7 +52,7 @@ export class PostService {
       .where(function () {
         this.whereRaw("post_author.id <> track_author.id")
       })
-      .where({ 'post.track_id': config.track.id, 'post_author.id': config.editor.id })
+      .where({ 'post?.track_id': config.track.id, 'post_author.id': config.editor.id })
       .del();
 
     return { success: true } as ServiceSuccessResponse;
@@ -69,7 +69,7 @@ export class PostService {
         const msg = err.message.toLowerCase();
 
         if (msg.includes('duplicate') && msg.includes('track_like_data_unique')) {
-          return { success: false, error: serviceError.post.duplicateLike } as ServiceErrorResponse;
+          return { success: false, error: serviceError.post?.duplicateLike } as ServiceErrorResponse;
         } else {
           throw err;
         }

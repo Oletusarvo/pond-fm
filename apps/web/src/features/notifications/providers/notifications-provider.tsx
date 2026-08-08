@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { NotificationsModal } from '../components/notifications-modal';
 import { createProvider } from '../../../utils/create-provider';
 import { useFeedContext } from '../../../providers/feed-provider';
@@ -13,16 +13,14 @@ export const [NotificationsProvider, useNotificationsContext] = createProvider({
   hook: () => {
     const authService = useAuthContext();
     const [showNotificationsModal, setShowNotificationsModal] = useState(false);
-    const [hasUnseen, setHasUnseen] = useState(
-      () => authService.session?.user.unseen_notification_count > 0 || false,
-    );
+    const hasUnseen = useRef<boolean>(authService.session?.user.unseen_notification_count > 0 || false);
     const toggleShowNotificationsModal = (state: boolean) => {
       setShowNotificationsModal(state);
     };
-    const updateHasUnseen = (state: boolean) => setHasUnseen(state);
+    const updateHasUnseen = (state: boolean) => hasUnseen.current = state;
 
     return {
-      hasUnseen,
+      hasUnseen: hasUnseen.current,
       toggleShowNotificationsModal,
       updateHasUnseen,
       showNotificationsModal,

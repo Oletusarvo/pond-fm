@@ -1,6 +1,6 @@
-import { createAuthToken } from '../query/auth/create-auth-token';
-import { deleteAuthTokenById } from '../query/auth/delete-auth-token-by-id';
-import { findValidTokenByCode } from '../query/auth/find-token-by-code';
+import { createAuthToken } from '../DAL/auth/create-auth-token';
+import { deleteAuthTokenById } from '../DAL/auth/delete-auth-token-by-id';
+import { findValidTokenByCode } from '../DAL/auth/find-token-by-code';
 import { Repository } from './repository';
 
 export class AuthRepository {

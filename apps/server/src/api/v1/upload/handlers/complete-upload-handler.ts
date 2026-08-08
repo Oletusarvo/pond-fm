@@ -6,10 +6,10 @@ import { createHandler } from "../../../../utils/create-handler";
 import { generateWaveformData, generateWaveformDataFromBuffer, generateWaveformDataFromStream } from "../../../../utils/generate-waveform-data";
 import { createReadStream, readFileSync, writeFileSync } from 'fs';
 import { parseBuffer } from "music-metadata";
-import { updateUpload } from "../../../../query/uploads/update-upload";
-import { getLookupQuery } from "../../../../query/util/get-lookup-query";
-import { getUploadById } from "../../../../query/uploads/get-upload-by-id";
-import { createCanonicalPost } from "../../../../query/posts/create-canonical-post";
+import { updateUpload } from "../../../../DAL/uploads/update-upload";
+import { getLookupQuery } from "../../../../DAL/util/get-lookup-query";
+import { getUploadById } from "../../../../DAL/uploads/get-upload-by-id";
+import { createCanonicalPost } from "../../../../DAL/posts/create-canonical-post";
 import { parseStream } from "music-metadata";
 
 export const completeUploadHandler = createHandler(

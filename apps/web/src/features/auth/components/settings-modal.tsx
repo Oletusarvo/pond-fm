@@ -9,9 +9,19 @@ import { useSettingsContext } from '../providers/settings-provider';
 import { ErrorMessage, SuccessMessage } from '../../../components/helper-message';
 
 export function ProfileSettingsModal() {
-  const navigate = useNavigate();
-  const authService = useAuthContext();
   const settingsService = useSettingsContext();
+  const close = () => settingsService.toggleSettingsModal(false);
+  return (
+    <Modal
+      title='Settings'
+      onClose={close}>
+      <ModalContent close={close} />
+    </Modal>
+  );
+}
+
+function ModalContent({ close }) {
+  const authService = useAuthContext();
 
   const { submit, status } = useSubmit({
     fetchFn: async payload => {
@@ -30,36 +40,29 @@ export function ProfileSettingsModal() {
       });
     },
   });
-
   return (
-    <Modal
-      title='Settings'
-      onClose={() => settingsService.toggleSettingsModal(false)}>
-      <Form onSubmit={submit}>
-        <Form.Group label='Username'>
-          <Input
-            defaultValue={authService.session?.user.username}
-            name='username'
-            required
-          />
-        </Form.Group>
-        <Form.Controls
-          loading={status === 'loading'}
-          cancelText='Cancel'
-          acceptText='Confirm'
-          onCancel={() => settingsService.toggleSettingsModal(false)
-          }
+    <Form onSubmit={submit}>
+      <Form.Group label='Username'>
+        <Input
+          defaultValue={authService.session?.user.username}
+          name='username'
+          required
         />
-        {status === 'error'
+      </Form.Group>
+      <Form.Controls
+        loading={status === 'loading'}
+        cancelText='Cancel'
+        acceptText='Confirm'
+        onCancel={close}
+      />
+      {status === 'error'
+        ?
+        <ErrorMessage>Something went wrong!</ErrorMessage>
+        : status === 'success'
           ?
-          <ErrorMessage>Something went wrong!</ErrorMessage>
-          : status === 'success'
-            ?
-            <SuccessMessage>Profile updated</SuccessMessage>
-            :
-            null}
-      </Form>
-
-    </Modal>
-  );
+          <SuccessMessage>Profile updated</SuccessMessage>
+          :
+          null}
+    </Form>
+  )
 }

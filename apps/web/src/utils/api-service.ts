@@ -111,6 +111,12 @@ export class ApiService {
     return await fetch(url, req);
   }
 
+  async getFollowedFeed(cursor?: string, genres?: string[], moods?: string[]) {
+    const req = requestBuilder.get().includeCredentials().build();
+    const url = this.buildFeedUrl(`tracks/feed/followed`, cursor, genres, moods);
+    return await fetch(url, req);
+  }
+
   /**Returns tracks posted by a specific user. */
   async getAuthorFeed(authorId: string, cursor?: string) {
     const req = requestBuilder.get().includeCredentials().build();
@@ -212,6 +218,39 @@ export class ApiService {
     const { token, ...rest } = payload;
     const req = requestBuilder.post().authorization(token).body(rest).json().includeCredentials().build();
     return await fetch(this.withEndpoint('upload/complete'), req);
+  }
+
+  async refreshSession(newSession: any) {
+    const req = requestBuilder.post().json().body(newSession).includeCredentials().build();
+    return await fetch(this.withEndpoint('auth/me/refresh'), req);
+  }
+
+  async follow(userId: string) {
+    const req = requestBuilder.post().includeCredentials().build();
+    return await fetch(this.withEndpoint(`users/follow/${userId}`), req);
+  }
+
+  async unfollow(userId: string) {
+    const req = requestBuilder.post().includeCredentials().build();
+    return await fetch(this.withEndpoint(`users/unfollow/${userId}`), req);
+  }
+
+  async getFollowers(userId: string, cursor?: string) {
+    const req = requestBuilder.get().includeCredentials().build();
+    const url = new URL(this.withEndpoint(`users/followers/${userId}`));
+    if (cursor) {
+      url.searchParams.set('cursor', cursor);
+    }
+    return await fetch(url, req);
+  }
+
+  async getFollowing(userId: string, cursor?: string) {
+    const req = requestBuilder.get().includeCredentials().build();
+    const url = new URL(this.withEndpoint(`users/following/${userId}`));
+    if (cursor) {
+      url.searchParams.set('cursor', cursor);
+    }
+    return await fetch(url, req);
   }
 }
 

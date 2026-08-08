@@ -2,6 +2,8 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { TPost } from '../../../types/post';
 import { TPlayback } from '../../../types/playback';
 import { apiService } from '../../../utils/api-service';
+import { useEventHandler } from '../../../hooks/use-event-handler';
+import { useActionContext } from '../../../providers/action-provider';
 
 export function useAudioPlayer() {
   const [currentPlayback, setCurrentPlayback] = useState<TPlayback | null>(null);
@@ -12,6 +14,7 @@ export function useAudioPlayer() {
   const [playbackState, setPlaybackState] = useState<'playing' | 'paused' | 'buffering'>('paused');
   const [playbackPosition, setPlaybackPosition] = useState(0);
   const audioRef = useRef<HTMLAudioElement>(null);
+  const actionService = useActionContext();
 
   /**Updates the current playback if it is different. */
   const updateCurrentPlayback = (playback: TPlayback | null) => {
@@ -71,6 +74,23 @@ export function useAudioPlayer() {
       onPlay();
     }
   }, [currentPlayback?.id]);
+
+  useEventHandler({
+    service: actionService,
+    type: 'like-toggled',
+    handler: (e: CustomEvent) => {
+      if (e.detail.id !== currentPlayback?.id) return;
+      setCurrentPlayback(prev => {
+        return {
+          ...prev,
+          stats: {
+            ...prev.stats,
+            liked_by_me: e.detail.state
+          }
+        }
+      })
+    }
+  })
 
   return {
     currentPlayback,

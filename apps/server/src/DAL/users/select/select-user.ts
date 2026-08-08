@@ -5,6 +5,6 @@ export function selectUser(query: Knex.QueryBuilder) {
     'users.id',
     'users.email',
     'users.username',
-    'user_status.label as status',
+    'users.status',
   );
 }

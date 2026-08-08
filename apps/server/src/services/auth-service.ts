@@ -6,9 +6,9 @@ import { createJWT } from '../utils/jwt';
 import crypto from 'crypto';
 import { ServiceResponse, ServiceSuccessResponse } from '../types/service-response';
 import { serviceError } from '../utils/service-error';
-import { findValidTokenByCode } from '../query/auth/find-token-by-code';
+import { findValidTokenByCode } from '../DAL/auth/find-token-by-code';
 import { UserRepository } from '../repositories/user-repository';
-import { activateUserById } from '../query/users/activate-by-id';
+import { activateUserById } from '../DAL/users/activate-by-id';
 
 export class AuthService {
   constructor(private repos: {

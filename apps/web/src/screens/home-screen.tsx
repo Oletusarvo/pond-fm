@@ -41,17 +41,19 @@ export function HomeScreen() {
       </section>
       <section className='h-pad py-16 bg-primary text-white flex-1'>
         <h2 className='text-xl font-semibold mb-4'>What is Pond.fm?</h2>
+
         <p>
           A place where every track gets a fair chance to be heard. The main feed is completely
-          chronological. New uploads appear in the order they're shared, and every user can repost a
-          track once, bringing it back to the top of the feed so more people can discover it. No
+          chronological. New uploads appear in the order they're shared or reposted. Each user gets one repost per track,
+          bringing it back to the top of the feed so more people can discover it. No
           recommendation algorithms. No pay-to-win promotion. Just people sharing music they
           genuinely enjoy.
           <br />
-          <br /> Looking for something truly new? Visit the <strong>Undiscovered</strong> feed,
+          <br /> Looking for something truly unheard? Visit the <strong>Undiscovered</strong> feed,
           where every track has been heard by fewer than 100 unique listeners. Unlike the main feed,
-          the undiscovered feed displays tracks in descending order - oldest first - giving every
-          newly uploaded track a fair chance to get heard.
+          the undiscovered feed displays tracks in ascending order - oldest first - giving every
+          newly uploaded track a fair chance to get heard. Tracks will stay on this feed until they
+          accumulate the required number of unique listens.
           <br />
           <br /> We believe in transparent incentives, community-driven discovery, and giving
           creators an opportunity to be seen without competing against opaque algorithms. Whether

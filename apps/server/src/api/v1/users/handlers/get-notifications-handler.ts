@@ -1,6 +1,6 @@
 
 import { db } from '../../../../db-config';
-import { getNotificationsByUserId } from '../../../../query/notifications/get-notifications-by-user-id';
+import { getNotificationsByUserId } from '../../../../DAL/notifications/get-notifications-by-user-id';
 import { AuthenticatedExpressRequest } from '../../../../types/express';
 import { createHandler } from '../../../../utils/create-handler';
 import { getCursor } from '../../../../utils/get-cursor';

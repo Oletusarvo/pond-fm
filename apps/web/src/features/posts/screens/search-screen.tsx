@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { SearchBar } from '../../../components/search-bar';
-import { Feed } from '../components/feed';
+import { Feed } from '../../../components/feed';
 import { useSearchableFeed } from '../hooks/use-searchable-feed';
 import { debounce } from '../../../utils/debounce';
 import { PostFeed } from '../components/post-feed';

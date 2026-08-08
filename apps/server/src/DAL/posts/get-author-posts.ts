@@ -19,7 +19,7 @@ export async function getAuthorPosts(ctx: DBContext, config: FeedQueryConfig & {
   });
   selectPost(query, config.session);
   selectTrack(query);
-  query.where({ 'post.user_id': config.authorId })
+  query.where({ 'post.author_id': config.authorId })
   query.orderBy('post.created_at', 'desc');
   return await resolveQueryWithCursor(query, { pageSize: 10 })
 }

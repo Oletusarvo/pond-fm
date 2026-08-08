@@ -1,26 +1,27 @@
 import { useInfiniteQuery } from '@tanstack/react-query';
-import { useCallback, useEffect, useMemo } from 'react';
-import { useInView } from 'react-intersection-observer';
+import { useMemo } from 'react';
 
 type UseFeedProps = {
-  queryFn: (config: { pageParam?: string }) => Promise<any>;
-  key: string[];
+  queryFn: (cursor?: string) => Promise<Response>;
+  queryKey: Parameters<typeof useInfiniteQuery>[0]['queryKey'];
   enabled?: boolean;
 };
 
-export function useInfiniteFeed({ queryFn, key, enabled }: UseFeedProps) {
+export function useInfiniteFeed({ queryFn, queryKey: key, enabled }: UseFeedProps) {
   const { data, fetchNextPage, ...query } = useInfiniteQuery({
     queryKey: key,
-    queryFn,
+    queryFn: async ({ pageParam: cursor }) => {
+      const res = await queryFn(cursor);
+      return res.ok ? await res.json() : [];
+    },
     initialPageParam: undefined,
-    getNextPageParam: lastPage => lastPage?.cursor,
+    getNextPageParam: (lastPage: any) => lastPage?.cursor,
     placeholderData: previousData => previousData,
     enabled,
   });
 
   const items = useMemo(() => data?.pages.flatMap(page => page.items) ?? [], [data]);
   const hasContent = useMemo(() => items.length > 0, [items.length]);
-
   return {
     ...query,
     data: items,

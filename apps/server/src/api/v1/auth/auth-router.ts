@@ -7,6 +7,7 @@ import { logoutHandler } from './handlers/logout-handler';
 import { createBodyParser } from '../../../utils/create-body-parser';
 import { requestAuthorizationSchema } from '../../../schemas/request-authorization-schema';
 import { authorizeByCodeSchema } from '../../../schemas/authorize-by-code-schema';
+import { refreshSessionHandler } from './handlers/refresh-session-handler';
 
 const router = getRouter();
 
@@ -18,4 +19,5 @@ router.post(
 router.post('/authorize', createBodyParser(authorizeByCodeSchema), authorizeByCodeHandler);
 router.post('/logout', checkAuth(), logoutHandler);
 router.get('/me', checkAuth(), getSessionInfoHandler);
+router.post('/me/refresh', checkAuth(), refreshSessionHandler);
 export { router as authRouter };

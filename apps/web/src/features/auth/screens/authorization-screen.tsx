@@ -8,6 +8,16 @@ import { useStatus } from '../../../hooks/use-status';
 import { Button } from '../../../components/button';
 
 export function AuthorizationScreen() {
+  return (
+    <Modal
+      title='Authorization'
+      onClose={null}>
+      <ModalContent />
+    </Modal>
+  );
+}
+
+function ModalContent() {
   const { status, setStatus } = useStatus();
   const { code } = useParams();
   const navigate = useNavigate();
@@ -41,40 +51,36 @@ export function AuthorizationScreen() {
   }, []);
 
   return (
-    <Modal
-      title='Authorization'
-      onClose={null}>
-      <div className='flex w-full flex-col gap-4 items-center'>
-        {status === 'loading' ? (
-          <>
-            <Spinner />
-            <p className='text-slate-500'>Please wait while we authorize you...</p>
-          </>
-        ) : status === 'success' ? (
-          <>
-            <div className='flex flex-col items-center'>
-              <h2 className='text-xl font-semibold'>Authorization succeeded!</h2>
-              <p className='text-slate-500'>Please wait while we redirect you...</p>
-            </div>
-          </>
-        ) : (
-          <>
-            <div className='flex flex-col items-center'>
-              <h2 className='text-xl font-semibold'>Authorization failed!</h2>
-              <p className='text-slate-500'>Something went wrong!</p>
-            </div>
+    <div className='flex w-full flex-col gap-4 items-center'>
+      {status === 'loading' ? (
+        <>
+          <Spinner />
+          <p className='text-slate-500'>Please wait while we authorize you...</p>
+        </>
+      ) : status === 'success' ? (
+        <>
+          <div className='flex flex-col items-center'>
+            <h2 className='text-xl font-semibold'>Authorization succeeded!</h2>
+            <p className='text-slate-500'>Please wait while we redirect you...</p>
+          </div>
+        </>
+      ) : (
+        <>
+          <div className='flex flex-col items-center'>
+            <h2 className='text-xl font-semibold'>Authorization failed!</h2>
+            <p className='text-slate-500'>Something went wrong!</p>
+          </div>
 
-            <Link to='/login'>
-              <Button
-                paddingEnabled
-                variant='outlined'
-                shape='rounded'>
-                Request a new login link
-              </Button>
-            </Link>
-          </>
-        )}
-      </div>
-    </Modal>
-  );
+          <Link to='/login'>
+            <Button
+              paddingEnabled
+              variant='outlined'
+              shape='rounded'>
+              Request a new login link
+            </Button>
+          </Link>
+        </>
+      )}
+    </div>
+  )
 }

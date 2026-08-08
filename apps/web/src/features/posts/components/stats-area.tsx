@@ -9,16 +9,17 @@ import { Button } from '../../../components/button';
 
 export function StatsArea() {
   const { post } = usePostContext();
-
+  const authService = useAuthContext();
   return (
     <div className='flex gap-5 items-center'>
       <Count
         icon={Play}
-        value={post.play_count}
+        value={post?.play_count}
       />
 
       <LikeButton />
-      <RepostButton />
+      {post?.track.author.id !== authService.session?.user.id ? <RepostButton /> : null}
+
 
     </div>
   );

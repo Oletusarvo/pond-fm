@@ -2,6 +2,14 @@ import { usePlaybackContext } from "../providers/playback-provider";
 import { useScrobbleContext } from "../providers/scrobble-provider";
 import { Button } from "../../../components/button";
 import { Heart } from "lucide-react";
+import { useActionContext } from "../../../providers/action-provider";
+import { useState } from "react";
+import { useEventHandler } from "../../../hooks/use-event-handler";
+import { PostProvider } from "../../posts/providers/post-provider";
+import { usePost } from "../../posts/hooks/use-post";
+import { usePostActions } from "../../posts/hooks/use-post-actions";
+import { RepostButton } from "../../posts/components/repost-button";
+import { LikeButton } from "../../posts/components/like-button";
 
 export function MiniPlayerWithInfo() {
   const playbackService = usePlaybackContext();
@@ -15,7 +23,18 @@ export function MiniPlayerWithInfo() {
           <h3 className="text-green-100 font-semibold text-lg">{playbackService.currentPlayback?.title}</h3>
           <small>{playbackService?.currentPlayback?.author.username}</small>
         </div>
-        <LikeButton />
+        {
+          playbackService.currentPlayback ? (
+
+            <PostProvider id={playbackService.currentPlayback.post_id}>
+              <div className="flex items-center gap-4">
+                <RepostButton />
+                <LikeButton />
+              </div>
+            </PostProvider>
+          ) : null
+        }
+
       </div>
 
       <audio
@@ -46,14 +65,23 @@ export function MiniPlayerWithInfo() {
   )
 }
 
-function LikeButton() {
+function LikeButton2() {
   const playbackService = usePlaybackContext();
-  const likedByMe = playbackService.currentPlayback?.stats.liked_by_me;
+  const postId = playbackService.currentPlayback.post_id;
+
+  const { toggleLike } = usePostActions({ id: postId });
+  const { post } = usePost(postId);
+
+  const likedByMe = post.liked_by_me;
   const fillColor = likedByMe ? 'var(--color-red-500)' : 'transparent';
   const borderColor = likedByMe ? 'transparent' : 'var(--color-red-500)';
 
   return (
-    <Button variant="ghost" shape="circle">
+    <Button
+      disabled={!playbackService.currentPlayback}
+      variant="ghost"
+      shape="circle"
+      onClick={() => toggleLike()}>
       <Heart fill={fillColor} color={borderColor} />
     </Button>
   );

@@ -1,9 +1,10 @@
 import { useCallback, useRef } from "react";
 import { apiService } from "../../../utils/api-service";
+import { cancelable } from "../../../utils/debounced";
 
 type EventType = 'track-played' | 'track-liked' | 'track-unliked';
 
-export function useEvents() {
+export function useActions() {
   const eventsRef = useRef(new EventTarget());
   const countPlay = useCallback((trackId: string) => {
     apiService
@@ -22,20 +23,49 @@ export function useEvents() {
       });
   }, []);
 
-  const registerTrackLike = (trackId: string) => {
-    eventsRef.current.dispatchEvent(new CustomEvent('track-liked', {
+  const toggleTrackLike = async (trackId: string, previousState: boolean) => {
+    const initialState = previousState;
+    const newState = !previousState;
+    const eventName = 'like-toggled';
+    eventsRef.current.dispatchEvent(new CustomEvent(eventName, {
       detail: {
-        id: trackId
+        id: trackId,
+        state: newState,
       }
     }));
+    const result = await cancelable.toggleTrackLike(trackId, initialState);
+    if (result.executed) {
+      if (result.value.ok) return;
+      eventsRef.current.dispatchEvent(new CustomEvent(eventName, {
+        detail: {
+          id: trackId,
+          state: initialState,
+        }
+      }));
+    }
   }
 
-  const registerTrackUnlike = (trackId: string) => {
-    eventsRef.current.dispatchEvent(new CustomEvent('track-unliked', {
+  const toggleTrackRepost = async (trackId: string, previousState: boolean) => {
+    const initialState = previousState;
+    const newState = !initialState;
+    const eventName = 'repost-toggled';
+    eventsRef.current.dispatchEvent(new CustomEvent(eventName, {
       detail: {
-        id: trackId
+        id: trackId,
+        state: newState,
       }
     }));
+
+    const result = await cancelable.repost(trackId, initialState);
+    if (result.executed) {
+      if (result.value.ok) return;
+      eventsRef.current.dispatchEvent(new CustomEvent(eventName, {
+        detail: {
+          id: trackId,
+          state: initialState,
+        }
+      }))
+    }
   }
 
   const addEventListener = (type: EventType, callback: any) => {
@@ -47,6 +77,6 @@ export function useEvents() {
   };
 
   return {
-    countPlay, registerTrackLike, registerTrackUnlike, addEventListener, removeEventListener
+    countPlay, toggleTrackLike, toggleTrackRepost, addEventListener, removeEventListener
   }
 }

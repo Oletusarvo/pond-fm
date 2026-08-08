@@ -15,7 +15,7 @@ type TagListProps = {
 export function TagList({ tags, onTagSelected, selectedTags, color = 'primary', size }: TagListProps) {
   return (
     <div className='flex items-center gap-2 max-w-full shrink-0 no-scrollbar'>
-      {tags.map(tag => {
+      {tags?.map(tag => {
         return (
           <Tag
             size={size}

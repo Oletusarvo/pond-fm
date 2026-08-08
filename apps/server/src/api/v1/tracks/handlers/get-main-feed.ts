@@ -1,5 +1,5 @@
 import { db } from '../../../../db-config';
-import { getNewPosts } from '../../../../query/posts/get-new-posts';
+import { getNewPosts } from '../../../../DAL/posts/get-new-posts';
 import { AuthenticatedExpressRequest } from '../../../../types/express';
 import { asArray } from '../../../../utils/as-array';
 import { createHandler } from '../../../../utils/create-handler';

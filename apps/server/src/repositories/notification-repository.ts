@@ -5,8 +5,8 @@ import { DBContext } from '../types/db-context';
 import { TNotification } from '../types/notification-type';
 import { Repository } from './repository';
 import { TCursor } from '../types/cursor';
-import { markNotificationAs } from '../query/notifications/mark-notifications-as';
-import { createNotification } from '../query/notifications/create-notification';
+import { markNotificationAs } from '../DAL/notifications/mark-notifications-as';
+import { createNotification } from '../DAL/notifications/create-notification';
 
 export class NotificationRepository {
   markNotificationAs = markNotificationAs

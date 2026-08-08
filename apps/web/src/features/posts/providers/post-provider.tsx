@@ -1,37 +1,32 @@
 import { useState } from 'react';
 import { setupContext } from '../../../utils/setup-context';
 import type { TPost } from '../../../types/post';
-import { usePostActions } from '../hooks/use-post-actions';
 import { Modal } from '../../../components/modal';
 import { Repeat } from 'lucide-react';
 import { Button } from '../../../components/button';
 import { useEventHandler } from '../../../hooks/use-event-handler';
-import { useEventsContext } from '../../../providers/events-provider';
-import { apiService } from '../../../utils/api-service';
+import { useActionContext } from '../../../providers/action-provider';
 import { TrackModal } from '../components/track-modal';
 import { useAuthContext } from '../../auth/providers/auth-provider';
+import { usePost } from '../hooks/use-post';
+import { RepostModal } from '../components/repost-modal';
 
 const [PostContext, usePostContext] = setupContext<{
   post: TPost;
-  toggleLike: () => Promise<void>;
   toggleRepost: (state: boolean) => void;
   toggleEdit: (state: boolean) => void;
 }>({ name: 'PostContext' });
 
 type PostProviderProps = React.PropsWithChildren & {
-  initialPost: TPost;
+  id: string;
 };
 
-export function PostProvider({ children, initialPost }: PostProviderProps) {
-  const [post, setPost] = useState(initialPost);
+export function PostProvider({ children, id }: PostProviderProps) {
+  const { post, updatePost } = usePost(id);
   const [showRepostModal, setShowRepostModal] = useState(false);
   const authService = useAuthContext();
   const [showEditModal, setShowEditModal] = useState(false);
-  const eventsService = useEventsContext();
-  const { toggleLike, repost } = usePostActions({
-    post,
-    onChange: newState => setPost(newState),
-  });
+  const actionService = useActionContext();
 
   const toggleRepost = (state: boolean) => {
     setShowRepostModal(state);
@@ -39,65 +34,32 @@ export function PostProvider({ children, initialPost }: PostProviderProps) {
 
   const toggleEdit = (state: boolean) => setShowEditModal(state);
 
+
   useEventHandler({
     type: 'track-played',
-    service: eventsService,
+    service: actionService,
     handler: (e: CustomEvent) => {
-      if (e.detail.id === post.track.id) {
-        setPost({
+      if (e.detail.id === post?.track.id) {
+        updatePost({
           ...post,
-          play_count: post.play_count + 1,
+          play_count: Number(post?.play_count + 1),
         });
       }
     },
   });
 
+  if (!post) {
+    return null;
+  }
+
   return (
-    <PostContext.Provider value={{ post, toggleLike, toggleRepost, toggleEdit }}>
+    <PostContext.Provider value={{ post, toggleRepost, toggleEdit }}>
       {children}
-
       {showRepostModal ? (
-        <Modal
-          title='Repost Track'
-          onClose={() => toggleRepost(false)}>
-          <div className='flex flex-col w-full gap-4 items-center'>
-            <Repeat
-              color='var(--color-primary)'
-              size='3rem'
-            />
-            <span>
-              You are about to repost <strong>{post.track.title}</strong> by{' '}
-              <strong>{post.track.author.username}</strong>. Reposts cannot currently be undone. Are
-              you sure?
-            </span>
-
-            <div className='flex gap-4 w-full'>
-              <Button
-                shape='rounded'
-                paddingEnabled
-                onClick={() => toggleRepost(false)}
-                variant='outlined'
-                fullWidth>
-                Cancel
-              </Button>
-              <Button
-                shape='rounded'
-                paddingEnabled
-                onClick={() => {
-                  repost();
-                  toggleRepost(false);
-                }}
-                variant='contained'
-                fullWidth>
-                <Repeat size='1rem' />
-                Repost
-              </Button>
-            </div>
-          </div>
-        </Modal>
+        <RepostModal />
       ) : null}
       {
-        authService.status === 'authenticated' ? (showEditModal ? <TrackModal track={post.track} onClose={() => toggleEdit(false)} /> : null) : null
+        authService.status === 'authenticated' ? (showEditModal ? <TrackModal track={post?.track} onClose={() => toggleEdit(false)} /> : null) : null
       }
     </PostContext.Provider>
   );

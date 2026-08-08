@@ -19,16 +19,6 @@ export class ScrobbleRepository extends PostRepository {
     await ctx(tablenames.uniqueListeners).where(trackId).del();
   }
 
-  /**Sets the is_discovered state of a track. */
-  async setTrackIsDiscovered(
-    payload: Required<Pick<TTrack, 'id' | 'is_discovered'>>,
-    ctx: DBContext,
-  ) {
-    await ctx(tablenames.tracks).where({ id: payload.id }).update({
-      is_discovered: payload.is_discovered,
-    });
-  }
-
   /**Inserts a new unique listener. */
   async createUniqueListener(listener: TrackAndUserId & { session_id: string }, ctx: DBContext) {
     const result = await ctx(tablenames.uniqueListeners)

@@ -5,7 +5,7 @@ import { tablenames } from '../tablenames';
 import { DBContext } from '../types/db-context';
 import { ServiceResponse, ServiceSuccessResponse } from '../types/service-response';
 import crypto from 'crypto';
-import { findUserByEmail } from '../query/users/find-user-by-email';
+import { findUserByEmail } from '../DAL/users/find-user-by-email';
 
 export class UserService {
   constructor(private repo: UserRepository) { }
@@ -17,7 +17,7 @@ export class UserService {
       const defaultUserId = crypto.randomBytes(8).toString('hex');
       const userNumber = BigInt('0x' + defaultUserId).toString();
       const defaultUserName = `user-${userNumber}`;
-      [user] = await this.repo.createNewUser(ctx, { user: { email: config.user.email, username: defaultUserName } });
+      user = await this.repo.createNewUser(ctx, { user: { email: config.user.email, username: defaultUserName } });
     }
 
     return { success: true, data: user } as ServiceSuccessResponse<{ id: string }>;

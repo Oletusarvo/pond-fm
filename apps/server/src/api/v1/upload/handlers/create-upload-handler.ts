@@ -1,6 +1,6 @@
 import { db } from "../../../../db-config";
-import { createAudioUpload } from "../../../../query/uploads/create-audio-upload";
-import { createUpload } from "../../../../query/uploads/create-upload";
+import { createAudioUpload } from "../../../../DAL/uploads/create-audio-upload";
+import { createUpload } from "../../../../DAL/uploads/create-upload";
 import { tablenames } from "../../../../tablenames";
 import { AuthenticatedExpressRequest, ExpressRequest } from "../../../../types/express";
 import { createHandler } from "../../../../utils/create-handler";

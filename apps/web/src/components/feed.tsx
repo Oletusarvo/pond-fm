@@ -1,10 +1,10 @@
 import { ReactNode, useEffect } from 'react';
 import { useInfiniteFeed } from '../hooks/use-infinite-feed';
-import { Separator } from '../../../components/separator';
+import { Separator } from './separator';
 import React from 'react';
-import { LoadingFiller } from '../../../components/loading-filler';
-import { useFeedContext } from '../../../providers/feed-provider';
-import { Sentinel } from '../../../components/sentinel';
+import { LoadingFiller } from './loading-filler';
+import { useFeedContext } from '../providers/feed-provider';
+import { Sentinel } from './sentinel';
 
 type FeedScreenProps = {
   keyExtractor?: (item: any) => string;
@@ -16,10 +16,14 @@ export function Feed({
   keyExtractor,
   onEmptyComponent: OnEmptyComponent,
 }: FeedScreenProps) {
-  const { data, isPending, fetchNextPage } = useFeedContext();
+  const { data, isPending, isError, error, fetchNextPage } = useFeedContext();
 
   if (isPending) {
     return <LoadingFiller />;
+  }
+  else if (isError) {
+    console.log(error);
+    return <span className="text-red-900">Failed to load feed!</span>
   }
 
   if (!data.length) {
@@ -37,19 +41,17 @@ export function Feed({
   return (
     <>
       <div className='flex flex-col w-full flex-1 overflow-y-scroll max-h-full'>
-        {!isPending ? (
-          <>
-            {data.map((item, i) => {
-              return (
-                <React.Fragment key={keyExtractor?.(item)}>
-                  <RenderComponent item={item} />
-                  {i < data.length - 1 ? <Separator /> : null}
-                </React.Fragment>
-              );
-            })}
-            <Sentinel onVisible={() => fetchNextPage()} />
-          </>
-        ) : null}
+        <>
+          {data.map((item, i) => {
+            return (
+              <React.Fragment key={keyExtractor?.(item)}>
+                <RenderComponent item={item} />
+                {i < data.length - 1 ? <Separator /> : null}
+              </React.Fragment>
+            );
+          })}
+          <Sentinel onVisible={() => fetchNextPage()} />
+        </>
       </div>
     </>
   );

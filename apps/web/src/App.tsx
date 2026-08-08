@@ -16,14 +16,16 @@ import { PlayCountProvider } from './features/audio/providers/playcount-provider
 import { SearchScreen } from './features/posts/screens/search-screen';
 import { SettingsProvider } from './features/auth/providers/settings-provider';
 import { ProfileSettingsModal } from './features/auth/components/settings-modal';
-import { EventsProvider } from './providers/events-provider';
+import { ActionProvider } from './providers/action-provider';
+import { UserProvider } from './features/users/providers/user-proivder';
+import { FollowedFeedScreen } from './features/posts/screens/followed-feed-screen';
 
 function App() {
   return (
     <QueryClientProvider client={new QueryClient()}>
       <AuthProvider>
-        <PlaybackProvider>
-          <EventsProvider>
+        <ActionProvider>
+          <PlaybackProvider>
             <ScrobbleProvider>
               <div className='flex flex-col w-full h-full'>
                 <BrowserRouter>
@@ -48,9 +50,10 @@ function App() {
                           path='undiscovered'
                           element={<UndiscoveredFeedScreen />}
                         />
+                        <Route path="followed" element={<FollowedFeedScreen />} />
                         <Route
                           path='user/:id'
-                          element={<UserScreen />}
+                          element={<UserProvider><UserScreen /></UserProvider>}
                         />
                         <Route
                           path='new'
@@ -75,8 +78,9 @@ function App() {
                 </BrowserRouter>
               </div>
             </ScrobbleProvider>
-          </EventsProvider>
-        </PlaybackProvider>
+
+          </PlaybackProvider>
+        </ActionProvider>
       </AuthProvider>
     </QueryClientProvider>
   );

@@ -36,6 +36,11 @@ export function MainHeader() {
             className='font-semibold'>
             New
           </ResponsiveLink>
+          {
+            authService.status === 'authenticated' ? (
+              <ResponsiveLink to="/followed" className="font-semibold">Followed</ResponsiveLink>
+            ) : null
+          }
         </nav>
       </div>
 
@@ -72,11 +77,19 @@ export function MainHeader() {
 
 function NotificationsButton() {
   const { toggleShowNotificationsModal, hasUnseen } = useNotificationsContext();
+  const authService = useAuthContext();
+
   return (
     <Button
       variant='ghost'
       shape='circle'
-      onClick={() => toggleShowNotificationsModal(true)}>
+      onClick={async () => {
+        await authService.refreshSession({
+          user: {
+            unseen_notification_count: 0
+          }
+        }); toggleShowNotificationsModal(true)
+      }}>
       <div className='relative'>
         <Bell />
         {hasUnseen ? (

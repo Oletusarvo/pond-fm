@@ -1,6 +1,6 @@
 
 import { db } from '../../../../db-config';
-import { markNotificationAs } from '../../../../query/notifications/mark-notifications-as';
+import { markNotificationAs } from '../../../../DAL/notifications/mark-notifications-as';
 import { AuthenticatedExpressRequest } from '../../../../types/express';
 import { TNotification } from '../../../../types/notification-type';
 import { createHandler } from '../../../../utils/create-handler';

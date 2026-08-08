@@ -1,5 +1,5 @@
 import { db } from '../../../../db-config';
-import { getAuthorPosts } from '../../../../query/posts/get-author-posts';
+import { getAuthorPosts } from '../../../../DAL/posts/get-author-posts';
 import { AuthenticatedExpressRequest } from '../../../../types/express';
 import { createHandler } from '../../../../utils/create-handler';
 import { getCursor } from '../../../../utils/get-cursor';

@@ -11,9 +11,13 @@ export const debounced = {
 export const cancelable = {
   toggleTrackLike: cancelPrevious(async (trackId: string, isLiked: boolean) => {
     return isLiked ? apiService.unlikeTrack(trackId) : apiService.likeTrack(trackId);
-  }, 2000),
+  }, 1000),
 
   repost: cancelPrevious(async (trackId: string, isReposted: boolean) => {
     return !isReposted ? apiService.repostTrack(trackId) : null;
-  }, 2000),
+  }, 1000),
+
+  toggleFollow: cancelPrevious(async (userId: string, isFollowed: boolean) => {
+    return !isFollowed ? apiService.follow(userId) : apiService.unfollow(userId);
+  }, 1000)
 };

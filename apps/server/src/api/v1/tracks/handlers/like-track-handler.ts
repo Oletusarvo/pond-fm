@@ -1,7 +1,7 @@
 import { } from '../../../../container';
 import { db } from '../../../../db-config';
-import { createNotification } from '../../../../query/notifications/create-notification';
-import { createTrackLike } from '../../../../query/posts/create-track-like';
+import { createNotification } from '../../../../DAL/notifications/create-notification';
+import { createTrackLike } from '../../../../DAL/posts/create-track-like';
 import { tablenames } from '../../../../tablenames';
 import { AuthenticatedExpressRequest } from '../../../../types/express';
 import { createHandler } from '../../../../utils/create-handler';

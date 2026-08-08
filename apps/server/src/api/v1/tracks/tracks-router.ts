@@ -16,6 +16,7 @@ import { getMainFeedHandler } from './handlers/get-main-feed';
 import { createBodyParser } from '../../../utils/create-body-parser';
 import { updateTrackHandler } from './handlers/update-track-handler';
 import { updateTrackScema } from '../../../schemas/update-track-schema';
+import { getFollowedFeedHandler } from './handlers/get-followed-feed';
 
 const router = getRouter();
 router.post(
@@ -28,6 +29,7 @@ router.post(
 
 router.get('/feed/main', checkAuth(false), getMainFeedHandler);
 router.get('/feed/discover', checkAuth(false), getDiscoveryFeed);
+router.get('/feed/followed', checkAuth(), getFollowedFeedHandler);
 router.get('/feed/:authorId', checkAuth(false), getAuthorFeed);
 
 router.post('/like', checkAuth(), likeTrackHandler);

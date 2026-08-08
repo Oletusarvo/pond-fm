@@ -3,7 +3,7 @@ import { setupContext } from './setup-context';
 
 type CreateProviderProps<THookReturn, THookProps = void> = {
   hook: (props: THookProps) => THookReturn & { ChildComponent?: React.FC<any> };
-  childComponent?: React.FC<any>;
+  childComponent?: React.FC<THookReturn>;
   contextName: string;
 };
 export function createProvider<THookReturn, THookProps>({
@@ -17,7 +17,7 @@ export function createProvider<THookReturn, THookProps>({
     return (
       <Context.Provider value={value as THookReturn}>
         {children}
-        {ChildComponent ? <ChildComponent /> : null}
+        {ChildComponent ? <ChildComponent {...value} /> : null}
       </Context.Provider>
     );
   }

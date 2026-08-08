@@ -1,38 +1,29 @@
-import { useParams } from 'react-router-dom';
 import { Separator } from '../../../components/separator';
-import { ObjectEncoder } from '../../../utils/object-encoder';
-import { FeedProvider } from '../../../providers/feed-provider';
 import { PostFeed } from '../components/post-feed';
 import { apiService } from '../../../utils/api-service';
-import { useQuery } from '@tanstack/react-query';
 import { Spinner } from '../../../components/spinner';
+import { UserHeader } from '../components/user-header';
+import { useUserContext } from '../../users/providers/user-proivder';
+import { FeedProvider } from '../../../providers/feed-provider';
+import { PopulatePostStore } from '../providers/populates-post-store';
 
 /**@todo Implement fetching of the user from the database instead of passing an encoded object in the page params. */
 export function UserScreen() {
-  const { id } = useParams();
-  const { data: user, isPending } = useQuery({
-    queryKey: ['user', id],
-    queryFn: async () => {
-      const res = await apiService.getUser(id);
-      return res.ok ? await res.json() : null;
-    }
-  });
-
-  if (isPending) {
+  const userService = useUserContext();
+  if (userService.isPending) {
     return <Spinner />
   }
 
   return (
     <div className='flex flex-col w-full max-h-full'>
-      <div className='py-2 w-full h-pad leading-none flex flex-col'>
-        <span className='text-xs text-slate-500'>Tracks By</span>
-        <h2 className='text-lg font-semibold text-primary'>{user.username}</h2>
-      </div>
+      <UserHeader />
       <Separator />
       <FeedProvider
-        queryFn={cursor => apiService.getAuthorFeed(user.id, cursor)}
-        queryKey={['feed', 'author', user.id]}>
-        <PostFeed />
+        queryFn={cursor => apiService.getAuthorFeed(userService.user.id, cursor)}
+        queryKey={['feed', 'author', userService.user.id]}>
+        <PopulatePostStore>
+          <PostFeed />
+        </PopulatePostStore>
       </FeedProvider>
     </div>
   );
