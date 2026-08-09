@@ -51,10 +51,19 @@ export const usePostStore = create<PostState>((set, get) => ({
 }))
 
 export function usePost(id: string) {
+  const queryClient = useQueryClient();
   const postStore = usePostStore();
   const post = postStore.getPost(id);
   const updatePost = (newState: Partial<TPost>) => {
     postStore.updatePost(id, newState);
+    //Tempoary solution to keep cache in sync.
+    queryClient.setQueriesData({ queryKey: ['feed'] }, (oldData: { cursor: string; items: any[] }) => {
+      if (!oldData) return oldData;
+      return {
+        ...oldData,
+        items: oldData.items.map(item => item.id === id ? { ...item, ...newState } : item)
+      }
+    });
   }
   return {
     post, updatePost,

@@ -35,8 +35,6 @@ export function PostFeedScreen({
         queryKey={[...queryKey, genres.sort().join(';'), moods.sort().join(';')]}>
         <PostFeed />
       </FeedProvider>
-
-
     </PostFeedScreenContainer >
   );
 }

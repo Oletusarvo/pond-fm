@@ -11,6 +11,7 @@ import { TagList } from "./tag-list";
 import { useMoods } from "../hooks/use-moods";
 import { useToggleList } from "../../../hooks/use-toggle-list";
 import { TTrack } from "../../../types/track";
+import { useQueryClient } from "@tanstack/react-query";
 
 type TrackModalProps = {
   track?: TTrack;
@@ -56,6 +57,7 @@ function MoodSelector({ defaultSelected, onChange }) {
 function ModalContent({ track, onClose }) {
   const genreRef = useRef<string | null>(track?.genre);
   const moodsRef = useRef<string[]>(track?.moods || []);
+  const queryClient = useQueryClient();
   const upload = async (data: any, file: File) => {
     const uploadUrlRes = await apiService.requestUploadUrl({
       filename: file.name,
@@ -100,6 +102,7 @@ function ModalContent({ track, onClose }) {
       if (!res.ok) {
         return { success: false };
       }
+      queryClient.invalidateQueries({ queryKey: ['feed'] });
       return { success: true };
     },
     onSuccess: () => {
@@ -108,7 +111,7 @@ function ModalContent({ track, onClose }) {
   });
 
   return (
-    <div className='flex flex-col w-full gap-8'>
+    <div className='flex flex-col w-full gap-8 text-black'>
       <div className='flex flex-col w-full'>
         {
           !track ? <> <h2 className='font-semibold text-lg'>Upload Your Track</h2>

@@ -6,11 +6,14 @@ import { AuthenticatedExpressRequest, ExpressRequest } from "../../../../types/e
 import { createHandler } from "../../../../utils/create-handler";
 import crypto from 'crypto';
 import { createJWT } from "../../../../utils/jwt";
+import { createSignedUploadUrl } from "../../../../utils/create-signed-upload-url";
+import { keyof } from "zod";
 
 export const createUploadHandler = createHandler(
   async (req: AuthenticatedExpressRequest, res) => {
+    const data = req.body;
     const audio = await db.transaction(async trx => {
-      const data = req.body;
+
       const upload = await createUpload(trx, {
         filename: data.filename,
         size: data.size,
@@ -38,9 +41,11 @@ export const createUploadHandler = createHandler(
       }
     });
 
+    const key = `uploads/${audio.filename}`;
+    const signedUrl = createSignedUploadUrl(key, data.mimeType);
     return res.status(200).json({
-      uploadUrl: 'http://localhost:3002/api/v1/upload/',
-      key: `uploads/${audio.filename}`,
+      uploadUrl: signedUrl,
+      key,
       token: audio.token,
     });
   }

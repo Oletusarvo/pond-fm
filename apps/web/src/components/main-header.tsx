@@ -11,6 +11,7 @@ import { FeedProvider } from '../providers/feed-provider';
 import { useNotifications } from '../features/notifications/hooks/use-notifications';
 import { apiService } from '../utils/api-service';
 import { useSettingsContext } from '../features/auth/providers/settings-provider';
+import { UploadProvider, useUploadContext } from '../features/posts/providers/upload-context';
 
 export function MainHeader() {
   const navigate = useNavigate();
@@ -57,11 +58,9 @@ export function MainHeader() {
               <NotificationsButton />
             </NotificationsProvider>
 
-            <Button
-              variant='ghost'
-              onClick={() => navigate('/upload')}>
-              <ArrowUpCircle />
-            </Button>
+            <UploadProvider>
+              <UploadButton />
+            </UploadProvider>
 
             <Button
               variant='ghost'
@@ -72,6 +71,17 @@ export function MainHeader() {
         ) : null}
       </div>
     </header>
+  );
+}
+
+function UploadButton() {
+  const { toggleShowUploadModal } = useUploadContext();
+  return (
+    <Button
+      variant='ghost'
+      onClick={() => toggleShowUploadModal(true)}>
+      <ArrowUpCircle />
+    </Button>
   );
 }
 

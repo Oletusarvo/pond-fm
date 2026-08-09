@@ -21,7 +21,6 @@ export function usePostActions({
 }: UsePostActionsProps) {
   const postStore = usePostStore();
   const post = postStore.getPost(id);
-  const queryClient = useQueryClient();
   const countPlay = async () => {
     const initialPlayCount = post.play_count;
     const newPlayCount = initialPlayCount + 1;
@@ -60,11 +59,7 @@ export function usePostActions({
         postStore.updatePost(post.id, initialPost);
         onLikeRollback?.();
       }
-      else {
-        queryClient.invalidateQueries({
-          queryKey: ['feed']
-        });
-      }
+
     }
   };
 
@@ -89,11 +84,6 @@ export function usePostActions({
       if (!result.value.ok) {
         postStore.updatePost(post.id, initialPost);
         onRepostRollback?.();
-      }
-      else {
-        queryClient.invalidateQueries({
-          queryKey: ['feed']
-        });
       }
     }
   };
