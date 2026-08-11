@@ -11,6 +11,6 @@ export async function createAuthToken(ctx: DBContext, config: {
       expires_at: config.expiresAt,
       is_used: false,
     })
-    .onConflict(['email'])
+    .onConflict(['user_id'])
     .merge();
 }
