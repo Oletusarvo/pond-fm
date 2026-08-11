@@ -79,6 +79,7 @@ class RequestBuilder {
       headers: {
         ...this.query.headers,
         'Content-Type': f.type,
+        'Content-Length': f.size.toString(),
       },
       body: f,
     }

@@ -12,6 +12,8 @@ import { useMoods } from "../hooks/use-moods";
 import { useToggleList } from "../../../hooks/use-toggle-list";
 import { TTrack } from "../../../types/track";
 import { useQueryClient } from "@tanstack/react-query";
+import { Button, LoaderButton } from "../../../components/button";
+import { ArrowUp, Trash, X } from "lucide-react";
 
 type TrackModalProps = {
   track?: TTrack;
@@ -68,10 +70,7 @@ function ModalContent({ track, onClose }) {
       return uploadUrlRes;
     }
     const uploadData = await uploadUrlRes.json();
-    const uploadRes = await apiService.uploadToUrl(file, {
-      uploadUrl: uploadData.uploadUrl,
-      token: uploadData.token,
-    });
+    const uploadRes = await apiService.uploadToUrl(file, uploadData.uploadUrl);
 
     if (!uploadRes.ok) {
       return uploadRes;
@@ -81,8 +80,7 @@ function ModalContent({ track, onClose }) {
       title: data.title,
       genre: data.genre,
       moods: data.moods,
-      token: uploadData.token,
-    });
+    }, uploadData.code);
   }
 
   const { submit, loading, status } = useSubmit({
@@ -147,12 +145,21 @@ function ModalContent({ track, onClose }) {
         <Form.Group label='Style (Max 3)'>
           <MoodSelector onChange={moods => moodsRef.current = moods} defaultSelected={track?.moods} />
         </Form.Group>
-        <Form.Controls
-          disabled={loading}
-          loading={loading}
-          onCancel={onClose}
-          acceptText={track ? 'Update Track' : 'Upload Track'}
-        />
+        <div className="flex w-full gap-2">
+          {
+            track ? <Button variant="outlined" color="danger" fullWidth shape="rounded" paddingEnabled icon={Trash} type="button">
+
+              Delete
+            </Button> : <Button variant="outlined" color="primary" fullWidth shape="rounded" paddingEnabled onClick={onClose} icon={X}>
+
+              Cancel
+            </Button>
+          }
+
+          <LoaderButton type="submit" variant="contained" loading={loading} disabled={loading} fullWidth shape="rounded" paddingEnabled icon={ArrowUp}>
+            {track ? 'Update' : 'Upload'}
+          </LoaderButton>
+        </div>
         {
           status === 'error'
             ?

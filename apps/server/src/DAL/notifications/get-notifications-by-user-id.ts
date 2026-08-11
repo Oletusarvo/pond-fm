@@ -19,7 +19,5 @@ export async function getNotificationsByUserId(ctx: DBContext, config: { user: {
     cursor: config.cursor
   });
 
-  const data = await resolveQueryWithCursor(query, { pageSize: 10 });
-  console.log(data.items.length)
-  return data;
+  return await resolveQueryWithCursor(query, { pageSize: 10 });
 }

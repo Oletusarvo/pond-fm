@@ -39,20 +39,16 @@ export function Feed({
   }
 
   return (
-    <>
-      <div className='flex flex-col w-full flex-1 overflow-y-scroll max-h-full'>
-        <>
-          {data.map((item, i) => {
-            return (
-              <React.Fragment key={keyExtractor?.(item)}>
-                <RenderComponent item={item} />
-                {i < data.length - 1 ? <Separator /> : null}
-              </React.Fragment>
-            );
-          })}
-          <Sentinel onVisible={() => fetchNextPage()} />
-        </>
-      </div>
-    </>
+    <div className='flex flex-col w-full flex-1 overflow-y-scroll max-h-full'>
+      {data.map((item, i) => {
+        return (
+          <React.Fragment key={keyExtractor?.(item)}>
+            <RenderComponent item={item} />
+            {i < data.length - 1 ? <Separator /> : null}
+          </React.Fragment>
+        );
+      })}
+      <Sentinel onVisible={() => fetchNextPage()} />
+    </div>
   );
 }

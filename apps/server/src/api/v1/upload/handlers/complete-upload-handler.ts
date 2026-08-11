@@ -16,7 +16,7 @@ export const completeUploadHandler = createHandler(
   async (req: AuthenticatedExpressRequest, res) => {
     const session = req.session;
     const uploadToken = await db(tablenames.uploadTokens)
-      .where({ code: req.uploadToken!.code, user_id: session.user.id })
+      .where({ code: req.params.code, user_id: session.user.id })
       .first();
 
     if (!uploadToken) {
@@ -33,7 +33,7 @@ export const completeUploadHandler = createHandler(
         await db.transaction(async trx => {
           //Generate waveform and activate the track.
           const uploadRecord = await getUploadById(trx, { id: uploadToken.upload_id });
-          const filePath = path.join(process.cwd(), `/uploads/${uploadRecord.filename}`);
+          const filePath = path.join(process.cwd(), uploadRecord.key);
           const waveformStream = createReadStream(filePath);
           const metadataStream = createReadStream(filePath);
 

@@ -22,7 +22,7 @@ export function MainHeader() {
       <div className='flex items-center gap-2 text-sm'>
         <Link to='/'>
           <h2 className='font-semibold cursive text-lg'>
-            🐸<span className='text-lg'>Pond Fm</span>
+            🐸<span className='text-lg'>Pond.fm</span>
           </h2>
         </Link>
         |{' '}
@@ -50,6 +50,7 @@ export function MainHeader() {
           <>
             <Button
               variant='ghost'
+              color="white"
               onClick={() => navigate(`/user/${authService.session.user.id}`)}>
               <User />
             </Button>
@@ -63,6 +64,7 @@ export function MainHeader() {
             </UploadProvider>
 
             <Button
+              color="white"
               variant='ghost'
               onClick={() => settingsService.toggleSettingsModal(true)}>
               <Settings />
@@ -78,6 +80,7 @@ function UploadButton() {
   const { toggleShowUploadModal } = useUploadContext();
   return (
     <Button
+      color="white"
       variant='ghost'
       onClick={() => toggleShowUploadModal(true)}>
       <ArrowUpCircle />
@@ -91,6 +94,7 @@ function NotificationsButton() {
 
   return (
     <Button
+      color="white"
       variant='ghost'
       shape='circle'
       onClick={async () => {

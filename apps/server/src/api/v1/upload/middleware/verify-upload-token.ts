@@ -11,6 +11,7 @@ export const verifyUploadToken = createMiddleware(
       return res.status(401).end();
     }
     const [payload, err] = await tryCatch(() => verifyJWT(token) as ExpressRequest['uploadToken']);
+
     if (err) {
       return res.status(401).end();
     }

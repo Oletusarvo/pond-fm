@@ -3,9 +3,9 @@ import { Button } from "../../../components/button";
 import { cancelable } from "../../../utils/debounced";
 import { useQueryClient } from "@tanstack/react-query";
 import { useUserContext } from "../../users/providers/user-proivder";
-import { Music } from "lucide-react";
+import { Music, UserMinus, UserPlus } from "lucide-react";
 
-
+/**@todo This should be moved under features/users/components */
 export function UserHeader() {
   const { user, ...userService } = useUserContext();
   const [followedByMe, setFollowedByMe] = useState(user.followed_by_me);
@@ -36,29 +36,30 @@ export function UserHeader() {
       });
   }
 
+  const FollowButtonIcon = followedByMe ? UserMinus : UserPlus;
+
   return (
     <div className='py-2 w-full h-pad leading-none flex flex-row justify-between xs:items-start'>
-      <div className="flex md:gap-8 xs:gap-1 md:items-center xs:items-start xs:flex-col md:flex-row">
+      <div className="flex sm:gap-8 xs:gap-1 md:items-center xs:items-start">
         <div className="flex gap-2 items-center">
           <Music size="1.2rem" color="var(--color-primary)" />
           <h2 className='text-sm font-semibold text-primary'>{user.username}</h2>
         </div>
-        <div className="flex items-center gap-4">
-          <Button
-            variant="ghost"
-            onClick={() => userService.toggleShowFollowingModal(true)}>
-            <span className="text-sm font-semibold text-primary"> {user.following_count} Following</span>
-          </Button>
-          <Button variant="ghost" onClick={() => userService.toggleShowFollowerModal(true)}>
-            <span className="text-sm font-semibold text-primary">{user.follower_count} Followers</span>
-          </Button>
-        </div>
-
+        <Button variant="ghost" onClick={onFollowButtonClicked} icon={FollowButtonIcon}><span className="text-sm text-primary">
+          {followedByMe ? 'Unfollow' : 'Follow'}</span></Button>
 
       </div>
 
-      <Button variant="ghost" onClick={onFollowButtonClicked}><span className="text-sm text-primary">
-        {followedByMe ? 'Unfollow' : 'Follow'}</span></Button>
+      <div className="flex items-center sm:gap-4 xs:gap-1">
+        <Button
+          variant="ghost"
+          onClick={() => userService.toggleShowFollowingModal(true)}>
+          <span className="text-sm font-semibold text-primary"> {user.following_count} Following</span>
+        </Button>
+        <Button variant="ghost" onClick={() => userService.toggleShowFollowerModal(true)}>
+          <span className="text-sm font-semibold text-primary">{user.follower_count} Followers</span>
+        </Button>
+      </div>
     </div>
   );
 }

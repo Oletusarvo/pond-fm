@@ -5,14 +5,13 @@ import { createHandler } from '../../../../utils/create-handler';
 
 /**Creates a new auth token and user - if it doesn't exist - for authorization. */
 export const requestAuthorizationHandler = createHandler(async (req, res) => {
-  const { email, username } = req.body;
+  const { email } = req.body;
   await db.transaction(async trx => {
-    const user = await userService.createIfNotExists(trx, { user: { email } });
+    const user = await userService.createIfNotExists(trx, { email });
     //Create an auth token and a database entry with a temporary code.
-    const code = await authService.createAuthorizationCode(trx, { user: { id: user.data.id } });
+    const code = await authService.createAuthorizationCode(trx, { userId: user.data.id });
     if (process.env.AUTH_ENVIRONMENT === 'production') {
       await emailService.sendMagicLink(email, code.data);
-
     }
     else {
       console.log('Temporary code log(remove once email is implemented): ', code);

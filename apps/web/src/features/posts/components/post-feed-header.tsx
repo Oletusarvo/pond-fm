@@ -3,6 +3,7 @@ type PostFeedHeaderProps = React.PropsWithChildren & {
   description: string;
 };
 
+/**Renders the header for post feeds. */
 export function PostFeedHeader({ children, title, description }: PostFeedHeaderProps) {
   return (
     <div className='py-2 w-full h-pad'>

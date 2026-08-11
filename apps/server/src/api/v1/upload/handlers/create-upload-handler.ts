@@ -8,45 +8,91 @@ import crypto from 'crypto';
 import { createJWT } from "../../../../utils/jwt";
 import { createSignedUploadUrl } from "../../../../utils/create-signed-upload-url";
 import { keyof } from "zod";
+import { withSubscription } from "../../../../DAL/billing/with/with-subscription";
+import { serviceError } from "../../../../utils/service-error";
+import { withUpload } from "../../../../DAL/uploads/with/with-upload";
+import { withTrack } from "../../../../DAL/posts/with/with-track";
+import { TSession } from "../../../../types/session";
+import path from "path";
+import { v4 } from "uuid";
 
+/**@todo */
 export const createUploadHandler = createHandler(
   async (req: AuthenticatedExpressRequest, res) => {
     const data = req.body;
-    const audio = await db.transaction(async trx => {
+    const session = req.session;
 
+    //Make sure the file size is within the quota of the user.
+    const quotaVerificationResult = await verifyUploadQuota(data.size, session);
+    if (quotaVerificationResult.success !== true) {
+      return res.status(409).json({
+        error: quotaVerificationResult.error,
+      })
+    }
+
+    const uploadToken = await db.transaction(async trx => {
+      const id = v4();
+      const extname = path.extname(data.filename);
+      const filename = `${id}${extname}`;
+      const key = `uploads/${filename}`;
       const upload = await createUpload(trx, {
-        filename: data.filename,
+        id,
+        filename,
+        key,
+        originalFilename: data.filename,
         size: data.size,
         mimeType: data.mimeType,
       });
+
       const audio = await createAudioUpload(trx, { uploadId: upload.id, bitrate: data.bitRate });
       const code = crypto.randomBytes(32).toString('base64url');
-      const session = req.session;
       await trx(tablenames.uploadTokens).insert({
         upload_id: audio.upload_id,
         user_id: session.user.id,
         code,
-        expires_at: Date.now() + 1000 * 60 * 60,
+        expires_at: db.raw("CURRENT_TIMESTAMP + INTERVAL '1h'"),
       });
-      const payload = {
-        uploadId: audio.upload_id,
-        userId: session.user.id,
-        code,
-      } as ExpressRequest['uploadToken'];
+
 
       return {
-        ...audio,
-        filename: upload.filename,
-        token: createJWT(payload),
-      }
+        code, key
+      };
     });
 
-    const key = `uploads/${audio.filename}`;
-    const signedUrl = createSignedUploadUrl(key, data.mimeType);
+    const signedUrl = await createSignedUploadUrl(uploadToken.key, data.mimeType, data.size);
     return res.status(200).json({
       uploadUrl: signedUrl,
-      key,
-      token: audio.token,
+      code: uploadToken.code,
     });
   }
 )
+
+async function verifyUploadQuota(uploadedSize: number, session: TSession) {
+  const quotaQuery = withSubscription(db.queryBuilder());
+  withTrack(quotaQuery);
+  withUpload(quotaQuery);
+  const quota = await quotaQuery
+    .from('subscription')
+    .where({ 'subscription.user_id': session.user.id })
+    .select(
+      'subscription.storage_quota_mib',
+      db.raw(`
+          (SELECT SUM(size) 
+          FROM upload 
+          WHERE upload.id 
+          IN (SELECT primary_audio_id FROM track WHERE track.author_id = subscription.user_id))
+          AS uploaded_size_mib`)
+    )
+    .first();
+
+  if (quota.storage_quota_mib && (quota.uploaded_size_mib + uploadedSize > quota.storage_quota_mib)) {
+    return {
+      success: false,
+      error: serviceError.upload.quotaExceeded
+    }
+  }
+
+  return {
+    success: true
+  }
+}

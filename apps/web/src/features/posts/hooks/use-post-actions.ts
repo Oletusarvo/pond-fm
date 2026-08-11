@@ -5,7 +5,7 @@ import { cancelable } from '../../../utils/debounced';
 import { usePostStore } from './use-post';
 
 type UsePostActionsProps = {
-  id: string;
+  trackId: string;
   onLikeToggled?: () => void;
   onLikeRollback?: () => void;
   onRepost?: () => void;
@@ -13,7 +13,7 @@ type UsePostActionsProps = {
 };
 
 export function usePostActions({
-  id,
+  trackId: id,
   onLikeToggled,
   onLikeRollback,
   onRepost,
@@ -29,7 +29,7 @@ export function usePostActions({
       .countPlay(post.track.id)
       .then(res => {
         if (!res.ok) return;
-        postStore.updatePost(post.id, {
+        postStore.updatePost(id, {
           play_count: newPlayCount,
         });
 
@@ -43,7 +43,7 @@ export function usePostActions({
     const initialIsLiked = post?.liked_by_me;
     const initialLikeCount = Number(post?.like_count);
     const initialPost = { ...post };
-    postStore.updatePost(post.id, {
+    postStore.updatePost(id, {
       ...post,
       track: {
         ...post?.track,
@@ -52,11 +52,11 @@ export function usePostActions({
       liked_by_me: !initialIsLiked,
     });
     onLikeToggled?.();
-    const result = await cancelable.toggleTrackLike(post?.track.id, initialIsLiked);
+    const result = await cancelable.toggleTrackLike(id, initialIsLiked);
     if (result.executed) {
       const res = result.value;
       if (!res.ok) {
-        postStore.updatePost(post.id, initialPost);
+        postStore.updatePost(id, initialPost);
         onLikeRollback?.();
       }
 
@@ -70,7 +70,7 @@ export function usePostActions({
     if (initialIsReposted) {
       return;
     }
-    postStore.updatePost(post.id, {
+    postStore.updatePost(id, {
       ...post,
       track: {
         ...post?.track,
@@ -79,10 +79,10 @@ export function usePostActions({
       repost_count: initialIsReposted ? initialCount - 1 : initialCount + 1,
     });
     onRepost?.();
-    const result = await cancelable.repost(post?.track.id, initialIsReposted);
+    const result = await cancelable.repost(id, initialIsReposted);
     if (result.executed) {
       if (!result.value.ok) {
-        postStore.updatePost(post.id, initialPost);
+        postStore.updatePost(id, initialPost);
         onRepostRollback?.();
       }
     }

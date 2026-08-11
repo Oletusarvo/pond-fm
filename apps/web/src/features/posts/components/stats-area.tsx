@@ -1,18 +1,24 @@
 import { Play, Settings } from 'lucide-react';
 import { usePostContext } from '../providers/post-provider';
-import { Count } from './count';
+import { CountButton } from './count-button';
 import { LikeButton } from './like-button';
 import { RepostButton } from './repost-button';
 import { TipButton } from './tip-button';
 import { useAuthContext } from '../../auth/providers/auth-provider';
 import { Button } from '../../../components/button';
 
+/**Renders a posts play count, like count and repost count using the CountButton-, LikeButton-, and RepostButton components. 
+ * Must be placed within a PostProvider. Depends on the AuthProvider, and will skip rendering of the repost button if the current
+ * authenticated user is the author of the post track.
+*/
 export function StatsArea() {
   const { post } = usePostContext();
   const authService = useAuthContext();
   return (
     <div className='flex gap-5 items-center'>
-      <Count
+      <CountButton
+        disabled={true}
+        color='inherit'
         icon={Play}
         value={post?.play_count}
       />

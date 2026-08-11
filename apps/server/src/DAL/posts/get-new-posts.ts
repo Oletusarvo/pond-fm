@@ -16,7 +16,7 @@ export async function getNewPosts(ctx: DBContext, config: FeedQueryConfig) {
   filterByMoods(query, config.moods);
   onlyReadyUploads(query);
   applyCursor(query, {
-    ...config,
+    cursor: config.cursor,
     dir: 'desc',
     timestampColumn: 'post.created_at',
     idColumn: 'post.id'

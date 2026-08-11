@@ -9,12 +9,13 @@ import { createUploadSchema } from "../../../schemas/create-upload-schema";
 import { completeUploadSchema } from "../../../schemas/complete-upload-schema";
 import { uploadFileHandler } from "./handlers/upload-file-handler";
 import { verifyUploadToken } from "./middleware/verify-upload-token";
+import { verifyUploadHeaderSignature } from "./middleware/verify-upload-header-signature";
 
 const router = getRouter();
 
 
 router.post('/create', checkAuth(), createBodyParser(createUploadSchema), createUploadHandler);
-router.post('/', checkAuth(), verifyUploadToken, upload.single('file'), uploadFileHandler);
-router.post('/complete', checkAuth(), verifyUploadToken, createBodyParser(completeUploadSchema), completeUploadHandler);
+router.post('/complete/:code', checkAuth(), completeUploadHandler);
+router.post('/*key', checkAuth(), verifyUploadHeaderSignature, uploadFileHandler);
 
 export { router as uploadRouter }

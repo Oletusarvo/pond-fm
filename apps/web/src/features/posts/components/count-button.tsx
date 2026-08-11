@@ -2,15 +2,14 @@ import { useMemo } from 'react';
 import { usePostContext } from '../providers/post-provider';
 import { Button } from '../../../components/button';
 
-export function Count({
+export function CountButton({
   icon: Icon,
   value,
   ...props
-}: { icon: React.FC<any>; value: number } & Pick<
-  React.ComponentProps<'button'>,
-  'onClick' | 'disabled'
+}: { value: number } & Pick<
+  React.ComponentProps<typeof Button>,
+  'onClick' | 'disabled' | 'color' | 'icon'
 >) {
-  const post = usePostContext();
   const convertedCount = useMemo(() => {
     const rawCount = value >= 1000 ? value / 1000 : value >= 1000000 ? value / 1000000 : value;
     const roundedCount = Math.round(rawCount * 100) / 100;

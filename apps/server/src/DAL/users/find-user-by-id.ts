@@ -7,9 +7,13 @@ import { withUnseenNotificationCount } from "./with/with-unseen-notification-cou
 
 export async function findUserById(ctx: DBContext, config: { user: { id: string } }) {
   const query = getUserQuery(ctx);
-  withFollowerCount(query);
   withUnseenNotificationCount(query);
+  query.leftJoin('unseen_notification_count', 'unseen_notification_count.recipient_id', 'users.id');
+  //withFollowerCount(query);
+
   selectUser(query);
   selectUnseenNotificationCount(query);
-  return await query.where({ 'users.id': config.user.id }).first();
+  query.select('subscription.json AS subscription')
+
+  return await query.where({ 'user.id': config.user.id }).first();
 }

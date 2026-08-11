@@ -16,6 +16,7 @@ export type ExpressRequest<T extends TData = any> = Request & {
     uploadId: string;
     userId: string;
     code: string;
+    key: string;
   };
   sessionToken: {
     id: string;

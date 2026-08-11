@@ -5,14 +5,15 @@ import { selectUser } from "./select/select-user";
 import { withFollowerCount } from "./with/with-follower-count";
 import { withUnseenNotificationCount } from "./with/with-unseen-notification-count";
 
-export async function findUserByEmail(ctx: DBContext, config: { user: { email: string } }) {
+export async function findUserByEmail(ctx: DBContext, config: { email: string }) {
   const query = getUserQuery(ctx);
   withUnseenNotificationCount(query);
   query.leftJoin('unseen_notification_count', 'unseen_notification_count.recipient_id', 'users.id');
-  //withFollowerCount(query);
+  query.join({ subscription: 'subscription' }, 'subscription.user_id', 'users.id');
 
   selectUser(query);
   selectUnseenNotificationCount(query);
+  query.select('subscription.json AS subscription')
 
-  return await query.where({ email: config.user.email }).first();
+  return await query.where({ email: config.email }).first();
 }

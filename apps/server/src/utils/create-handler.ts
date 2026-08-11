@@ -13,7 +13,7 @@ const runHandler = async <THandlerRet>(
   const [result, err] = await tryCatch(async () => await handler());
 
   if (err !== null) {
-    console.log(err.message);
+    console.log(err.stack);
     const errorResponse = onError ? onError(err, res) : null;
     if (errorResponse) {
       return errorResponse;

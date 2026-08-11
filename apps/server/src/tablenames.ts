@@ -15,5 +15,8 @@ export const tablenames = {
   followers: 'follower_data',
   uploads: 'upload.upload_data',
   audio: 'upload.audio_data',
-  uploadTokens: 'upload.upload_token_data'
+  uploadTokens: 'upload.upload_token_data',
+  plans: 'billing.plan_data',
+  subscriptions: 'billing.subscription_data',
+  subscriptionQuotaOverrides: 'billing.subscription_quota_override_data'
 } as const;

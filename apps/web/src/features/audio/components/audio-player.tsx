@@ -1,12 +1,12 @@
 import { useCallback, useState } from 'react';
 import { postToPlayback } from '../../../utils/post-to-playback';
-import { usePostContext } from '../providers/post-provider';
-import { PlayButton } from './play-button';
-import { Waveform } from './waveform';
+import { usePostContext } from '../../posts/providers/post-provider';
+import { PlayButton } from '../../posts/components/play-button';
+import { Waveform } from '../../posts/components/waveform';
 import { useEventHandler } from '../../../hooks/use-event-handler';
-import { usePlaybackContext } from '../../audio/providers/playback-provider';
+import { usePlaybackContext } from '../providers/playback-provider';
 
-export function LargePlayer() {
+export function AudioPlayer() {
   const { playbackState, togglePlayback, currentPlayback, audioRef, updateCurrentPlayback } =
     usePlaybackContext();
   const { post } = usePostContext();

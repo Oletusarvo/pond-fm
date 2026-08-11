@@ -9,6 +9,8 @@ import { Post } from './post';
 import { FeedProvider } from '../../../providers/feed-provider';
 import { PopulatePostStore } from '../providers/populates-post-store';
 
+/**Renders feeds using the Post-component as the renderComponent. Each Post is wrapped inside a PostProvider. 
+ * This component must be placed within a FeedProvider, and will populate the post store with the fetched items. */
 export function PostFeed() {
   return (
     <PopulatePostStore>
@@ -17,10 +19,8 @@ export function PostFeed() {
         renderComponent={({ item }) => {
           if (!item) return null;
           return (
-            <PostProvider id={item.id}>
-              <TippingProvider recipient={item.track.author}>
-                <Post />
-              </TippingProvider>
+            <PostProvider trackId={item.track.id}>
+              <Post />
             </PostProvider>
           );
         }}

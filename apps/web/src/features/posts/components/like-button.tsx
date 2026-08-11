@@ -1,17 +1,19 @@
 import { Heart } from 'lucide-react';
 import { usePostContext } from '../providers/post-provider';
-import { Count } from './count';
+import { CountButton } from './count-button';
 import { useAuthContext } from '../../auth/providers/auth-provider';
 import { useActionContext } from '../../../providers/action-provider';
 import { usePostActions } from '../hooks/use-post-actions';
+import { Button } from '../../../components/button';
 
 export function LikeButton() {
   const { post } = usePostContext();
-  const postActions = usePostActions({ id: post.id });
+  const postActions = usePostActions({ trackId: post.track.id });
   const { status } = useAuthContext();
   const color = 'var(--color-red-500)';
   return (
-    <Count
+    <CountButton
+      color={'inherit'}
       disabled={status !== 'authenticated'}
       icon={props => (
         <Heart

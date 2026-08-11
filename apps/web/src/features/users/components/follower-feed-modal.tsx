@@ -8,7 +8,7 @@ import { FollowerItem } from "./follower-item";
 export function FollowerFeedModal() {
   const userService = useUserContext();
   const navigate = useNavigate();
-  return <FeedModal title="Followers"
+  return <FeedModal title={`Followers of ${userService.user.username}`}
     onClose={() => userService.toggleShowFollowerModal(false)}
     queryKey={['followers', userService.user?.id]}
     queryFn={cursor => apiService.getFollowers(userService.user?.id, cursor)}>

@@ -204,20 +204,18 @@ export class ApiService {
     return await fetch(this.withEndpoint('upload/create'), req);
   }
 
-  async uploadToUrl(file: File, config: { uploadUrl: string; token: string }) {
-    const fd = new FormData();
-    fd.append('file', file);
+  async uploadToUrl(file: File, uploadUrl: string) {
     const req = requestBuilder
-      .authorization(config.token)
-      .formData(fd)
-      .includeCredentials().post().build();
-    return await fetch(config.uploadUrl, req);
+      .file(file)
+      .includeCredentials()
+      .post()
+      .build();
+    return await fetch(uploadUrl, req);
   }
 
-  async completeUpload(payload: { token: string; title: string; moods: string[]; genre: string }) {
-    const { token, ...rest } = payload;
-    const req = requestBuilder.post().authorization(token).body(rest).json().includeCredentials().build();
-    return await fetch(this.withEndpoint('upload/complete'), req);
+  async completeUpload(payload: { title: string; moods: string[]; genre: string }, code: string) {
+    const req = requestBuilder.post().body(payload).json().includeCredentials().build();
+    return await fetch(this.withEndpoint(['upload/complete', code].join('/')), req);
   }
 
   async refreshSession(newSession: any) {

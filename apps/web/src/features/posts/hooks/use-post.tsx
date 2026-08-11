@@ -5,10 +5,10 @@ import { create } from 'zustand';
 type PostState = {
   posts: Record<string, TPost>;
   showRepostModal: boolean;
-  getPost: (id: string) => TPost | undefined;
+  getPost: (trackId: string) => TPost | undefined;
   setPosts: (newPosts: TPost[]) => void;
   setIsPending: (state: boolean) => void;
-  updatePost: (id: string, data: Partial<TPost>) => void;
+  updatePost: (trackId: string, data: Partial<TPost>) => void;
 }
 export const usePostStore = create<PostState>((set, get) => ({
   posts: {},
@@ -25,23 +25,24 @@ export const usePostStore = create<PostState>((set, get) => ({
       isPending: pendingState,
     }
   }),
-  getPost: (id: string): TPost | undefined => get().posts[id],
+  getPost: (trackId: string): TPost | undefined => get().posts[trackId],
   setPosts: (posts) => set((state) => {
     return {
       posts: {
         ...state.posts,
         ...Object.fromEntries(
-          posts.map(p => ([p.id, p]))
+          posts.map(p => ([p.track.id, p]))
         )
       }
     }
   }),
-  updatePost: (id, newPost) => set((state) => {
-    const oldData = state.posts[id];
+  updatePost: (trackId, newPost) => set((state) => {
+    console.log('Updating post', trackId)
+    const oldData = state.posts[trackId];
     return {
       posts: {
         ...state.posts,
-        [id]: {
+        [trackId]: {
           ...oldData,
           ...newPost,
         }
@@ -50,18 +51,18 @@ export const usePostStore = create<PostState>((set, get) => ({
   })
 }))
 
-export function usePost(id: string) {
+export function usePost(trackId: string) {
   const queryClient = useQueryClient();
   const postStore = usePostStore();
-  const post = postStore.getPost(id);
+  const post = postStore.getPost(trackId);
   const updatePost = (newState: Partial<TPost>) => {
-    postStore.updatePost(id, newState);
+    postStore.updatePost(trackId, newState);
     //Tempoary solution to keep cache in sync.
     queryClient.setQueriesData({ queryKey: ['feed'] }, (oldData: { cursor: string; items: any[] }) => {
       if (!oldData) return oldData;
       return {
         ...oldData,
-        items: oldData.items.map(item => item.id === id ? { ...item, ...newState } : item)
+        items: oldData.items.map(item => item.track.id === trackId ? { ...item, ...newState } : item)
       }
     });
   }

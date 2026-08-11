@@ -18,10 +18,10 @@ const [PostContext, usePostContext] = setupContext<{
 }>({ name: 'PostContext' });
 
 type PostProviderProps = React.PropsWithChildren & {
-  id: string;
+  trackId: string;
 };
 
-export function PostProvider({ children, id }: PostProviderProps) {
+export function PostProvider({ children, trackId: id }: PostProviderProps) {
   const { post, updatePost } = usePost(id);
   const [showRepostModal, setShowRepostModal] = useState(false);
   const authService = useAuthContext();

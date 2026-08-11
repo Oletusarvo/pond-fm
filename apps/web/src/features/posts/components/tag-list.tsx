@@ -12,6 +12,7 @@ type TagListProps = {
   size?: React.ComponentProps<typeof Tag>['size'];
 };
 
+/**Renders a list of tags as the Tag-component. */
 export function TagList({ tags, onTagSelected, selectedTags, color = 'primary', size }: TagListProps) {
   return (
     <div className='flex items-center gap-2 max-w-full shrink-0 no-scrollbar'>

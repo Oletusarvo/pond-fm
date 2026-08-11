@@ -5,9 +5,10 @@ import { usePostContext } from "../providers/post-provider";
 import { Button } from "../../../components/button";
 import { usePostActions } from "../hooks/use-post-actions";
 
+/**Renders the modal prompting confirmation of reposts. */
 export function RepostModal() {
   const { post, toggleRepost } = usePostContext();
-  const postActions = usePostActions({ id: post.id });
+  const postActions = usePostActions({ trackId: post.track.id });
   return (
     <Modal
       title='Repost Track'
@@ -40,8 +41,8 @@ export function RepostModal() {
               toggleRepost(false);
             }}
             variant='contained'
-            fullWidth>
-            <Repeat size='1rem' />
+            fullWidth icon={Repeat}>
+
             Repost
           </Button>
         </div>

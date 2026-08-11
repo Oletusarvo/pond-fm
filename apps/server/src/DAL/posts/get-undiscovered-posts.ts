@@ -17,7 +17,6 @@ export async function getUndiscoveredPosts(ctx: DBContext, config: FeedQueryConf
   onlyReadyUploads(query);
   filterByGenres(query, config.genres);
   filterByMoods(query, config.moods);
-
   query.where('track.unique_play_count', '<', 100)
     .orderBy('post.created_at', 'asc');
   applyCursor(query, {

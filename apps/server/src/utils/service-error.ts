@@ -16,9 +16,13 @@ export const serviceError = {
     duplicateLike: postError('duplicate-like'),
     uniqueListenerUpdateFail: postError('unique-listener-update-fail'),
   },
+  upload: {
+    quotaExceeded: buildErrorString('upload', 'quota-exceeded')
+  },
   server: {
     unexpected: buildErrorString('server', 'unexpected'),
   },
+
 } as const;
 
 export const errorValues = [

@@ -11,13 +11,13 @@ export class UserService {
   constructor(private repo: UserRepository) { }
 
   async createIfNotExists(ctx: DBContext, config: Parameters<typeof findUserByEmail>[1]) {
-    let user = await this.repo.findByEmail(ctx, config);
+    let user = await ctx(tablenames.users).where({ email: config.email }).select('id').first();
     if (!user) {
       //Create a new pending user record.
       const defaultUserId = crypto.randomBytes(8).toString('hex');
       const userNumber = BigInt('0x' + defaultUserId).toString();
       const defaultUserName = `user-${userNumber}`;
-      user = await this.repo.createNewUser(ctx, { user: { email: config.user.email, username: defaultUserName } });
+      user = await this.repo.createNewUser(ctx, { user: { email: config.email, username: defaultUserName } });
     }
 
     return { success: true, data: user } as ServiceSuccessResponse<{ id: string }>;

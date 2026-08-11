@@ -10,14 +10,15 @@ import { usePost } from "../../posts/hooks/use-post";
 import { usePostActions } from "../../posts/hooks/use-post-actions";
 import { RepostButton } from "../../posts/components/repost-button";
 import { LikeButton } from "../../posts/components/like-button";
+import { useAuthContext } from "../../auth/providers/auth-provider";
 
 export function MiniPlayerWithInfo() {
   const playbackService = usePlaybackContext();
   const scrobbleService = useScrobbleContext();
-
+  const authService = useAuthContext();
   return (
-    <div className="flex flex-col w-full bg-slate-900 text-white">
-      <div className="flex w-full justify-between items-center px-2 py-4">
+    <div className="flex flex-col w-full bg-slate-900 text-white h-pad">
+      <div className="flex w-full justify-between items-center py-4">
         <div className="flex flex-col gap-0 leading-1">
           {playbackService.currentPlayback ? <small className="animate-pulse text-green-100">Now playing</small> : <small className="text-green-100">Nothing playing.</small>}
           <h3 className="text-green-100 font-semibold text-lg">{playbackService.currentPlayback?.title}</h3>
@@ -25,10 +26,14 @@ export function MiniPlayerWithInfo() {
         </div>
         {
           playbackService.currentPlayback ? (
-
-            <PostProvider id={playbackService.currentPlayback.post_id}>
+            <PostProvider trackId={playbackService.currentPlayback.id}>
               <div className="flex items-center gap-4">
-                <RepostButton />
+                {
+                  authService.session?.user.id !== playbackService.currentPlayback.author.id ? (
+                    <RepostButton />
+
+                  ) : null
+                }
                 <LikeButton />
               </div>
             </PostProvider>
@@ -69,7 +74,7 @@ function LikeButton2() {
   const playbackService = usePlaybackContext();
   const postId = playbackService.currentPlayback.post_id;
 
-  const { toggleLike } = usePostActions({ id: postId });
+  const { toggleLike } = usePostActions({ trackId: postId });
   const { post } = usePost(postId);
 
   const likedByMe = post.liked_by_me;

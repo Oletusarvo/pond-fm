@@ -8,6 +8,8 @@ import { createBodyParser } from '../../../utils/create-body-parser';
 import { requestAuthorizationSchema } from '../../../schemas/request-authorization-schema';
 import { authorizeByCodeSchema } from '../../../schemas/authorize-by-code-schema';
 import { refreshSessionHandler } from './handlers/refresh-session-handler';
+import { requestRegistrationHandler } from './handlers/request-registration-handler';
+import { requestRegistrationSchema } from '../../../schemas/request-registration-schema';
 
 const router = getRouter();
 
