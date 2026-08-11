@@ -1,4 +1,5 @@
 seeds
 node_modules
 mock-data
+uploads
 .env
