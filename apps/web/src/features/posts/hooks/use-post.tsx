@@ -1,6 +1,7 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { TPost } from "../../../types/post";
 import { create } from 'zustand';
+import { useTransition } from "react";
 
 type PostState = {
   posts: Record<string, TPost>;
@@ -54,28 +55,30 @@ export function usePost(trackId: string) {
   const queryClient = useQueryClient();
   const postStore = usePostStore();
   const post = postStore.getPost(trackId);
+  const [tansition, startTransition] = useTransition();
   const updatePost = (newState: Partial<TPost>) => {
     console.log('Running update post...');
     postStore.updatePost(trackId, newState);
     //Tempoary solution to keep cache in sync.
     //queryClient.invalidateQueries({ queryKey: ['feed'] });
 
-    queryClient.setQueriesData({ queryKey: ['feed'] }, (oldData: any) => {
-      if (!oldData) return oldData;
-      const newPages = oldData.pages.map(page => {
+    startTransition(() => {
+      queryClient.setQueriesData({ queryKey: ['feed'] }, (oldData: any) => {
+        if (!oldData) return oldData;
+        const newPages = oldData.pages.map(page => {
+          return {
+            ...page, items: page.items.map(item => {
+              return item.track.id === trackId ? { ...item, ...newState } : item
+            })
+          }
+        });
+
         return {
-          ...page, items: page.items.map(item => {
-            return item.track.id === trackId ? { ...item, ...newState } : item
-          })
+          ...oldData,
+          pages: newPages,
         }
       });
-
-      return {
-        ...oldData,
-        pages: newPages,
-      }
     });
-
   }
   return {
     post, updatePost,
