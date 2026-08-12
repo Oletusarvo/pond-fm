@@ -3,6 +3,9 @@ import { NotificationsModal } from '../components/notifications-modal';
 import { createProvider } from '../../../utils/create-provider';
 import { useFeedContext } from '../../../providers/feed-provider';
 import { useAuthContext } from '../../auth/providers/auth-provider';
+import { useQuery } from '@tanstack/react-query';
+import { apiService } from '../../../utils/api-service';
+import { useInfiniteFeed } from '../../../hooks/use-infinite-feed';
 
 export const [NotificationsProvider, useNotificationsContext] = createProvider({
   contextName: 'NotificationsProvider',
@@ -11,18 +14,13 @@ export const [NotificationsProvider, useNotificationsContext] = createProvider({
     return showNotificationsModal ? <NotificationsModal /> : null;
   },
   hook: () => {
-    const authService = useAuthContext();
     const [showNotificationsModal, setShowNotificationsModal] = useState(false);
-    const hasUnseen = useRef<boolean>(authService.session?.user.unseen_notification_count > 0 || false);
     const toggleShowNotificationsModal = (state: boolean) => {
       setShowNotificationsModal(state);
     };
-    const updateHasUnseen = (state: boolean) => hasUnseen.current = state;
 
     return {
-      hasUnseen: hasUnseen.current,
       toggleShowNotificationsModal,
-      updateHasUnseen,
       showNotificationsModal,
     };
   },

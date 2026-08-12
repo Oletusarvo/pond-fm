@@ -3,7 +3,7 @@ import { Button } from "../../../components/button";
 import { cancelable } from "../../../utils/debounced";
 import { useQueryClient } from "@tanstack/react-query";
 import { useUserContext } from "../../users/providers/user-proivder";
-import { Music, UserMinus, UserPlus } from "lucide-react";
+import { Music, User, UserMinus, UserPlus } from "lucide-react";
 
 /**@todo This should be moved under features/users/components */
 export function UserHeader() {
@@ -40,17 +40,20 @@ export function UserHeader() {
 
   return (
     <div className='py-2 w-full h-pad leading-none flex flex-row justify-between xs:items-start'>
-      <div className="flex sm:gap-8 xs:gap-1 md:items-center xs:items-start">
+      <div className="flex sm:gap-8 xs:gap-2 md:items-center xs:items-start">
         <div className="flex gap-2 items-center">
-          <Music size="1.2rem" color="var(--color-primary)" />
+          <User size="1.2rem" color="var(--color-primary)" />
           <h2 className='text-sm font-semibold text-primary'>{user.username}</h2>
         </div>
-        <Button variant="ghost" onClick={onFollowButtonClicked} icon={FollowButtonIcon}><span className="text-sm text-primary">
-          {followedByMe ? 'Unfollow' : 'Follow'}</span></Button>
+        <Button
+          color={followedByMe ? 'danger' : 'primary'}
+          variant="ghost"
+          onClick={onFollowButtonClicked} icon={FollowButtonIcon}><span className="text-sm">
+            {followedByMe ? 'Unfollow' : 'Follow'}</span></Button>
 
       </div>
 
-      <div className="flex items-center sm:gap-4 xs:gap-1">
+      <div className="flex items-center sm:gap-4 xs:gap-2">
         <Button
           variant="ghost"
           onClick={() => userService.toggleShowFollowingModal(true)}>

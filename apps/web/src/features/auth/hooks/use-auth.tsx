@@ -51,6 +51,7 @@ export function useAuth() {
   const refreshSession = async (newSession: any) => {
     let payload;
     queryClient.setQueryData(['session'], (oldSession: any) => {
+      if (!oldSession) return oldSession;
       const newData = {
         ...oldSession,
         user: {

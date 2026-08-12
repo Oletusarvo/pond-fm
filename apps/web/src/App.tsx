@@ -10,7 +10,7 @@ import { AuthorizationScreen } from './features/auth/screens/authorization-scree
 import { UploadTrackScreen } from './features/posts/screens/upload-track-screen';
 import { AppProvider } from './providers/app-provider';
 import { MainScreenFeed } from './features/posts/screens/main-feed-screen';
-import { UserScreen } from './features/posts/screens/user-screen';
+import { UserScreen } from './features/users/screens/user-screen';
 import { ScrobbleProvider } from './features/audio/providers/scrobble-provider';
 import { PlayCountProvider } from './features/audio/providers/playcount-provider';
 import { SearchScreen } from './features/posts/screens/search-screen';

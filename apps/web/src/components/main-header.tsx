@@ -1,17 +1,16 @@
-import { ArrowUpCircle, Bell, Menu, Settings, User } from 'lucide-react';
+import { ArrowUpCircle, Bell, Settings, User } from 'lucide-react';
 import { Button } from './button';
-import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useAuthContext } from '../features/auth/providers/auth-provider';
 import {
   NotificationsProvider,
   useNotificationsContext,
 } from '../features/notifications/providers/notifications-provider';
 import { ResponsiveLink } from './responsive-link';
-import { FeedProvider } from '../providers/feed-provider';
-import { useNotifications } from '../features/notifications/hooks/use-notifications';
-import { apiService } from '../utils/api-service';
 import { useSettingsContext } from '../features/auth/providers/settings-provider';
 import { UploadProvider, useUploadContext } from '../features/posts/providers/upload-context';
+import { FeedProvider, useFeedContext } from '../providers/feed-provider';
+import { apiService } from '../utils/api-service';
 
 export function MainHeader() {
   const navigate = useNavigate();
@@ -54,10 +53,15 @@ export function MainHeader() {
               onClick={() => navigate(`/user/${authService.session.user.id}`)}>
               <User />
             </Button>
+            <FeedProvider
+              queryKey={['notifications']}
+              queryFn={cursor => apiService.getNotifications(cursor)}
+              refetchInterval={1000 * 60}>
+              <NotificationsProvider>
+                <NotificationsButton />
+              </NotificationsProvider>
+            </FeedProvider>
 
-            <NotificationsProvider>
-              <NotificationsButton />
-            </NotificationsProvider>
 
             <UploadProvider>
               <UploadButton />
@@ -89,7 +93,9 @@ function UploadButton() {
 }
 
 function NotificationsButton() {
-  const { toggleShowNotificationsModal, hasUnseen } = useNotificationsContext();
+  const { toggleShowNotificationsModal } = useNotificationsContext();
+  const { data } = useFeedContext();
+  const hasUnseen = data?.some(item => item.seen_at == null);
   const authService = useAuthContext();
 
   return (

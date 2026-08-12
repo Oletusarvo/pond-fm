@@ -2,6 +2,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { TPost } from "../../../types/post";
 import { create } from 'zustand';
 import { useTransition } from "react";
+import { Key } from "lucide-react";
 
 type PostState = {
   posts: Record<string, TPost>;
@@ -11,6 +12,7 @@ type PostState = {
   setIsPending: (state: boolean) => void;
   updatePost: (trackId: string, data: Partial<TPost>) => void;
 }
+
 export const usePostStore = create<PostState>((set, get) => ({
   posts: {},
   showRepostModal: false,
@@ -49,19 +51,22 @@ export const usePostStore = create<PostState>((set, get) => ({
       }
     }
   })
-}))
+}));
 
 export function usePost(trackId: string) {
   const queryClient = useQueryClient();
   const postStore = usePostStore();
   const post = postStore.getPost(trackId);
+  /*
+  const post = queryClient
+    .getQueriesData({ queryKey: ['feed'] })
+    .flatMap(([key, data]: [string[], any]) => data.pages?.flatMap(page => page.items))?.find(item => item.track.id === trackId);
+*/
   const [tansition, startTransition] = useTransition();
+
   const updatePost = (newState: Partial<TPost>) => {
     console.log('Running update post...');
     postStore.updatePost(trackId, newState);
-    //Tempoary solution to keep cache in sync.
-    //queryClient.invalidateQueries({ queryKey: ['feed'] });
-
     startTransition(() => {
       queryClient.setQueriesData({ queryKey: ['feed'] }, (oldData: any) => {
         if (!oldData) return oldData;

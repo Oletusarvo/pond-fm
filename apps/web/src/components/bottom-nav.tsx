@@ -9,19 +9,19 @@ export function BottomNav() {
   const authService = useAuthContext();
 
   return (
-    <footer className='xs:flex items-center gap-16 w-full bg-primary text-white p-4 justify-center border-t-green-800 border-t md:hidden'>
-      <NavButton to='/'>
+    <footer className='xs:flex items-center gap-10 w-full bg-primary text-white justify-center border-t-green-800 border-t md:hidden'>
+      <NavButton to='/' title="Home">
         <House />
       </NavButton>
-      <NavButton to='/undiscovered'>
+      <NavButton to='/undiscovered' title="Undiscovered">
         <Sprout />
       </NavButton>
-      <NavButton to='/new'>
+      <NavButton to='/new' title="New">
         <Rss />
       </NavButton>
       {
         authService.status === 'authenticated' ? (
-          <NavButton to="/followed">
+          <NavButton to="/followed" title="Followed">
             <Network />
           </NavButton>
         ) : null
@@ -30,14 +30,19 @@ export function BottomNav() {
   );
 }
 
-function NavButton({ children, ...props }: React.ComponentProps<typeof ResponsiveLink>) {
+function NavButton({ children, title, ...props }: React.ComponentProps<typeof ResponsiveLink> & { title: string }) {
   return (
     <ResponsiveLink {...props}>
       <Button
+        color="inherit"
         type='button'
         variant='ghost'
         shape='circle'>
-        {children}
+        <div className="flex flex-col w-full items-center leading-0">
+          {children}
+          <small className="text-xs">{title}</small>
+        </div>
+
       </Button>
     </ResponsiveLink>
   );

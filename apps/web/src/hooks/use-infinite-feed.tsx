@@ -1,15 +1,13 @@
 import { useInfiniteQuery } from '@tanstack/react-query';
 import { useMemo } from 'react';
 
-type UseFeedProps = {
+type UseFeedProps = Omit<Parameters<typeof useInfiniteQuery>[0], 'initialPageParam' | 'getNextPageParam' | 'placeholderData' | 'queryFn'> & {
   queryFn: (cursor?: string) => Promise<Response>;
-  queryKey: Parameters<typeof useInfiniteQuery>[0]['queryKey'];
-  enabled?: boolean;
 };
 
-export function useInfiniteFeed({ queryFn, queryKey: key, enabled }: UseFeedProps) {
+export function useInfiniteFeed({ queryFn, ...props }: UseFeedProps) {
   const { data, fetchNextPage, ...query } = useInfiniteQuery({
-    queryKey: key,
+    ...props,
     queryFn: async ({ pageParam: cursor }) => {
       const res = await queryFn(cursor);
       return res.ok ? await res.json() : [];
@@ -17,14 +15,14 @@ export function useInfiniteFeed({ queryFn, queryKey: key, enabled }: UseFeedProp
     initialPageParam: undefined,
     getNextPageParam: (lastPage: any) => lastPage?.cursor,
     placeholderData: previousData => previousData,
-    enabled,
+    select: data => data?.pages.flatMap(page => page.items) ?? [],
   });
 
-  const items = useMemo(() => data?.pages.flatMap(page => page.items) ?? [], [data]);
-  const hasContent = useMemo(() => items.length > 0, [items.length]);
+  //const items = useMemo(() => data?.pages.flatMap(page => page.items) ?? [], [data]);
+  const hasContent = useMemo(() => data?.length > 0, [data?.length]);
   return {
     ...query,
-    data: items,
+    data,
     hasContent,
     fetchNextPage,
   };

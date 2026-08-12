@@ -1,46 +1,53 @@
 import { Heart, Repeat, UserPlus } from 'lucide-react';
 import { Modal } from '../../../components/modal';
-import { NotificationsProvider, useNotificationsContext } from '../providers/notifications-provider';
+import { useNotificationsContext } from '../providers/notifications-provider';
 import { useEffect } from 'react';
 import { formatDistanceToNow } from 'date-fns';
 import { apiService } from '../../../utils/api-service';
 import { Feed } from '../../../components/feed';
-import { FeedProvider, useFeedContext } from '../../../providers/feed-provider';
-import React from 'react';
-import { Separator } from '../../../components/separator';
-import { useAuthContext } from '../../auth/providers/auth-provider';
-import { FeedModal } from '../../../components/feed-modal';
-import { Link, useNavigate } from 'react-router-dom';
+import { useFeedContext } from '../../../providers/feed-provider';
+import { useNavigate } from 'react-router-dom';
+import { useQueryClient } from '@tanstack/react-query';
 
 export function NotificationsModal() {
-  const { toggleShowNotificationsModal, hasUnseen, updateHasUnseen } = useNotificationsContext();
-  const authService = useAuthContext();
-  if (hasUnseen) {
-    updateHasUnseen(false);
-  }
+  const { toggleShowNotificationsModal } = useNotificationsContext();
+  return (
+    <Modal
+      title='Notifications'
+      onClose={() => toggleShowNotificationsModal(false)}>
+      <ModalContent />
+    </Modal>
+  );
+}
+
+function ModalContent() {
+  const queryClient = useQueryClient();
+  const { data } = useFeedContext();
+  const hasUnseen = data?.some(item => item.seen_at == null);
 
   useEffect(() => {
     if (hasUnseen) {
       apiService
         .markNotificationsAsSeen()
+        .then(() => {
+
+        })
         .catch(err => {
           console.log('Failed to mark notifications as seen!', err.message);
         });
+      return () => {
+        console.log('Updating notifications cache')
+        queryClient.invalidateQueries({ queryKey: ['notifications'] });
+      }
     }
-  }, [updateHasUnseen]);
+  }, [hasUnseen]);
 
   return (
-    <FeedModal
-      queryFn={cursor => apiService.getNotifications(cursor)}
-      queryKey={['notifications', authService.session?.user.id]}
-      title='Notifications'
-      onClose={() => toggleShowNotificationsModal(false)}>
-      <Feed
-        renderComponent={({ item }) => <Notification notification={item} />}
-        keyExtractor={item => item.id}
-      />
-    </FeedModal>
-  );
+    <Feed
+      renderComponent={({ item }) => <Notification notification={item} />}
+      keyExtractor={item => item.id}
+    />
+  )
 }
 
 function Notification({ notification }) {
