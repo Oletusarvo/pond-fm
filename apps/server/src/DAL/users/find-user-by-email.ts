@@ -1,3 +1,4 @@
+import { db } from "../../db-config";
 import { DBContext } from "../../types/db-context";
 import { getUserQuery } from "./get-user-query";
 import { selectUnseenNotificationCount } from "./select/select-notification-count";
@@ -13,7 +14,9 @@ export async function findUserByEmail(ctx: DBContext, config: { email: string })
 
   selectUser(query);
   selectUnseenNotificationCount(query);
-  query.select('subscription.json AS subscription')
+  query.select(
+    db.raw("JSON_BUILD_OBJECT('id', subscription.id, 'label', subscription.label) AS subscription")
+  );
 
   return await query.where({ email: config.email }).first();
 }

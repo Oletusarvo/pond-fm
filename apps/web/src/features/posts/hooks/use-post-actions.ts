@@ -2,7 +2,7 @@ import { useQueryClient } from '@tanstack/react-query';
 import { TPost } from '../../../types/post';
 import { apiService } from '../../../utils/api-service';
 import { cancelable } from '../../../utils/debounced';
-import { usePostStore } from './use-post';
+import { usePost, usePostStore } from './use-post';
 
 type UsePostActionsProps = {
   trackId: string;
@@ -19,8 +19,7 @@ export function usePostActions({
   onRepost,
   onRepostRollback,
 }: UsePostActionsProps) {
-  const postStore = usePostStore();
-  const post = postStore.getPost(id);
+  const { post, updatePost } = usePost(id);
   const countPlay = async () => {
     const initialPlayCount = post.play_count;
     const newPlayCount = initialPlayCount + 1;
@@ -29,7 +28,7 @@ export function usePostActions({
       .countPlay(post.track.id)
       .then(res => {
         if (!res.ok) return;
-        postStore.updatePost(id, {
+        updatePost({
           play_count: newPlayCount,
         });
 
@@ -43,11 +42,7 @@ export function usePostActions({
     const initialIsLiked = post?.liked_by_me;
     const initialLikeCount = Number(post?.like_count);
     const initialPost = { ...post };
-    postStore.updatePost(id, {
-      ...post,
-      track: {
-        ...post?.track,
-      },
+    updatePost({
       like_count: initialIsLiked ? initialLikeCount - 1 : initialLikeCount + 1,
       liked_by_me: !initialIsLiked,
     });
@@ -56,7 +51,7 @@ export function usePostActions({
     if (result.executed) {
       const res = result.value;
       if (!res.ok) {
-        postStore.updatePost(id, initialPost);
+        updatePost(initialPost);
         onLikeRollback?.();
       }
 
@@ -70,11 +65,7 @@ export function usePostActions({
     if (initialIsReposted) {
       return;
     }
-    postStore.updatePost(id, {
-      ...post,
-      track: {
-        ...post?.track,
-      },
+    updatePost({
       reposted_by_me: !initialIsReposted,
       repost_count: initialIsReposted ? initialCount - 1 : initialCount + 1,
     });
@@ -82,7 +73,7 @@ export function usePostActions({
     const result = await cancelable.repost(id, initialIsReposted);
     if (result.executed) {
       if (!result.value.ok) {
-        postStore.updatePost(id, initialPost);
+        updatePost(initialPost);
         onRepostRollback?.();
       }
     }

@@ -37,7 +37,6 @@ export const usePostStore = create<PostState>((set, get) => ({
     }
   }),
   updatePost: (trackId, newPost) => set((state) => {
-    console.log('Updating post', trackId)
     const oldData = state.posts[trackId];
     return {
       posts: {
@@ -56,15 +55,27 @@ export function usePost(trackId: string) {
   const postStore = usePostStore();
   const post = postStore.getPost(trackId);
   const updatePost = (newState: Partial<TPost>) => {
+    console.log('Running update post...');
     postStore.updatePost(trackId, newState);
     //Tempoary solution to keep cache in sync.
-    queryClient.setQueriesData({ queryKey: ['feed'] }, (oldData: { cursor: string; items: any[] }) => {
+    //queryClient.invalidateQueries({ queryKey: ['feed'] });
+
+    queryClient.setQueriesData({ queryKey: ['feed'] }, (oldData: any) => {
       if (!oldData) return oldData;
+      const newPages = oldData.pages.map(page => {
+        return {
+          ...page, items: page.items.map(item => {
+            return item.track.id === trackId ? { ...item, ...newState } : item
+          })
+        }
+      });
+
       return {
         ...oldData,
-        items: oldData.items.map(item => item.track.id === trackId ? { ...item, ...newState } : item)
+        pages: newPages,
       }
     });
+
   }
   return {
     post, updatePost,
