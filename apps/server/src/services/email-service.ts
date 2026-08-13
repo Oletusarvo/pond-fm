@@ -25,7 +25,7 @@ class EmailService {
   async send({ to, subject, html }: { to: string; subject: string; html: string }) {
     const serviceEmail = loadEnvVariable('SERVICE_EMAIL', true);
     const body = JSON.stringify({
-      sender: { email: serviceEmail, name: 'E-MRK' },
+      sender: { email: serviceEmail, name: 'Pond.fm' },
       to: [{ email: to }],
       subject,
       htmlContent: html,
