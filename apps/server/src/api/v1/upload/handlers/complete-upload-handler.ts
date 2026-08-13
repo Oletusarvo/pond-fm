@@ -4,13 +4,14 @@ import { tablenames } from "../../../../tablenames";
 import { AuthenticatedExpressRequest } from "../../../../types/express";
 import { createHandler } from "../../../../utils/create-handler";
 import { generateWaveformDataFromStream } from "../../../../utils/generate-waveform-data";
-import { createReadStream } from 'fs';
+import { createReadStream, ReadStream } from 'fs';
 import { getUploadById } from "../../../../DAL/uploads/get-upload-by-id";
 import { createCanonicalPost } from "../../../../DAL/posts/create-canonical-post";
 import { parseStream } from "music-metadata";
 import { createSignedStreamUrl } from "../../../../utils/signed-stream";
 import { withTrack } from "../../../../DAL/posts/with/with-track";
 import { Readable } from "stream";
+import { getDuration } from "../../../../utils/calculate-audio-duration";
 
 export const completeUploadHandler = createHandler(
   async (req: AuthenticatedExpressRequest, res) => {
@@ -33,15 +34,19 @@ export const completeUploadHandler = createHandler(
         await db.transaction(async trx => {
           //Generate waveform and activate the track.
           const uploadRecord = await getUploadById(trx, { id: uploadToken.upload_id });
-          const { waveformStream, metadataStream } = await createStreams(uploadRecord.key);
+          const track = await withTrack(db.queryBuilder())
+            .from('track')
+            .where({ 'track.key': uploadRecord.key })
+            .select('id').first();
 
-          const metadata = await parseStream(metadataStream, {
-            mimeType: uploadRecord.mimeType,
-          });
-          const waveform = await generateWaveformDataFromStream(waveformStream, metadata.format.duration);
+          const signedStreamUrl = await createSignedStreamUrl(track.id) as string;
+          const duration = await getDuration(signedStreamUrl);
+          const waveformStream = await getFileStream(signedStreamUrl, uploadRecord.key) as any;
+
+          const waveform = await generateWaveformDataFromStream(waveformStream, duration);
 
           await trx(tablenames.audio).where({ upload_id: uploadRecord.id }).update({
-            duration: metadata.format.duration,
+            duration,
             waveform: JSON.stringify(waveform),
           });
 
@@ -56,6 +61,7 @@ export const completeUploadHandler = createHandler(
         reject(err);
       }
     });
+
     promise.catch(async err => {
       console.log('Failed to complete upload!', err.message);
     });
@@ -64,43 +70,29 @@ export const completeUploadHandler = createHandler(
   }
 )
 
-async function createStreams(key: string): Promise<{ metadataStream: Readable; waveformStream: Readable }> {
+async function calculateDuration(stream: Readable, mimeType: string) {
+  const metadata = await parseStream(stream, { mimeType });
+  console.log(metadata.format);
+  return metadata;
+}
+
+async function getFileStream(signedStreamUrl: string, key: string): Promise<Readable> {
   const objectStoreEnv = process.env.OBJECT_STORE_ENV;
 
   switch (objectStoreEnv) {
     case 'custom': {
-      const track = await withTrack(db.queryBuilder())
-        .from('track')
-        .where({ 'track.key': key })
-        .select('id').first();
-
-      const signedStreamUrl = await createSignedStreamUrl(track.id) as string;
-      const fileRequest = await fetch(signedStreamUrl, { method: 'GET' });
-      if (!fileRequest.ok) {
+      const stream = await fetch(signedStreamUrl);
+      if (!stream.ok) {
         throw new Error("Failed to fetch file stream for processing!");
       }
-      const [waveformBody, durationBody] = fileRequest.body.tee();
-
-      return {
-        waveformStream: Readable.fromWeb(waveformBody),
-        metadataStream: Readable.fromWeb(durationBody),
-      };
+      return Readable.fromWeb(stream.body);
     }
       break;
 
     default: {
       const filePath = path.join(process.cwd(), key);
-      const fileStream = createReadStream(filePath);
-      const webStream = Readable.toWeb(fileStream);
-      const [waveformBody, durationBody] = webStream.tee();
-      const waveformStream = Readable.fromWeb(waveformBody);
-      const metadataStream = Readable.fromWeb(durationBody);
-
-      return {
-        waveformStream,
-        metadataStream,
-      };
-
+      const stream = createReadStream(filePath);
+      return stream;
     }
   }
 }
