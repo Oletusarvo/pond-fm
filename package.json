@@ -8,7 +8,8 @@
     "dev:server": "npm run dev -w @pondfm/server",
     "build:web": "npm run build -w @pondfm/web",
     "build:server": "npm run build -w @pondfm/server",
-    "start:server": "npm run start -w @pondfm/server"
+    "start:server": "npm run start -w @pondfm/server",
+    "build:packages": "npm run build -w @pondfm/crypto && npm run build -w @pondfm/server-utils"
   },
   "workspaces": [
     "apps/*",
