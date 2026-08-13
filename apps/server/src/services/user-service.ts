@@ -6,6 +6,7 @@ import { DBContext } from '../types/db-context';
 import { ServiceResponse, ServiceSuccessResponse } from '../types/service-response';
 import crypto from 'crypto';
 import { findUserByEmail } from '../DAL/users/find-user-by-email';
+import { getLookupQuery } from '../DAL/util/get-lookup-query';
 
 export class UserService {
   constructor(private repo: UserRepository) { }
@@ -18,6 +19,10 @@ export class UserService {
       const userNumber = BigInt('0x' + defaultUserId).toString();
       const defaultUserName = `user-${userNumber}`;
       user = await this.repo.createNewUser(ctx, { user: { email: config.email, username: defaultUserName } });
+      await ctx(tablenames.subscriptions).insert({
+        user_id: user.id,
+        plan_id: getLookupQuery(tablenames.plans, 'free'),
+      })
     }
 
     return { success: true, data: user } as ServiceSuccessResponse<{ id: string }>;
