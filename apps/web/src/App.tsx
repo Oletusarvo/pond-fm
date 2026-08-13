@@ -13,7 +13,6 @@ import { MainScreenFeed } from './features/posts/screens/main-feed-screen';
 import { UserScreen } from './features/users/screens/user-screen';
 import { ScrobbleProvider } from './features/audio/providers/scrobble-provider';
 import { PlayCountProvider } from './features/audio/providers/playcount-provider';
-import { SearchScreen } from './features/posts/screens/search-screen';
 import { SettingsProvider } from './features/auth/providers/settings-provider';
 import { ProfileSettingsModal } from './features/auth/components/settings-modal';
 import { ActionProvider } from './providers/action-provider';
@@ -59,10 +58,7 @@ function App() {
                           path='new'
                           element={<MainScreenFeed />}
                         />
-                        <Route
-                          path='search'
-                          element={<SearchScreen />}
-                        />
+
                         <Route
                           path='upload'
                           element={<UploadTrackScreen />}
