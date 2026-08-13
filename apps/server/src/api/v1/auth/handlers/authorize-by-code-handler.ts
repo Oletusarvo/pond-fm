@@ -1,4 +1,4 @@
-import { serverConfig } from '../../../../../server-config';
+import { serverConfig } from '../../../../server-config';
 import { authService, userService } from '../../../../container';
 import { db } from '../../../../db-config';
 import { createHandler } from '../../../../utils/create-handler';

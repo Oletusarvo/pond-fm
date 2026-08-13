@@ -6,7 +6,6 @@ import { AuthenticatedExpressRequest, ExpressRequest } from "../../../../types/e
 import { createHandler } from "../../../../utils/create-handler";
 import crypto from 'crypto';
 import { createJWT } from "../../../../utils/jwt";
-import { createSignedUploadUrl } from "../../../../utils/create-signed-upload-url";
 import { keyof } from "zod";
 import { withSubscription } from "../../../../DAL/billing/with/with-subscription";
 import { serviceError } from "../../../../utils/service-error";
@@ -15,6 +14,8 @@ import { withTrack } from "../../../../DAL/posts/with/with-track";
 import { TSession } from "../../../../types/session";
 import path from "path";
 import { v4 } from "uuid";
+import { createSignedUploadUrl } from "../../../../utils/signed-upload";
+import { createCanonicalPost } from "../../../../DAL/posts/create-canonical-post";
 
 /**@todo */
 export const createUploadHandler = createHandler(
@@ -45,6 +46,16 @@ export const createUploadHandler = createHandler(
       });
 
       const audio = await createAudioUpload(trx, { uploadId: upload.id, bitrate: data.bitRate });
+      await createCanonicalPost(trx, {
+        track: {
+          title: data.title,
+          genre: data.genre,
+          moods: data.moods,
+          authorId: session.user.id,
+          audioId: upload.id,
+        } as any
+      });
+
       const code = crypto.randomBytes(32).toString('base64url');
       await trx(tablenames.uploadTokens).insert({
         upload_id: audio.upload_id,

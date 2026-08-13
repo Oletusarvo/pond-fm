@@ -1,6 +1,6 @@
 import { v4 } from 'uuid';
 import { createHandler } from '../../../../utils/create-handler';
-import { serverConfig } from '../../../../../server-config';
+import { serverConfig } from '../../../../server-config';
 import { createJWT } from '../../../../utils/jwt';
 
 export const createAnonymousSessionHandler = createHandler(async (req, res) => {

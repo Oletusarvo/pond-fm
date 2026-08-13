@@ -1,5 +1,4 @@
-import { feedService } from '../../../../container';
-import { db } from '../../../../db-config';
+
 import { AuthenticatedExpressRequest } from '../../../../types/express';
 import { createHandler } from '../../../../utils/create-handler';
 import { getCursor } from '../../../../utils/get-cursor';

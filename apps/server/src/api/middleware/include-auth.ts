@@ -1,7 +1,8 @@
-import { createMiddleware } from '../../../utils/create-handler';
-import { getAccessToken } from '../util/get-access-token';
+import { createMiddleware } from "@pondfm/server-utils";
+import { getAccessToken } from "./util/get-access-token";
+import { AuthenticatedExpressRequest } from "../../types/express";
 
-export const includeAuth = createMiddleware(async (req, res, next) => {
+export const includeAuth = createMiddleware(async (req: AuthenticatedExpressRequest, res, next) => {
   const token = getAccessToken(req);
   if (token) {
     //Decode the token and include the session as part of the request.

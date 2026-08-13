@@ -1,4 +1,4 @@
-import { serverConfig } from '../../../../../server-config';
+import { serverConfig } from '../../../../server-config';
 import { createMiddleware } from '../../../../utils/create-handler';
 import { verifyJWT } from '../../../../utils/jwt';
 

@@ -6,10 +6,8 @@ import { useEventHandler } from '../../../hooks/use-event-handler';
 import { useActionContext } from '../../../providers/action-provider';
 
 export function useAudioPlayer() {
-  const [currentPlayback, setCurrentPlayback] = useState<TPlayback | null>(null);
-  const playbackSrc = currentPlayback
-    ? `http://localhost:3002/api/v1/tracks/${currentPlayback.id}/stream`
-    : null;
+  const [currentPlayback, setCurrentPlayback] = useState<TPlayback & { streamUrl: string } | null>(null);
+  const playbackSrc = currentPlayback?.streamUrl;
 
   const [playbackState, setPlaybackState] = useState<'playing' | 'paused' | 'buffering'>('paused');
   const [playbackPosition, setPlaybackPosition] = useState(0);
@@ -22,8 +20,16 @@ export function useAudioPlayer() {
     if (currentPlayback?.id !== playback.id) {
       apiService
         .requestStreamToken(playback.id)
-        .then(() => {
-          setCurrentPlayback(playback);
+        .then(async (res) => {
+          if (!res.ok) {
+            throw new Error("Failed to start stream!");
+          }
+
+          const data = await res.json();
+          setCurrentPlayback({
+            ...playback,
+            streamUrl: data.streamUrl,
+          });
         })
         .catch(err => {
           console.log('Fetching of stream token failed!', err.message);

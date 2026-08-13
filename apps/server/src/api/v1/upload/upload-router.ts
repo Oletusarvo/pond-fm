@@ -16,6 +16,6 @@ const router = getRouter();
 
 router.post('/create', checkAuth(), createBodyParser(createUploadSchema), createUploadHandler);
 router.post('/complete/:code', checkAuth(), completeUploadHandler);
-router.post('/*key', checkAuth(), verifyUploadHeaderSignature, uploadFileHandler);
+router.put('/*key', checkAuth(), verifyUploadHeaderSignature, uploadFileHandler);
 
 export { router as uploadRouter }

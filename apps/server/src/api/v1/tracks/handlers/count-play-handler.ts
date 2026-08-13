@@ -1,4 +1,4 @@
-import { serverConfig } from '../../../../../server-config';
+import { serverConfig } from '../../../../server-config';
 import { scrobbleService } from '../../../../container';
 import { db } from '../../../../db-config';
 import { AuthenticatedExpressRequest } from '../../../../types/express';

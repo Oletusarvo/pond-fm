@@ -3,7 +3,7 @@ import path from 'node:path';
 import { createHandler } from '../../../../utils/create-handler';
 import { postService } from '../../../../container';
 import { db } from '../../../../db-config';
-import { serverConfig } from '../../../../../server-config';
+import { serverConfig } from '../../../../server-config';
 import { verifyJWT } from '../../../../utils/jwt';
 import { parseFile } from 'music-metadata';
 import mime from 'mime-types';

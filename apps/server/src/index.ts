@@ -2,9 +2,11 @@ import express from 'express';
 import cors from 'cors';
 import http from 'http';
 import cookieParser from 'cookie-parser';
-import { apiRouter } from './src/api/api-router';
-import { db } from './src/db-config';
-import { tablenames } from './src/tablenames';
+import { apiRouter } from './api/api-router';
+
+import { tablenames } from './tablenames';
+import { db } from './db-config';
+
 require('dotenv').config();
 const app = express();
 const allowedOrigins = ['http://localhost:5173', 'https://www.amplitune.com'];

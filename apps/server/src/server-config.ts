@@ -22,4 +22,4 @@ export const serverConfig = {
     secure: true,
     sameSite: 'none',
   } as CookieOptions,
-};
+} as const;

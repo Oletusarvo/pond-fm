@@ -164,16 +164,6 @@ export class ApiService {
     return await fetch(this.withEndpoint(`users/notifications/mark-as-seen`), req);
   }
 
-  async getSearchableFeed(currentSearch: string | null, cursor?: string) {
-    const req = requestBuilder.get().includeCredentials().build();
-    const url = new URL(this.withEndpoint(`tracks/search`));
-    url.searchParams.set('q', currentSearch);
-    if (cursor) {
-      url.searchParams.set('cursor', cursor);
-    }
-    return await fetch(url, req);
-  }
-
   async updateUser(payload: { username?: string }) {
     const req = requestBuilder.put().body(payload).json().includeCredentials().build();
     return await fetch(this.withEndpoint('users/username'), req);
@@ -199,7 +189,7 @@ export class ApiService {
     return await fetch(this.withEndpoint(`tracks/${id}`), req);
   }
 
-  async requestUploadUrl(payload: { filename: string; mimeType: string; size: number }) {
+  async requestUploadUrl(payload: { filename: string; mimeType: string; size: number; title: string; moods: string[]; genre: string }) {
     const req = requestBuilder.body(payload).json().includeCredentials().post().build();
     return await fetch(this.withEndpoint('upload/create'), req);
   }
@@ -208,13 +198,13 @@ export class ApiService {
     const req = requestBuilder
       .file(file)
       .includeCredentials()
-      .post()
+      .put()
       .build();
     return await fetch(uploadUrl, req);
   }
 
-  async completeUpload(payload: { title: string; moods: string[]; genre: string }, code: string) {
-    const req = requestBuilder.post().body(payload).json().includeCredentials().build();
+  async completeUpload(code: string) {
+    const req = requestBuilder.post().json().includeCredentials().build();
     return await fetch(this.withEndpoint(['upload/complete', code].join('/')), req);
   }
 

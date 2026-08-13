@@ -8,7 +8,8 @@
     "dev:server": "npm run dev -w @pondfm/server"
   },
   "workspaces": [
-    "apps/*"
+    "apps/*",
+    "packages/*"
   ],
   "author": "oletusarvo",
   "license": "ISC",

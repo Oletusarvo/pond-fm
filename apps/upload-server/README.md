@@ -1,0 +1,1 @@
+A mock object-storage api for use in development.

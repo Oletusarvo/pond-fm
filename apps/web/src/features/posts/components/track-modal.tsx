@@ -65,6 +65,9 @@ function ModalContent({ track, onClose }) {
       filename: file.name,
       mimeType: file.type,
       size: file.size,
+      title: data.title,
+      moods: data.moods,
+      genre: data.genre
     });
     if (!uploadUrlRes.ok) {
       return uploadUrlRes;
@@ -76,11 +79,7 @@ function ModalContent({ track, onClose }) {
       return uploadRes;
     }
 
-    return apiService.completeUpload({
-      title: data.title,
-      genre: data.genre,
-      moods: data.moods,
-    }, uploadData.code);
+    return apiService.completeUpload(uploadData.code);
   }
 
   const { submit, loading, status } = useSubmit({

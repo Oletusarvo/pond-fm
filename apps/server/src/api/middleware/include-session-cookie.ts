@@ -1,5 +1,5 @@
 import { v4 } from 'uuid';
-import { serverConfig } from '../../../server-config';
+import { serverConfig } from '../../server-config';
 import { createMiddleware } from '../../utils/create-handler';
 import { createJWT } from '../../utils/jwt';
 
