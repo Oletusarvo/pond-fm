@@ -243,4 +243,4 @@ export class ApiService {
 }
 
 /**Provides methods to perform actions on the server. */
-export const apiService = new ApiService(import.meta.env.DEV ? 'http://localhost:3002/api/v1' : '');
+export const apiService = new ApiService(import.meta.env.DEV ? 'http://localhost:3002/api/v1' : 'https://pond-fm-api.onrender.com/api/v1');
