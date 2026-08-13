@@ -3,7 +3,7 @@ import http from 'http';
 import { v1Router } from './api/v1/v1Router';
 import cors from 'cors';
 
-const allowedOrigins = ['http://localhost:5173', 'https://www.amplitune.com'];
+const allowedOrigins = ['http://localhost:5173', 'https://pond-fm-api.onrender.com', 'https://pond-fm.onrender.com'];
 const app = express();
 app.use(
   cors({

@@ -9,7 +9,7 @@ import { db } from './db-config';
 
 require('dotenv').config();
 const app = express();
-const allowedOrigins = ['http://localhost:5173', 'https://www.amplitune.com'];
+const allowedOrigins = ['http://localhost:5173', 'https://pond-fm.onrender.com'];
 app.use(cookieParser());
 app.use(
   cors({
