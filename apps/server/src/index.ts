@@ -52,6 +52,7 @@ async function runCleanup() {
   await db(tablenames.uploads)
     .where({ status: 'pending' })
     .whereRaw("CURRENT_TIMESTAMP - created_at >= INTERVAL '15min'")
+    .orWhere({ status: 'failed' })
     .del()
     .catch(err => console.log("Failed to delete expired uploads!", err.stack));
 

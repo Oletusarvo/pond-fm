@@ -14,6 +14,7 @@ import { TTrack } from "../../../types/track";
 import { useQueryClient } from "@tanstack/react-query";
 import { Button, LoaderButton } from "../../../components/button";
 import { ArrowUp, Trash, X } from "lucide-react";
+import { ProgressBar } from "./progress-bar";
 
 type TrackModalProps = {
   track?: TTrack;
@@ -59,6 +60,8 @@ function MoodSelector({ defaultSelected, onChange }) {
 function ModalContent({ track, onClose }) {
   const genreRef = useRef<string | null>(track?.genre);
   const moodsRef = useRef<string[]>(track?.moods || []);
+  const [progress, setProgress] = useState(0);
+  const [progressStatus, setProgressStatus] = useState('uploading');
   const queryClient = useQueryClient();
   const upload = async (data: any, file: File) => {
     const uploadUrlRes = await apiService.requestUploadUrl({
@@ -73,12 +76,21 @@ function ModalContent({ track, onClose }) {
       return uploadUrlRes;
     }
     const uploadData = await uploadUrlRes.json();
-    const uploadRes = await apiService.uploadToUrl(file, uploadData.uploadUrl);
-
-    if (!uploadRes.ok) {
-      return uploadRes;
+    try {
+      await apiService.uploadToUrl({
+        file,
+        method: 'PUT',
+        url: uploadData.uploadUrl,
+        onProgress: (percent) => {
+          setProgress(percent)
+        }
+      });
+    }
+    catch (err) {
+      return { ok: false }
     }
 
+    setProgressStatus('processing');
     return apiService.completeUpload(uploadData.code);
   }
 
@@ -118,6 +130,7 @@ function ModalContent({ track, onClose }) {
           </>
         }
       </div>
+      <ProgressBar progress={progress} status={progressStatus as any} />
       <Form onSubmit={submit}>
         <Form.Group label='Title'>
           <Input

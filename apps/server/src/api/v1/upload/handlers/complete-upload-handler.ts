@@ -4,14 +4,14 @@ import { tablenames } from "../../../../tablenames";
 import { AuthenticatedExpressRequest } from "../../../../types/express";
 import { createHandler } from "../../../../utils/create-handler";
 import { generateWaveformDataFromStream } from "../../../../utils/generate-waveform-data";
-import { createReadStream, ReadStream } from 'fs';
+import { createReadStream } from 'fs';
 import { getUploadById } from "../../../../DAL/uploads/get-upload-by-id";
-import { createCanonicalPost } from "../../../../DAL/posts/create-canonical-post";
-import { parseStream } from "music-metadata";
 import { createSignedStreamUrl } from "../../../../utils/signed-stream";
 import { withTrack } from "../../../../DAL/posts/with/with-track";
 import { Readable } from "stream";
 import { getDuration } from "../../../../utils/calculate-audio-duration";
+import { retry } from "@pondfm/server-utils";
+import { trackSchema } from "../../../../schemas/track-schema";
 
 export const completeUploadHandler = createHandler(
   async (req: AuthenticatedExpressRequest, res) => {
@@ -29,51 +29,61 @@ export const completeUploadHandler = createHandler(
       status: 'processing'
     });
 
-    const promise = new Promise<void>(async (resolve, reject) => {
-      try {
-        await db.transaction(async trx => {
-          //Generate waveform and activate the track.
-          const uploadRecord = await getUploadById(trx, { id: uploadToken.upload_id });
-          const track = await withTrack(db.queryBuilder())
-            .from('track')
-            .where({ 'track.key': uploadRecord.key })
-            .select('id').first();
+    const uploadRecord = await getUploadById(db, { id: uploadToken.upload_id });
+    const track = await withTrack(db.queryBuilder())
+      .from('track')
+      .where({ 'track.key': uploadRecord.key })
+      .select('id').first();
 
-          const signedStreamUrl = await createSignedStreamUrl(track.id) as string;
-          const duration = await getDuration(signedStreamUrl);
-          const waveformStream = await getFileStream(signedStreamUrl, uploadRecord.key) as any;
 
-          const waveform = await generateWaveformDataFromStream(waveformStream, duration);
 
-          await trx(tablenames.audio).where({ upload_id: uploadRecord.id }).update({
-            duration,
-            waveform: JSON.stringify(waveform),
-          });
+    try {
+      return await db.transaction(async trx => {
+        //Calculate duration
+        const duration = await retry(async () => await calculateDuration(track.id), {
+          retries: 3,
+        });
+        //Generate waveform
+        const waveform = await retry(async () => await generateWaveform(uploadRecord.key, track.id, duration), { retries: 3 });
 
-          await trx(tablenames.uploadTokens).where({ upload_id: uploadToken.upload_id }).del();
-          await trx(tablenames.uploads).where({ id: uploadRecord.id }).update({
-            status: 'ready'
-          });
-          resolve();
-        })
-      }
-      catch (err) {
-        reject(err);
-      }
-    });
+        //Save upload
+        await trx(tablenames.audio).where({ upload_id: uploadRecord.id }).update({
+          duration,
+          waveform: JSON.stringify(waveform)
+        });
 
-    promise.catch(async err => {
-      console.log('Failed to complete upload!', err.message);
-    });
-
-    return res.end();
+        await db(tablenames.uploadTokens).where({ upload_id: uploadRecord.id }).del();
+        await db(tablenames.uploads).where({ id: uploadRecord.id }).update({
+          status: 'ready'
+        });
+        return res.end();
+      })
+    }
+    catch (err) {
+      await db.transaction(async trx => {
+        await trx(tablenames.tracks).where({ id: track.id }).del();
+        await trx(tablenames.uploads).where({ id: uploadRecord.id }).update({
+          status: 'failed'
+        });
+      })
+      throw new Error('Failed to complete upload!', {
+        cause: err
+      });
+    }
   }
 )
 
-async function calculateDuration(stream: Readable, mimeType: string) {
-  const metadata = await parseStream(stream, { mimeType });
-  console.log(metadata.format);
-  return metadata;
+async function calculateDuration(trackId: string) {
+  const signedStreamUrl = await createSignedStreamUrl(trackId) as string;
+  const duration = await getDuration(signedStreamUrl);
+  return duration;
+}
+
+async function generateWaveform(uploadKey: string, trackId: string, duration: number) {
+  const signedStreamUrl = await createSignedStreamUrl(trackId) as string;
+  const waveformStream = await getFileStream(signedStreamUrl, uploadKey) as any;
+  const waveform = await generateWaveformDataFromStream(waveformStream, duration);
+  return waveform;
 }
 
 async function getFileStream(signedStreamUrl: string, key: string): Promise<Readable> {
@@ -87,7 +97,6 @@ async function getFileStream(signedStreamUrl: string, key: string): Promise<Read
       }
       return Readable.fromWeb(stream.body);
     }
-      break;
 
     default: {
       const filePath = path.join(process.cwd(), key);
