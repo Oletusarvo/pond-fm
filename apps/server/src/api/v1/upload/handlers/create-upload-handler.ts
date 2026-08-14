@@ -3,10 +3,8 @@ import { createAudioUpload } from "../../../../DAL/uploads/create-audio-upload";
 import { createUpload } from "../../../../DAL/uploads/create-upload";
 import { tablenames } from "../../../../tablenames";
 import { AuthenticatedExpressRequest, ExpressRequest } from "../../../../types/express";
-import { createHandler } from "../../../../utils/create-handler";
+import { createHandler } from "@pondfm/server-utils";
 import crypto from 'crypto';
-import { createJWT } from "../../../../utils/jwt";
-import { keyof } from "zod";
 import { withSubscription } from "../../../../DAL/billing/with/with-subscription";
 import { serviceError } from "../../../../utils/service-error";
 import { withUpload } from "../../../../DAL/uploads/with/with-upload";
@@ -16,8 +14,8 @@ import path from "path";
 import { v4 } from "uuid";
 import { createSignedUploadUrl } from "../../../../utils/signed-upload";
 import { createCanonicalPost } from "../../../../DAL/posts/create-canonical-post";
+import { ServiceErrorResponse, ServiceSuccessResponse } from "../../../../types/service-response";
 
-/**@todo */
 export const createUploadHandler = createHandler(
   async (req: AuthenticatedExpressRequest, res) => {
     const data = req.body;
@@ -100,10 +98,10 @@ async function verifyUploadQuota(uploadedSize: number, session: TSession) {
     return {
       success: false,
       error: serviceError.upload.quotaExceeded
-    }
+    } as ServiceErrorResponse;
   }
 
   return {
     success: true
-  }
+  } as ServiceSuccessResponse;
 }

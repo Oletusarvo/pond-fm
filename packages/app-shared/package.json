@@ -1,0 +1,13 @@
+{
+  "name": "@pondfm/app-shared",
+  "version": "1.0.0",
+  "description": "",
+  "main": "dist/index.js",
+  "scripts": {
+    "dev": "npx tsc"
+  },
+  "keywords": [],
+  "author": "",
+  "type": "module",
+  "license": "ISC"
+}

@@ -2,13 +2,13 @@ import { userService } from '../container';
 import { AuthRepository } from '../repositories/auth-repository';
 import { Repository } from '../repositories/repository';
 import { DBContext } from '../types/db-context';
-import { createJWT } from '../utils/jwt';
+import { createJWT } from '@pondfm/server-utils';
 import crypto from 'crypto';
 import { ServiceResponse, ServiceSuccessResponse } from '../types/service-response';
-import { serviceError } from '../utils/service-error';
 import { findValidTokenByCode } from '../DAL/auth/find-token-by-code';
 import { UserRepository } from '../repositories/user-repository';
 import { activateUserById } from '../DAL/users/activate-by-id';
+import { serviceError } from '../utils/service-error';
 
 export class AuthService {
   constructor(private repos: {

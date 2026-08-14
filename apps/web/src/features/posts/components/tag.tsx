@@ -24,7 +24,7 @@ export function Tag({ value, onSelected, selected, color = 'primary', size }: Ta
   const colorConfig = colorMap[color];
   const className = useClassName(
     'rounded-[100px] font-semibold text-center shrink-0 border',
-    size === 'small' ? 'px-[6px] py-[1px] text-[11px]' : 'px-2 py-1 text-xs',
+    size === 'small' ? 'px-[6px] py-[1px] text-xs' : 'px-2 py-1 text-xs',
     onSelected ? 'cursor-pointer' : '',
     selected ? colorConfig.selected : colorConfig.unselected,
   );

@@ -4,6 +4,6 @@ import { usePostContext } from '../providers/post-provider';
 export function Title() {
   const { post } = usePostContext();
   return <Link to={`/track/${post.track.id}`}>
-    <h2 className='font-semibold'>{post?.track.title}</h2>
+    <h2 className='font-semibold text-sm'>{post?.track.title}</h2>
   </Link>
 }

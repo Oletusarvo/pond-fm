@@ -18,10 +18,10 @@ export function MainHeader() {
   const settingsService = useSettingsContext();
   return (
     <header className='bg-primary text-white py-2 h-pad w-full flex items-center justify-between'>
-      <div className='flex items-center gap-2 text-sm'>
+      <div className='flex items-center gap-2 text-xs'>
         <Link to='/'>
-          <h2 className='font-semibold cursive text-lg'>
-            🐸<span className='text-lg'>Pond.fm</span>
+          <h2 className='font-semibold cursive text-base'>
+            🐸<span>Pond.fm</span>
           </h2>
         </Link>
         |{' '}
@@ -44,14 +44,14 @@ export function MainHeader() {
         </nav>
       </div>
 
-      <div className='flex gap-4 items-center'>
+      <div className='flex gap-4 items-center text-base'>
         {authService.status === 'authenticated' ? (
           <>
             <Button
               variant='ghost'
               color="white"
               onClick={() => navigate(`/user/${authService.session.user.id}`)}>
-              <User />
+              <User size="1.2rem" />
             </Button>
             <FeedProvider
               queryKey={['notifications']}
@@ -71,7 +71,7 @@ export function MainHeader() {
               color="white"
               variant='ghost'
               onClick={() => settingsService.toggleSettingsModal(true)}>
-              <Settings />
+              <Settings size="1.2rem" />
             </Button>
           </>
         ) : null}
@@ -87,7 +87,7 @@ function UploadButton() {
       color="white"
       variant='ghost'
       onClick={() => toggleShowUploadModal(true)}>
-      <ArrowUpCircle />
+      <ArrowUpCircle size="1.2rem" />
     </Button>
   );
 }
@@ -111,7 +111,7 @@ function NotificationsButton() {
         }); toggleShowNotificationsModal(true)
       }}>
       <div className='relative'>
-        <Bell />
+        <Bell size="1.2rem" />
         {hasUnseen ? (
           <div className='bg-red-500 p-1 aspect-square w-2 h-2 rounded-full absolute z-10 right-0 bottom-1 text-red text-center'></div>
         ) : null}

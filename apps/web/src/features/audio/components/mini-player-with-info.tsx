@@ -43,7 +43,7 @@ export function MiniPlayerWithInfo() {
       </div>
 
       <audio
-        className="bg-transparent"
+        className="bg-transparent w-full"
         onPlay={() => playbackService.updatePlaybackState('playing')}
         onPause={() => {
           playbackService.updatePlaybackState('paused');

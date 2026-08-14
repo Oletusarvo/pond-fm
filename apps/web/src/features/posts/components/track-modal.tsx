@@ -87,6 +87,7 @@ function ModalContent({ track, onClose }) {
       });
     }
     catch (err) {
+      console.log(err.message)
       return { ok: false }
     }
 
@@ -109,7 +110,7 @@ function ModalContent({ track, onClose }) {
         res = await apiService.updateTrack(track.id, rest);
       }
       if (!res.ok) {
-        return { success: false };
+        return { success: false, error: await res.json() };
       }
       queryClient.invalidateQueries({ queryKey: ['feed'] });
       return { success: true };
@@ -173,15 +174,17 @@ function ModalContent({ track, onClose }) {
           </LoaderButton>
         </div>
         {
-          status === 'error'
-            ?
-            <ErrorMessage>Something went wrong!</ErrorMessage>
+          status === 'upload:quota-exceeded' ? <ErrorMessage>You have reached your upload quota. Please upgrade to pro to continue uploading.</ErrorMessage>
             :
-            status === 'success'
+            status === 'error'
               ?
-              <SuccessMessage>Track upload successfull!</SuccessMessage>
+              <ErrorMessage>Something went wrong!</ErrorMessage>
               :
-              null
+              status === 'success'
+                ?
+                <SuccessMessage>Track upload successfull!</SuccessMessage>
+                :
+                null
         }
       </Form>
     </div>

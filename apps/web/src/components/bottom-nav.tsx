@@ -11,18 +11,18 @@ export function BottomNav() {
   return (
     <footer className='xs:flex items-center gap-10 w-full bg-primary text-white justify-center border-t-green-800 border-t md:hidden'>
       <NavButton to='/' title="Home">
-        <House />
+        <House size="1.2rem" />
       </NavButton>
       <NavButton to='/undiscovered' title="Undiscovered">
-        <Sprout />
+        <Sprout size="1.2rem" />
       </NavButton>
       <NavButton to='/new' title="New">
-        <Rss />
+        <Rss size="1.2rem" />
       </NavButton>
       {
         authService.status === 'authenticated' ? (
           <NavButton to="/followed" title="Followed">
-            <Network />
+            <Network size="1.2rem" />
           </NavButton>
         ) : null
       }

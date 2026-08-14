@@ -23,7 +23,7 @@ export function HelperMessage({ children, type, fullWidth }: HelperMessageProps)
 
   return (
     <div className={containerClassName}>
-      {Icon ? <Icon size='1rem' /> : null}
+      {Icon ? <Icon /> : null}
 
       <span>{children}</span>
     </div>

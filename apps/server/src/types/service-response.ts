@@ -1,4 +1,5 @@
-import { serviceError } from '../utils/service-error';
+import { serviceError } from "../utils/service-error";
+
 
 type Values<T> = T extends unknown ? T[keyof T] : never;
 export type ServiceErrorValue = Values<Values<typeof serviceError>>;

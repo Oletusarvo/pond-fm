@@ -8,8 +8,8 @@ export function PostFeedHeader({ children, title, description }: PostFeedHeaderP
   return (
     <div className='py-2 w-full h-pad'>
       <div className='flex flex-col pb-2'>
-        <h2 className='font-semibold text-primary'>{title}</h2>
-        <p className='text-slate-500 text-sm'>{description}</p>
+        <h2 className='font-semibold text-primary text-sm'>{title}</h2>
+        <p className='text-slate-500 text-xs'>{description}</p>
       </div>
       {children}
     </div>

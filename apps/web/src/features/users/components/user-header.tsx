@@ -43,12 +43,12 @@ export function UserHeader() {
       <div className="flex sm:gap-8 xs:gap-2 md:items-center xs:items-start">
         <div className="flex gap-2 items-center">
           <User size="1.2rem" color="var(--color-primary)" />
-          <h2 className='text-sm font-semibold text-primary'>{user.username}</h2>
+          <h2 className='text-xs font-semibold text-primary'>{user.username}</h2>
         </div>
         <Button
           color={followedByMe ? 'danger' : 'primary'}
           variant="ghost"
-          onClick={onFollowButtonClicked} icon={FollowButtonIcon}><span className="text-sm">
+          onClick={onFollowButtonClicked} icon={FollowButtonIcon}><span className="text-xs">
             {followedByMe ? 'Unfollow' : 'Follow'}</span></Button>
 
       </div>
@@ -57,10 +57,10 @@ export function UserHeader() {
         <Button
           variant="ghost"
           onClick={() => userService.toggleShowFollowingModal(true)}>
-          <span className="text-sm font-semibold text-primary"> {user.following_count} Following</span>
+          <span className="text-xs font-semibold text-primary"> {user.following_count} Following</span>
         </Button>
         <Button variant="ghost" onClick={() => userService.toggleShowFollowerModal(true)}>
-          <span className="text-sm font-semibold text-primary">{user.follower_count} Followers</span>
+          <span className="text-xs font-semibold text-primary">{user.follower_count} Followers</span>
         </Button>
       </div>
     </div>

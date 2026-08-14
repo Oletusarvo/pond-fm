@@ -44,5 +44,5 @@ export function PostAuthor() {
 }
 
 function UsernameLabel({ children }: React.PropsWithChildren) {
-  return <div className='text-sm text-slate-500 font-semibold'>{children}</div>;
+  return <div className='text-xs text-slate-500 font-semibold'>{children}</div>;
 }
