@@ -268,6 +268,11 @@ export class ApiService {
     }
     return await fetch(url, req);
   }
+
+  async getTrack(trackId: string) {
+    const req = requestBuilder.get().includeCredentials().build();
+    return await fetch(this.withEndpoint('tracks', trackId), req);
+  }
 }
 
 /**Provides methods to perform actions on the server. */

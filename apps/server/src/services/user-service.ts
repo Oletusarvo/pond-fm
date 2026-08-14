@@ -3,10 +3,11 @@ import { db } from '../db-config';
 import { UserRepository } from '../repositories/user-repository';
 import { tablenames } from '../tablenames';
 import { DBContext } from '../types/db-context';
-import { ServiceResponse, ServiceSuccessResponse } from '../types/service-response';
+import { ServiceErrorResponse, ServiceResponse, ServiceSuccessResponse } from '../types/service-response';
 import crypto from 'crypto';
 import { findUserByEmail } from '../DAL/users/find-user-by-email';
 import { getLookupQuery } from '../DAL/util/get-lookup-query';
+import { serviceError } from '../utils/service-error';
 
 export class UserService {
   constructor(private repo: UserRepository) { }
@@ -14,6 +15,18 @@ export class UserService {
   async createIfNotExists(ctx: DBContext, config: Parameters<typeof findUserByEmail>[1]) {
     let user = await ctx(tablenames.users).where({ email: config.email }).select('id').first();
     if (!user) {
+      const rowsAffected = await db.transaction(async trx => await trx(tablenames.serviceSettings)
+        .forUpdate()
+        .whereRaw("registered_users < max_users")
+        .increment('registered_users', 1));
+
+      if (rowsAffected == 0) {
+        return {
+          success: false,
+          error: serviceError.auth.userQuotaExceeded
+        } as ServiceErrorResponse;
+      }
+
       //Create a new pending user record.
       const defaultUserId = crypto.randomBytes(8).toString('hex');
       const userNumber = BigInt('0x' + defaultUserId).toString();

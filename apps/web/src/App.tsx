@@ -18,6 +18,7 @@ import { ProfileSettingsModal } from './features/auth/components/settings-modal'
 import { ActionProvider } from './providers/action-provider';
 import { UserProvider } from './features/users/providers/user-proivder';
 import { FollowedFeedScreen } from './features/posts/screens/followed-feed-screen';
+import { TrackScreen } from './features/posts/screens/track-screen';
 
 function App() {
   return (
@@ -67,6 +68,8 @@ function App() {
                           path='login'
                           element={<LoginScreen />}
                         />
+
+                        <Route path="track/:trackId" element={<TrackScreen />} />
 
                       </Route>
                     </Routes>

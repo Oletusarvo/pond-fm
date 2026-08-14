@@ -6,6 +6,7 @@ import { apiRouter } from './api/api-router';
 
 import { tablenames } from './tablenames';
 import { db } from './db-config';
+import { signCommand } from '@pondfm/crypto';
 
 require('dotenv').config();
 const app = express();
@@ -49,13 +50,8 @@ async function runCleanup() {
     .catch((err) => {
       console.log('Failed to delete expired pending users.', err.stack);
     });
-  await db(tablenames.uploads)
-    .where({ status: 'pending' })
-    .whereRaw("CURRENT_TIMESTAMP - created_at >= INTERVAL '15min'")
-    .orWhere({ status: 'failed' })
-    .del()
-    .catch(err => console.log("Failed to delete expired uploads!", err.stack));
 
+  await cleanupUnusedFiles().catch(err => console.log('Failed to delete unused files!', err.stack));
   await db(tablenames.authTokens)
     .where('expires_at', '<=', db.fn.now()).del()
     .catch(err => console.log('Failed to delete expired auth tokens.', err.stack));
@@ -64,5 +60,30 @@ async function runCleanup() {
     .where('expires_at', '<=', db.fn.now())
     .del()
     .catch(err => console.log('Failed to delete expired upload tokens.', err.stack));
+}
+
+async function cleanupUnusedFiles() {
+  const keys = await db(tablenames.uploads)
+    .where(function () {
+      this.where({ status: 'pending' })
+        .whereRaw("CURRENT_TIMESTAMP - updated_at >= INTERVAL '15min'");
+    })
+    .orWhere({ status: 'failed' })
+    .select('key')
+    .pluck('key');
+
+  const clientId = process.env.LOCAL_UPLOAD_CLIENT_ID;
+  const signature = signCommand({
+    clientId,
+  }, process.env.URL_SIGN_SECRET);
+
+  const signedDeleteUrl = new URL([process.env.CUSTOM_UPLOAD_API, 'upload'].join('/'));
+  signedDeleteUrl.searchParams.set('X-Signature', signature);
+  signedDeleteUrl.searchParams.set('X-Client-ID', clientId);
+
+  const res = await fetch(signedDeleteUrl, { method: 'DELETE', body: JSON.stringify(keys) });
+  if (res.ok) {
+    await db(tablenames.uploads).whereIn('key', keys).del();
+  }
 
 }

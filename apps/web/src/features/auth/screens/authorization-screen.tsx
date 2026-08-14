@@ -8,10 +8,12 @@ import { useStatus } from '../../../hooks/use-status';
 import { Button } from '../../../components/button';
 
 export function AuthorizationScreen() {
+  const navigate = useNavigate();
+  const onClose = () => navigate('/')
   return (
     <Modal
       title='Authorization'
-      onClose={null}>
+      onClose={onClose}>
       <ModalContent />
     </Modal>
   );

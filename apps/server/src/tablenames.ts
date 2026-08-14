@@ -18,5 +18,6 @@ export const tablenames = {
   uploadTokens: 'upload.upload_token_data',
   plans: 'billing.plan_data',
   subscriptions: 'billing.subscription_data',
-  subscriptionQuotaOverrides: 'billing.subscription_quota_override_data'
+  subscriptionQuotaOverrides: 'billing.subscription_quota_override_data',
+  serviceSettings: 'service_settings_data'
 } as const;

@@ -2,13 +2,13 @@ import { useStatus } from './use-status';
 
 export type ResponseType =
   | {
-      success: true;
-      data?: any;
-    }
+    success: true;
+    data?: any;
+  }
   | {
-      success: false;
-      error?: any;
-    };
+    success: false;
+    error?: any;
+  };
 
 export type UseSubmitProps = {
   fetchFn: (payload: FormData) => Promise<ResponseType>;
@@ -30,7 +30,7 @@ export function useSubmit({ fetchFn, onSuccess, onError, onException }: UseSubmi
         setStatus('success');
         await onSuccess?.(res.data);
       } else {
-        const error = res.error ? JSON.parse(res.error) : null;
+        const error = res.error ? res.error : null;
         setStatus(error?.error || 'error');
         await onError?.(error);
       }

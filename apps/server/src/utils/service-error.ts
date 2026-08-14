@@ -7,6 +7,7 @@ export const serviceError = {
   auth: {
     unauthorized: authError('unauthorized'),
     forbidden: authError('forbidden'),
+    userQuotaExceeded: authError('user-quota-exceeded')
   },
   payment: {
     selfTip: paymentError('self-tip'),

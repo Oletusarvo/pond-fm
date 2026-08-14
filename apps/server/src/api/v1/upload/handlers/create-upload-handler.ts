@@ -88,7 +88,7 @@ async function verifyUploadQuota(uploadedSize: number, session: TSession) {
     .select(
       'subscription.storage_quota_mib',
       db.raw(`
-          (SELECT SUM(size) 
+          (SELECT SUM(size)::bigint 
           FROM upload 
           WHERE upload.id 
           IN (SELECT primary_audio_id FROM track WHERE track.author_id = subscription.user_id))
@@ -96,7 +96,7 @@ async function verifyUploadQuota(uploadedSize: number, session: TSession) {
     )
     .first();
 
-  if (quota.storage_quota_mib && (quota.uploaded_size_mib + uploadedSize > quota.storage_quota_mib)) {
+  if (quota.storage_quota_mib && (BigInt(quota.uploaded_size_mib) + BigInt(uploadedSize) > BigInt(quota.storage_quota_mib))) {
     return {
       success: false,
       error: serviceError.upload.quotaExceeded
