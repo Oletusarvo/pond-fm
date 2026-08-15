@@ -13,7 +13,8 @@ class EmailService {
     const html = this.createEmailHtml({
       title: 'Greetings!',
       body: `You have requested to log into Pond.Fm<br/>If that wasn't you, please ignore this message.<br/>
-              Otherwise please tap <a href="${domainUrl}/authorize/${code}">this link</a>.`,
+              Otherwise please tap <a href="${domainUrl}/authorize/${code}">this link</a>, or paste the below code into the app:<br/>
+              <span style="font-size=24px; font-weight=600; color=black">${code}</span>`,
     });
     return this.send({
       to,

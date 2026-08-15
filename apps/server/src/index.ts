@@ -7,6 +7,7 @@ import { apiRouter } from './api/api-router';
 import { tablenames } from './tablenames';
 import { db } from './db-config';
 import { signCommand } from '@pondfm/crypto';
+import { retry } from '@pondfm/server-utils';
 
 require('dotenv').config();
 const app = express();
@@ -51,7 +52,7 @@ async function runCleanup() {
       console.log('Failed to delete expired pending users.', err.stack);
     });
 
-  await cleanupUnusedFiles().catch(err => console.log('Failed to delete unused files!', err.stack));
+  await cleanupUnusedFilesAndTracks().catch(err => console.log('Failed to delete unused files!', err.stack));
   await db(tablenames.authTokens)
     .where('expires_at', '<=', db.fn.now()).del()
     .catch(err => console.log('Failed to delete expired auth tokens.', err.stack));
@@ -62,13 +63,16 @@ async function runCleanup() {
     .catch(err => console.log('Failed to delete expired upload tokens.', err.stack));
 }
 
-async function cleanupUnusedFiles() {
+async function cleanupUnusedFilesAndTracks() {
+  const deletedTrackIds = await db(tablenames.tracks).where({ status: 'deleted' }).pluck('primary_audio_id');
+
   const keys = await db(tablenames.uploads)
     .where(function () {
       this.where({ status: 'pending' })
         .whereRaw("CURRENT_TIMESTAMP - updated_at >= INTERVAL '15min'");
     })
     .orWhere({ status: 'failed' })
+    .orWhereIn('id', deletedTrackIds)
     .select('key')
     .pluck('key');
 
@@ -83,7 +87,11 @@ async function cleanupUnusedFiles() {
 
   const res = await fetch(signedDeleteUrl, { method: 'DELETE', body: JSON.stringify(keys) });
   if (res.ok) {
-    await db(tablenames.uploads).whereIn('key', keys).del();
+    await retry(async () => await db.transaction(async trx => {
+      await trx(tablenames.tracks).where({ status: 'deleted' }).del();
+      await trx(tablenames.uploads).whereIn('key', keys).del();
+    }), {
+      retries: 5
+    });
   }
-
 }

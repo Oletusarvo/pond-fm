@@ -17,6 +17,7 @@ export function getPostQuery(ctx: DBContext) {
     .join({ track_genre: tablenames.genres }, 'track_genre.id', 'track.genre_id')
     .join({ upload: tablenames.uploads }, 'upload.id', 'track.primary_audio_id')
     .join({ audio: tablenames.audio }, 'audio.upload_id', 'track.primary_audio_id')
+    .where({ 'track.status': 'active' })
 
   return query;
 }

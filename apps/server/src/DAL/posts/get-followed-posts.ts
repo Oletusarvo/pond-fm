@@ -27,6 +27,7 @@ export async function getFollowedPosts(ctx: DBContext, config: {
   const query = getUndistinctPostQuery(ctx);
   fromUndistinctPost(query);
   onlyCanonicalPosts(query);
+  onlyReadyUploads(query);
   filterByMoods(query, config.moods);
   filterByGenres(query, config.genres);
   query.whereIn(
