@@ -11,6 +11,7 @@ type PostState = {
   setPosts: (newPosts: TPost[]) => void;
   setIsPending: (state: boolean) => void;
   updatePost: (trackId: string, data: Partial<TPost>) => void;
+  deletePost: (trackId: string) => void;
 }
 
 export const usePostStore = create<PostState>((set, get) => ({
@@ -29,6 +30,11 @@ export const usePostStore = create<PostState>((set, get) => ({
     }
   }),
   getPost: (trackId: string): TPost | undefined => get().posts[trackId],
+  deletePost: (trackId: string) => set(state => {
+    const newState = { ...state };
+    delete newState.posts[trackId];
+    return newState;
+  }),
   setPosts: (posts) => set((state) => {
     return {
       posts: {

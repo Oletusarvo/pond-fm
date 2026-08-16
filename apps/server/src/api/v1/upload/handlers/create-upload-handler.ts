@@ -77,24 +77,13 @@ export const createUploadHandler = createHandler(
 )
 
 async function verifyUploadQuota(uploadedSize: number, session: TSession) {
-  const quotaQuery = withSubscription(db.queryBuilder());
-  withTrack(quotaQuery);
-  withUpload(quotaQuery);
-  const quota = await quotaQuery
+  const quota = await withSubscription(db.queryBuilder())
     .from('subscription')
-    .where({ 'subscription.user_id': session.user.id })
-    .select(
-      'subscription.storage_quota_mib',
-      db.raw(`
-          (SELECT SUM(size)::bigint 
-          FROM upload 
-          WHERE upload.id 
-          IN (SELECT primary_audio_id FROM track WHERE track.author_id = subscription.user_id))
-          AS uploaded_size_mib`)
-    )
+    .select('storage_quota_mib', 'storage_quota_consumed')
+    .where({ user_id: session.user.id })
     .first();
 
-  if (quota.storage_quota_mib && (BigInt(quota.uploaded_size_mib) + BigInt(uploadedSize) > BigInt(quota.storage_quota_mib))) {
+  if (quota.storage_quota_mib && (BigInt(quota.storage_quota_consumed) + BigInt(uploadedSize) > BigInt(quota.storage_quota_mib))) {
     return {
       success: false,
       error: serviceError.upload.quotaExceeded

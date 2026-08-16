@@ -21,7 +21,7 @@ export function LoginScreen() {
 
 //Render the content separately to stop the modal from re-rendering when the states change.
 function ModalContent({ close }) {
-
+  const navigate = useNavigate();
   const authService = useAuthContext();
   const { submit, status, loading } = useSubmit({
     fetchFn: async (payload) => {
@@ -34,6 +34,9 @@ function ModalContent({ close }) {
       return {
         success: true,
       }
+    },
+    onSuccess: () => {
+      navigate('/authorize');
     }
   });
 

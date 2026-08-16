@@ -15,13 +15,20 @@ import { useQueryClient } from "@tanstack/react-query";
 import { Button, LoaderButton } from "../../../components/button";
 import { ArrowUp, Trash, X } from "lucide-react";
 import { ProgressBar } from "./progress-bar";
+import { useDeleteTrack } from "../hooks/use-delete-track";
+import { usePostStore } from "../hooks/use-post";
+import { usePlaybackContext } from "../../audio/providers/playback-provider";
+import { useAuthContext } from "../../auth/providers/auth-provider";
+import { useToggleContext } from "../../../providers/toggle-provider";
 
 type TrackModalProps = {
   track?: TTrack;
-  onClose: () => void;
 }
 
-export function TrackModal({ track, onClose }: TrackModalProps) {
+export function TrackModal({ track }: TrackModalProps) {
+  const { toggleState } = useToggleContext();
+  const onClose = () => toggleState(false);
+
   return (
     <Modal
       title='Upload'
@@ -63,6 +70,8 @@ function ModalContent({ track, onClose }) {
   const [progress, setProgress] = useState(0);
   const [progressStatus, setProgressStatus] = useState('uploading');
   const queryClient = useQueryClient();
+  const playbackService = usePlaybackContext();
+  const authService = useAuthContext();
   const upload = async (data: any, file: File) => {
     const uploadUrlRes = await apiService.requestUploadUrl({
       filename: file.name,
@@ -113,12 +122,45 @@ function ModalContent({ track, onClose }) {
         return { success: false, error: await res.json() };
       }
       queryClient.invalidateQueries({ queryKey: ['feed'] });
+      if (file) {
+        const currentStorageQuotaConsumed = Number(authService.session.user.subscription.storage_quota_consumed) + file.size;
+        await authService.refreshSession({
+          user: {
+            subscription: {
+              storage_quota_consumed: currentStorageQuotaConsumed,
+            }
+          }
+        });
+      }
+
       return { success: true };
     },
     onSuccess: () => {
       setTimeout(() => onClose(), 1000);
     }
   });
+
+  const postStore = usePostStore();
+
+  const { deleteTrack, status: trackDeleteStatus, loading: trackDeleteLoading } = useDeleteTrack({
+    onSuccess: async () => {
+      postStore.deletePost(track.id);
+      queryClient.invalidateQueries({ queryKey: ['feed'] });
+      const newQuotaConsumed = Number(authService.session.user.subscription.storage_quota_consumed) - Number(track.size);
+      await authService.refreshSession({
+        user: {
+          subscription: {
+            storage_quota_consumed: newQuotaConsumed,
+          }
+        }
+      })
+      onClose();
+    }
+  });
+
+  console.log(authService.session?.user)
+  const { storage_quota, storage_quota_consumed } = authService.session?.user.subscription || {};
+  const storageQuotaConsumed = Number(storage_quota_consumed) / Number(storage_quota) * 100;
 
   return (
     <div className='flex flex-col w-full gap-8 text-black'>
@@ -131,7 +173,22 @@ function ModalContent({ track, onClose }) {
           </>
         }
       </div>
-      <ProgressBar progress={progress} status={progressStatus as any} />
+      {
+        !track ? <>
+          <div className="flex flex-col w-full">
+            <ProgressBar progress={progress} status={progressStatus as any} />
+            <div className="flex gap-4">
+              <small>Upload progress {progress.toFixed(2) || 0}%</small>
+              {progressStatus === 'processing' ? <small>Processing...</small> : null}
+            </div>
+          </div>
+
+        </> : null
+      }
+      <div className="flex flex-col w-full">
+        <ProgressBar progress={storageQuotaConsumed} status={'uploading'} />
+        <small>Quota consumed {storageQuotaConsumed.toFixed(2)}%</small>
+      </div>
       <Form onSubmit={submit}>
         <Form.Group label='Title'>
           <Input
@@ -160,16 +217,28 @@ function ModalContent({ track, onClose }) {
         </Form.Group>
         <div className="flex w-full gap-2">
           {
-            track ? <Button variant="outlined" color="danger" fullWidth shape="rounded" paddingEnabled icon={Trash} type="button">
-
+            track ? <LoaderButton
+              loading={trackDeleteLoading}
+              disabled={trackDeleteLoading || trackDeleteStatus === 'success'}
+              variant="outlined" color="danger"
+              fullWidth shape="rounded"
+              paddingEnabled
+              type="button"
+              onClick={async () => {
+                if (playbackService.currentPlayback?.id === track.id) {
+                  //Stop playback before deleting to prevent errors
+                  playbackService.stopPlayback();
+                }
+                await deleteTrack(track.id);
+              }}>
               Delete
-            </Button> : <Button variant="outlined" color="primary" fullWidth shape="rounded" paddingEnabled onClick={onClose} icon={X}>
+            </LoaderButton> : <Button variant="outlined" color="primary" fullWidth shape="rounded" paddingEnabled onClick={onClose}>
 
               Cancel
             </Button>
           }
 
-          <LoaderButton type="submit" variant="contained" loading={loading} disabled={loading} fullWidth shape="rounded" paddingEnabled icon={ArrowUp}>
+          <LoaderButton type="submit" variant="contained" loading={loading} disabled={loading} fullWidth shape="rounded" paddingEnabled>
             {track ? 'Update' : 'Upload'}
           </LoaderButton>
         </div>

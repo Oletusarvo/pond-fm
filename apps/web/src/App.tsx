@@ -42,7 +42,7 @@ function App() {
                             element={<LoginScreen />}
                           />
                           <Route
-                            path='authorize/:code'
+                            path='authorize'
                             element={<AuthorizationScreen />}
                           />
                         </Route>

@@ -15,7 +15,7 @@ export function StatsArea() {
   const { post } = usePostContext();
   const authService = useAuthContext();
   return (
-    <div className='flex gap-5 items-center'>
+    <div className='flex xs:gap-2 md:gap-5 items-center'>
       <CountButton
         disabled={true}
         color='inherit'
@@ -25,8 +25,6 @@ export function StatsArea() {
 
       <LikeButton />
       {post?.track.author.id !== authService.session?.user.id ? <RepostButton /> : null}
-
-
     </div>
   );
 }

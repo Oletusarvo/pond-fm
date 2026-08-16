@@ -1,11 +1,16 @@
-import { Link, useNavigate, useParams } from 'react-router-dom';
+import { Link, useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import { Modal } from '../../../components/modal';
 import { Spinner } from '../../../components/spinner';
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import { useAppContext } from '../../../providers/app-provider';
 import { useAuthContext } from '../providers/auth-provider';
 import { useStatus } from '../../../hooks/use-status';
-import { Button } from '../../../components/button';
+import { Button, LoaderButton } from '../../../components/button';
+import { Form } from '../../../components/form';
+import { Input } from '../../../components/input';
+import { useSubmit } from '../../../hooks/use-submit';
+import { ErrorMessage, SuccessMessage } from '../../../components/helper-message';
+import { Check, X } from 'lucide-react';
 
 export function AuthorizationScreen() {
   const navigate = useNavigate();
@@ -14,75 +19,54 @@ export function AuthorizationScreen() {
     <Modal
       title='Authorization'
       onClose={onClose}>
-      <ModalContent />
+      <ModalContent onClose={onClose} />
     </Modal>
   );
 }
 
-function ModalContent() {
-  const { status, setStatus } = useStatus();
-  const { code } = useParams();
+function ModalContent({ onClose }) {
+  const [params] = useSearchParams();
+  const code = params.get('code');
   const navigate = useNavigate();
   const authService = useAuthContext();
-  const onAuthorize = async () => {
-    return await authService.authorize(code);
-  };
+  const formRef = useRef<HTMLFormElement>(null);
+  const { submit, loading, status } = useSubmit({
+    fetchFn: async (payload) => {
+      const data = Object.fromEntries(payload) as { code: string };
 
-  useEffect(() => {
-    let t;
-    setStatus('loading');
-    onAuthorize()
-      .then(res => {
-        if (res.ok) {
-          setStatus('success');
-          t = setTimeout(() => {
-            navigate('/new');
-          }, 1500);
-        } else {
-          setStatus('error');
-        }
-      })
-      .catch(err => {
-        console.log(err.message);
-        setStatus('error');
-      });
+      const res = await authService.authorize(data.code);
+      if (!res.ok) {
+        return { success: false }
+      }
+      return { success: true }
+    },
+    onSuccess: () => {
+      navigate('/new');
+    }
+  });
 
-    return () => {
-      clearTimeout(t);
-    };
-  }, []);
-
+  const buttonsDisabled = loading || status === 'success';
   return (
-    <div className='flex w-full flex-col gap-4 items-center'>
-      {status === 'loading' ? (
-        <>
-          <Spinner />
-          <p className='text-slate-500'>Please wait while we authorize you...</p>
-        </>
-      ) : status === 'success' ? (
-        <>
-          <div className='flex flex-col items-center'>
-            <h2 className='text-xl font-semibold'>Authorization succeeded!</h2>
-            <p className='text-slate-500'>Please wait while we redirect you...</p>
-          </div>
-        </>
-      ) : (
-        <>
-          <div className='flex flex-col items-center'>
-            <h2 className='text-xl font-semibold'>Authorization failed!</h2>
-            <p className='text-slate-500'>Something went wrong!</p>
-          </div>
-
-          <Link to='/login'>
-            <Button
-              paddingEnabled
-              variant='outlined'
-              shape='rounded'>
-              Request a new login link
-            </Button>
-          </Link>
-        </>
-      )}
+    <div className='flex w-full flex-col gap-4'>
+      <Form onSubmit={submit} ref={formRef}>
+        <p>Please submit the below code to log in.</p>
+        <Form.Group label="Code">
+          <Input name="code" type="text" required defaultValue={code} />
+        </Form.Group>
+        <div className="flex gap-2 w-full">
+          <Button disabled={buttonsDisabled} variant="outlined" fullWidth paddingEnabled shape="rounded" onClick={onClose}>Cancel</Button>
+          <LoaderButton loading={loading} disabled={buttonsDisabled} fullWidth paddingEnabled shape="rounded" type="submit">
+            {status !== 'error' ? 'Submit' : 'Try Again'}
+          </LoaderButton>
+        </div>
+      </Form>
+      {status === 'success' ? (
+        <SuccessMessage>Authorization succeeded! Please wait while we redirect you...</SuccessMessage>
+      ) : status === 'error' ? (
+        <ErrorMessage>Authorization failed!</ErrorMessage>
+      ) : status === 'exception' ? (
+        <ErrorMessage>Something went wrong!</ErrorMessage>
+      ) : null}
     </div>
   )
 }

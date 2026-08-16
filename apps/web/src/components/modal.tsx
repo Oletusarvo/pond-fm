@@ -17,7 +17,7 @@ export const Modal = React.memo(function Modal({
 }: ModalProps) {
   function Container() {
     const className = useClassName(
-      'w-full flex h-full z-90 bg-black/20 backdrop-blur-lg absolute top-0 left-0',
+      'w-full flex h-full z-90 bg-black/20 backdrop-blur-lg absolute top-0 left-0 text-black',
       !fullScreen ? 'items-center justify-center p-2' : '',
     );
     return (

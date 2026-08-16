@@ -4,12 +4,12 @@ import { TPlayback } from '../../../types/playback';
 import { apiService } from '../../../utils/api-service';
 import { useEventHandler } from '../../../hooks/use-event-handler';
 import { useActionContext } from '../../../providers/action-provider';
+import { PlaybackReducerState } from '../reducers/playback-reducer';
 
 export function useAudioPlayer() {
-  const [currentPlayback, setCurrentPlayback] = useState<TPlayback & { streamUrl: string } | null>(null);
-  const playbackSrc = currentPlayback?.streamUrl;
-
+  const [currentPlayback, setCurrentPlayback] = useState<PlaybackReducerState | null>(null);
   const [playbackState, setPlaybackState] = useState<'playing' | 'paused' | 'buffering'>('paused');
+  const playbackSrc = currentPlayback?.status === 'ready' ? currentPlayback.streamUrl : null;
   const [playbackPosition, setPlaybackPosition] = useState(0);
   const audioRef = useRef<HTMLAudioElement>(null);
   const actionService = useActionContext();
@@ -28,11 +28,16 @@ export function useAudioPlayer() {
           const data = await res.json();
           setCurrentPlayback({
             ...playback,
+            status: 'ready',
             streamUrl: data.streamUrl,
           });
         })
         .catch(err => {
           console.log('Fetching of stream token failed!', err.message);
+          setCurrentPlayback({
+            ...playback,
+            status: 'error',
+          });
         });
     }
   };
@@ -45,6 +50,10 @@ export function useAudioPlayer() {
     //setPlaybackPosition(pos);
     audioRef.current.currentTime = pos;
   };
+
+  const stopPlayback = () => {
+    audioRef.current?.pause();
+  }
 
   /**Toggles the state of the current playback. */
   const togglePlayback = async () => {
@@ -75,11 +84,11 @@ export function useAudioPlayer() {
 
   //Automatically play tracks when they are selected. Must be done here; the hidden audio-tag must be rendered before play is hit.
   useEffect(() => {
-    if (currentPlayback) {
+    if (currentPlayback?.status === 'ready') {
       audioRef.current.currentTime = currentPlayback.start_position || 0;
       onPlay();
     }
-  }, [currentPlayback?.id]);
+  }, [currentPlayback?.id, currentPlayback?.status]);
 
   useEventHandler({
     service: actionService,
@@ -105,6 +114,7 @@ export function useAudioPlayer() {
     updateCurrentPlayback,
     updatePlaybackState,
     updatePlaybackPosition,
+    stopPlayback,
     playbackPosition,
     audioRef,
     playbackSrc,

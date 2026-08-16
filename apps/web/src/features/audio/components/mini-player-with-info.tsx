@@ -31,7 +31,6 @@ export function MiniPlayerWithInfo() {
                 {
                   authService.session?.user.id !== playbackService.currentPlayback.author.id ? (
                     <RepostButton />
-
                   ) : null
                 }
                 <LikeButton />

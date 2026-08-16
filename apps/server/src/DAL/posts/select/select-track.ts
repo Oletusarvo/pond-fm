@@ -16,7 +16,8 @@ export function selectTrack(query: Knex.QueryBuilder) {
               WHERE 
               moods.track_id = track.id
             ),
-            'waveform', audio.waveform
+            'waveform', audio.waveform,
+            'size', track.size
           ) AS track
         `,
     ),

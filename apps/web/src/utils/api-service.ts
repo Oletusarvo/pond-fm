@@ -273,6 +273,11 @@ export class ApiService {
     const req = requestBuilder.get().includeCredentials().build();
     return await fetch(this.withEndpoint('tracks', trackId), req);
   }
+
+  async deleteTrack(trackId: string) {
+    const req = requestBuilder.del().includeCredentials().build();
+    return await fetch(this.withEndpoint('tracks', trackId), req);
+  }
 }
 
 /**Provides methods to perform actions on the server. */

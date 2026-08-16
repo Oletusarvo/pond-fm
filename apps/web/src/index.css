@@ -31,7 +31,18 @@
   height: calc(var(--vh) * 100);
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   color: black;
-  font-size: var(--text-sm);
+}
+
+@media screen and (max-width: 500px) {
+  #root {
+    font-size: var(--text-sm);
+  }
+}
+
+@media screen and (min-width: 501px) {
+  #root {
+    font-size: var(--text-base);
+  }
 }
 
 body {

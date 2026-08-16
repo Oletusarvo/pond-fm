@@ -8,6 +8,8 @@ import { UploadTime } from './upload-time';
 import { usePostContext } from '../providers/post-provider';
 import { Tag } from './tag';
 import { SettingsButton } from './track-settings-button';
+import { ToggleProvider } from '../../../providers/toggle-provider';
+import { TrackModal } from './track-modal';
 
 /**The main component responsible for rendering posts. Includes an AudioPlayer, stats and other information.
  * Must be a child of a PostProvider.
@@ -15,13 +17,20 @@ import { SettingsButton } from './track-settings-button';
 export function Post() {
   const { post } = usePostContext();
   return (
-    <div className='flex py-2 rounded-md bg-white w-full flex-col gap-2 items-start h-pad'>
+    <div className='flex py-2 rounded-md bg-white w-full flex-col gap-1 items-start h-pad'>
       <div className='flex justify-between w-full items-start'>
         <div className='flex flex-col leading-none'>
           <PostAuthor />
           <div className="flex items-center gap-2">
             <Title />
-            <SettingsButton />
+            <ToggleProvider>
+              <ToggleProvider.Trigger>
+                <SettingsButton />
+              </ToggleProvider.Trigger>
+              <ToggleProvider.Target>
+                <TrackModal track={post.track} />
+              </ToggleProvider.Target>
+            </ToggleProvider>
           </div>
 
         </div>

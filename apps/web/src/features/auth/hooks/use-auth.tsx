@@ -57,6 +57,10 @@ export function useAuth() {
         user: {
           ...oldSession.user,
           ...newSession.user,
+          subscription: {
+            ...oldSession.user.subscription,
+            ...newSession.user.subscription,
+          }
         }
       };
 

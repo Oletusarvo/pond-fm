@@ -7,10 +7,11 @@ import { useSubmit } from '../../../hooks/use-submit';
 import { apiService } from '../../../utils/api-service';
 import { useSettingsContext } from '../providers/settings-provider';
 import { ErrorMessage, SuccessMessage } from '../../../components/helper-message';
+import { useToggleContext } from '../../../providers/toggle-provider';
 
 export function ProfileSettingsModal() {
-  const settingsService = useSettingsContext();
-  const close = () => settingsService.toggleSettingsModal(false);
+  const { toggleState } = useToggleContext();
+  const close = () => toggleState(false);
   return (
     <Modal
       title='Settings'

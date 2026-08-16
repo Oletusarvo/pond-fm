@@ -8,13 +8,14 @@ import { Feed } from '../../../components/feed';
 import { useFeedContext } from '../../../providers/feed-provider';
 import { useNavigate } from 'react-router-dom';
 import { useQueryClient } from '@tanstack/react-query';
+import { useToggleContext } from '../../../providers/toggle-provider';
 
 export function NotificationsModal() {
-  const { toggleShowNotificationsModal } = useNotificationsContext();
+  const { toggleState } = useToggleContext();
   return (
     <Modal
       title='Notifications'
-      onClose={() => toggleShowNotificationsModal(false)}>
+      onClose={() => toggleState(false)}>
       <ModalContent />
     </Modal>
   );
