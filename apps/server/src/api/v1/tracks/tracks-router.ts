@@ -34,6 +34,7 @@ router.get('/feed/main', checkAuth(false), getMainFeedHandler);
 router.get('/feed/discover', checkAuth(false), getDiscoveryFeed);
 router.get('/feed/followed', checkAuth(), getFollowedFeedHandler);
 router.get('/feed/:authorId', checkAuth(false), getAuthorFeed);
+router.get('/:trackId', getTrackHandler);
 
 router.post('/like', checkAuth(), likeTrackHandler);
 router.delete('/like', checkAuth(), unlikeTrackHandler);

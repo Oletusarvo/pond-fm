@@ -3,9 +3,9 @@ import { Form } from "../../../components/form";
 import { ErrorMessage, SuccessMessage } from "../../../components/helper-message";
 import { Input } from "../../../components/input";
 import { Modal } from "../../../components/modal";
-import { useRef, useState } from "react";
+import React, { useCallback, useRef, useState } from "react";
 import { useSubmit } from "../../../hooks/use-submit";
-import { apiService } from "../../../utils/api-service";
+import { apiService } from "../../../utils/api/api-service";
 import { useMainGenres } from "../hooks/use-main-genres";
 import { TagList } from "./tag-list";
 import { useMoods } from "../hooks/use-moods";
@@ -20,12 +20,16 @@ import { usePostStore } from "../hooks/use-post";
 import { usePlaybackContext } from "../../audio/providers/playback-provider";
 import { useAuthContext } from "../../auth/providers/auth-provider";
 import { useToggleContext } from "../../../providers/toggle-provider";
+import { useUploadTrack } from "../hooks/use-upload-track";
+import { useUpdateTrack } from "../hooks/use-update-track";
+import { GenreSelector } from "./track-modal-selector";
+import { MoodSelector } from "./track-modal-selector";
 
 type TrackModalProps = {
   track?: TTrack;
 }
 
-export function TrackModal({ track }: TrackModalProps) {
+export const TrackModal = React.memo(function ({ track }: TrackModalProps) {
   const { toggleState } = useToggleContext();
   const onClose = () => toggleState(false);
 
@@ -36,112 +40,75 @@ export function TrackModal({ track }: TrackModalProps) {
       <ModalContent track={track} onClose={onClose} />
     </Modal>
   );
-}
-
-function GenreSelector({ onChange, defaultSelected }) {
-  const [selectedGenre, setSelectedGenre] = useState(defaultSelected);
-  const { data: genres, isPending: genresPending } = useMainGenres();
-  const onGenreSelected = (genre: string) => {
-    setSelectedGenre(genre);
-    onChange(genre)
-  }
-  return (
-    <TagList selectedTags={[selectedGenre]} tags={genres || []} onTagSelected={onGenreSelected} />
-  );
-}
-
-function MoodSelector({ defaultSelected, onChange }) {
-  const { items: selectedMoods, toggleItem: toggleMood } = useToggleList<string>({
-    initialItems: defaultSelected,
-    limit: 3,
-    onChanged: (items) => onChange(items)
-  });
-
-  const { data: moods, isPending: moodsPending } = useMoods();
-
-  return (
-    <TagList tags={moods || []} selectedTags={selectedMoods} onTagSelected={tag => toggleMood(tag)} color="secondary" />
-  )
-}
+})
 
 function ModalContent({ track, onClose }) {
   const genreRef = useRef<string | null>(track?.genre);
   const moodsRef = useRef<string[]>(track?.moods || []);
-  const [progress, setProgress] = useState(0);
-  const [progressStatus, setProgressStatus] = useState('uploading');
   const queryClient = useQueryClient();
   const playbackService = usePlaybackContext();
   const authService = useAuthContext();
-  const upload = async (data: any, file: File) => {
-    const uploadUrlRes = await apiService.requestUploadUrl({
-      filename: file.name,
-      mimeType: file.type,
-      size: file.size,
-      title: data.title,
-      moods: data.moods,
-      genre: data.genre
-    });
-    if (!uploadUrlRes.ok) {
-      return uploadUrlRes;
-    }
-    const uploadData = await uploadUrlRes.json();
-    try {
-      await apiService.uploadToUrl({
-        file,
-        method: 'PUT',
-        url: uploadData.uploadUrl,
-        onProgress: (percent) => {
-          setProgress(percent)
+  const [progress, setProgress] = useState(0);
+  const [progressStatus, setProgressStatus] = useState('uploading');
+  const fileSizeRef = useRef<number>(0);
+
+  const { submit: uploadTrack, loading: uploadLoading, status: uploadStatus } = useSubmit({
+    fetchFn: async payload => {
+      const data = Object.fromEntries(payload) as any;
+      data.moods = moodsRef.current;
+      data.genre = genreRef.current;
+      const { file, ...rest } = data;
+
+      fileSizeRef.current = file.size;
+      const res = await apiService.requestUploadUrl({
+        filename: file.name,
+        mimeType: file.type,
+        size: file.size,
+        title: rest.title,
+        moods: rest.moods,
+        genre: rest.genre
+      });
+      if (!res.ok) {
+        return res;
+      }
+      const uploadSession = await res.json();
+      try {
+        await apiService.uploadToUrl({
+          method: 'PUT',
+          url: uploadSession.uploadUrl,
+          file,
+          onProgress: progress => setProgress(progress)
+        });
+      } catch (error) {
+        return new Response(null, { status: 500 });
+      }
+
+      setProgressStatus('processing');
+      return await apiService.completeUpload(uploadSession.code);
+    },
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({ queryKey: ['feed'] });
+      const newStorageConsumed = Number(authService.session?.user.subscription.storage_quota_consumed) + fileSizeRef.current;
+      await authService.refreshSession({
+        user: {
+          subscription: {
+            storage_quota_consumed: newStorageConsumed,
+          }
         }
       });
-    }
-    catch (err) {
-      console.log(err.message)
-      return { ok: false }
-    }
-
-    setProgressStatus('processing');
-    return apiService.completeUpload(uploadData.code);
-  }
-
-  const { submit, loading, status } = useSubmit({
-    fetchFn: async payload => {
-      const trackPayload: { title: string; file: File; moods?: string[]; genre: string } = Object.fromEntries(payload) as unknown as any;
-      trackPayload.genre = genreRef.current;
-      trackPayload.moods = moodsRef.current;
-      const { file, ...rest } = trackPayload;
-
-      let res;
-      if (!track) {
-        res = await upload(rest, file);
-      }
-      else {
-        res = await apiService.updateTrack(track.id, rest);
-      }
-      if (!res.ok) {
-        return { success: false, error: await res.json() };
-      }
-      queryClient.invalidateQueries({ queryKey: ['feed'] });
-      if (file) {
-        const currentStorageQuotaConsumed = Number(authService.session.user.subscription.storage_quota_consumed) + file.size;
-        await authService.refreshSession({
-          user: {
-            subscription: {
-              storage_quota_consumed: currentStorageQuotaConsumed,
-            }
-          }
-        });
-      }
-
-      return { success: true };
+      setTimeout(() => onClose(), 1500);
     },
-    onSuccess: () => {
-      setTimeout(() => onClose(), 1000);
+    onError: async res => {
+      if (res.status === 409) {
+        const err = await res.json();
+        return err.error;
+      }
     }
   });
 
-  const postStore = usePostStore();
+  const { submit: updateTrack, loading: updateLoading, status: updateStatus } = useUpdateTrack(track?.id);
 
+  const postStore = usePostStore();
   const { deleteTrack, status: trackDeleteStatus, loading: trackDeleteLoading } = useDeleteTrack({
     onSuccess: async () => {
       postStore.deletePost(track.id);
@@ -158,9 +125,11 @@ function ModalContent({ track, onClose }) {
     }
   });
 
-  console.log(authService.session?.user)
   const { storage_quota, storage_quota_consumed } = authService.session?.user.subscription || {};
   const storageQuotaConsumed = Number(storage_quota_consumed) / Number(storage_quota) * 100;
+  const loading = track ? updateLoading : uploadLoading;
+  const status = track ? updateStatus : uploadStatus;
+  const submit = track ? updateTrack : uploadTrack;
 
   return (
     <div className='flex flex-col w-full gap-8 text-black'>
@@ -233,14 +202,13 @@ function ModalContent({ track, onClose }) {
               }}>
               Delete
             </LoaderButton> : <Button variant="outlined" color="primary" fullWidth shape="rounded" paddingEnabled onClick={onClose}>
-
               Cancel
             </Button>
           }
 
-          <LoaderButton type="submit" variant="contained" loading={loading} disabled={loading} fullWidth shape="rounded" paddingEnabled>
+          <SubmitButton loading={loading} disabled={status === 'success' || loading}>
             {track ? 'Update' : 'Upload'}
-          </LoaderButton>
+          </SubmitButton>
         </div>
         {
           status === 'upload:quota-exceeded' ? <ErrorMessage>You have reached your upload quota. Please upgrade to pro to continue uploading.</ErrorMessage>
@@ -257,5 +225,13 @@ function ModalContent({ track, onClose }) {
         }
       </Form>
     </div>
-  )
+  );
 }
+
+const SubmitButton = React.memo(function ({ children, loading, disabled }: React.PropsWithChildren & { loading: boolean; disabled: boolean }) {
+  return (
+    <LoaderButton type="submit" variant="contained" loading={loading} disabled={disabled} fullWidth shape="rounded" paddingEnabled>
+      {children}
+    </LoaderButton>
+  );
+})

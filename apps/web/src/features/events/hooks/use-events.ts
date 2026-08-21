@@ -1,5 +1,5 @@
 import { useCallback, useRef } from "react";
-import { apiService } from "../../../utils/api-service";
+import { apiService } from "../../../utils/api/api-service";
 import { cancelable } from "../../../utils/debounced";
 
 type EventType = 'track-played' | 'track-liked' | 'track-unliked';

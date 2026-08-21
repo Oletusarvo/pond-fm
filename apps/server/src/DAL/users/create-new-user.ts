@@ -9,7 +9,7 @@ export async function createNewUser(ctx: DBContext, config: { user: { email: str
       {
         email: config.user.email,
         username: config.user.username,
-        status: 'pending',
+        status: 'pending_verification',
       }
     )
     .returning('id');

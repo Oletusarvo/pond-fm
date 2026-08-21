@@ -1,6 +1,6 @@
 import { Separator } from '../../../components/separator';
 import { PostFeed } from '../../posts/components/post-feed';
-import { apiService } from '../../../utils/api-service';
+import { apiService } from '../../../utils/api/api-service';
 import { Spinner } from '../../../components/spinner';
 
 import { useUserContext } from '../providers/user-proivder';

@@ -1,24 +1,14 @@
-import { useStatus } from "../../../hooks/use-status";
-import { apiService } from "../../../utils/api-service"
+import { useAction } from "../../../hooks/use-action";
+import { apiService } from "../../../utils/api/api-service"
 
-type UseDeleteTrackProps = {
-  onSuccess?: (res: Response) => void;
-  onFailure?: (res: Response) => void;
-}
+type UseDeleteTrackProps = Omit<Parameters<typeof useAction>[0], 'fn'>;
 
-export function useDeleteTrack({ onSuccess, onFailure }: UseDeleteTrackProps) {
-  const { status, loading, setStatus } = useStatus();
-  const deleteTrack = async (id: string) => {
-    setStatus('loading')
-    const res = await apiService.deleteTrack(id);
-    if (!res.ok) {
-      setStatus('error');
-      onFailure?.(res);
+export function useDeleteTrack(props: UseDeleteTrackProps) {
+  const { action, loading, status } = useAction({
+    ...props,
+    fn: async (id: string) => {
+      return await apiService.deleteTrack(id);
     }
-    else {
-      setStatus('success');
-      onSuccess?.(res);
-    }
-  }
-  return { deleteTrack, status, loading };
+  });
+  return { deleteTrack: action, status, loading };
 }

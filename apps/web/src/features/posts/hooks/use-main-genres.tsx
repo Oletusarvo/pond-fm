@@ -1,7 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
-import { apiService } from "../../../utils/api-service";
+import { apiService } from "../../../utils/api/api-service";
 
-export function useMainGenres(){
+export function useMainGenres() {
     const query = useQuery({
         queryKey: ['main-genres'],
         queryFn: async () => {

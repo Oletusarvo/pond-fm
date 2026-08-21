@@ -1,5 +1,5 @@
 import { useCallback, useRef, useState } from 'react';
-import { apiService } from '../../../utils/api-service';
+import { apiService } from '../../../utils/api/api-service';
 
 type PlayCountEvent = 'track-played';
 

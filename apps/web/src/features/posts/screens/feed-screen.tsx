@@ -1,4 +1,4 @@
-import { useState, useTransition } from 'react';
+import React, { ReactNode, useState, useTransition } from 'react';
 import { Separator } from '../../../components/separator';
 import { PostFeed } from '../components/post-feed';
 import { PostFeedScreenContainer } from '../components/post-feed-screen-container';
@@ -11,9 +11,10 @@ type FeedScreenProps = {
   description?: string;
   queryFn: (genres: string[], moods: string[], cursor?: string) => Promise<Response>;
   queryKey: string[];
+  icon?: ReactNode;
 }
 export function PostFeedScreen({
-  title, description, queryFn, queryKey
+  title, description, queryFn, queryKey, icon
 }: FeedScreenProps) {
   const [genres, setMainGenre] = useState([]);
   const [moods, setMoods] = useState([]);
@@ -22,6 +23,7 @@ export function PostFeedScreen({
   return (
     <PostFeedScreenContainer>
       <PostFeedHeader
+        icon={icon}
         title={title}
         description={description}>
         <GenreSelector

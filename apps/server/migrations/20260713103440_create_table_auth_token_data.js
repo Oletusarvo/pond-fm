@@ -15,7 +15,8 @@ exports.up = function (knex) {
         .notNullable()
         .references('id')
         .inTable('auth.user_data')
-        .onDelete('CASCADE');
+        .onDelete('CASCADE')
+        .onUpdate('CASCADE');
       tbl.string('code').notNullable().unique();
       tbl.boolean('is_used').defaultTo(false);
       tbl.timestamp('expires_at').notNullable();

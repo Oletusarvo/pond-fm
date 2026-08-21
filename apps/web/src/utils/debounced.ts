@@ -1,4 +1,4 @@
-import { apiService } from './api-service';
+import { apiService } from './api/api-service';
 import { cancelPrevious, debounce } from './debounce';
 
 /**Provides useful debounced methods. */

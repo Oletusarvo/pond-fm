@@ -1,6 +1,6 @@
-import { TTrack } from '../types/track';
-import { joinStrings } from './join-strings';
-import { requestBuilder } from './request-builder';
+import { TTrack } from '../../types/track';
+import { joinStrings } from '../join-strings';
+import { requestBuilder } from '../request-builder';
 
 export class ApiService {
   constructor(private endpoint: string) { }
@@ -278,7 +278,18 @@ export class ApiService {
     const req = requestBuilder.del().includeCredentials().build();
     return await fetch(this.withEndpoint('tracks', trackId), req);
   }
+
+  async updateSubscription(to: string) {
+    const req = requestBuilder.patch().json().body({ plan_label: to }).includeCredentials().build();
+    return await fetch(this.withEndpoint('billing/subscriptions/checkout'), req);
+  }
+
+  async getSubscriptionStatus() {
+    const req = requestBuilder.get().includeCredentials().build();
+    return await fetch(this.withEndpoint('billing/subscriptions/status'), req);
+  }
 }
+
 
 /**Provides methods to perform actions on the server. */
 export const apiService = new ApiService(import.meta.env.DEV ? 'http://localhost:3002/api/v1' : 'https://pond-fm-api.onrender.com/api/v1');

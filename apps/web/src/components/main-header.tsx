@@ -4,29 +4,25 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useAuthContext } from '../features/auth/providers/auth-provider';
 import {
   NotificationsProvider,
-  useNotificationsContext,
 } from '../features/notifications/providers/notifications-provider';
 import { ResponsiveLink } from './responsive-link';
-import { useSettingsContext } from '../features/auth/providers/settings-provider';
-import { UploadProvider, useUploadContext } from '../features/posts/providers/upload-context';
 import { FeedProvider, useFeedContext } from '../providers/feed-provider';
-import { apiService } from '../utils/api-service';
-import { ReactPromise } from 'react';
-import { ToggleProvider, useToggleContext } from '../providers/toggle-provider';
-import { Modal } from './modal';
+import { apiService } from '../utils/api/api-service';
+import React from 'react';
+import { ToggleProvider } from '../providers/toggle-provider';
 import { NotificationsModal } from '../features/notifications/components/notifications-modal';
 import { TrackModal } from '../features/posts/components/track-modal';
-import { ProfileSettingsModal } from '../features/auth/components/settings-modal';
+import { GoProModal } from '../features/auth/components/go-pro-modal';
+import { SettingsModal } from '../features/auth/components/settings-modal';
 
 export function MainHeader() {
-  const navigate = useNavigate();
-  const authService = useAuthContext();
-  const settingsService = useSettingsContext();
+  const { status: authStatus } = useAuthContext();
+
   return (
     <header className='bg-primary text-white py-2 h-pad w-full flex items-center justify-between'>
-      <div className='flex items-center gap-2 xs:text-xs md:text-base'>
+      <div className='flex items-center gap-2 text-sm'>
         <Link to='/'>
-          <h2 className='font-semibold cursive text-base'>
+          <h2 className='font-semibold cursive'>
             🐸<span>Pond.fm</span>
           </h2>
         </Link>
@@ -43,92 +39,107 @@ export function MainHeader() {
             New
           </ResponsiveLink>
           {
-            authService.status === 'authenticated' ? (
+            authStatus === 'authenticated' ? (
               <ResponsiveLink to="/followed" className="font-semibold">Followed</ResponsiveLink>
             ) : null
           }
         </nav>
       </div>
 
-      <div className='flex gap-4 items-center text-base'>
-        {authService.status === 'authenticated' ? (
-          <>
-            {authService.session.user.subscription.label !== 'pro' ? <ToggleProvider>
-              <ToggleProvider.Trigger>
-                <Button variant="text" color="inherit">Go Pro</Button>
-              </ToggleProvider.Trigger>
-              <ToggleProvider.Target>
-                <GetProModal />
-              </ToggleProvider.Target>
-            </ToggleProvider> : null}
-
-            <Button
-              variant='ghost'
-              color="white"
-              onClick={() => navigate(`/user/${authService.session.user.id}`)}>
-              <UserIcon />
-            </Button>
-            <FeedProvider
-              queryKey={['notifications']}
-              queryFn={cursor => apiService.getNotifications(cursor)}
-              refetchInterval={1000 * 60}>
-              <NotificationsProvider>
-                <ToggleProvider>
-                  <ToggleProvider.Trigger>
-                    <NotificationsButton />
-                  </ToggleProvider.Trigger>
-                  <ToggleProvider.Target>
-                    <NotificationsModal />
-                  </ToggleProvider.Target>
-                </ToggleProvider>
-              </NotificationsProvider>
-            </FeedProvider>
-
-
-            <ToggleProvider>
-              <ToggleProvider.Trigger>
-                <UploadButton />
-              </ToggleProvider.Trigger>
-              <ToggleProvider.Target>
-                <TrackModal />
-              </ToggleProvider.Target>
-            </ToggleProvider>
-            <ToggleProvider>
-              <ToggleProvider.Trigger>
-                <Button
-                  color="white"
-                  variant='ghost'
-                >
-                  <SettingsIcon />
-                </Button>
-              </ToggleProvider.Trigger>
-              <ToggleProvider.Target>
-                <ProfileSettingsModal />
-              </ToggleProvider.Target>
-            </ToggleProvider>
-
-          </>
-        ) : null}
-      </div>
+      <AuthControls authStatus={authStatus} />
     </header>
   );
 }
 
-function GetProModal() {
-  const { toggleState } = useToggleContext();
+/**
+ * Renders the controls appearing when the user is logged in. 
+ * It is done in this ugly memo-way to stop the TrackModal from re-rendering when
+ * the users session is updated after a track upload finishes.
+ */
+const AuthControls = React.memo(function ({ authStatus }: { authStatus: ReturnType<typeof useAuthContext>['status'] }) {
   return (
-    <Modal title="Get Pro" onClose={() => toggleState(false)}>
-      <h2 className="text-xl font-semibold">Increase your footprint with pro</h2>
-      <p>Coming soon. With a pro-account, you will get 5gb of storage; plenty to get your tracks out there, for only €6,99 a month.</p>
-    </Modal>
+    <div className='flex gap-4 items-center text-sm'>
+      {authStatus === 'authenticated' ? (
+        <>
+          <GoProButton />
+          <UserProfileButton />
+          <FeedProvider
+            queryKey={['notifications']}
+            queryFn={cursor => apiService.getNotifications(cursor)}
+            refetchInterval={1000 * 60}>
+            <NotificationsProvider>
+              <ToggleProvider>
+                <ToggleProvider.Trigger>
+                  <NotificationsButton />
+                </ToggleProvider.Trigger>
+                <ToggleProvider.Target>
+                  <NotificationsModal />
+                </ToggleProvider.Target>
+              </ToggleProvider>
+            </NotificationsProvider>
+          </FeedProvider>
+
+
+          <ToggleProvider>
+            <ToggleProvider.Trigger>
+              <UploadButton />
+            </ToggleProvider.Trigger>
+            <ToggleProvider.Target>
+              <TrackModal />
+            </ToggleProvider.Target>
+          </ToggleProvider>
+          <ToggleProvider>
+            <ToggleProvider.Trigger>
+              <Button
+                color="white"
+                variant='ghost'
+                shape="circle"
+              >
+                <SettingsIcon />
+              </Button>
+            </ToggleProvider.Trigger>
+            <ToggleProvider.Target>
+              <SettingsModal />
+            </ToggleProvider.Target>
+          </ToggleProvider>
+        </>
+      ) : null}
+    </div>
+  );
+});
+
+function GoProButton() {
+  const { session } = useAuthContext();
+  return (
+    session.user.subscription.label !== 'pro' ? <ToggleProvider>
+      <ToggleProvider.Trigger>
+        <Button variant="text" color="inherit">Go Pro</Button>
+      </ToggleProvider.Trigger>
+      <ToggleProvider.Target>
+        <GoProModal />
+      </ToggleProvider.Target>
+    </ToggleProvider> : null
   );
 }
+
+function UserProfileButton() {
+  const { session } = useAuthContext();
+  const navigate = useNavigate();
+  return (<Button
+    shape="circle"
+    variant='ghost'
+    color="white"
+    onClick={() => navigate(`/user/${session.user.id}`)}>
+    <UserIcon />
+  </Button>)
+}
+
 function UploadButton(props) {
   return (
     <Button
       {...props}
       color="white"
-      variant='ghost'>
+      variant='ghost' shape="circle">
       <UploadIcon />
     </Button>
   );
@@ -181,6 +192,6 @@ function UploadIcon() {
 
 function HeaderIcon({ icon: Icon }: { icon: React.FC<any> }) {
   return (
-    <Icon className="xs:w-5 md:w-8" />
+    <Icon className="w-5" />
   );
 }

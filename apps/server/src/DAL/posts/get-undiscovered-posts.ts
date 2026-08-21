@@ -1,4 +1,6 @@
 
+import { db } from "../../db-config";
+import { tablenames } from "../../tablenames";
 import { DBContext } from "../../types/db-context";
 import { getUndistinctPostQuery } from "./get-undistinct-post-query";
 import { selectPost } from "./select/select-post";
@@ -17,7 +19,19 @@ export async function getUndiscoveredPosts(ctx: DBContext, config: FeedQueryConf
   onlyReadyUploads(query);
   filterByGenres(query, config.genres);
   filterByMoods(query, config.moods);
-  query.where('track.unique_play_count', '<', 100)
+  query
+    .where(
+      'track.unique_play_count',
+      '<',
+      ctx.select('unique_listeners_threshold')
+        .from(tablenames.plans)
+        .where({
+          id: ctx
+            .select('id')
+            .from(tablenames.subscriptions)
+            .whereRaw("user_id = track.author_id")
+            .limit(1)
+        }))
     .orderBy('post.created_at', 'asc');
   applyCursor(query, {
     ...config,

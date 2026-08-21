@@ -33,12 +33,7 @@ function ModalContent({ onClose }) {
   const { submit, loading, status } = useSubmit({
     fetchFn: async (payload) => {
       const data = Object.fromEntries(payload) as { code: string };
-
-      const res = await authService.authorize(data.code);
-      if (!res.ok) {
-        return { success: false }
-      }
-      return { success: true }
+      return await authService.authorize(data.code);
     },
     onSuccess: () => {
       navigate('/new');
@@ -49,7 +44,7 @@ function ModalContent({ onClose }) {
   return (
     <div className='flex w-full flex-col gap-4'>
       <Form onSubmit={submit} ref={formRef}>
-        <p>Please submit the below code to log in.</p>
+        <p>To sign in, please submit the code we sent you.</p>
         <Form.Group label="Code">
           <Input name="code" type="text" required defaultValue={code} />
         </Form.Group>

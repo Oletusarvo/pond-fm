@@ -3,7 +3,7 @@ import { Modal } from '../../../components/modal';
 import { useNotificationsContext } from '../providers/notifications-provider';
 import { useEffect } from 'react';
 import { formatDistanceToNow } from 'date-fns';
-import { apiService } from '../../../utils/api-service';
+import { apiService } from '../../../utils/api/api-service';
 import { Feed } from '../../../components/feed';
 import { useFeedContext } from '../../../providers/feed-provider';
 import { useNavigate } from 'react-router-dom';
@@ -74,12 +74,17 @@ function Notification({ notification }) {
         size='1.2rem'
       />
       <div className='flex flex-col flex-1 items-start'>
-        <div className='flex items-center gap-2 text-sm'>
-          <strong>{notification.sender.username}</strong>
-          <span>{message}</span>
+        <div className='flex flex-col items-start text-sm'>
+          <div className="flex items-center gap-2">
+            <strong>{notification.sender.username}</strong>
+            <span className="text-nowrap">{message}</span>
+          </div>
+
+
+
           {
             notification.type !== 'follow' ? (
-              <strong>{notification.track?.title}</strong>
+              <strong className="text-primary">{notification.track?.title}</strong>
             ) : null
           }
 

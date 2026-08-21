@@ -2,7 +2,7 @@ import { useParams } from "react-router-dom";
 import { createProvider } from "../../../utils/create-provider";
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { apiService } from "../../../utils/api-service";
+import { apiService } from "../../../utils/api/api-service";
 import { FollowerFeedModal } from "../components/follower-feed-modal";
 import { FollowingFeedModal } from "../components/following-feed-modal";
 

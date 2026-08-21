@@ -10,6 +10,16 @@
   }
 }
 
+@keyframes GrowInAnimation {
+  0% {
+    transform: scale(0.97);
+  }
+
+  100% {
+    transform: scale(1);
+  }
+}
+
 :root {
   --primary: var(--color-green-600);
   --warning: var(--color-orange-400);
@@ -22,6 +32,7 @@
   --color-primary: var(--primary);
   --breakpoint-xs: 360px;
   --animate-fade-in: FadeInAnimation 0.2s ease-out;
+  --animate-grow-in: GrowInAnimation 0.2s ease-out;
 }
 
 #root {

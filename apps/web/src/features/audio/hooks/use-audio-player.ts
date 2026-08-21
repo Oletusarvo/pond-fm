@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { TPost } from '../../../types/post';
 import { TPlayback } from '../../../types/playback';
-import { apiService } from '../../../utils/api-service';
+import { apiService } from '../../../utils/api/api-service';
 import { useEventHandler } from '../../../hooks/use-event-handler';
 import { useActionContext } from '../../../providers/action-provider';
 import { PlaybackReducerState } from '../reducers/playback-reducer';

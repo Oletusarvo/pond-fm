@@ -1,6 +1,6 @@
 import { useQueryClient } from '@tanstack/react-query';
 import { TPost } from '../../../types/post';
-import { apiService } from '../../../utils/api-service';
+import { apiService } from '../../../utils/api/api-service';
 import { cancelable } from '../../../utils/debounced';
 import { usePost, usePostStore } from './use-post';
 

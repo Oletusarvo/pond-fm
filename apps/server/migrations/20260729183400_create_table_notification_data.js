@@ -7,7 +7,7 @@ const tablename = 'notification_data';
  */
 exports.up = function (knex) {
   return knex.schema
-    .raw("CREATE TYPE notification_type AS ENUM ('like', 'repost', 'follow')")
+    .raw("CREATE TYPE notification_type AS ENUM ('like', 'repost', 'follow', 'comment')")
     .createTable(tablename, tbl => {
       tbl.uuid('id').primary().defaultTo(knex.fn.uuid());
       tbl

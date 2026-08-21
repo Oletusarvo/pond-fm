@@ -4,7 +4,7 @@ import { useClassName } from '../hooks/use-class-name';
 import React from 'react';
 
 type ModalProps = React.PropsWithChildren & {
-  onClose: () => void;
+  onClose?: () => void;
   title: string;
   fullScreen?: boolean;
 };
@@ -29,7 +29,7 @@ export const Modal = React.memo(function Modal({
 
   const Body = React.memo(function Body() {
     const className = useClassName(
-      'bg-white p-4 flex flex-col overflow-y-scroll max-h-full animate-fade-in',
+      'bg-white p-4 flex flex-col overflow-y-scroll max-h-full animate-fade-in animate-grow-in',
       fullScreen ? 'w-full h-full' : 'xs:w-full md:w-[60%] lg:w-[50%] xl:w-[40%] rounded-md',
     );
     return (
@@ -37,6 +37,7 @@ export const Modal = React.memo(function Modal({
         <div className='flex items-center w-full justify-between pt-2 pb-4 text-slate-500'>
           <h3 className='font-semibold'>{title}</h3>
           <Button
+            hidden={!onClose}
             paddingEnabled
             onClick={onClose}
             variant='ghost'

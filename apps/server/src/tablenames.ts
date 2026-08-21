@@ -19,5 +19,13 @@ export const tablenames = {
   plans: 'billing.plan_data',
   subscriptions: 'billing.subscription_data',
   subscriptionQuotaOverrides: 'billing.subscription_quota_override_data',
-  serviceSettings: 'service_settings_data'
+  serviceSettings: 'service_settings_data',
+  uploadFolders: 'upload.upload_folder_data'
+} as const;
+
+export const viewnames = {
+  /**
+   * Refers to a view combining the track, upload, audio and upload_folder_data.
+   */
+  tracks: 'post.track_view',
 } as const;

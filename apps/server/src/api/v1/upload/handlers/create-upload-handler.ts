@@ -7,8 +7,6 @@ import { createHandler } from "@pondfm/server-utils";
 import crypto from 'crypto';
 import { withSubscription } from "../../../../DAL/billing/with/with-subscription";
 import { serviceError } from "../../../../utils/service-error";
-import { withUpload } from "../../../../DAL/uploads/with/with-upload";
-import { withTrack } from "../../../../DAL/posts/with/with-track";
 import { TSession } from "../../../../types/session";
 import path from "path";
 import { v4 } from "uuid";
@@ -34,16 +32,27 @@ export const createUploadHandler = createHandler(
       const extname = path.extname(data.filename);
       const filename = `${id}${extname}`;
       const key = `uploads/${filename}`;
-      const upload = await createUpload(trx, {
+      const [folder] = await trx(tablenames.uploadFolders).insert({
+        status: 'pending_upload',
+        author_id: session.user.id,
+      })
+        .returning('id');
+
+      const [upload] = await trx(tablenames.uploads).insert({
         id,
+        upload_folder_id: folder.id,
         filename,
         key,
-        originalFilename: data.filename,
-        size: data.size,
-        mimeType: data.mimeType,
-      });
+        original_filename: data.filename,
+        size_bytes: data.size,
+        mime_type: data.mimeType
+      })
+        .returning('id');
 
-      const audio = await createAudioUpload(trx, { uploadId: upload.id, bitrate: data.bitRate });
+      const [audio] = await trx(tablenames.audio).insert({
+        upload_id: upload.id,
+      }).returning('*');
+
       await createCanonicalPost(trx, {
         track: {
           title: data.title,
@@ -62,7 +71,6 @@ export const createUploadHandler = createHandler(
         expires_at: db.raw("CURRENT_TIMESTAMP + INTERVAL '1h'"),
       });
 
-
       return {
         code, key
       };
@@ -79,11 +87,13 @@ export const createUploadHandler = createHandler(
 async function verifyUploadQuota(uploadedSize: number, session: TSession) {
   const quota = await withSubscription(db.queryBuilder())
     .from('subscription')
-    .select('storage_quota_mib', 'storage_quota_consumed')
+    .select('storage_quota_bytes', 'storage_quota_consumed')
     .where({ user_id: session.user.id })
     .first();
 
-  if (quota.storage_quota_mib && (BigInt(quota.storage_quota_consumed) + BigInt(uploadedSize) > BigInt(quota.storage_quota_mib))) {
+  console.log(quota);
+
+  if (quota.storage_quota_bytes && (BigInt(quota.storage_quota_consumed) + BigInt(uploadedSize) > BigInt(quota.storage_quota_bytes))) {
     return {
       success: false,
       error: serviceError.upload.quotaExceeded

@@ -29,11 +29,11 @@ function ModalContent({ close }) {
         email: string;
         username?: string;
       };
-      const res = await authService.requestAuthorization(credentials);
-      if (!res.ok) return { success: false, error: await res.json() };
-      return {
-        success: true,
-      }
+      return await authService.requestAuthorization(credentials);
+
+    },
+    onError: async res => {
+      return await res.json();
     },
     onSuccess: () => {
       navigate('/authorize');
@@ -51,8 +51,7 @@ function ModalContent({ close }) {
           required
         />
         <span className='text-slate-500 text-xs'>
-          We will send you a link into your inbox through which to authenticate. The link is
-          valid for 15 minutes.
+          Check your inbox for a sign-in link. It’ll be valid for 15 minutes.
         </span>
       </Form.Group>
 

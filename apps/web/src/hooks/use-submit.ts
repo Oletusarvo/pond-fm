@@ -1,47 +1,19 @@
+import { useAction } from './use-action';
 import { useStatus } from './use-status';
 
-export type ResponseType =
-  | {
-    success: true;
-    data?: any;
-  }
-  | {
-    success: false;
-    error?: any;
-  };
-
-export type UseSubmitProps = {
-  fetchFn: (payload: FormData) => Promise<ResponseType>;
-  onSuccess?: (data: any) => Promise<void> | void;
-  onError?: (res: Response) => Promise<void> | void;
-  onException?: (err: any) => Promise<void> | void;
+export type UseSubmitProps = Omit<Parameters<typeof useAction>[0], 'fn'> & {
+  fetchFn: (payload: FormData) => Promise<Response>;
 };
 
-export function useSubmit({ fetchFn, onSuccess, onError, onException }: UseSubmitProps) {
-  const { status, loading, setStatus } = useStatus();
-
-  const submit = async (e: any) => {
-    e.preventDefault();
-    try {
-      setStatus('loading');
+export function useSubmit({ fetchFn, ...props }: UseSubmitProps) {
+  const { action, status, loading } = useAction({
+    ...props,
+    fn: async (e) => {
+      e.preventDefault();
       const payload = new FormData(e.currentTarget);
-      const res = await fetchFn(payload);
-      if (res.success === true) {
-        setStatus('success');
-        await onSuccess?.(res.data);
-      } else {
-        const error = res.error ? res.error : null;
-        setStatus(error?.error || 'error');
-        await onError?.(error);
-      }
-    } catch (err) {
-      console.log(err.message);
-      setStatus('exception');
-      await onException?.(err);
-    } finally {
-      setStatus(prev => (prev === 'loading' ? 'idle' : prev));
+      return await fetchFn(payload);
     }
-  };
+  });
 
-  return { submit, status, loading };
+  return { submit: action, status, loading };
 }

@@ -16,7 +16,6 @@ export const deleteFileshandler = createHandler(
       }
 
       await trx(tablenames.uploads).whereIn('key', keys).del();
-
     })
     return res.end();
   }

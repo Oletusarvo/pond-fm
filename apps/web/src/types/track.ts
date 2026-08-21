@@ -8,4 +8,5 @@ export type TTrack = {
   genre: string;
   moods: string[];
   waveform: number[];
+  size: number;
 };

@@ -18,10 +18,10 @@ export function MiniPlayerWithInfo() {
   const authService = useAuthContext();
   return (
     <div className="flex flex-col w-full bg-slate-900 text-white h-pad">
-      <div className="flex w-full justify-between items-center py-4">
-        <div className="flex flex-col gap-0 leading-1">
+      <div className="flex w-full justify-between items-center py-2">
+        <div className="flex flex-col gap-0 leading-3">
           {playbackService.currentPlayback ? <small className="animate-pulse text-green-100">Now playing</small> : <small className="text-green-100">Nothing playing.</small>}
-          <h3 className="text-green-100 font-semibold text-lg">{playbackService.currentPlayback?.title}</h3>
+          <h3 className="text-green-100 font-semibold text-sm">{playbackService.currentPlayback?.title}</h3>
           <small>{playbackService?.currentPlayback?.author.username}</small>
         </div>
         {

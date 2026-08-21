@@ -11,7 +11,6 @@ import { getUndistinctPostQuery } from "../../../../DAL/posts/get-undistinct-pos
 export const getTrackHandler = createHandler(
   async (req: AuthenticatedExpressRequest, res) => {
     const query = getUndistinctPostQuery(db);
-
     selectPost(query, req.session);
     selectTrack(query);
     query.where({ 'track.id': req.params.trackId as string }).first();

@@ -2,6 +2,7 @@ import { getRouter } from '../../utils/get-router';
 import { decodeSessionCookie } from '../middleware/decode-session-cookie';
 import { includeSessionCookie } from '../middleware/include-session-cookie';
 import { authRouter } from './auth/auth-router';
+import { billingRouter } from './billing/billing-router';
 import { budgetRouter } from './budget/budget-router';
 import { paymentsRouter } from './payments/payments-router';
 import { tagsRouter } from './tags/tags-router';
@@ -18,5 +19,6 @@ router.use('/budget', budgetRouter);
 router.use('/users', usersRouter);
 router.use('/tags', tagsRouter);
 router.use('/upload', uploadRouter);
+router.use('/billing', billingRouter);
 
 export { router as apiV1Router };

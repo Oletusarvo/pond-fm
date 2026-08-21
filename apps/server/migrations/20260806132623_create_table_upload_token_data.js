@@ -5,10 +5,10 @@ const tablename = 'upload_token_data';
  */
 exports.up = function (knex) {
   return knex.schema.withSchema('upload').createTable(tablename, tbl => {
-    tbl.uuid('upload_id').references('id').inTable('upload.upload_data').onDelete('CASCADE');
-    tbl.uuid('user_id').references('id').inTable('auth.user_data').onDelete('CASCADE');
+    tbl.uuid('upload_id').references('id').inTable('upload.upload_data').onDelete('CASCADE').onUpdate('CASCADE');
+    tbl.uuid('user_id').references('id').inTable('auth.user_data').onDelete('CASCADE').onUpdate('CASCADE');
     tbl.string('code').notNullable();
-    tbl.bigint('expires_at').notNullable();
+    tbl.timestamp('expires_at').notNullable();
     tbl.primary(['upload_id', 'user_id']);
   })
 };

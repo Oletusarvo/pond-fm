@@ -1,6 +1,3 @@
-import { db } from "../../../../db-config";
-import { createUpload } from "../../../../DAL/uploads/create-upload";
-import { updateUpload } from "../../../../DAL/uploads/update-upload";
 import { AuthenticatedExpressRequest } from "../../../../types/express";
 import { createHandler } from "../../../../utils/create-handler";
 import { createWriteStream } from "fs";
@@ -21,6 +18,7 @@ export const uploadFileHandler = createHandler(
     });
 
     file.on('error', () => {
+      //Do a cleanup here.
       res.writeHead(500);
       res.end();
     });

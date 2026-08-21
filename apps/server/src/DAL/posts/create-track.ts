@@ -13,7 +13,6 @@ export async function createTrack(ctx: DBContext, config: { track: { title: stri
       title,
       author_id: authorId,
       primary_audio_id: audioId,
-      status: 'active',
       genre_id: getLookupQuery(tablenames.genres, genre)
     })
     .returning('*');

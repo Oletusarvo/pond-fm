@@ -9,6 +9,7 @@ import { findValidTokenByCode } from '../DAL/auth/find-token-by-code';
 import { UserRepository } from '../repositories/user-repository';
 import { activateUserById } from '../DAL/users/activate-by-id';
 import { serviceError } from '../utils/service-error';
+import { tablenames } from '../tablenames';
 
 export class AuthService {
   constructor(private repos: {
@@ -39,8 +40,10 @@ export class AuthService {
 
   async createSessionToken(ctx: DBContext, config: { authToken: any }) {
     const savedUser = await this.repos.userRepo.findByEmail(ctx, { email: config.authToken.user_email });
-    if (savedUser.status === 'pending') {
-      await this.repos.userRepo.activateById(ctx, { id: savedUser.id });
+    if (savedUser.status === 'pending_verification') {
+      await ctx(tablenames.users).where({ id: savedUser.id, status: 'pending_verification' }).update({
+        status: 'active'
+      });
     }
 
     const token = createJWT(

@@ -1,6 +1,6 @@
 import path from "path";
 import { db } from "../../../../db-config";
-import { tablenames } from "../../../../tablenames";
+import { tablenames, viewnames } from "../../../../tablenames";
 import { AuthenticatedExpressRequest } from "../../../../types/express";
 import { createHandler } from "../../../../utils/create-handler";
 import { generateWaveformDataFromStream } from "../../../../utils/generate-waveform-data";
@@ -11,7 +11,6 @@ import { withTrack } from "../../../../DAL/posts/with/with-track";
 import { Readable } from "stream";
 import { getDuration } from "../../../../utils/calculate-audio-duration";
 import { retry } from "@pondfm/server-utils";
-import { trackSchema } from "../../../../schemas/track-schema";
 
 export const completeUploadHandler = createHandler(
   async (req: AuthenticatedExpressRequest, res) => {
@@ -25,17 +24,17 @@ export const completeUploadHandler = createHandler(
       return res.status(401).end();
     }
 
-    await db(tablenames.uploads).where({ id: uploadToken.upload_id }).update({
-      status: 'processing'
+    await db(tablenames.uploadFolders).where({ id: db.select('upload_folder_id').from(tablenames.uploads).where({ id: uploadToken.upload_id }) }).update({
+      status: 'processing_audio',
+      updated_at: db.fn.now(),
     });
 
-    const uploadRecord = await getUploadById(db, { id: uploadToken.upload_id });
-    const track = await withTrack(db.queryBuilder())
-      .from('track')
-      .where({ 'track.key': uploadRecord.key })
-      .select('id').first();
-
-
+    const track = await db({ track: viewnames.tracks })
+      .where({
+        'track.key': db.select('key').from(tablenames.uploads).where({ id: uploadToken.upload_id }).limit(1)
+      })
+      .select('id', 'key', 'upload_folder_id')
+      .first();
 
     try {
       return await db.transaction(async trx => {
@@ -44,17 +43,18 @@ export const completeUploadHandler = createHandler(
           retries: 3,
         });
         //Generate waveform
-        const waveform = await retry(async () => await generateWaveform(uploadRecord.key, track.id, duration), { retries: 3 });
+        const waveform = await retry(async () => await generateWaveform(track.key, track.id, duration), { retries: 3 });
 
         //Save upload
-        await trx(tablenames.audio).where({ upload_id: uploadRecord.id }).update({
+        await trx(tablenames.audio).where({ upload_id: uploadToken.upload_id }).update({
           duration,
           waveform: JSON.stringify(waveform)
         });
 
-        await db(tablenames.uploadTokens).where({ upload_id: uploadRecord.id }).del();
-        await db(tablenames.uploads).where({ id: uploadRecord.id }).update({
-          status: 'ready'
+        await db(tablenames.uploadTokens).where({ upload_id: uploadToken.upload_id }).del();
+        await db(tablenames.uploadFolders).where({ id: track.upload_folder_id }).update({
+          status: 'active',
+          updated_at: db.fn.now(),
         });
         return res.end();
       })
@@ -62,13 +62,12 @@ export const completeUploadHandler = createHandler(
     catch (err) {
       await db.transaction(async trx => {
         await trx(tablenames.tracks).where({ id: track.id }).del();
-        await trx(tablenames.uploads).where({ id: uploadRecord.id }).update({
-          status: 'failed'
+        await trx(tablenames.uploadFolders).where({ id: track.upload_folder_id }).update({
+          status: 'failed_upload',
+          updated_at: db.fn.now(),
         });
       })
-      throw new Error('Failed to complete upload!', {
-        cause: err
-      });
+      throw err;
     }
   }
 )

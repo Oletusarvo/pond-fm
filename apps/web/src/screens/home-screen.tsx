@@ -22,9 +22,10 @@ export function HomeScreen() {
           <h1 className='text-4xl font-semibold text-transparent'>Pond.fm</h1>
         </div>
 
-        <span className='text-center text-slate-500'>
-          Discover music you want to hear, without algorithms - in chronological order.
+        <span className='text-center text-base'>
+          Your music shouldn't have to fight for attention.
         </span>
+        <div className="text-green-900 text-sm p-2 border border-primary/20 bg-primary/10 rounded-md"> We're currently in <strong>early access</strong>, with 500 spots open — join now while spots remain.</div>
         <Button
           onClick={heroButtonAction}
           paddingEnabled
@@ -33,7 +34,7 @@ export function HomeScreen() {
           {status === 'authenticated' ? (
             'Logout'
           ) : status === 'unauthenticated' ? (
-            'Request Login'
+            'Continue with email'
           ) : (
             <Spinner />
           )}
@@ -42,24 +43,16 @@ export function HomeScreen() {
       <section className='h-pad py-16 bg-primary text-white flex-1'>
         <h2 className='text-xl font-semibold mb-4'>What is Pond.fm?</h2>
 
-        <p>
-          A place where every track gets a fair chance to be heard. The main feed is completely
-          chronological. New uploads appear in the order they're shared or reposted. Each user gets one repost per track,
-          bringing it back to the top of the feed so more people can discover it. No
-          recommendation algorithms. No pay-to-win promotion. Just people sharing music they
-          genuinely enjoy.
-          <br />
-          <br /> Looking for something truly unheard? Visit the <strong>Undiscovered</strong> feed,
-          where every track has been heard by fewer than 100 unique listeners. Unlike the main feed,
-          the undiscovered feed displays tracks in ascending order - oldest first - giving every
-          newly uploaded track a fair chance to get heard. Tracks will stay on this feed until they
-          accumulate the required number of unique listens.
-          <br />
-          <br /> We believe in transparent incentives, community-driven discovery, and giving
-          creators an opportunity to be seen without competing against opaque algorithms. Whether
-          you're here to discover your next favourite artist or to share your own music with the
-          world, every upload starts on equal footing. Human recommendation. Direct artist support.
-          Transparent incentives.
+        <p className="text-base">
+          Pond.fm is a music sharing platform built on a simple idea: your music should be heard because people choose to listen, not because an algorithm decides to show it to them.
+          <br /><br />
+          We want every musician to get a fair shot at getting heard; that's where our <strong>Undiscovered</strong> feed comes in. Any track with fewer than 100 unique listeners stays there, oldest first — so instead of getting buried under a wave of new uploads, your music keeps surfacing to real listeners until it earns an audience on its own merit. Once you cross that threshold, you've genuinely been discovered.
+          <br /><br />
+          To help the right listeners find you, tracks can be tagged by genre and mood — because most listeners don't think in a maze of subgenres, they think in how they want music to make them feel.
+          <br /><br />
+          No engagement-driven recommendations, no black-box feeds — just chronological streams that give every artist a fair shot.
+          <br /><br />
+
         </p>
       </section>
     </>

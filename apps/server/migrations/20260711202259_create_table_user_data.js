@@ -7,14 +7,16 @@ exports.up = function (knex) {
   return knex
     .schema
     .withSchema('auth')
-    .raw("CREATE TYPE auth.user_status AS ENUM ('pending', 'active', 'suspended', 'deleted')")
+    .raw("CREATE TYPE auth.user_status AS ENUM ('pending_verification', 'pending_review', 'active', 'suspended', 'deleted')")
     .createTable(tablename, tbl => {
       tbl.uuid('id').primary().defaultTo(knex.fn.uuid());
-      tbl.specificType('status', 'auth.user_status').notNullable().defaultTo('pending');
+      tbl.specificType('status', 'auth.user_status').notNullable().defaultTo('pending_verification');
       tbl.string('email').notNullable().unique();
       tbl.string('username').unique();
-      tbl.timestamps(true, true);
       tbl.timestamp('terms_accepted_at').defaultTo(knex.fn.now());
+      tbl.timestamp('deleted_at');
+      tbl.timestamps(true, true);
+
     });
 };
 

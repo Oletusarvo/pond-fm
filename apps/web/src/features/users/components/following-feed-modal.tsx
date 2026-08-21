@@ -1,6 +1,6 @@
 import { useNavigate } from "react-router-dom";
 import { FeedModal } from "../../../components/feed-modal";
-import { apiService } from "../../../utils/api-service";
+import { apiService } from "../../../utils/api/api-service";
 import { Feed } from "../../../components/feed";
 import { useUserContext } from "../providers/user-proivder";
 import { FollowerItem } from "./follower-item";

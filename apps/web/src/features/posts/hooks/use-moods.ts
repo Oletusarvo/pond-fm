@@ -1,11 +1,11 @@
 import { useQuery } from "@tanstack/react-query";
-import { apiService } from "../../../utils/api-service";
+import { apiService } from "../../../utils/api/api-service";
 
-export function useMoods(){
+export function useMoods() {
     return useQuery({
         queryKey: ['moods'],
         queryFn: async () => {
-            const res  = await apiService.getMoods();
+            const res = await apiService.getMoods();
             return res.ok ? await res.json() : null;
         }
     })

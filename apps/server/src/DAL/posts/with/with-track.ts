@@ -7,7 +7,8 @@ export function withTrack(query: Knex.QueryBuilder) {
     qb.from({ track: tablenames.tracks })
       .join({ upload: tablenames.uploads }, 'upload.id', 'track.primary_audio_id')
       .join({ audio: tablenames.audio }, 'audio.upload_id', 'track.primary_audio_id')
-      .select('track.*', 'audio.duration', 'upload.size', 'upload.key')
+      .join({ folder: tablenames.uploadFolders }, 'folder.id', 'upload.upload_folder_id')
+      .select('track.*', 'audio.duration', 'upload.size_bytes', 'upload.key', 'folder.status', 'folder.author_id', 'folder.id AS upload_folder_id');
   });
   return query;
 }

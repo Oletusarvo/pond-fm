@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import { createProvider } from "../utils/create-provider";
 import { PassProps } from "../components/pass-props";
 import { setupContext } from "../utils/setup-context";
@@ -14,7 +14,7 @@ const [ToggleContext, useToggleContext] = setupContext<{
 
 function ToggleProvider({ children, initialState }: ToggleProviderProps) {
   const [isOn, setIsOn] = useState(initialState || false);
-  const toggleState = (state: boolean) => setIsOn(state);
+  const toggleState = useCallback((state: boolean) => setIsOn(state), [setIsOn]);
   return (
     <ToggleContext.Provider value={{ isOn, toggleState }}>{children}</ToggleContext.Provider>
   );

@@ -3,7 +3,7 @@
  * @returns { Promise<void> }
  */
 exports.up = function (knex) {
-  return knex.schema.raw("ALTER TYPE post.track_status ADD VALUE 'deleted'");
+  return knex.schema.createSchema('billing');
 };
 
 /**
@@ -11,5 +11,5 @@ exports.up = function (knex) {
  * @returns { Promise<void> }
  */
 exports.down = function (knex) {
-  return Promise.resolve();
+  return knex.schema.dropSchemaIfExists('billing');
 };

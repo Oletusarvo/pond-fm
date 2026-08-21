@@ -17,7 +17,7 @@ export async function findUserByEmail(ctx: DBContext, config: { email: string })
   selectUser(query);
   selectUnseenNotificationCount(query);
   query.select(
-    db.raw("JSON_BUILD_OBJECT('id', subscription.id, 'label', subscription.label, 'storage_quota', subscription.storage_quota_mib, 'storage_quota_consumed', subscription.storage_quota_consumed) AS subscription"),
+    db.raw("JSON_BUILD_OBJECT('label', subscription.label, 'storage_quota', subscription.storage_quota_bytes, 'storage_quota_consumed', subscription.storage_quota_consumed) AS subscription"),
   );
 
   return await query.where({ email: config.email }).first();

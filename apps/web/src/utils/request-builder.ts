@@ -44,6 +44,11 @@ class RequestBuilder {
     this.query.method = 'PUT';
     return this;
   }
+
+  patch() {
+    this.query.method = 'PATCH';
+    return this;
+  }
   /**Sets the method to DELETE. */
   del() {
     this.query.method = 'DELETE';

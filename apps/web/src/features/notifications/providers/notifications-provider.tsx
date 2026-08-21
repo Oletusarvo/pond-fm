@@ -4,7 +4,7 @@ import { createProvider } from '../../../utils/create-provider';
 import { useFeedContext } from '../../../providers/feed-provider';
 import { useAuthContext } from '../../auth/providers/auth-provider';
 import { useQuery } from '@tanstack/react-query';
-import { apiService } from '../../../utils/api-service';
+import { apiService } from '../../../utils/api/api-service';
 import { useInfiniteFeed } from '../../../hooks/use-infinite-feed';
 
 export const [NotificationsProvider, useNotificationsContext] = createProvider({

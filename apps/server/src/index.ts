@@ -4,10 +4,11 @@ import http from 'http';
 import cookieParser from 'cookie-parser';
 import { apiRouter } from './api/api-router';
 
-import { tablenames } from './tablenames';
+import { tablenames, viewnames } from './tablenames';
 import { db } from './db-config';
 import { signCommand } from '@pondfm/crypto';
 import { retry } from '@pondfm/server-utils';
+import { withTrack } from './DAL/posts/with/with-track';
 
 require('dotenv').config();
 const app = express();
@@ -64,32 +65,41 @@ async function runCleanup() {
 }
 
 async function cleanupUnusedFilesAndTracks() {
-  const deletedTrackIds = await db(tablenames.tracks).where({ status: 'deleted' }).pluck('primary_audio_id');
-
-  const keys = await db(tablenames.uploads)
+  const foldersToDelete = await db(tablenames.uploadFolders)
     .where(function () {
-      this.where({ status: 'pending' })
-        .whereRaw("CURRENT_TIMESTAMP - updated_at >= INTERVAL '15min'");
+      this.where({ status: 'pending_upload' }).orWhere({ status: 'failed_upload' }).orWhere({ status: 'processing_upload' })
+        .andWhereRaw("CURRENT_TIMESTAMP - updated_at >= INTERVAL '15min'");
     })
-    .orWhere({ status: 'failed' })
-    .orWhereIn('id', deletedTrackIds)
-    .select('key')
-    .pluck('key');
+    .orWhere({ status: 'failed_upload' })
+    .orWhere({ status: 'deleted' })
+    .select(
+      'id',
+      db.raw("(SELECT JSON_AGG(key) FROM upload.upload_data WHERE upload_folder_id = id) AS keys")
+    ) as { id: string; keys: string[] }[];
 
+  if (foldersToDelete.length == 0) {
+    return;
+  }
+
+  const keys = foldersToDelete.flatMap(f => f.keys);
   const clientId = process.env.LOCAL_UPLOAD_CLIENT_ID;
   const signature = signCommand({
     clientId,
+    key: JSON.stringify(keys.sort())
   }, process.env.URL_SIGN_SECRET);
 
   const signedDeleteUrl = new URL([process.env.CUSTOM_UPLOAD_API, 'upload'].join('/'));
   signedDeleteUrl.searchParams.set('X-Signature', signature);
   signedDeleteUrl.searchParams.set('X-Client-ID', clientId);
 
-  const res = await fetch(signedDeleteUrl, { method: 'DELETE', body: JSON.stringify(keys) });
+  const res = await fetch(signedDeleteUrl, {
+    method: 'DELETE', body: JSON.stringify({ keys }), headers: {
+      'Content-Type': 'application/json'
+    }
+  });
   if (res.ok) {
     await retry(async () => await db.transaction(async trx => {
-      await trx(tablenames.tracks).where({ status: 'deleted' }).del();
-      await trx(tablenames.uploads).whereIn('key', keys).del();
+      await trx(tablenames.uploadFolders).whereIn('id', foldersToDelete.map(f => f.id)).del();
     }), {
       retries: 5
     });

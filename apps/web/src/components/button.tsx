@@ -43,7 +43,7 @@ export function Button({
   ...props
 }: ButtonProps) {
   const className = useClassName(
-    'flex xs:text-sm md:text-base items-center justify-center active:scale-95 cursor-pointer transition-all duration-100 font-semibold gap-2 border text-nowrap flex-nowrap',
+    'flex text-sm items-center justify-center active:scale-95 cursor-pointer transition-all duration-100 font-semibold gap-2 border text-nowrap flex-nowrap',
     color !== 'inherit' ? colorMap[color][variant] : '',
     ['ghost', 'text', 'contained'].includes(variant) ? 'border-transparent' : '',
     shadow ? 'shadow-md' : '',

@@ -1,6 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { useParams } from "react-router-dom";
-import { apiService } from "../../../utils/api-service";
+import { apiService } from "../../../utils/api/api-service";
 import { Spinner } from "../../../components/spinner";
 import { PostProvider } from "../providers/post-provider";
 import { useEffect, useState } from "react";

@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { TAuthor } from '../../../types/author';
 import { setupContext } from '../../../utils/setup-context';
-import { apiService } from '../../../utils/api-service';
+import { apiService } from '../../../utils/api/api-service';
 import { Modal } from '../../../components/modal';
 import { Button, LoaderButton } from '../../../components/button';
 import { Coins } from 'lucide-react';

@@ -7,7 +7,7 @@ exports.up = function (knex) {
   return knex
     .schema
     .withSchema('post')
-    .raw("CREATE TYPE post.post_status AS ENUM ('active', 'pending_review', 'deleted')")
+    .raw("CREATE TYPE post.post_status AS ENUM ('active', 'pending_review', 'pending_deletion', 'deleted')")
     .createTable(tablename, tbl => {
       tbl.uuid('id').primary().defaultTo(knex.fn.uuid());
       tbl
@@ -26,6 +26,7 @@ exports.up = function (knex) {
 
       tbl.specificType('status', 'post.post_status').notNullable().defaultTo('active')
       tbl.string('body');
+      tbl.timestamp('deleted_at');
       tbl.timestamps(true, true);
       tbl.unique(['author_id', 'track_id']);
     });

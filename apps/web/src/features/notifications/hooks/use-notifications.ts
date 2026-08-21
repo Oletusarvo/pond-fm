@@ -1,5 +1,5 @@
 import { useAppContext } from '../../../providers/app-provider';
-import { apiService } from '../../../utils/api-service';
+import { apiService } from '../../../utils/api/api-service';
 import { useInfiniteFeed } from '../../../hooks/use-infinite-feed';
 
 export function useNotifications(session?: any) {

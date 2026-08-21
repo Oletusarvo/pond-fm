@@ -8,17 +8,15 @@ import { AuthProvider } from './features/auth/providers/auth-provider';
 import { HomeLayout } from './layouts/home-layout';
 import { AuthorizationScreen } from './features/auth/screens/authorization-screen';
 import { UploadTrackScreen } from './features/posts/screens/upload-track-screen';
-import { AppProvider } from './providers/app-provider';
 import { MainScreenFeed } from './features/posts/screens/main-feed-screen';
 import { UserScreen } from './features/users/screens/user-screen';
 import { ScrobbleProvider } from './features/audio/providers/scrobble-provider';
-import { PlayCountProvider } from './features/audio/providers/playcount-provider';
 import { SettingsProvider } from './features/auth/providers/settings-provider';
-import { ProfileSettingsModal } from './features/auth/components/settings-modal';
 import { ActionProvider } from './providers/action-provider';
 import { UserProvider } from './features/users/providers/user-proivder';
 import { FollowedFeedScreen } from './features/posts/screens/followed-feed-screen';
 import { TrackScreen } from './features/posts/screens/track-screen';
+import { BillingSuccessScreen } from './features/auth/components/billing-success';
 
 function App() {
   return (
@@ -34,6 +32,7 @@ function App() {
                       <Route
                         path='/'
                         element={<MainLayout />}>
+                        <Route path='/billing/success' element={<BillingSuccessScreen />} />
                         <Route
                           path='/'
                           element={<HomeLayout />}>

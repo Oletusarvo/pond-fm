@@ -34,7 +34,7 @@ export class UserService {
       user = await this.repo.createNewUser(ctx, { user: { email: config.email, username: defaultUserName } });
       await ctx(tablenames.subscriptions).insert({
         user_id: user.id,
-        plan_id: getLookupQuery(tablenames.plans, 'free'),
+        plan_id: 'free',
       })
     }
 

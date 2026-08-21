@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { apiService } from '../../../utils/api-service';
+import { apiService } from '../../../utils/api/api-service';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { LogoutModal } from '../components/logout-modal';
 
