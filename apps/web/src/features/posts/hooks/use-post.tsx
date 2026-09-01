@@ -1,8 +1,8 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { TPost } from "../../../types/post";
 import { create } from 'zustand';
 import { useTransition } from "react";
 import { Key } from "lucide-react";
+import { TPost } from "@pondfm/app-shared";
 
 type PostState = {
   posts: Record<string, TPost>;
@@ -47,15 +47,20 @@ export const usePostStore = create<PostState>((set, get) => ({
   }),
   updatePost: (trackId, newPost) => set((state) => {
     const oldData = state.posts[trackId];
+    const newData = {
+      ...oldData,
+      ...newPost,
+      track: {
+        ...oldData.track,
+        ...newPost.track
+      }
+    }
     return {
       posts: {
         ...state.posts,
-        [trackId]: {
-          ...oldData,
-          ...newPost,
-        }
+        [trackId]: newData
       }
-    }
+    };
   })
 }));
 

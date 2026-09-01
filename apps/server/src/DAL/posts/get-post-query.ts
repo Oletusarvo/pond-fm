@@ -1,3 +1,4 @@
+import { TPost } from "@pondfm/app-shared";
 import { tablenames, viewnames } from "../../tablenames";
 import { DBContext } from "../../types/db-context";
 import { selectPost } from "./select/select-post";
@@ -7,7 +8,7 @@ import { withAuthor } from "./with/with-author";
 import { withMoods } from "./with/with-moods";
 
 export function getPostQuery(ctx: DBContext) {
-  const query = ctx.queryBuilder();
+  const query = ctx.queryBuilder<any, TPost>();
   withAuthor(query);
   withMoods(query);
   query

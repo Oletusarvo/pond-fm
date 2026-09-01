@@ -1,8 +1,10 @@
 export const tablenames = {
   tracks: 'post.track_data',
   users: 'auth.user_data',
-  payments: 'payment_data',
+  payments: 'billing.payment_data',
+  /**@deprecated */
   paymentStatuses: 'payment_status',
+  /**@deprecated */
   paymentTypes: 'payment_type',
   authTokens: 'auth.auth_token_data',
   posts: 'post.post_data',
@@ -28,4 +30,6 @@ export const viewnames = {
    * Refers to a view combining the track, upload, audio and upload_folder_data.
    */
   tracks: 'post.track_view',
+  subscriptions: 'billing.subscription_view',
+  users: 'auth.user_view'
 } as const;

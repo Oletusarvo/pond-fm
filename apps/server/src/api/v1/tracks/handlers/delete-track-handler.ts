@@ -13,7 +13,7 @@ export const deleteTrackHandler = createHandler(
           .select('upload_folder_id')
           .from(tablenames.uploads)
           .where({
-            id: db.select('primary_audio_id').from(tablenames.tracks).where({ id: req.body.trackId }).limit(1)
+            id: db.select('primary_audio_id').from(tablenames.tracks).where({ id: req.params.trackId }).limit(1)
           }).limit(1)
       })
       .andWhereNot(function () {

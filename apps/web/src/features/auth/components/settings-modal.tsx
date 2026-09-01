@@ -1,5 +1,5 @@
-import React, { useMemo, useState } from 'react';
-import { Check, Crown, Loader2, TriangleAlert, Waves } from 'lucide-react';
+import React, { useState } from 'react';
+import { Check, Crown, Waves } from 'lucide-react';
 import { Modal } from '../../../components/modal';
 import { useClassName } from '../../../hooks/use-class-name';
 import { Button, LoaderButton } from '../../../components/button';
@@ -8,14 +8,9 @@ import { useAuthContext } from '../providers/auth-provider';
 import { Input } from '../../../components/input';
 import { useAction } from '../../../hooks/use-action';
 import { apiService } from '../../../utils/api/api-service';
-
-
-/**
- * Assumes `Button` supports `variant` values of 'primary' | 'outline' | 'ghost'
- * and forwards `className`/`disabled`, matching the usage already seen in modal.tsx
- * (`variant='ghost' shape='circle'`). Adjust variant names if the real design
- * system differs.
- */
+import { useUpgradeSubscription } from '../../billing/hooks/use-upgrade-subscription';
+import { useCancelSubscription } from '../../billing/hooks/use-cancel-subscription';
+import { ConfirmAction } from '../../../components/confirm-action';
 
 type Plan = 'free' | 'pro';
 
@@ -53,50 +48,9 @@ export function SettingsModal({
   const authService = useAuthContext();
   const { session } = authService;
   const username = session?.user.username || '';
-  const plan = session?.user.subscription.label || '';
   const [usernameDraft, setUsernameDraft] = useState(username);
-  const [savingUsername, setSavingUsername] = useState(false);
-  const [usernameSaved, setUsernameSaved] = useState(false);
-
-
-  const [upgrading, setUpgrading] = useState(false);
-
   const usernameDirty = usernameDraft.trim().length > 0 && usernameDraft.trim() !== username;
   const onClose = () => toggleState(false);
-
-  const withinRefundWindow = useMemo(() => {
-    if (!proPurchasedAt) return false;
-    return daysSince(proPurchasedAt) < REFUND_WINDOW_DAYS;
-  }, [proPurchasedAt]);
-
-  const planExpiresAt = useMemo(() => {
-    if (!proPurchasedAt) return null;
-    return addDays(proPurchasedAt, PLAN_TERM_DAYS);
-  }, [proPurchasedAt]);
-
-  async function handleSaveUsername() {
-    const next = usernameDraft.trim();
-    if (!next || next === username) return;
-    setSavingUsername(true);
-    setUsernameSaved(false);
-    try {
-      await onUsernameChange(next);
-      setUsernameSaved(true);
-    } finally {
-      setSavingUsername(false);
-    }
-  }
-
-  async function handleUpgrade() {
-    setUpgrading(true);
-    try {
-      await onUpgrade();
-    } finally {
-      setUpgrading(false);
-    }
-  }
-
-
 
   return (
     <Modal title='Settings' onClose={onClose}>
@@ -104,9 +58,7 @@ export function SettingsModal({
         <UsernameSection />
         <Divider />
         <PlanSection
-          withinRefundWindow={withinRefundWindow}
-          planExpiresAt={planExpiresAt}
-          onUpgrade={handleUpgrade}
+
         />
       </div>
     </Modal>
@@ -175,137 +127,124 @@ function UsernameSection() {
   );
 }
 
-function PlanSection({
-  withinRefundWindow,
-  planExpiresAt,
-  onUpgrade,
-}: {
-  withinRefundWindow: boolean;
-  planExpiresAt: Date | null;
-  onUpgrade?: () => void;
-}) {
-  const [cancelling, setCancelling] = useState(false);
-  const [confirmingCancel, setConfirmingCancel] = useState(false);
-  const authService = useAuthContext();
-  const plan = authService.session?.user.subscription.label;
-  const { action: updateSubscription, status, loading } = useAction({
-    fn: async () => {
-      return await apiService.updateSubscription(
-        plan === 'free' ? 'pro' : 'free'
-      );
-    },
+function PlanSection() {
+  const { toggleState } = useToggleContext();
+  const { session } = useAuthContext();
+
+  const daysSinceSubscriptionStart = session ? ((Date.now() - new Date(session.user.subscription.current_period_start).getTime()) / (1000 * 60 * 60 * 24)) : null;
+  const withinRefundWindow = session && daysSinceSubscriptionStart <= 14;
+  const planExpiresAt = session ? new Date(session.user.subscription.current_period_end) : null;
+
+  const { cancelSubscription, loading } = useCancelSubscription({
     onSuccess: () => {
-      setConfirmingCancel(false);
-    },
-    onFinished: () => {
-      setCancelling(false);
+      //Should update the user's session.
+      toggleState(false);
     }
-  })
+  });
+
+  const authService = useAuthContext();
+  const plan = authService.session?.user.subscription.plan_id;
+
   const cardClassName = useClassName(
     'flex flex-col gap-3 rounded-md border p-4',
     plan === 'pro' ? 'border-amber-200 bg-amber-50' : 'border-slate-200 bg-slate-50',
   );
 
+  const Icon = () => {
+    return plan === 'pro' ? (
+      <span className='flex h-7 w-7 items-center justify-center rounded-full bg-amber-100 text-amber-600'>
+        <Crown size={14} />
+      </span>
+    ) : (
+      <span className='flex h-7 w-7 items-center justify-center rounded-full bg-teal-100 text-teal-600'>
+        <Waves size={14} />
+      </span>
+    )
+  }
+
+  const PlanDetails = () => {
+    return (
+      <div>
+        <p className='font-semibold text-black'>{plan === 'pro' ? 'Pond Pro' : 'Free'}</p>
+        <p className='text-xs text-slate-500'>
+          {plan === 'pro' ? '5€/month · billed annually' : '0€/month'}
+        </p>
+      </div>
+    )
+  }
+
+  const PlanFeaturesList = () => {
+    return (
+      <ul className='flex flex-col gap-1 text-sm text-slate-600'>
+        <li>{plan === 'pro' ? '100 unique listeners on the discovery feed' : '25 unique listeners on the discovery feed.'}</li>
+        <li>{plan === 'pro' ? '5GB of storage' : '150MB of storage'}</li>
+        <li>{plan === 'pro' ? 'No ads' : 'Ads'}</li>
+      </ul>
+    );
+  }
+
+  const UpgradePlanButton = () => {
+    const { upgradeSubscription, loading, status } = useUpgradeSubscription({
+      onSuccess: async (res) => {
+        const data = await res.json();
+        window.location.href = data.checkoutUrl;
+      }
+    });
+
+    return (
+      <LoaderButton
+        loading={loading}
+        variant='contained'
+        disabled={status === 'success' || loading}
+        onClick={upgradeSubscription}
+        paddingEnabled
+        shape="rounded">
+        Go Pro — 5€/month
+      </LoaderButton>
+    );
+  }
+
   return (
     <section className='flex flex-col gap-3'>
       <SectionLabel>Plan</SectionLabel>
-
       <div className={cardClassName}>
         <div className='flex items-center justify-between'>
           <div className='flex items-center gap-2'>
-            {plan === 'pro' ? (
-              <span className='flex h-7 w-7 items-center justify-center rounded-full bg-amber-100 text-amber-600'>
-                <Crown size={14} />
-              </span>
-            ) : (
-              <span className='flex h-7 w-7 items-center justify-center rounded-full bg-teal-100 text-teal-600'>
-                <Waves size={14} />
-              </span>
-            )}
-            <div>
-              <p className='font-semibold text-black'>{plan === 'pro' ? 'Pond Pro' : 'Free'}</p>
-              <p className='text-xs text-slate-500'>
-                {plan === 'pro' ? '5€/month · billed annually' : '0€/month'}
-              </p>
-            </div>
+            <Icon />
+            <PlanDetails />
           </div>
         </div>
 
-        <ul className='flex flex-col gap-1 text-sm text-slate-600'>
-          <li>{plan === 'pro' ? '5GB of storage' : '150MB of storage'}</li>
-          <li>{plan === 'pro' ? 'No ads' : 'Ads'}</li>
-        </ul>
+        <PlanFeaturesList />
 
         {plan === 'free' && (
-          <LoaderButton
-            loading={loading}
-            variant='contained'
-            disabled={status === 'success' || loading}
-            onClick={updateSubscription}
-            paddingEnabled
-            shape="rounded">
-            Go Pro — 5€/month
-          </LoaderButton>
+          <UpgradePlanButton />
         )}
 
-        {plan === 'pro' && !confirmingCancel && (
-          <Button variant='outlined' onClick={() => setConfirmingCancel(true)} paddingEnabled shape="rounded">
-            Cancel subscription
-          </Button>
-        )}
+        {
+          plan === 'pro' && (
+            <ConfirmAction
+              onConfirm={async () => await cancelSubscription()}
+              variant="warning.outlined"
+              intentButton={<Button fullWidth variant='outlined' paddingEnabled shape="rounded">Cancel Subscription</Button>}
+              intentCancelButton={<Button variant="text">Keep Pro</Button>}
+              confirmButton={<LoaderButton variant="text" loading={loading} disabled={loading || status === 'success'}>Cancel Pro</LoaderButton>}>
+              <p>
+                {
+                  withinRefundWindow
+                    ?
+                    "You're still within your 14-day refund window. Canceling now refunds your payment and moves you back to Free right away."
+                    :
+                    ` Your refund window has passed. Canceling keeps Pro active until
+            ${planExpiresAt ? formatDate(planExpiresAt) : 'your term ends'}, then you'll move to
+            Free. You won't be charged again, and this payment isn't refunded.`
+                }
+              </p>
 
-        {plan === 'pro' && confirmingCancel && (
-          <CancelConfirmation
-            cancelling={cancelling}
-            withinRefundWindow={withinRefundWindow}
-            planExpiresAt={planExpiresAt}
-            onAbort={() => setConfirmingCancel(false)}
-            onConfirm={updateSubscription}
-          />
-        )}
+            </ConfirmAction>
+          )
+        }
       </div>
     </section>
-  );
-}
-
-function CancelConfirmation({
-  cancelling,
-  withinRefundWindow,
-  planExpiresAt,
-  onAbort,
-  onConfirm,
-}: {
-  cancelling: boolean;
-  withinRefundWindow: boolean;
-  planExpiresAt: Date | null;
-  onAbort: () => void;
-  onConfirm: () => void;
-}) {
-  return (
-    <div className='flex flex-col gap-3 rounded-md border border-amber-200 bg-white p-3'>
-      <div className='flex gap-2 text-sm text-slate-700'>
-        <TriangleAlert size={16} className='mt-0.5 shrink-0 text-amber-500' />
-        {withinRefundWindow ? (
-          <p>
-            You're still within your 14-day refund window. Canceling now refunds your payment
-            and moves you back to Free right away.
-          </p>
-        ) : (
-          <p>
-            Your refund window has passed. Canceling keeps Pro active until{' '}
-            {planExpiresAt ? formatDate(planExpiresAt) : 'your term ends'}, then you'll move to
-            Free. You won't be charged again, and this payment isn't refunded.
-          </p>
-        )}
-      </div>
-      <div className='flex justify-end gap-2'>
-        <Button variant='ghost' disabled={cancelling} onClick={onAbort}>
-          Keep Pro
-        </Button>
-        <Button variant='outlined' disabled={cancelling} onClick={onConfirm}>
-          {cancelling ? <Loader2 className='animate-spin' size={16} /> : 'Confirm cancellation'}
-        </Button>
-      </div>
-    </div>
   );
 }

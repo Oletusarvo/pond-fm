@@ -1,4 +1,5 @@
 
+import { TPost } from "@pondfm/app-shared";
 import { DBContext } from "../../types/db-context";
 import { getUndistinctPostQuery } from "./get-undistinct-post-query";
 import { selectPost } from "./select/select-post";
@@ -21,5 +22,8 @@ export async function getAuthorPosts(ctx: DBContext, config: FeedQueryConfig & {
   selectTrack(query);
   query.where({ 'post.author_id': config.authorId })
   query.orderBy('post.created_at', 'desc');
-  return await resolveQueryWithCursor(query, { pageSize: 10 })
+  return await resolveQueryWithCursor(query, { pageSize: 10 }) as {
+    cursor: string;
+    items: TPost[];
+  }
 }

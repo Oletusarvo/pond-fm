@@ -10,6 +10,7 @@ import { UserRepository } from '../repositories/user-repository';
 import { activateUserById } from '../DAL/users/activate-by-id';
 import { serviceError } from '../utils/service-error';
 import { tablenames } from '../tablenames';
+import { TUserStatus } from '@pondfm/app-shared';
 
 export class AuthService {
   constructor(private repos: {
@@ -42,7 +43,7 @@ export class AuthService {
     const savedUser = await this.repos.userRepo.findByEmail(ctx, { email: config.authToken.user_email });
     if (savedUser.status === 'pending_verification') {
       await ctx(tablenames.users).where({ id: savedUser.id, status: 'pending_verification' }).update({
-        status: 'active'
+        status: 'active' as TUserStatus
       });
     }
 

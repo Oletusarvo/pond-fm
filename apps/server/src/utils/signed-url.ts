@@ -3,6 +3,9 @@ import { loadEnvVariable } from "./load-env-variable";
 import { S3Client, PutObjectCommand } from "@aws-sdk/client-s3";
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 
+/**
+ * Calls the dedicated function for generating an upload url based on the OBJECT_STORE_ENV env-variable.
+ */
 export async function createSignedUploadUrl(key: string, contentType: string, maxSize: number) {
   const uploadEnv = process.env.OBJECT_STORE_ENV;
   switch (uploadEnv) {
@@ -15,6 +18,7 @@ export async function createSignedUploadUrl(key: string, contentType: string, ma
   }
 }
 
+/**Creates an upload url for Cloudflare. */
 async function createAWSSignedUploadUrl(key: string, contentType: string, maxSize: number) {
   const r2 = new S3Client({
     region: "auto",
@@ -57,6 +61,7 @@ async function createCustomSignedUploadUrl(key: string, contentType: string, max
   return url.toString();
 }
 
+/**Creates an upload url for local uploads. */
 async function createLocalSignedUploadUrl(key: string, contentType: string, maxSize: number) {
   const command = {
     key,

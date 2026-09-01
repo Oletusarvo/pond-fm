@@ -1,6 +1,6 @@
-import { TTrack } from './track';
+import { TTrackPublic } from "@pondfm/app-shared";
 
-export type TPlayback = TTrack & {
+export type TPlayback = TTrackPublic & {
   start_position?: number;
   post_id: string;
   stats: {

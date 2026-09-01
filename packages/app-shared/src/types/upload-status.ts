@@ -1,0 +1,1 @@
+export type TUploadStatus = 'active' | 'pending_upload' | 'processing_audio' | 'processing_waveform' | 'deleted' | 'failed_upload';

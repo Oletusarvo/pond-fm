@@ -1,0 +1,1 @@
+export type TMimeType = 'audio/mpeg' | 'audio/wav';

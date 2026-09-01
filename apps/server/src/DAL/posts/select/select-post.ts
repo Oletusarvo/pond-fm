@@ -1,7 +1,7 @@
 import { Knex } from "knex";
 import { db } from "../../../db-config";
-import { TSession } from "../../../types/session";
 import { tablenames } from "../../../tablenames";
+import { TSession } from "@pondfm/app-shared";
 
 export function selectPost(query: Knex.QueryBuilder, session?: TSession) {
   query.select(

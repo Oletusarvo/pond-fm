@@ -1,18 +1,16 @@
 import { db } from "../../../../db-config";
-import { createAudioUpload } from "../../../../DAL/uploads/create-audio-upload";
-import { createUpload } from "../../../../DAL/uploads/create-upload";
-import { tablenames } from "../../../../tablenames";
+import { tablenames, viewnames } from "../../../../tablenames";
 import { AuthenticatedExpressRequest, ExpressRequest } from "../../../../types/express";
 import { createHandler } from "@pondfm/server-utils";
 import crypto from 'crypto';
-import { withSubscription } from "../../../../DAL/billing/with/with-subscription";
 import { serviceError } from "../../../../utils/service-error";
-import { TSession } from "../../../../types/session";
+
 import path from "path";
 import { v4 } from "uuid";
-import { createSignedUploadUrl } from "../../../../utils/signed-upload";
+import { createSignedUploadUrl } from "../../../../utils/signed-url";
 import { createCanonicalPost } from "../../../../DAL/posts/create-canonical-post";
 import { ServiceErrorResponse, ServiceSuccessResponse } from "../../../../types/service-response";
+import { TSession } from "@pondfm/app-shared";
 
 export const createUploadHandler = createHandler(
   async (req: AuthenticatedExpressRequest, res) => {
@@ -85,13 +83,10 @@ export const createUploadHandler = createHandler(
 )
 
 async function verifyUploadQuota(uploadedSize: number, session: TSession) {
-  const quota = await withSubscription(db.queryBuilder())
-    .from('subscription')
+  const quota = await db(viewnames.subscriptions)
     .select('storage_quota_bytes', 'storage_quota_consumed')
     .where({ user_id: session.user.id })
     .first();
-
-  console.log(quota);
 
   if (quota.storage_quota_bytes && (BigInt(quota.storage_quota_consumed) + BigInt(uploadedSize) > BigInt(quota.storage_quota_bytes))) {
     return {

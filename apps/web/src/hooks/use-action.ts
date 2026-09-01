@@ -1,19 +1,22 @@
 import { useCallback } from "react";
 import { useStatus } from "./use-status";
 
-type UseActionProps = {
-  fn: (...args: any) => Promise<Response>;
+type AsyncFn<ArgsT extends any[] = any[]> =
+  (...args: ArgsT) => Promise<Response>;
+
+type UseActionProps<ArgsT extends any[]> = {
+  fn: AsyncFn<ArgsT>,
   onSuccess?: (res: Response) => Promise<string | void> | void | string;
   onError?: (res: Response) => Promise<string | void> | void | string;
   onException?: (err: Error) => Promise<string | void> | string | void;
   onFinished?: () => Promise<void> | void;
 }
 
-export function useAction({
+export function useAction<ArgsT extends any[]>({
   fn, onSuccess, onError, onException, onFinished
-}: UseActionProps) {
+}: UseActionProps<ArgsT>) {
   const { status, setStatus, loading } = useStatus();
-  const action = useCallback(async (...args: any) => {
+  const action = async (...args: ArgsT) => {
     setStatus('loading');
     try {
       const res = await fn(...args);
@@ -31,6 +34,6 @@ export function useAction({
       onFinished?.();
       setStatus(prev => prev === 'loading' ? 'idle' : prev);
     }
-  }, [setStatus, onException, onSuccess, onError, fn])
+  }
   return { action, loading, status };
 }

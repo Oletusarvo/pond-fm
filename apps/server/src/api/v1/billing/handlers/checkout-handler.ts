@@ -9,9 +9,8 @@ export const checkoutHandler = createHandler(
   async (req: AuthenticatedExpressRequest, res) => {
     const subscription = await db({ subscription: tablenames.subscriptions })
       .join({ user: tablenames.users }, 'user.id', 'subscription.user_id')
-      .join({ plan: tablenames.plans }, 'plan.id', 'subscription.plan_id')
       .where({ user_id: req.session.user.id })
-      .select('subscription.id', 'user.id as user_id', 'user.email as user_email', 'subscription.stripe_customer_id', 'plan.label')
+      .select('subscription.user_id', 'user.id as user_id', 'user.email as user_email', 'subscription.stripe_customer_id', 'plan_id')
       .first();
 
     if (!subscription) {
@@ -19,15 +18,11 @@ export const checkoutHandler = createHandler(
         error: 'subscription:not-found'
       });
     }
-    else if (subscription.label == 'pro') {
+    else if (subscription.plan_id == 'pro') {
       return res.status(409).json({
         error: 'subscription:already-pro'
       });
     }
-
-    await db(tablenames.subscriptions).where({ id: subscription.id }).update({
-      status: 'pending'
-    });
 
     let customerId = subscription.stripe_customer_id;
 
@@ -42,7 +37,7 @@ export const checkoutHandler = createHandler(
       customerId = customer.id;
     }
 
-    const plan = await db(tablenames.plans).where({ label: 'pro' }).select('stripe_price_id').first();
+    const plan = await db(tablenames.plans).where({ id: 'pro' }).select('stripe_price_id').first();
     if (!plan) {
       console.log('No pro plan defined!');
       return res.status(500).end();
@@ -53,10 +48,11 @@ export const checkoutHandler = createHandler(
     }
 
     return db.transaction(async trx => {
-      await trx(tablenames.subscriptions).where({ id: subscription.id }).update({
+      await trx(tablenames.subscriptions).where({ user_id: subscription.user_id }).update({
         status: 'incomplete'
       });
       const APP_URL = getDomainUrl();
+      const subscriptionUserId = subscription.user_id;
       const session = await stripe.checkout.sessions.create({
         mode: "subscription",
         customer: customerId,
@@ -67,11 +63,11 @@ export const checkoutHandler = createHandler(
           },
         ],
         metadata: {
-          subscription_id: subscription.id,
+          subscription_user_id: subscriptionUserId,
         },
         subscription_data: {
           metadata: {
-            subscription_id: subscription.id,
+            subscription_user_id: subscriptionUserId,
           }
         },
         success_url: `${APP_URL}/billing/success?session_id={CHECKOUT_SESSION_ID}`,
@@ -85,8 +81,7 @@ export const checkoutHandler = createHandler(
 
       return res.json({
         checkoutUrl: session.url
-      })
-    })
-
+      });
+    });
   }
 )

@@ -1,4 +1,4 @@
-import { TTrack } from '../../types/track';
+import { TSession } from '@pondfm/app-shared';
 import { joinStrings } from '../join-strings';
 import { requestBuilder } from '../request-builder';
 
@@ -236,7 +236,7 @@ export class ApiService {
     return await fetch(this.withEndpoint(['upload/complete', code].join('/')), req);
   }
 
-  async refreshSession(newSession: any) {
+  async refreshSession(newSession: Partial<TSession>) {
     const req = requestBuilder.post().json().body(newSession).includeCredentials().build();
     return await fetch(this.withEndpoint('auth/me/refresh'), req);
   }
@@ -279,9 +279,16 @@ export class ApiService {
     return await fetch(this.withEndpoint('tracks', trackId), req);
   }
 
-  async updateSubscription(to: string) {
-    const req = requestBuilder.patch().json().body({ plan_label: to }).includeCredentials().build();
+  /**Starts the process to upgrade a users subscription to pro. */
+  async upgradeSubscription() {
+    const req = requestBuilder.patch().includeCredentials().build();
     return await fetch(this.withEndpoint('billing/subscriptions/checkout'), req);
+  }
+
+  /**Cancels the users pro subscription. */
+  async cancelSubscription() {
+    const req = requestBuilder.del().includeCredentials().build();
+    return await fetch(this.withEndpoint('billing/subscriptions/cancel'), req);
   }
 
   async getSubscriptionStatus() {

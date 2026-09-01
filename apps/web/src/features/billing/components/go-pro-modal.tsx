@@ -4,15 +4,14 @@ import React from 'react';
 import { useToggleContext } from '../../../providers/toggle-provider';
 import { Modal } from '../../../components/modal';
 import { Button, LoaderButton } from '../../../components/button';
-import { useAction } from '../../../hooks/use-action';
-import { apiService } from '../../../utils/api/api-service';
+import { useUpgradeSubscription } from '../hooks/use-upgrade-subscription';
 
 type GoProModalProps = {
   onUpgrade?: () => void;
 };
 
 const PRO_FEATURES = [
-  'Your tracks appear in the undiscovered feed until 100 unique listeners (up from 25)',
+  'Your tracks appear in the undiscovered feed until they have accumulated 100 unique listeners (up from 25)',
   '5GB of storage (up from 150MB)',
   'No ads, ever',
 ] as const;
@@ -33,14 +32,10 @@ export const GoProModal = React.memo(function GoProModal({
 function ModalContent() {
   const { toggleState } = useToggleContext();
   const onClose = () => toggleState(false);
-  const { action: upgradeSubscription, loading, status } = useAction({
-    fn: async () => {
-      return await apiService.updateSubscription('pro');
-    },
-    onSuccess: async (res) => {
-      const data = await res.json();
-      console.log('Subscription queued for update!');
-      window.location.href = data.checkoutUrl;
+  const { upgradeSubscription, loading, status } = useUpgradeSubscription({
+    onSuccess: async res => {
+      const result = await res.json();
+      window.location.href = result.checkoutUrl;
     }
   });
 

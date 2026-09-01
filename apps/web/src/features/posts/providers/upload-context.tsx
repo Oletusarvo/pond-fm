@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { createProvider } from "../../../utils/create-provider";
-import { TrackModal } from "../components/track-modal";
+import { UploadTrackModal } from "../components/upload-track-modal";
 
 const [UploadProvider, useUploadContext] = createProvider({
   contextName: 'UploadContext',
@@ -13,7 +13,7 @@ const [UploadProvider, useUploadContext] = createProvider({
     }
   },
   childComponent: (props) => {
-    return props.showUploadModal ? <TrackModal onClose={() => props.toggleShowUploadModal(false)} /> : null;
+    return props.showUploadModal ? <UploadTrackModal onClose={() => props.toggleShowUploadModal(false)} /> : null;
   }
 });
 

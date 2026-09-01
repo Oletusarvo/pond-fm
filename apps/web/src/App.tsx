@@ -1,6 +1,6 @@
 import { PlaybackProvider } from './features/audio/providers/playback-provider';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
-import { UndiscoveredFeedScreen } from './features/posts/screens/discovery-feed-screen';
+import { UndiscoveredFeedScreen } from './features/posts/screens/undiscovered-feed-screen';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { LoginScreen } from './features/auth/screens/login-screen';
 import { MainLayout } from './layouts/main-layout';
@@ -16,7 +16,8 @@ import { ActionProvider } from './providers/action-provider';
 import { UserProvider } from './features/users/providers/user-proivder';
 import { FollowedFeedScreen } from './features/posts/screens/followed-feed-screen';
 import { TrackScreen } from './features/posts/screens/track-screen';
-import { BillingSuccessScreen } from './features/auth/components/billing-success';
+import { BillingSuccessScreen } from './features/billing/components/billing-success';
+import { SubscriptionCancelSuccess } from './features/billing/components/subscription-cancel-success';
 
 function App() {
   return (
@@ -33,6 +34,7 @@ function App() {
                         path='/'
                         element={<MainLayout />}>
                         <Route path='/billing/success' element={<BillingSuccessScreen />} />
+                        <Route path="/billing/cancel/success" element={<SubscriptionCancelSuccess />} />
                         <Route
                           path='/'
                           element={<HomeLayout />}>

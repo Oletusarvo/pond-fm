@@ -9,6 +9,8 @@ import { db } from './db-config';
 import { signCommand } from '@pondfm/crypto';
 import { retry } from '@pondfm/server-utils';
 import { withTrack } from './DAL/posts/with/with-track';
+import { stripeWebhookHandler } from './api/v1/billing/webhooks/stripe-webhook-handler';
+import { verifyStripeSignature } from './api/v1/billing/middleware/verify-stripe-signature';
 
 require('dotenv').config();
 const app = express();
@@ -28,6 +30,12 @@ app.use(
     credentials: true,
   }),
 );
+app.post(
+  '/api/v1/billing/webhook/stripe',
+  express.raw({ type: 'application/json' }),
+  verifyStripeSignature,
+  stripeWebhookHandler
+);
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.use('/api', apiRouter);
@@ -45,39 +53,45 @@ runCleanup()
 
 async function runCleanup() {
   console.log('Running cleanup...');
-  await db(tablenames.users)
-    .where({ status: 'pending' })
+  await retry(async () => db(tablenames.users)
+    .where({ status: 'pending_verification' })
     .whereRaw("CURRENT_TIMESTAMP - created_at >= INTERVAL '24h'")
     .del()
+  )
     .catch((err) => {
       console.log('Failed to delete expired pending users.', err.stack);
     });
 
   await cleanupUnusedFilesAndTracks().catch(err => console.log('Failed to delete unused files!', err.stack));
-  await db(tablenames.authTokens)
-    .where('expires_at', '<=', db.fn.now()).del()
+  await retry(async () => await db(tablenames.authTokens)
+    .where('expires_at', '<=', db.fn.now()).del())
     .catch(err => console.log('Failed to delete expired auth tokens.', err.stack));
 
-  await db(tablenames.uploadTokens)
-    .where('expires_at', '<=', db.fn.now())
-    .del()
+  await retry(
+    async () => await db(tablenames.uploadTokens)
+      .where('expires_at', '<=', db.fn.now())
+      .del()
+  )
     .catch(err => console.log('Failed to delete expired upload tokens.', err.stack));
 }
 
 async function cleanupUnusedFilesAndTracks() {
-  const foldersToDelete = await db(tablenames.uploadFolders)
+  const foldersToDelete = await db({ folder: tablenames.uploadFolders })
     .where(function () {
-      this.where({ status: 'pending_upload' }).orWhere({ status: 'failed_upload' }).orWhere({ status: 'processing_upload' })
+      this
+        .where({ status: 'pending_upload' })
+        .orWhere({ status: 'failed_upload' })
+        .orWhere({ status: 'processing_audio' })
         .andWhereRaw("CURRENT_TIMESTAMP - updated_at >= INTERVAL '15min'");
     })
-    .orWhere({ status: 'failed_upload' })
     .orWhere({ status: 'deleted' })
     .select(
       'id',
-      db.raw("(SELECT JSON_AGG(key) FROM upload.upload_data WHERE upload_folder_id = id) AS keys")
+      db.raw("(SELECT JSON_AGG(key) FROM upload.upload_data WHERE upload_folder_id = folder.id) AS keys")
     ) as { id: string; keys: string[] }[];
 
   if (foldersToDelete.length == 0) {
+    console.log('Nothing to delete')
     return;
   }
 

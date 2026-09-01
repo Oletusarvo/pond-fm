@@ -4,7 +4,7 @@ import { useMainGenres } from "../hooks/use-main-genres";
 import { useMoods } from "../hooks/use-moods";
 import { TagList } from "./tag-list";
 
-export function GenreSelector({ onChange, defaultSelected }) {
+export function GenreSelector({ onChange, defaultSelected = null }) {
   const [selectedGenre, setSelectedGenre] = useState(defaultSelected);
   const { data: genres, isPending: genresPending } = useMainGenres();
   const onGenreSelected = (genre: string) => {
@@ -16,7 +16,7 @@ export function GenreSelector({ onChange, defaultSelected }) {
   );
 }
 
-export function MoodSelector({ defaultSelected, onChange }) {
+export function MoodSelector({ defaultSelected = null, onChange }) {
   const { items: selectedMoods, toggleItem: toggleMood } = useToggleList<string>({
     initialItems: defaultSelected,
     limit: 3,

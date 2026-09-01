@@ -1,6 +1,7 @@
 
+import { TPost } from "@pondfm/app-shared";
 import { db } from "../../db-config";
-import { tablenames } from "../../tablenames";
+import { viewnames } from "../../tablenames";
 import { DBContext } from "../../types/db-context";
 import { getUndistinctPostQuery } from "./get-undistinct-post-query";
 import { selectPost } from "./select/select-post";
@@ -23,15 +24,11 @@ export async function getUndiscoveredPosts(ctx: DBContext, config: FeedQueryConf
     .where(
       'track.unique_play_count',
       '<',
-      ctx.select('unique_listeners_threshold')
-        .from(tablenames.plans)
-        .where({
-          id: ctx
-            .select('id')
-            .from(tablenames.subscriptions)
-            .whereRaw("user_id = track.author_id")
-            .limit(1)
-        }))
+      db
+        .select('unique_listeners_threshold')
+        .from({ subscription: viewnames.subscriptions })
+        .whereRaw("subscription.user_id = track.author_id")
+        .limit(1))
     .orderBy('post.created_at', 'asc');
   applyCursor(query, {
     ...config,
@@ -42,5 +39,8 @@ export async function getUndiscoveredPosts(ctx: DBContext, config: FeedQueryConf
   selectPost(query, config.session);
   selectTrack(query);
 
-  return await resolveQueryWithCursor(query, { pageSize: 10 });
+  return (await resolveQueryWithCursor(query, { pageSize: 10 })) as {
+    cursor: string;
+    items: TPost[]
+  };
 }

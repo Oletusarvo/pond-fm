@@ -1,9 +1,9 @@
 import { usePlaybackContext } from "../providers/playback-provider";
 import { useScrobbleContext } from "../providers/scrobble-provider";
 import { Button } from "../../../components/button";
-import { Heart } from "lucide-react";
+import { Heart, Pause, Play, Speaker, Volume } from "lucide-react";
 import { useActionContext } from "../../../providers/action-provider";
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import { useEventHandler } from "../../../hooks/use-event-handler";
 import { PostProvider } from "../../posts/providers/post-provider";
 import { usePost } from "../../posts/hooks/use-post";
@@ -11,16 +11,51 @@ import { usePostActions } from "../../posts/hooks/use-post-actions";
 import { RepostButton } from "../../posts/components/repost-button";
 import { LikeButton } from "../../posts/components/like-button";
 import { useAuthContext } from "../../auth/providers/auth-provider";
+import { createProvider } from "../../../utils/create-provider";
+
+const [PlaybackPositionProvider, usePlaybackPositionContext] = createProvider({
+  contextName: 'PlaybackPositionContext',
+  hook: () => {
+    const { audioRef, currentPlayback } = usePlaybackContext();
+    const [playbackPosition, setPlaybackPosition] = useState(0);
+    useEventHandler({
+      type: 'timeupdate',
+      service: audioRef.current,
+      handler: (e: any) => {
+        setPlaybackPosition(e.currentTarget.currentTime);
+      }
+    });
+
+    const updatePlaybackPosition = useCallback((pos: number) => {
+      setPlaybackPosition(pos);
+    }, [setPlaybackPosition]);
+
+    const convertToTimeString = useCallback((n: number) => {
+      const totalSeconds = Math.floor(n);
+      const minutes = Math.floor(totalSeconds / 60);
+      const seconds = totalSeconds % 60;
+      const positionStr = `${minutes.toString().padStart(2, '0')}:${seconds
+        .toString()
+        .padStart(2, '0')}`;
+      return positionStr;
+    }, []);
+
+    return {
+      playbackPosition,
+      updatePlaybackPosition,
+      convertToTimeString,
+    }
+  }
+});
 
 export function MiniPlayerWithInfo() {
   const playbackService = usePlaybackContext();
   const scrobbleService = useScrobbleContext();
   const authService = useAuthContext();
   return (
-    <div className="flex flex-col w-full bg-slate-900 text-white h-pad">
+    <div className="flex flex-col w-full bg-slate-900 text-white h-pad py-2">
       <div className="flex w-full justify-between items-center py-2">
         <div className="flex flex-col gap-0 leading-3">
-          {playbackService.currentPlayback ? <small className="animate-pulse text-green-100">Now playing</small> : <small className="text-green-100">Nothing playing.</small>}
           <h3 className="text-green-100 font-semibold text-sm">{playbackService.currentPlayback?.title}</h3>
           <small>{playbackService?.currentPlayback?.author.username}</small>
         </div>
@@ -68,25 +103,73 @@ export function MiniPlayerWithInfo() {
 
   )
 }
+function PlayButton() {
+  const { playbackState, togglePlayback } = usePlaybackContext();
+  const Icon = playbackState === 'playing' ? Pause : Play;
+  return (
+    <Button variant="ghost" shape="circle" onClick={togglePlayback}>
+      <Icon fill="white" color="transparent" size="1.5rem" />
+    </Button>
+  );
+}
+function PlaybackTrack() {
+  const { currentPlayback, updatePlaybackPosition } = usePlaybackContext();
+  const { playbackPosition } = usePlaybackPositionContext();
+  const trackWidth = (currentPlayback ? playbackPosition / currentPlayback.duration : 0) * 100;
 
-function LikeButton2() {
-  const playbackService = usePlaybackContext();
-  const postId = playbackService.currentPlayback.post_id;
+  const onTrackClicked = (e: React.MouseEvent<HTMLDivElement>) => {
+    const trackRect = e.currentTarget.getBoundingClientRect();
 
-  const { toggleLike } = usePostActions({ trackId: postId });
-  const { post } = usePost(postId);
+    // Mouse position inside the track
+    const mouseXPos = e.clientX - trackRect.left;
 
-  const likedByMe = post.liked_by_me;
-  const fillColor = likedByMe ? 'var(--color-red-500)' : 'transparent';
-  const borderColor = likedByMe ? 'transparent' : 'var(--color-red-500)';
+    // Clamp between 0 and 1
+    const percentage = Math.max(
+      0,
+      Math.min(1, mouseXPos / trackRect.width)
+    );
+    updatePlaybackPosition(
+      percentage * currentPlayback.duration
+    );
+  };
 
   return (
-    <Button
-      disabled={!playbackService.currentPlayback}
-      variant="ghost"
-      shape="circle"
-      onClick={() => toggleLike()}>
-      <Heart fill={fillColor} color={borderColor} />
-    </Button>
+    <div className="h-2 bg-gray-500 w-full cursor-pointer flex-1" onClick={onTrackClicked}>
+      <div className="h-full bg-primary transition-all duration-100" style={{
+        width: `${trackWidth}%`
+      }} />
+    </div>
+  );
+}
+
+function PlaybackTime() {
+  const { currentPlayback } = usePlaybackContext();
+  const { playbackPosition, convertToTimeString } = usePlaybackPositionContext();
+  return (
+    <div className="flex items-center">
+      <span className="text-sm font-mono">{convertToTimeString(playbackPosition)}/{convertToTimeString(currentPlayback?.duration || 0)}</span>
+    </div>
+  );
+}
+
+function CustomAudio() {
+  return (
+    <div className="flex flex-col w-full">
+      <div className="flex items-center w-full gap-2">
+        <PlayButton />
+        <PlaybackPositionProvider>
+          <div className="gap-2 w-full flex items-center">
+            <PlaybackTrack />
+            <PlaybackTime />
+          </div>
+
+        </PlaybackPositionProvider>
+      </div>
+      <div className="flex items-center w-full gap-2">
+        <Button variant="ghost" disabled shape="circle">
+          <Volume size="1.5rem" fill="white" color="transparent" />
+        </Button>
+      </div>
+    </div>
   );
 }

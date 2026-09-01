@@ -1,4 +1,5 @@
 
+import { TPost } from "@pondfm/app-shared";
 import { DBContext } from "../../types/db-context";
 import { getDistinctPostQuery } from "./get-distinct-post-query";
 import { selectPost } from "./select/select-post";
@@ -24,5 +25,8 @@ export async function getNewPosts(ctx: DBContext, config: FeedQueryConfig) {
   selectPost(query, config.session);
   selectTrack(query);
   query.orderBy('post.created_at', 'desc');
-  return await resolveQueryWithCursor(query, { pageSize: 10 });
+  return await resolveQueryWithCursor(query, { pageSize: 10 }) as {
+    cursor: string;
+    items: TPost[];
+  };
 }

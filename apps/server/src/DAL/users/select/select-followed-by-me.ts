@@ -1,7 +1,7 @@
 import { Knex } from "knex";
-import { TSession } from "../../../types/session";
 import { db } from "../../../db-config";
 import { tablenames } from "../../../tablenames";
+import { TSession } from "@pondfm/app-shared";
 
 export function selectFollowedByMe(query: Knex.QueryBuilder, session?: TSession) {
   if (session) {

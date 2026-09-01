@@ -1,11 +1,10 @@
+import { TPost, TSession } from "@pondfm/app-shared";
 import { db } from "../../db-config";
 import { tablenames } from "../../tablenames";
 import { TCursor } from "../../types/cursor";
 import { DBContext } from "../../types/db-context";
-import { TSession } from "../../types/session";
+
 import { fromUndistinctPost } from "./from/from-undistinct-post";
-import { getDistinctPostQuery } from "./get-distinct-post-query";
-import { getPostQuery } from "./get-post-query";
 import { getUndistinctPostQuery } from "./get-undistinct-post-query";
 import { selectPost } from "./select/select-post";
 import { selectTrack } from "./select/select-track";
@@ -15,8 +14,6 @@ import { filterByMoods } from "./utils/filter-by-moods";
 import { onlyCanonicalPosts } from "./utils/only-canonical-posts";
 import { onlyReadyUploads } from "./utils/only-ready-uploads";
 import { resolveQueryWithCursor } from "./utils/resolve-query-with-cursor";
-import { withAuthor } from "./with/with-author";
-import { withTrack } from "./with/with-track";
 
 export async function getFollowedPosts(ctx: DBContext, config: {
   session: TSession,
@@ -43,6 +40,8 @@ export async function getFollowedPosts(ctx: DBContext, config: {
     timestampColumn: 'post.created_at'
   });
   query.orderBy('post.created_at', 'desc');
-  return await resolveQueryWithCursor(query, { pageSize: 10 });
-
+  return await resolveQueryWithCursor(query, { pageSize: 10 }) as {
+    cursor: string;
+    items: TPost[];
+  };
 }

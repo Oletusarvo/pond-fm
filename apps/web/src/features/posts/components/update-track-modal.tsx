@@ -2,27 +2,24 @@ import { useRef, useState } from "react";
 import { Modal } from "../../../components/modal";
 import { useToggleContext } from "../../../providers/toggle-provider";
 import { Form } from "../../../components/form";
-import { useSubmit } from "../../../hooks/use-submit";
-import { apiService } from "../../../utils/api/api-service";
 import { createProvider } from "../../../utils/create-provider";
-import { TTrack } from "../../../types/track";
 import { GenreSelector, MoodSelector } from "./track-modal-selector";
 import { Input } from "../../../components/input";
-import { LoaderButton } from "../../../components/button";
-import { usePostStore } from "../hooks/use-post";
+import { Button, LoaderButton } from "../../../components/button";
 import { useDeleteTrack } from "../hooks/use-delete-track";
-import { useAuthContext } from "../../auth/providers/auth-provider";
-import { useQueryClient } from "@tanstack/react-query";
 import { usePlaybackContext } from "../../audio/providers/playback-provider";
+import { useUpdateTrack } from "../hooks/use-update-track";
+import { ConfirmAction } from "../../../components/confirm-action";
+import { TTrack, TTrackPublic } from '@pondfm/app-shared';
 
 const [UpdateTrackProvider, useUpdateTrackContext] = createProvider({
   contextName: 'UpdateTrackContext',
-  hook: ({ track }: { track: TTrack }) => {
+  hook: ({ track }: { track: TTrackPublic }) => {
     return { track }
   },
 });
 
-export function UpdateTrackModal({ track }: { track: TTrack }) {
+export function UpdateTrackModal({ track }: { track: TTrackPublic }) {
   const { toggleState } = useToggleContext();
   return (
     <Modal title="Update Track" onClose={() => toggleState(false)}>
@@ -34,42 +31,26 @@ export function UpdateTrackModal({ track }: { track: TTrack }) {
 }
 
 function ModalContent() {
-  const authService = useAuthContext();
-  const queryClient = useQueryClient();
   const playbackService = usePlaybackContext();
   const { track } = useUpdateTrackContext();
-  const genreRef = useRef<string | null>(track?.genre);
-  const moodsRef = useRef<string[]>(track?.moods || []);
-  const { toggleState: toggleModalVisible } = useToggleContext();
-  const postStore = usePostStore();
+  const [genre, setGenre] = useState(track?.genre);
+  const [moods, setMoods] = useState(track?.moods || []);
 
-  const { submit, status, loading } = useSubmit({
-    fetchFn: async (payload) => {
-      const data = Object.fromEntries(payload);
-      const res = await apiService.updateTrack(track.id, data);
-      if (res.ok) {
-        postStore.updatePost(track.id, data);
-      }
-      return res;
+  const { toggleState: toggleModalVisible } = useToggleContext();
+
+  const { submit, loading: updateLoading } = useUpdateTrack({
+    track: {
+      ...track,
+      moods,
+      genre
     },
     onSuccess: () => {
       toggleModalVisible(false);
     }
   });
 
-
-  const { deleteTrack, status: trackDeleteStatus, loading: trackDeleteLoading } = useDeleteTrack({
-    onSuccess: async () => {
-      postStore.deletePost(track.id);
-      queryClient.invalidateQueries({ queryKey: ['feed'] });
-      const newQuotaConsumed = Number(authService.session.user.subscription.storage_quota_consumed) - Number(track.size);
-      await authService.refreshSession({
-        user: {
-          subscription: {
-            storage_quota_consumed: newQuotaConsumed,
-          }
-        }
-      })
+  const { deleteTrack, status: deleteStatus, loading: deleteLoading } = useDeleteTrack({
+    onSuccess: () => {
       toggleModalVisible(false);
     }
   });
@@ -86,35 +67,30 @@ function ModalContent() {
         />
       </Form.Group>
       <Form.Group label='Main Genre'>
-        <GenreSelector onChange={genre => genreRef.current = genre} defaultSelected={track?.genre} />
+        <GenreSelector onChange={genre => { setGenre(genre) }} defaultSelected={track?.genre} />
       </Form.Group>
       <Form.Group label='Style (Max 3)'>
-        <MoodSelector onChange={moods => moodsRef.current = moods} defaultSelected={track?.moods} />
+        <MoodSelector onChange={moods => { setMoods(moods) }} defaultSelected={track?.moods} />
       </Form.Group>
-      <div className="flex w-full gap-2">
-        <LoaderButton
-          loading={trackDeleteLoading}
-          disabled={trackDeleteLoading || trackDeleteStatus === 'success'}
-          variant="outlined" color="danger"
-          fullWidth shape="rounded"
-          paddingEnabled
-          type="button"
-          onClick={async () => {
+      <div className="flex flex-col w-full gap-2">
+        <LoaderButton type="submit" variant="contained" loading={updateLoading} disabled={updateLoading} fullWidth shape="rounded" paddingEnabled>
+          Update
+        </LoaderButton>
+        <ConfirmAction
+          variant="danger"
+          intentButton={<Button variant="text" color="danger">Delete Track</Button>}
+          confirmButton={<LoaderButton variant="text" loading={deleteLoading}>Delete Track</LoaderButton>}
+          intentCancelButton={<Button variant="text">Keep Track</Button>}
+          onConfirm={async () => {
             if (playbackService.currentPlayback?.id === track.id) {
               //Stop playback before deleting to prevent errors
               playbackService.stopPlayback();
             }
-            await deleteTrack(track.id);
+            await deleteTrack(track);
           }}>
-          Delete
-        </LoaderButton>
-
-
-        <LoaderButton type="submit" variant="contained" loading={loading} disabled={loading} fullWidth shape="rounded" paddingEnabled>
-          Update
-        </LoaderButton>
+          <p>You are about to delete this track. Deleted tracks cannot be recovered. Are you absolutely sure?</p>
+        </ConfirmAction>
       </div>
-
 
     </Form>
   )

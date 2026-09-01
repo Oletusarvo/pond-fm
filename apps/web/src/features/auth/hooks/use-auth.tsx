@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { apiService } from '../../../utils/api/api-service';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { LogoutModal } from '../components/logout-modal';
+import { TSession, TSubscriptionRestricted, TUser, TUserRestricted } from '@pondfm/app-shared';
 
 type TSessionStatus = 'loading' | 'authenticated' | 'unauthenticated';
 
@@ -12,12 +13,13 @@ export function useAuth() {
     data: session,
     isPending,
     refetch: refetchSession,
-  } = useQuery({
+  } = useQuery<TSession>({
     queryKey: ['session'],
     queryFn: async () => {
       const res = await apiService.me();
       return res.ok ? await res.json() : null;
     },
+    staleTime: Infinity,
   });
 
   const status: TSessionStatus = isPending
@@ -28,7 +30,7 @@ export function useAuth() {
 
   const toggleLogoutModal = (state: boolean) => setShowLogoutModal(state);
 
-  const requestAuthorization = async (credentials: { email: string; username?: string }) => {
+  const requestAuthorization = async (credentials: Pick<TUser, 'email'>) => {
     return await apiService.requestAuthorization(credentials);
   };
 
@@ -48,26 +50,29 @@ export function useAuth() {
     return res;
   };
 
-  const refreshSession = async (newSession: any) => {
+  const refreshSession = async (newSession?: Omit<Partial<TSession>, 'user'> & {
+    user?: Partial<TUserRestricted> & {
+      subscription?: Partial<TSubscriptionRestricted>;
+    }
+  }) => {
     let payload;
-    queryClient.setQueryData(['session'], (oldSession: any) => {
+    queryClient.setQueryData(['session'], (oldSession: TSession) => {
       if (!oldSession) return oldSession;
       const newData = {
         ...oldSession,
         user: {
           ...oldSession.user,
-          ...newSession.user,
+          ...newSession?.user,
           subscription: {
             ...oldSession.user.subscription,
-            ...newSession.user.subscription,
+            ...newSession?.user?.subscription,
           }
         }
       };
 
       return payload = newData;
     });
-    await apiService.refreshSession(payload);
-
+    return await apiService.refreshSession(payload);
   };
 
   return {

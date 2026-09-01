@@ -11,8 +11,8 @@ import { apiService } from '../utils/api/api-service';
 import React from 'react';
 import { ToggleProvider } from '../providers/toggle-provider';
 import { NotificationsModal } from '../features/notifications/components/notifications-modal';
-import { TrackModal } from '../features/posts/components/track-modal';
-import { GoProModal } from '../features/auth/components/go-pro-modal';
+import { UploadTrackModal } from '../features/posts/components/upload-track-modal';
+import { GoProModal } from '../features/billing/components/go-pro-modal';
 import { SettingsModal } from '../features/auth/components/settings-modal';
 
 export function MainHeader() {
@@ -85,7 +85,7 @@ const AuthControls = React.memo(function ({ authStatus }: { authStatus: ReturnTy
               <UploadButton />
             </ToggleProvider.Trigger>
             <ToggleProvider.Target>
-              <TrackModal />
+              <UploadTrackModal />
             </ToggleProvider.Target>
           </ToggleProvider>
           <ToggleProvider>
@@ -111,7 +111,7 @@ const AuthControls = React.memo(function ({ authStatus }: { authStatus: ReturnTy
 function GoProButton() {
   const { session } = useAuthContext();
   return (
-    session.user.subscription.label !== 'pro' ? <ToggleProvider>
+    session.user.subscription.plan_id !== 'pro' ? <ToggleProvider>
       <ToggleProvider.Trigger>
         <Button variant="text" color="inherit">Go Pro</Button>
       </ToggleProvider.Trigger>

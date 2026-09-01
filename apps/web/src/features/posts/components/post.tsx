@@ -9,7 +9,7 @@ import { usePostContext } from '../providers/post-provider';
 import { Tag } from './tag';
 import { SettingsButton } from './track-settings-button';
 import { ToggleProvider } from '../../../providers/toggle-provider';
-import { TrackModal } from './track-modal';
+import { UploadTrackModal } from './upload-track-modal';
 import { UpdateTrackModal } from './update-track-modal';
 
 /**The main component responsible for rendering posts. Includes an AudioPlayer, stats and other information.

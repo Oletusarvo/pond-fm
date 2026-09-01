@@ -1,9 +1,7 @@
-import { useActionContext } from '../../../providers/action-provider';
 import { createProvider } from '../../../utils/create-provider';
 import { usePostActions } from '../../posts/hooks/use-post-actions';
 import { useScrobble } from '../hooks/use-scrobble';
 import { usePlaybackContext } from './playback-provider';
-import { usePlayCountContext } from './playcount-provider';
 
 export const [ScrobbleProvider, useScrobbleContext] = createProvider({
   contextName: 'ScrobbleContext',
