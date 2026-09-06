@@ -1,4 +1,6 @@
 const viewname = 'user_view';
+const constructUserView = require('../migration-utils/views/user-view');
+
 /**
  * @param { import("knex").Knex } knex
  * @returns { Promise<void> }

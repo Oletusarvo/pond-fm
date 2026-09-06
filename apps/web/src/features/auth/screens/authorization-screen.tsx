@@ -1,24 +1,21 @@
-import { Link, useNavigate, useParams, useSearchParams } from 'react-router-dom';
-import { Modal } from '../../../components/modal';
-import { Spinner } from '../../../components/spinner';
-import { useEffect, useRef } from 'react';
-import { useAppContext } from '../../../providers/app-provider';
-import { useAuthContext } from '../providers/auth-provider';
-import { useStatus } from '../../../hooks/use-status';
-import { Button, LoaderButton } from '../../../components/button';
-import { Form } from '../../../components/form';
-import { Input } from '../../../components/input';
-import { useSubmit } from '../../../hooks/use-submit';
-import { ErrorMessage, SuccessMessage } from '../../../components/helper-message';
-import { Check, X } from 'lucide-react';
+import { useNavigate, useSearchParams } from "react-router-dom";
+import { Modal } from "../../../components/modal";
+import { useRef } from "react";
+import { useAuthContext } from "../providers/auth-provider";
+import { Button, LoaderButton } from "../../../components/button";
+import { Form } from "../../../components/form";
+import { Input } from "../../../components/input";
+import { useSubmit } from "../../../hooks/use-submit";
+import {
+  ErrorMessage,
+  SuccessMessage,
+} from "../../../components/helper-message";
 
 export function AuthorizationScreen() {
   const navigate = useNavigate();
-  const onClose = () => navigate('/')
+  const onClose = () => navigate("/");
   return (
-    <Modal
-      title='Authorization'
-      onClose={onClose}>
+    <Modal title='Authorization' onClose={onClose}>
       <ModalContent onClose={onClose} />
     </Modal>
   );
@@ -26,7 +23,7 @@ export function AuthorizationScreen() {
 
 function ModalContent({ onClose }) {
   const [params] = useSearchParams();
-  const code = params.get('code');
+  const code = params.get("code");
   const navigate = useNavigate();
   const authService = useAuthContext();
   const formRef = useRef<HTMLFormElement>(null);
@@ -36,32 +33,50 @@ function ModalContent({ onClose }) {
       return await authService.authorize(data.code);
     },
     onSuccess: () => {
-      navigate('/new');
-    }
+      navigate("/new");
+    },
   });
 
-  const buttonsDisabled = loading || status === 'success';
+  const buttonsDisabled = loading || status === "success";
   return (
     <div className='flex w-full flex-col gap-4'>
       <Form onSubmit={submit} ref={formRef}>
         <p>To sign in, please submit the code we sent you.</p>
-        <Form.Group label="Code">
-          <Input name="code" type="text" required defaultValue={code} />
+        <Form.Group label='Code'>
+          <Input name='code' type='text' required defaultValue={code} />
         </Form.Group>
-        <div className="flex gap-2 w-full">
-          <Button disabled={buttonsDisabled} variant="outlined" fullWidth paddingEnabled shape="rounded" onClick={onClose}>Cancel</Button>
-          <LoaderButton loading={loading} disabled={buttonsDisabled} fullWidth paddingEnabled shape="rounded" type="submit">
-            {status !== 'error' ? 'Submit' : 'Try Again'}
+        <div className='flex gap-2 w-full'>
+          <Button
+            disabled={buttonsDisabled}
+            variant='outlined'
+            fullWidth
+            paddingEnabled
+            shape='rounded'
+            onClick={onClose}
+          >
+            Cancel
+          </Button>
+          <LoaderButton
+            loading={loading}
+            disabled={buttonsDisabled}
+            fullWidth
+            paddingEnabled
+            shape='rounded'
+            type='submit'
+          >
+            {status !== "error" ? "Submit" : "Try Again"}
           </LoaderButton>
         </div>
       </Form>
-      {status === 'success' ? (
-        <SuccessMessage>Authorization succeeded! Please wait while we redirect you...</SuccessMessage>
-      ) : status === 'error' ? (
+      {status === "success" ? (
+        <SuccessMessage>
+          Authorization succeeded! Please wait while we redirect you...
+        </SuccessMessage>
+      ) : status === "error" ? (
         <ErrorMessage>Authorization failed!</ErrorMessage>
-      ) : status === 'exception' ? (
+      ) : status === "exception" ? (
         <ErrorMessage>Something went wrong!</ErrorMessage>
       ) : null}
     </div>
-  )
+  );
 }

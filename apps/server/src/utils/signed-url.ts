@@ -5,6 +5,7 @@ import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 
 /**
  * Calls the dedicated function for generating an upload url based on the OBJECT_STORE_ENV env-variable.
+ * @deprecated Use urlSigner.upload.sign instead.
  */
 export async function createSignedUploadUrl(key: string, contentType: string, maxSize: number) {
   const uploadEnv = process.env.OBJECT_STORE_ENV;

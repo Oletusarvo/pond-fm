@@ -1,47 +1,42 @@
-import { postService } from '../../../../container';
-import { db } from '../../../../db-config';
-import { createNotification } from '../../../../DAL/notifications/create-notification';
-import { tablenames } from '../../../../tablenames';
-import { AuthenticatedExpressRequest } from '../../../../types/express';
-import { createHandler } from '../../../../utils/create-handler';
-import { serviceError } from '../../../../utils/service-error';
-import { tryCatch } from '../../../../utils/try-catch';
+import { postService } from "../../../../container";
+import { db } from "../../../../db-config";
+import { createNotification } from "../../../../DAL/notifications/create-notification";
+import { tablenames } from "../../../../tablenames";
+import { AuthenticatedExpressRequest } from "../../../../types/express";
+import { createHandler } from "../../../../utils/create-handler";
+import { serviceError } from "../../../../utils/service-error";
+import { tryCatch } from "../../../../utils/try-catch";
 
 /**Records a repost by a user on a track by id. */
 export const repostTrackHandler = createHandler(
   async (req: AuthenticatedExpressRequest, res) => {
     const session = req.session;
     const { trackId } = req.body as { trackId: string };
-    const result = await postService.repostTrack(
-      db,
-      {
-        post: {
-          authorId: session.user.id,
-          trackId: trackId,
-        }
-      },
-    );
+    const result = await postService.repostTrack(db, {
+      author: { id: session.user.id },
+      track: { id: trackId },
+    });
 
-    if (result.success === false && result.error === serviceError.post?.duplicateRepost) {
+    if (
+      result.success === false &&
+      result.error === serviceError.post?.duplicateRepost
+    ) {
       return res.status(409).json({ error: result.error });
     }
     const notificationPromise = new Promise<void>(async (resolve, reject) => {
       const [result, err] = await tryCatch(async () => {
         const track = await db(tablenames.tracks)
           .where({ id: req.body.trackId })
-          .select('author_id')
+          .select("author_id")
           .first();
-        await createNotification(
-          db,
-          {
-            notification: {
-              recipient_id: track.author_id,
-              sender_id: session?.user.id,
-              track_id: req.body.trackId,
-              type: 'repost',
-            }
+        await createNotification(db, {
+          notification: {
+            recipient_id: track.author_id,
+            sender_id: session?.user.id,
+            track_id: req.body.trackId,
+            type: "repost",
           },
-        );
+        });
       });
 
       if (err) {
@@ -51,15 +46,15 @@ export const repostTrackHandler = createHandler(
       }
     });
 
-    notificationPromise.catch(err =>
-      console.log('Creating of repost notification failed!', err.message),
+    notificationPromise.catch((err) =>
+      console.log("Creating of repost notification failed!", err.message),
     );
 
     return res.end();
   },
   (err, res) => {
     const msg = err.message.toUpperCase();
-    if (msg.includes('DUPLICATE')) {
+    if (msg.includes("DUPLICATE")) {
       return res.status(409).end();
     }
   },

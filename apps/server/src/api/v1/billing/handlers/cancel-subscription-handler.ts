@@ -3,14 +3,14 @@ import { AuthenticatedExpressRequest } from "../../../../types/express";
 import { stripe } from "../../../../stripe-config";
 import { db } from "../../../../db-config";
 import { tablenames } from "../../../../tablenames";
-import knex from "knex";
+import { TPayment, TSubscription } from "@pondfm/app-shared";
 
 export const cancelSubscriptionHandler = createHandler(
   async (req: AuthenticatedExpressRequest, res) => {
     const localSubscription = await db(tablenames.subscriptions)
       .where({ user_id: req.session.user.id, plan_id: 'pro' })
       .whereNotNull('stripe_subscription_id')
-      .first();
+      .first() as TSubscription;
 
     if (!localSubscription) {
       return res.status(409).json({
@@ -22,7 +22,7 @@ export const cancelSubscriptionHandler = createHandler(
       .where({ subscription_user_id: localSubscription.user_id })
       .select('stripe_payment_intent_id', 'refunded_at')
       .orderBy('paid_at', 'desc')
-      .first();
+      .first() as Pick<TPayment, 'stripe_payment_intent_id' | 'refunded_at'>;
 
     if (payment.refunded_at) {
       return res.status(409).json({
@@ -37,34 +37,43 @@ export const cancelSubscriptionHandler = createHandler(
     const ageInDays =
       (Date.now() - createdAt) / (1000 * 60 * 60 * 24);
 
-    if (ageInDays <= 14) {
-      /*Refund the customer and cancel the subscription. 
-        Also delete oldest files that contribute to free plan quota overage. 
-        File deletion should be handled in the stripe webhook.
-      */
+    await db(tablenames.subscriptions).where({
+      user_id: localSubscription.user_id,
+    } as TSubscription)
+      .update({
+        status: 'canceled'
+      } as TSubscription);
 
-      // Cancel immediately
-      await stripe.subscriptions.cancel(subscription.id);
-      await stripe.refunds.create({
-        payment_intent: payment.stripe_payment_intent_id,
-      });
-      await retry(async () => {
-        await db(tablenames.subscriptions).where({
-          user_id: localSubscription.user_id
-        })
-          .update({
-            status: 'canceled'
-          })
-      });
+    try {
+      if (ageInDays <= 14) {
+        /*Refund the customer and cancel the subscription. 
+          Also delete oldest files that contribute to free plan quota overage. 
+          File deletion should be handled in the stripe webhook.
+        */
+
+        // Cancel immediately
+        await stripe.subscriptions.cancel(subscription.id);
+        await stripe.refunds.create({
+          payment_intent: payment.stripe_payment_intent_id,
+        });
+      }
+      else {
+        //Cancel at period end; do not refund.
+        await stripe.subscriptions.update(subscription.id, {
+          cancel_at_period_end: true,
+        });
+      }
     }
-    else {
-      //Cancel at period end; do not refund.
-      await stripe.subscriptions.update(subscription.id, {
-        cancel_at_period_end: true,
-      });
+    catch (err) {
+      //Revert the db update
+      await db(tablenames.subscriptions).where({
+        user_id: localSubscription.user_id,
+        status: 'canceled'
+      } as TSubscription)
+        .update({
+          status: 'active'
+        } as TSubscription);
     }
-
-
 
     return res.end();
   }

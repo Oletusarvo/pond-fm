@@ -9,6 +9,7 @@ type UsePollingProps = {
   queryFn: () => Promise<Response>;
   pollingInterval?: UseQueryParameters['refetchInterval'];
   onData: <T>(data: T) => boolean;
+  onSuccess?: () => Promise<void> | void;
   onError?: (error: Error) => Promise<void> | void;
   onMaxTries?: () => void;
 };
@@ -20,6 +21,7 @@ export function usePolling({
   queryFn,
   onData,
   onError,
+  onSuccess,
   onMaxTries
 }: UsePollingProps) {
   const fetchEnabledRef = useRef(true);
@@ -44,6 +46,9 @@ export function usePolling({
 
       if (!isError) {
         fetchEnabledRef.current = onData(data);
+        if (!fetchEnabledRef.current) {
+          onSuccess();
+        }
       }
       else {
         onError?.(error as Error);

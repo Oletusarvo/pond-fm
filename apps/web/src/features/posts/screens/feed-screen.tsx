@@ -1,20 +1,32 @@
-import React, { ReactNode, useState, useTransition } from 'react';
-import { Separator } from '../../../components/separator';
-import { PostFeed } from '../components/post-feed';
-import { PostFeedScreenContainer } from '../components/post-feed-screen-container';
-import { PostFeedHeader } from '../components/post-feed-header';
-import { GenreSelector } from '../components/genre-selector';
-import { FeedProvider } from '../../../providers/feed-provider';
+import React, { ReactNode, useState, useTransition } from "react";
+import { Separator } from "../../../components/separator";
+import { PostFeed } from "../components/post-feed";
+import { PostFeedScreenContainer } from "../components/post-feed-screen-container";
+import { PostFeedHeader } from "../components/post-feed-header";
+import { GenreSelector } from "../components/genre-selector";
+import { FeedProvider } from "../../../providers/feed-provider";
+import {
+  useInfiniteFeed,
+  UseInfiniteFeedProps,
+} from "../../../hooks/use-infinite-feed";
 
 type FeedScreenProps = {
   title: string;
   description?: string;
-  queryFn: (genres: string[], moods: string[], cursor?: string) => Promise<Response>;
+  queryFn: (
+    genres: string[],
+    moods: string[],
+    cursor?: string,
+  ) => ReturnType<UseInfiniteFeedProps["queryFn"]>;
   queryKey: string[];
   icon?: ReactNode;
-}
+};
 export function PostFeedScreen({
-  title, description, queryFn, queryKey, icon
+  title,
+  description,
+  queryFn,
+  queryKey,
+  icon,
 }: FeedScreenProps) {
   const [genres, setMainGenre] = useState([]);
   const [moods, setMoods] = useState([]);
@@ -22,21 +34,28 @@ export function PostFeedScreen({
 
   return (
     <PostFeedScreenContainer>
-      <PostFeedHeader
-        icon={icon}
-        title={title}
-        description={description}>
+      <PostFeedHeader icon={icon} title={title} description={description}>
         <GenreSelector
-          onGenresChanged={g => startTransition(() => setMainGenre(g))}
-          onMoodsChanged={s => startTransition(() => { setMoods(s) })} />
+          onGenresChanged={(g) => startTransition(() => setMainGenre(g))}
+          onMoodsChanged={(s) =>
+            startTransition(() => {
+              setMoods(s);
+            })
+          }
+        />
       </PostFeedHeader>
 
       <Separator />
       <FeedProvider
         queryFn={(cursor?: string) => queryFn(genres, moods, cursor as string)}
-        queryKey={[...queryKey, genres.sort().join(';'), moods.sort().join(';')]}>
+        queryKey={[
+          ...queryKey,
+          genres.sort().join(";"),
+          moods.sort().join(";"),
+        ]}
+      >
         <PostFeed />
       </FeedProvider>
-    </PostFeedScreenContainer >
+    </PostFeedScreenContainer>
   );
 }

@@ -2,15 +2,21 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { create } from 'zustand';
 import { useTransition } from "react";
 import { Key } from "lucide-react";
-import { TPost } from "@pondfm/app-shared";
+import { TPost, TPostPublic, TTrackPublic } from "@pondfm/app-shared";
+
+type PostType = Partial<Omit<TPostPublic, 'track'> & {
+  track: Partial<Omit<TTrackPublic, 'stats'>> & {
+    stats: Partial<TTrackPublic['stats']>
+  }
+}>;
 
 type PostState = {
-  posts: Record<string, TPost>;
+  posts: Record<string, TPostPublic>;
   showRepostModal: boolean;
-  getPost: (trackId: string) => TPost | undefined;
-  setPosts: (newPosts: TPost[]) => void;
+  getPost: (trackId: string) => TPostPublic | undefined;
+  setPosts: (newPosts: TPostPublic[]) => void;
   setIsPending: (state: boolean) => void;
-  updatePost: (trackId: string, data: Partial<TPost>) => void;
+  updatePost: (trackId: string, data: PostType) => void;
   deletePost: (trackId: string) => void;
 }
 
@@ -29,7 +35,7 @@ export const usePostStore = create<PostState>((set, get) => ({
       isPending: pendingState,
     }
   }),
-  getPost: (trackId: string): TPost | undefined => get().posts[trackId],
+  getPost: (trackId: string) => get().posts[trackId],
   deletePost: (trackId: string) => set(state => {
     const newState = { ...state };
     delete newState.posts[trackId];
@@ -52,7 +58,11 @@ export const usePostStore = create<PostState>((set, get) => ({
       ...newPost,
       track: {
         ...oldData.track,
-        ...newPost.track
+        ...newPost.track,
+        stats: {
+          ...oldData.track.stats,
+          ...newPost.track?.stats
+        }
       }
     }
     return {
@@ -75,8 +85,7 @@ export function usePost(trackId: string) {
 */
   const [tansition, startTransition] = useTransition();
 
-  const updatePost = (newState: Partial<TPost>) => {
-    console.log('Running update post...');
+  const updatePost = (newState: PostType) => {
     postStore.updatePost(trackId, newState);
     startTransition(() => {
       queryClient.setQueriesData({ queryKey: ['feed'] }, (oldData: any) => {
@@ -84,7 +93,18 @@ export function usePost(trackId: string) {
         const newPages = oldData.pages.map(page => {
           return {
             ...page, items: page.items.map(item => {
-              return item.track.id === trackId ? { ...item, ...newState } : item
+              return item.track.id === trackId ? {
+                ...item,
+                ...newState,
+                track: {
+                  ...item.track,
+                  ...newState.track,
+                  stats: {
+                    ...item.track.stats,
+                    ...newState.track?.stats,
+                  }
+                }
+              } : item
             })
           }
         });

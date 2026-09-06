@@ -21,7 +21,7 @@ export async function getFollowedPosts(ctx: DBContext, config: {
   moods?: string[];
   genres?: string[]
 }) {
-  const query = getUndistinctPostQuery(ctx);
+  const query = getUndistinctPostQuery(ctx, config.session);
   fromUndistinctPost(query);
   onlyCanonicalPosts(query);
   onlyReadyUploads(query);
@@ -31,7 +31,7 @@ export async function getFollowedPosts(ctx: DBContext, config: {
     'track.author_id',
     db.select('followee_id').from(tablenames.followers).where({ follower_id: config.session.user.id })
   );
-  selectPost(query, config.session);
+  selectPost(query);
   selectTrack(query);
   applyCursor(query, {
     dir: 'desc',

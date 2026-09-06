@@ -1,8 +1,6 @@
-import { useQueryClient } from '@tanstack/react-query';
-import { TPost } from '../../../types/post';
-import { apiService } from '../../../utils/api/api-service';
-import { cancelable } from '../../../utils/debounced';
-import { usePost, usePostStore } from './use-post';
+import { api } from "../../../utils/api/api";
+import { cancelable } from "../../../utils/debounced";
+import { usePost } from "./use-post";
 
 type UsePostActionsProps = {
   trackId: string;
@@ -21,58 +19,70 @@ export function usePostActions({
 }: UsePostActionsProps) {
   const { post, updatePost } = usePost(id);
   const countPlay = async () => {
-    const initialPlayCount = post.play_count;
+    const initialPlayCount = post.track.stats.play_count;
     const newPlayCount = initialPlayCount + 1;
 
-    apiService
+    api.tracks
       .countPlay(post.track.id)
-      .then(res => {
-        if (!res.ok) return;
+      .then((res) => {
+        if (!res.success) return;
         updatePost({
-          play_count: newPlayCount,
+          track: {
+            stats: {
+              play_count: newPlayCount,
+            },
+          },
         });
-
       })
-      .catch(err => {
+      .catch((err) => {
         console.log(err.message);
       });
-  }
+  };
 
   const toggleLike = async () => {
-    const initialIsLiked = post?.liked_by_me;
-    const initialLikeCount = Number(post?.like_count);
+    const initialIsLiked = post?.track.stats.liked_by_me;
+    const initialLikeCount = Number(post?.track.stats.like_count);
     const initialPost = { ...post };
     updatePost({
-      like_count: initialIsLiked ? initialLikeCount - 1 : initialLikeCount + 1,
-      liked_by_me: !initialIsLiked,
+      track: {
+        stats: {
+          like_count: initialIsLiked
+            ? initialLikeCount - 1
+            : initialLikeCount + 1,
+          liked_by_me: !initialIsLiked,
+        },
+      },
     });
     onLikeToggled?.();
     const result = await cancelable.toggleTrackLike(id, initialIsLiked);
     if (result.executed) {
       const res = result.value;
-      if (!res.ok) {
+      if (!res.success) {
         updatePost(initialPost);
         onLikeRollback?.();
       }
-
     }
   };
 
   const repost = async () => {
     const initialPost = { ...post };
-    const initialIsReposted = post?.reposted_by_me;
-    const initialCount = Number(post?.repost_count);
+    const initialIsReposted = post?.track.stats.reposted_by_me;
+    const initialCount = Number(post?.track.stats.repost_count);
     if (initialIsReposted) {
       return;
     }
     updatePost({
-      reposted_by_me: !initialIsReposted,
-      repost_count: initialIsReposted ? initialCount - 1 : initialCount + 1,
+      track: {
+        stats: {
+          reposted_by_me: !initialIsReposted,
+          repost_count: initialIsReposted ? initialCount - 1 : initialCount + 1,
+        },
+      },
     });
     onRepost?.();
     const result = await cancelable.repost(id, initialIsReposted);
     if (result.executed) {
-      if (!result.value.ok) {
+      if (!result.value.success) {
         updatePost(initialPost);
         onRepostRollback?.();
       }

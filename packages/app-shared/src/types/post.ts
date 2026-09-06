@@ -3,13 +3,15 @@ import type { TTrackPublic } from "./track.js";
 
 export type TPost = {
   id: string;
-  liked_by_me: boolean;
-  reposted_by_me: boolean;
-  is_canonical: boolean;
-  like_count: number;
-  repost_count: number;
-  play_count: number;
+  author_id: string;
+  track_id: string;
   created_at: string;
+};
+
+export type TPostPublic = Omit<TPost, 'author_id' | 'track_id'> & {
+  /**The author of the post. Can be different from the author of the track. */
   author: TAuthor;
   track: TTrackPublic;
-};
+  /**Is the post created by the author of the track? */
+  is_canonical: boolean;
+}

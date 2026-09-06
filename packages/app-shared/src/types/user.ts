@@ -1,22 +1,47 @@
-import type { TSubscription, TSubscriptionPublic, TSubscriptionRestricted } from "./subscription.js";
+import z from "zod";
+import type {
+  TSubscription,
+  TSubscriptionPublic,
+  TSubscriptionRestricted,
+} from "./subscription.js";
 
-export type TUserStatus = 'active' | 'pending_verification' | 'deleted' | 'suspended';
+export const userStatusSchema = z.enum([
+  "active",
+  "pending_verification",
+  "deleted",
+  "suspended",
+] as const);
+
+export type TUserStatus = z.infer<typeof userStatusSchema>;
+
 /**The type for users. */
 export type TUser = {
   id: string;
   email: string;
   username: string;
+  bio?: string;
   unseen_notification_count: number;
+  follower_count: number;
+  following_count: number;
+  followed_by_me: boolean;
   status: TUserStatus;
   subscription: TSubscription;
-}
+};
 
 /**The user type displayed for the authenticated user themselves. */
-export type TUserRestricted = Omit<TUser, 'subscription'> & {
+export type TUserRestricted = Omit<TUser, "subscription"> & {
   subscription: TSubscriptionRestricted;
-}
+};
 
 /**The user type displayed to the public. */
-export type TUserPublic = Pick<TUser, 'id' | 'username'> & {
+export type TUserPublic = Pick<
+  TUser,
+  | "id"
+  | "username"
+  | "bio"
+  | "follower_count"
+  | "following_count"
+  | "followed_by_me"
+> & {
   subscription: TSubscriptionPublic;
-}
+};

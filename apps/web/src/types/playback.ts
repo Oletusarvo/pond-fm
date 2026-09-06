@@ -1,8 +1,9 @@
-import { TTrackPublic } from "@pondfm/app-shared";
+import { TPost, TTrackPublic } from "@pondfm/app-shared";
 
-export type TPlayback = TTrackPublic & {
+export type TPlayback = {
   start_position?: number;
-  post_id: string;
+  post: Pick<TPost, 'id'>;
+  track: TTrackPublic;
   stats: {
     liked_by_me?: boolean;
     reposted_by_me?: boolean;

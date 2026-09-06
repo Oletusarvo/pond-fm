@@ -9,41 +9,43 @@ import { usePlaybackContext } from '../providers/playback-provider';
 export function AudioPlayer() {
   const { playbackState, togglePlayback, currentPlayback, audioRef, updateCurrentPlayback } =
     usePlaybackContext();
+  const playbackTrackId = currentPlayback?.track.id;
   const { post } = usePostContext();
+  const postTrackId = post?.track.id;
   const [playbackPosition, setPlaybackPosition] = useState(() =>
-    currentPlayback?.id === post?.track.id ? audioRef.current?.currentTime : 0,
+    currentPlayback?.track.id === post?.track.id ? audioRef.current?.currentTime : 0,
   );
 
   const onWaveformClicked = useCallback(
     (currentTime: number) => {
-      if (currentPlayback?.id === post?.track.id) {
+      if (playbackTrackId === postTrackId) {
         audioRef.current.currentTime = currentTime;
       } else {
         updateCurrentPlayback({ ...postToPlayback(post), start_position: currentTime });
       }
     },
-    [post?.track.id, currentPlayback?.id, updateCurrentPlayback],
+    [postTrackId, playbackTrackId, updateCurrentPlayback],
   );
 
   const onPlayButtonClicked = useCallback(async () => {
-    if (currentPlayback?.id === post?.track.id) {
+    if (playbackTrackId === postTrackId) {
       togglePlayback();
     } else {
       updateCurrentPlayback({ ...postToPlayback(post) });
     }
-  }, [currentPlayback?.id, post?.track.id, togglePlayback, updateCurrentPlayback]);
+  }, [playbackTrackId, postTrackId, togglePlayback, updateCurrentPlayback]);
 
   useEventHandler({
     type: 'timeupdate',
     service: audioRef.current,
     handler: (e: any) => {
-      if (currentPlayback?.id === post?.track.id) {
+      if (playbackTrackId === postTrackId) {
         setPlaybackPosition(e.currentTarget.currentTime);
       }
     },
   });
 
-  const playbuttonState = currentPlayback && currentPlayback.id === post.track.id ? currentPlayback.status === 'ready' ? playbackState : currentPlayback.status : 'paused';
+  const playbuttonState = currentPlayback && playbackTrackId === postTrackId ? currentPlayback.status === 'ready' ? playbackState : currentPlayback.status : 'paused';
   return (
     <div className='flex gap-2 w-full h-full items-center'>
       <PlayButton

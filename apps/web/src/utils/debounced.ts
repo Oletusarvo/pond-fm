@@ -1,23 +1,23 @@
-import { apiService } from './api/api-service';
-import { cancelPrevious, debounce } from './debounce';
+import { api } from "./api/api";
+import { cancelPrevious, debounce } from "./debounce";
 
 /**Provides useful debounced methods. */
 export const debounced = {
   toggleTrackLike: debounce(async (trackId: string, isLiked: boolean) => {
-    return isLiked ? apiService.unlikeTrack(trackId) : apiService.likeTrack(trackId);
+    return isLiked ? api.tracks.unlike(trackId) : api.tracks.like(trackId);
   }, 700),
 };
 
 export const cancelable = {
   toggleTrackLike: cancelPrevious(async (trackId: string, isLiked: boolean) => {
-    return isLiked ? apiService.unlikeTrack(trackId) : apiService.likeTrack(trackId);
+    return isLiked ? api.tracks.unlike(trackId) : api.tracks.like(trackId);
   }, 1000),
 
   repost: cancelPrevious(async (trackId: string, isReposted: boolean) => {
-    return !isReposted ? apiService.repostTrack(trackId) : null;
+    return !isReposted ? api.tracks.repost(trackId) : null;
   }, 1000),
 
   toggleFollow: cancelPrevious(async (userId: string, isFollowed: boolean) => {
-    return !isFollowed ? apiService.follow(userId) : apiService.unfollow(userId);
-  }, 1000)
+    return !isFollowed ? api.users.follow(userId) : api.users.unfollow(userId);
+  }, 1000),
 };

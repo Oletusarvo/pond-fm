@@ -7,11 +7,22 @@ import { selectUnseenNotificationCount } from "./select/select-notification-coun
 import { selectUser } from "./select/select-user";
 import { withUnseenNotificationCount } from "./with/with-unseen-notification-count";
 
-export async function findUserByEmail(ctx: DBContext, config: { email: string }) {
+export async function findUserByEmail(
+  ctx: DBContext,
+  config: { email: string },
+) {
   const query = getUserQuery(ctx);
   withUnseenNotificationCount(query);
-  query.leftJoin('unseen_notification_count', 'unseen_notification_count.recipient_id', 'users.id');
-  query.join({ subscription: viewnames.subscriptions }, 'subscription.user_id', 'users.id');
+  query.leftJoin(
+    "unseen_notification_count",
+    "unseen_notification_count.recipient_id",
+    "users.id",
+  );
+  query.join(
+    { subscription: viewnames.subscriptions },
+    "subscription.user_id",
+    "users.id",
+  );
 
   selectUser(query);
   selectUnseenNotificationCount(query);
@@ -20,7 +31,7 @@ export async function findUserByEmail(ctx: DBContext, config: { email: string })
       JSON_BUILD_OBJECT(
       'plan_id', subscription.plan_id, 
       'status', subscription.status,
-      'storage_quota', subscription.storage_quota_bytes, 
+      'storage_quota_bytes', subscription.storage_quota_bytes, 
       'storage_quota_consumed', subscription.storage_quota_consumed,
       'current_period_start', subscription.current_period_start,
       'current_period_end', subscription.current_period_end,
@@ -30,5 +41,7 @@ export async function findUserByEmail(ctx: DBContext, config: { email: string })
       ) AS subscription`),
   );
 
-  return await query.where({ email: config.email }).first() as TUserRestricted;
+  return (await query
+    .where({ email: config.email } as TUser)
+    .first()) as TUserRestricted;
 }

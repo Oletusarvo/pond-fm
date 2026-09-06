@@ -1,12 +1,13 @@
-import { useState } from 'react';
-import { TAuthor } from '../../../types/author';
-import { setupContext } from '../../../utils/setup-context';
-import { apiService } from '../../../utils/api/api-service';
-import { Modal } from '../../../components/modal';
-import { Button, LoaderButton } from '../../../components/button';
-import { Coins } from 'lucide-react';
-import { v4 } from 'uuid';
-import { useStatus } from '../../../hooks/use-status';
+import { useState } from "react";
+
+import { setupContext } from "../../../utils/setup-context";
+import { Modal } from "../../../components/modal";
+import { Button, LoaderButton } from "../../../components/button";
+import { Coins } from "lucide-react";
+import { v4 } from "uuid";
+import { useStatus } from "../../../hooks/use-status";
+import { api } from "../../../utils/api/api";
+import { TAuthor } from "@pondfm/app-shared/dist/types/author";
 
 const amounts = [
   { amount: 2, id: v4() },
@@ -17,7 +18,7 @@ const amounts = [
 const [TippingContext, useTippingContext] = setupContext<{
   //tip: (amountInCents: number) => Promise<void>;
   showTippingModal: () => void;
-}>({ name: 'TippingContext' });
+}>({ name: "TippingContext" });
 
 type TippingProviderProps = React.PropsWithChildren & {
   recipient: TAuthor;
@@ -36,25 +37,27 @@ export function TippingProvider({ children, recipient }: TippingProviderProps) {
   };
 
   const tip = async () => {
-    setStatus('loading');
+    setStatus("loading");
 
     try {
-      const res = await apiService.tip({
+      const res = await api.users.tip({
         recipientId: recipient.id,
         amountInCents: amount * 100,
       });
-      setStatus('success');
+      setStatus("success");
       setShowModal(false);
       return res;
     } catch (err) {
-      setStatus('error');
+      setStatus("error");
       console.log(err.message);
     }
   };
 
   const platformFeePercentage = 0.05;
   const platformFeeAmount =
-    typeof amount !== 'undefined' ? Math.round(amount * platformFeePercentage * 100) / 100 : 0;
+    typeof amount !== "undefined"
+      ? Math.round(amount * platformFeePercentage * 100) / 100
+      : 0;
   const vat = Math.round(amount * 0.255 * 100) / 100;
   const totalTip = amount;
 
@@ -62,14 +65,9 @@ export function TippingProvider({ children, recipient }: TippingProviderProps) {
     <TippingContext.Provider value={{ showTippingModal }}>
       {children}
       {showModal ? (
-        <Modal
-          title='Tip User'
-          onClose={() => setShowModal(false)}>
+        <Modal title='Tip User' onClose={() => setShowModal(false)}>
           <div className='flex flex-col w-full gap-8 items-center'>
-            <Coins
-              size='3rem'
-              color='var(--color-primary)'
-            />
+            <Coins size='3rem' color='var(--color-primary)' />
             <table className='w-full'>
               <tbody>
                 <tr>
@@ -100,27 +98,29 @@ export function TippingProvider({ children, recipient }: TippingProviderProps) {
               </tbody>
             </table>
             <AmountSelector
-              onAmountSelected={a => setSelectedAmount(a)}
+              onAmountSelected={(a) => setSelectedAmount(a)}
               selectedAmount={selectedAmount}
             />
             <div className='flex gap-4 w-full'>
               <Button
-                disabled={loading || status === 'success'}
+                disabled={loading || status === "success"}
                 shape='rounded'
                 paddingEnabled
                 onClick={() => setShowModal(false)}
                 variant='outlined'
-                fullWidth>
+                fullWidth
+              >
                 Cancel
               </Button>
               <LoaderButton
-                disabled={loading || status === 'success'}
+                disabled={loading || status === "success"}
                 loading={loading}
                 shape='rounded'
                 paddingEnabled
                 onClick={tip}
                 variant='contained'
-                fullWidth>
+                fullWidth
+              >
                 <Coins size='1rem' />
                 Tip {totalTip + vat}€
               </LoaderButton>
@@ -145,7 +145,8 @@ function AmountSelector({ onAmountSelected, selectedAmount }) {
               onAmountSelected(a);
             }}
             shape='rounded'
-            variant={selectedAmount?.id === a?.id ? 'contained' : 'outlined'}>
+            variant={selectedAmount?.id === a?.id ? "contained" : "outlined"}
+          >
             {a.amount}€
           </Button>
         );

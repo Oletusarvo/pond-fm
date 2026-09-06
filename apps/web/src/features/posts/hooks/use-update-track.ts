@@ -1,9 +1,9 @@
 import { TPost, TTrackPublic } from "@pondfm/app-shared";
 import { useSubmit } from "../../../hooks/use-submit";
-import { apiService } from "../../../utils/api/api-service";
 import { usePostStore } from "./use-post";
+import { api } from "../../../utils/api/api";
 
-type UseUpdateTrackProps = Omit<Parameters<typeof useSubmit>[0], 'fetchFn'> & {
+type UseUpdateTrackProps = Omit<Parameters<typeof useSubmit>[0], "fetchFn"> & {
   track: Partial<TTrackPublic>;
 };
 
@@ -17,16 +17,15 @@ export function useUpdateTrack({ track, ...props }: UseUpdateTrackProps) {
         track: {
           ...track,
           ...fdata,
-        }
+        },
       } as Partial<TPost>;
 
-      const res = await apiService.updateTrack(track.id, udata);
-      if (res.ok) {
-        console.log(track.moods, track.genre, udata)
+      const res = await api.tracks.update(track.id, udata);
+      if (res.success) {
         postStore.updatePost(track.id, udata);
-        return res;
       }
-    }
+      return res;
+    },
   });
   return { submit, loading, status };
 }

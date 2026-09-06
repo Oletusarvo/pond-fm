@@ -16,53 +16,70 @@ export function UserHeader() {
     const newFollowed = !initialFollowed;
 
     setFollowedByMe(newFollowed);
-    await cancelable.toggleFollow(user.id, initialFollowed)
-      .then(async result => {
+    await cancelable
+      .toggleFollow(user.id, initialFollowed)
+      .then(async (result) => {
         if (result.executed) {
-          if (!result.value.ok) {
-            setFollowedByMe(initialFollowed)
-          }
-          else {
+          if (!result.value.success) {
+            setFollowedByMe(initialFollowed);
+          } else {
             await queryClient.invalidateQueries({
-              queryKey: ['user', user.id]
+              queryKey: ["user", user.id],
             });
 
             await queryClient.invalidateQueries({
-              queryKey: ['followers', user.id]
-            })
+              queryKey: ["followers", user.id],
+            });
           }
         }
-
       });
-  }
+  };
 
   const FollowButtonIcon = followedByMe ? UserMinus : UserPlus;
 
   return (
-    <div className='py-2 w-full h-pad leading-none flex flex-row justify-between xs:items-start'>
-      <div className="flex sm:gap-8 xs:gap-2 md:items-center xs:items-start">
-        <div className="flex gap-2 items-center">
-          <User size="1.2rem" color="var(--color-primary)" />
-          <h2 className='text-xs font-semibold text-primary'>{user.username}</h2>
+    <div className='flex flex-col w-full py-2 h-pad'>
+      <div className='w-full leading-none flex flex-row justify-between xs:items-start'>
+        <div className='flex sm:gap-8 xs:gap-2 md:items-center xs:items-start'>
+          <div className='flex gap-2 items-center'>
+            <User size='1.2rem' color='var(--color-primary)' />
+            <h2 className='text-xs font-semibold text-primary'>
+              {user.username}
+            </h2>
+          </div>
+          <Button
+            color={followedByMe ? "danger" : "primary"}
+            variant='ghost'
+            onClick={onFollowButtonClicked}
+            icon={FollowButtonIcon}
+          >
+            <span className='text-xs'>
+              {followedByMe ? "Unfollow" : "Follow"}
+            </span>
+          </Button>
         </div>
-        <Button
-          color={followedByMe ? 'danger' : 'primary'}
-          variant="ghost"
-          onClick={onFollowButtonClicked} icon={FollowButtonIcon}><span className="text-xs">
-            {followedByMe ? 'Unfollow' : 'Follow'}</span></Button>
 
+        <div className='flex items-center sm:gap-4 xs:gap-2'>
+          <Button
+            variant='ghost'
+            onClick={() => userService.toggleShowFollowingModal(true)}
+          >
+            <span className='text-xs font-semibold text-primary'>
+              {" "}
+              {user.following_count} Following
+            </span>
+          </Button>
+          <Button
+            variant='ghost'
+            onClick={() => userService.toggleShowFollowerModal(true)}
+          >
+            <span className='text-xs font-semibold text-primary'>
+              {user.follower_count} Followers
+            </span>
+          </Button>
+        </div>
       </div>
-
-      <div className="flex items-center sm:gap-4 xs:gap-2">
-        <Button
-          variant="ghost"
-          onClick={() => userService.toggleShowFollowingModal(true)}>
-          <span className="text-xs font-semibold text-primary"> {user.following_count} Following</span>
-        </Button>
-        <Button variant="ghost" onClick={() => userService.toggleShowFollowerModal(true)}>
-          <span className="text-xs font-semibold text-primary">{user.follower_count} Followers</span>
-        </Button>
-      </div>
+      <p className='text-sm text-slate-500'>{user.bio || "No bio."}</p>
     </div>
   );
 }

@@ -90,6 +90,17 @@ class RequestBuilder {
     }
     return this;
   }
+
+  noStore(){
+    this.query = {
+      ...this.query,
+      headers: {
+        ...this.query.headers,
+        'Cache-Control': 'no-store',
+      }
+    }
+    return this;
+  }
 }
 
 export const requestBuilder = new RequestBuilder();

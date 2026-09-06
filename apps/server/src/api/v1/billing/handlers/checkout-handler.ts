@@ -4,6 +4,7 @@ import { db } from "../../../../db-config";
 import { tablenames } from "../../../../tablenames";
 import { getDomainUrl } from "../../../../utils/get-domain-url";
 import { stripe } from '../../../../stripe-config';
+import { TSubscription, TUser } from "@pondfm/app-shared";
 
 export const checkoutHandler = createHandler(
   async (req: AuthenticatedExpressRequest, res) => {
@@ -11,7 +12,7 @@ export const checkoutHandler = createHandler(
       .join({ user: tablenames.users }, 'user.id', 'subscription.user_id')
       .where({ user_id: req.session.user.id })
       .select('subscription.user_id', 'user.id as user_id', 'user.email as user_email', 'subscription.stripe_customer_id', 'plan_id')
-      .first();
+      .first() as TSubscription & { user_email: TUser['email'] };
 
     if (!subscription) {
       return res.status(404).json({

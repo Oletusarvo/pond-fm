@@ -1,5 +1,5 @@
 
-import { TPost } from "@pondfm/app-shared";
+import { TPost, TPostPublic } from "@pondfm/app-shared";
 import { DBContext } from "../../types/db-context";
 import { getDistinctPostQuery } from "./get-distinct-post-query";
 import { selectPost } from "./select/select-post";
@@ -12,7 +12,7 @@ import { onlyReadyUploads } from "./utils/only-ready-uploads";
 import { resolveQueryWithCursor } from "./utils/resolve-query-with-cursor";
 
 export async function getNewPosts(ctx: DBContext, config: FeedQueryConfig) {
-  const query = getDistinctPostQuery(ctx);
+  const query = getDistinctPostQuery(ctx, config.session);
   filterByGenres(query, config.genres);
   filterByMoods(query, config.moods);
   onlyReadyUploads(query);
@@ -22,11 +22,11 @@ export async function getNewPosts(ctx: DBContext, config: FeedQueryConfig) {
     timestampColumn: 'post.created_at',
     idColumn: 'post.id'
   });
-  selectPost(query, config.session);
+  selectPost(query);
   selectTrack(query);
   query.orderBy('post.created_at', 'desc');
   return await resolveQueryWithCursor(query, { pageSize: 10 }) as {
     cursor: string;
-    items: TPost[];
+    items: TPostPublic[];
   };
 }

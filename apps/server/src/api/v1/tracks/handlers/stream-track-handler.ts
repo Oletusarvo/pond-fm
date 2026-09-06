@@ -1,22 +1,23 @@
-import { createReadStream, statSync } from 'node:fs';
-import path from 'node:path';
-import { createHandler } from '../../../../utils/create-handler';
-import { postService } from '../../../../container';
-import { db } from '../../../../db-config';
-import { serverConfig } from '../../../../server-config';
-import { verifyJWT } from '../../../../utils/jwt';
-import { parseFile } from 'music-metadata';
-import mime from 'mime-types';
-import { tablenames } from '../../../../tablenames';
+import { createReadStream, statSync } from "node:fs";
+import path from "node:path";
+import { createHandler } from "../../../../utils/create-handler";
+import { postService } from "../../../../container";
+import { db } from "../../../../db-config";
+import { serverConfig } from "../../../../server-config";
+import { verifyJWT } from "../../../../utils/jwt";
+import { parseFile } from "music-metadata";
+import mime from "mime-types";
+import { tablenames } from "../../../../tablenames";
 
 export const streamTrackHandler = createHandler(async (req, res) => {
   const trackId = req.params.trackId as string;
 
   const track = await db({ track: tablenames.tracks })
-    .where({ 'track.id': trackId })
-    .join({ upload: tablenames.uploads }, 'upload.id', 'track.primary_audio_id')
-    .select('upload.filename').first();
-  const filePath = path.join(process.cwd(), 'uploads', `${track.filename}`);
+    .where({ "track.id": trackId })
+    .join({ upload: tablenames.uploads }, "upload.id", "track.primary_audio_id")
+    .select("upload.filename")
+    .first();
+  const filePath = path.join(process.cwd(), "uploads", `${track.filename}`);
 
   const fileSize = statSync(filePath).size;
   const fileType = mime.lookup(filePath) as string;
@@ -25,9 +26,9 @@ export const streamTrackHandler = createHandler(async (req, res) => {
   // Browser requested the entire file
   if (!range) {
     res.writeHead(200, {
-      'Content-Type': fileType,
-      'Content-Length': fileSize,
-      'Accept-Ranges': 'bytes',
+      "Content-Type": fileType,
+      "Content-Length": fileSize,
+      "Accept-Ranges": "bytes",
     });
 
     createReadStream(filePath).pipe(res);
@@ -35,13 +36,18 @@ export const streamTrackHandler = createHandler(async (req, res) => {
   }
 
   // Example: "bytes=1048576-"
-  const [startString, endString] = range.replace('bytes=', '').split('-');
+  const [startString, endString] = range.replace("bytes=", "").split("-");
 
   const start = Number(startString);
   const end = endString ? Number(endString) : fileSize - 1;
 
-  if (Number.isNaN(start) || Number.isNaN(end) || start > end || end >= fileSize) {
-    res.status(416).setHeader('Content-Range', `bytes */${fileSize}`);
+  if (
+    Number.isNaN(start) ||
+    Number.isNaN(end) ||
+    start > end ||
+    end >= fileSize
+  ) {
+    res.status(416).setHeader("Content-Range", `bytes */${fileSize}`);
     res.end();
     return;
   }
@@ -49,10 +55,10 @@ export const streamTrackHandler = createHandler(async (req, res) => {
   const chunkSize = end - start + 1;
 
   res.writeHead(206, {
-    'Content-Range': `bytes ${start}-${end}/${fileSize}`,
-    'Accept-Ranges': 'bytes',
-    'Content-Length': chunkSize,
-    'Content-Type': fileType,
+    "Content-Range": `bytes ${start}-${end}/${fileSize}`,
+    "Accept-Ranges": "bytes",
+    "Content-Length": chunkSize,
+    "Content-Type": fileType,
   });
 
   createReadStream(filePath, {

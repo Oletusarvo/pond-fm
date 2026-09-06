@@ -14,13 +14,14 @@ import { Button } from '../../../components/button';
 export function StatsArea() {
   const { post } = usePostContext();
   const authService = useAuthContext();
+  const stats = post?.track.stats;
   return (
     <div className='flex xs:gap-2 md:gap-5 items-center'>
       <CountButton
         disabled={true}
         color='inherit'
         icon={Play}
-        value={post?.play_count}
+        value={stats?.play_count}
       />
 
       <LikeButton />

@@ -1,3 +1,4 @@
+import { TUser } from '@pondfm/app-shared';
 import { db } from '../../../../db-config';
 import { tablenames } from '../../../../tablenames';
 import { AuthenticatedExpressRequest } from '../../../../types/express';
@@ -8,7 +9,7 @@ export const updateUserHandler = createHandler(
     const session = req.session;
     const payload = req.body;
     await db(tablenames.users)
-      .where({ id: session.user.id })
+      .where({ id: session.user.id } as TUser)
       .update(payload);
     return res.end();
   },

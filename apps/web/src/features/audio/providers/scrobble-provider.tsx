@@ -7,9 +7,10 @@ export const [ScrobbleProvider, useScrobbleContext] = createProvider({
   contextName: 'ScrobbleContext',
   hook: () => {
     const playbackService = usePlaybackContext();
-    const postActions = usePostActions({ trackId: playbackService.currentPlayback?.id })
+    const currentTrack = playbackService.currentPlayback?.track;
+    const postActions = usePostActions({ trackId: currentTrack?.id })
 
-    const duration = playbackService.currentPlayback?.duration || 1;
+    const duration = currentTrack?.duration || 1;
     const service = useScrobble({
       duration,
       threshold:

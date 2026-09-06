@@ -1,17 +1,15 @@
 import { useAction } from "../../../hooks/use-action";
-import { apiService } from "../../../utils/api/api-service";
-import { useAuthContext } from "../../auth/providers/auth-provider";
+import { api } from "../../../utils/api/api";
 
-export function useUpgradeSubscription(props: Omit<Parameters<typeof useAction>[0], 'fn'> = {}) {
-  const { refreshSession } = useAuthContext();
-  const { action: upgradeSubscription, ...rest } = useAction({
+export function useUpgradeSubscription(
+  props: Omit<Parameters<typeof useAction>[0], "fn"> = {},
+) {
+  const { action: upgradeSubscription, ...rest } = useAction<{
+    checkoutUrl: string;
+  }>({
     ...props,
     fn: async () => {
-      const res = await apiService.upgradeSubscription();
-      if (res.ok) {
-        await refreshSession({});
-      }
-      return res;
+      return await api.users.subscriptions.upgrade();
     },
   });
   return { upgradeSubscription, ...rest };

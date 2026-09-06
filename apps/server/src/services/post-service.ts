@@ -15,10 +15,11 @@ import { createPost } from '../DAL/posts/create-post';
 import { createTrackLike } from '../DAL/posts/create-track-like';
 import { deleteTrackLike } from '../DAL/posts/delete-track-like';
 import { getPostQuery } from '../DAL/posts/get-post-query';
-import { TTrack } from '../types/track-type';
 import { tablenames } from '../tablenames';
 import { db } from '../db-config';
 import { withTrack } from '../DAL/posts/with/with-track';
+import { TUpload } from '@pondfm/app-shared/dist/types/upload';
+import { TTrack } from '@pondfm/app-shared';
 
 
 /**Responsible for handling business-logic related to individual posts and tracks. */
@@ -82,12 +83,8 @@ export class PostService {
     return { success: true } as ServiceSuccessResponse<void>;
   }
 
-  /**Returns a token allowing fetching of streams and counting plays.**/
-  async createStreamToken(ctx: DBContext, config: { trackId: string }) {
-    const query = ctx.queryBuilder();
-    withTrack(query)
-    const track = await query.from('track').select('track.id', 'track.duration').where({ 'track.id': config.trackId }).first() as { id: string; duration: number };
-
+  /**Returns a token allowing fetching of streams and counting plays.*/
+  async createStreamToken(track: Pick<TTrack, 'key' | 'duration' | 'id'>) {
     const streamStarted = Date.now();
     //Stream start + duration of the track + a grace period of 10 seconds, in milliseconds.
     const expires = streamStarted + track.duration * 1000 + 10000;

@@ -1,18 +1,12 @@
-import { useState } from 'react';
-import { TAuthor } from '../../../types/author';
-import { setupContext } from '../../../utils/setup-context';
-import { apiService } from '../../../utils/api/api-service';
-import { Modal } from '../../../components/modal';
-import { Button } from '../../../components/button';
-import { TTrack } from '../../../types/track';
-import { Repeat } from 'lucide-react';
-import { usePostContext } from './post-provider';
-import { useStatus } from '../../../hooks/use-status';
+import { useState } from "react";
+import { setupContext } from "../../../utils/setup-context";
+import { useStatus } from "../../../hooks/use-status";
+import { TTrack } from "@pondfm/app-shared";
 
 const [RepostContext, useRepostContext] = setupContext<{
   repost: () => Promise<void>;
   showRepostModal: () => void;
-}>({ name: 'TippingContext' });
+}>({ name: "TippingContext" });
 
 type RepostProviderProps = React.PropsWithChildren & {
   track: TTrack;
@@ -27,16 +21,18 @@ export function RepostProvider({ children, track }: RepostProviderProps) {
   };
 
   const repost = async () => {
-    setStatus('loading');
+    setStatus("loading");
   };
 
   const cancel = () => {
-    setStatus('idle');
+    setStatus("idle");
     setShowModal(false);
   };
 
   return (
-    <RepostContext.Provider value={{ repost, showRepostModal }}>{children}</RepostContext.Provider>
+    <RepostContext.Provider value={{ repost, showRepostModal }}>
+      {children}
+    </RepostContext.Provider>
   );
 }
 

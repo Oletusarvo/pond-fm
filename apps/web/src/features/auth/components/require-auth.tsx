@@ -5,11 +5,10 @@ import { Navigate } from "react-router-dom";
 
 export function RequireAuth({ children }: React.PropsWithChildren) {
   const authService = useAuthContext();
-  if (authService.status === 'loading') {
-    return <Spinner />
-  }
-  else if (authService.status === 'unauthenticated') {
-    return <Navigate to="/login" />
+  if (authService.status === "loading") {
+    return <Spinner />;
+  } else if (authService.status === "unauthenticated") {
+    return <Navigate to='/login' />;
   }
 
   return children;

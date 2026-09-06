@@ -10,19 +10,19 @@ import { useDeleteTrack } from "../hooks/use-delete-track";
 import { usePlaybackContext } from "../../audio/providers/playback-provider";
 import { useUpdateTrack } from "../hooks/use-update-track";
 import { ConfirmAction } from "../../../components/confirm-action";
-import { TTrack, TTrackPublic } from '@pondfm/app-shared';
+import { TTrack, TTrackPublic } from "@pondfm/app-shared";
 
 const [UpdateTrackProvider, useUpdateTrackContext] = createProvider({
-  contextName: 'UpdateTrackContext',
+  contextName: "UpdateTrackContext",
   hook: ({ track }: { track: TTrackPublic }) => {
-    return { track }
+    return { track };
   },
 });
 
 export function UpdateTrackModal({ track }: { track: TTrackPublic }) {
   const { toggleState } = useToggleContext();
   return (
-    <Modal title="Update Track" onClose={() => toggleState(false)}>
+    <Modal title='Update Track' onClose={() => toggleState(false)}>
       <UpdateTrackProvider track={track}>
         <ModalContent />
       </UpdateTrackProvider>
@@ -42,17 +42,21 @@ function ModalContent() {
     track: {
       ...track,
       moods,
-      genre
+      genre,
     },
     onSuccess: () => {
       toggleModalVisible(false);
-    }
+    },
   });
 
-  const { deleteTrack, status: deleteStatus, loading: deleteLoading } = useDeleteTrack({
+  const {
+    deleteTrack,
+    status: deleteStatus,
+    loading: deleteLoading,
+  } = useDeleteTrack({
     onSuccess: () => {
       toggleModalVisible(false);
-    }
+    },
   });
 
   return (
@@ -67,31 +71,60 @@ function ModalContent() {
         />
       </Form.Group>
       <Form.Group label='Main Genre'>
-        <GenreSelector onChange={genre => { setGenre(genre) }} defaultSelected={track?.genre} />
+        <GenreSelector
+          onChange={(genre) => {
+            setGenre(genre);
+          }}
+          defaultSelected={track?.genre}
+        />
       </Form.Group>
       <Form.Group label='Style (Max 3)'>
-        <MoodSelector onChange={moods => { setMoods(moods) }} defaultSelected={track?.moods} />
+        <MoodSelector
+          onChange={(moods) => {
+            setMoods(moods);
+          }}
+          defaultSelected={track?.moods}
+        />
       </Form.Group>
-      <div className="flex flex-col w-full gap-2">
-        <LoaderButton type="submit" variant="contained" loading={updateLoading} disabled={updateLoading} fullWidth shape="rounded" paddingEnabled>
+      <div className='flex flex-col w-full gap-2'>
+        <LoaderButton
+          type='submit'
+          variant='contained'
+          loading={updateLoading}
+          disabled={updateLoading}
+          fullWidth
+          shape='rounded'
+          paddingEnabled
+        >
           Update
         </LoaderButton>
         <ConfirmAction
-          variant="danger"
-          intentButton={<Button variant="text" color="danger">Delete Track</Button>}
-          confirmButton={<LoaderButton variant="text" loading={deleteLoading}>Delete Track</LoaderButton>}
-          intentCancelButton={<Button variant="text">Keep Track</Button>}
+          variant='danger'
+          intentButton={
+            <Button variant='text' color='danger'>
+              Delete Track
+            </Button>
+          }
+          confirmButton={
+            <LoaderButton variant='text' loading={deleteLoading}>
+              Delete Track
+            </LoaderButton>
+          }
+          intentCancelButton={<Button variant='text'>Keep Track</Button>}
           onConfirm={async () => {
-            if (playbackService.currentPlayback?.id === track.id) {
+            if (playbackService.currentPlayback?.track.id === track.id) {
               //Stop playback before deleting to prevent errors
               playbackService.stopPlayback();
             }
             await deleteTrack(track);
-          }}>
-          <p>You are about to delete this track. Deleted tracks cannot be recovered. Are you absolutely sure?</p>
+          }}
+        >
+          <p>
+            You are about to delete this track. Deleted tracks cannot be
+            recovered. Are you absolutely sure?
+          </p>
         </ConfirmAction>
       </div>
-
     </Form>
-  )
+  );
 }

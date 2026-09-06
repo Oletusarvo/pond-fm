@@ -11,7 +11,7 @@ exports.up = function (knex) {
     .createTable(tablename, tbl => {
       tbl.uuid('user_id').primary().references('id').inTable('auth.user_data').onDelete('CASCADE').onUpdate('CASCADE');
       tbl.string('plan_id').notNullable().references('id').inTable('billing.plan_data').onUpdate('CASCADE');
-      tbl.specificType('status', 'subscription_status').defaultTo('incomplete');
+      tbl.specificType('status', 'billing.subscription_status').defaultTo('incomplete');
       tbl.string('stripe_subscription_id').unique();
       tbl.string('stripe_customer_id').unique();
       tbl.boolean('cancel_at_period_end').defaultTo(false);

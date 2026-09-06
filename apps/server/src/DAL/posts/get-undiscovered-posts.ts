@@ -1,5 +1,5 @@
 
-import { TPost } from "@pondfm/app-shared";
+import { TPost, TPostPublic } from "@pondfm/app-shared";
 import { db } from "../../db-config";
 import { viewnames } from "../../tablenames";
 import { DBContext } from "../../types/db-context";
@@ -15,7 +15,7 @@ import { onlyReadyUploads } from "./utils/only-ready-uploads";
 import { resolveQueryWithCursor } from "./utils/resolve-query-with-cursor";
 
 export async function getUndiscoveredPosts(ctx: DBContext, config: FeedQueryConfig) {
-  const query = getUndistinctPostQuery(ctx);
+  const query = getUndistinctPostQuery(ctx, config.session);
   onlyCanonicalPosts(query);
   onlyReadyUploads(query);
   filterByGenres(query, config.genres);
@@ -36,11 +36,11 @@ export async function getUndiscoveredPosts(ctx: DBContext, config: FeedQueryConf
     timestampColumn: 'post.created_at',
     idColumn: 'post.id'
   });
-  selectPost(query, config.session);
+  selectPost(query);
   selectTrack(query);
 
   return (await resolveQueryWithCursor(query, { pageSize: 10 })) as {
     cursor: string;
-    items: TPost[]
+    items: TPostPublic[]
   };
 }

@@ -1,17 +1,15 @@
-import { Modal } from '../../../components/modal';
-import { Button, LoaderButton } from '../../../components/button';
-import { useStatus } from '../../../hooks/use-status';
-import { ErrorMessage } from '../../../components/helper-message';
-import { useAuthContext } from '../providers/auth-provider';
+import { Modal } from "../../../components/modal";
+import { Button, LoaderButton } from "../../../components/button";
+import { useStatus } from "../../../hooks/use-status";
+import { ErrorMessage } from "../../../components/helper-message";
+import { useAuthContext } from "../providers/auth-provider";
 
 export function LogoutModal() {
   const authService = useAuthContext();
   const cancel = () => authService.toggleLogoutModal(false);
 
   return (
-    <Modal
-      title='Logout'
-      onClose={cancel}>
+    <Modal title='Logout' onClose={cancel}>
       <ModalContent cancel={cancel} />
     </Modal>
   );
@@ -20,20 +18,20 @@ export function LogoutModal() {
 function ModalContent({ cancel }) {
   const authService = useAuthContext();
   const { status, loading, setStatus } = useStatus();
-  const buttonsDisabled = loading || status === 'success';
+  const buttonsDisabled = loading || status === "success";
 
   const onLogout = async () => {
     try {
       const res = await authService.logout();
-      if (!res.ok) {
-        setStatus('error');
+      if (!res.success) {
+        setStatus("error");
       } else {
-        setStatus('success');
+        setStatus("success");
         cancel();
       }
     } catch (err) {
       console.log(err.message);
-      setStatus('error');
+      setStatus("error");
     }
   };
 
@@ -47,7 +45,8 @@ function ModalContent({ cancel }) {
           onClick={cancel}
           variant='outlined'
           paddingEnabled
-          disabled={buttonsDisabled}>
+          disabled={buttonsDisabled}
+        >
           Cancel
         </Button>
         <LoaderButton
@@ -57,11 +56,14 @@ function ModalContent({ cancel }) {
           onClick={onLogout}
           variant='contained'
           paddingEnabled
-          disabled={buttonsDisabled}>
+          disabled={buttonsDisabled}
+        >
           Logout
         </LoaderButton>
       </div>
-      {status === 'error' ? <ErrorMessage>Logout failed! Please try again.</ErrorMessage> : null}
+      {status === "error" ? (
+        <ErrorMessage>Logout failed! Please try again.</ErrorMessage>
+      ) : null}
     </div>
-  )
+  );
 }

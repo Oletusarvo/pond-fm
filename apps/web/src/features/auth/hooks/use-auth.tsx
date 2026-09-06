@@ -1,10 +1,15 @@
-import { useState } from 'react';
-import { apiService } from '../../../utils/api/api-service';
-import { useQuery, useQueryClient } from '@tanstack/react-query';
-import { LogoutModal } from '../components/logout-modal';
-import { TSession, TSubscriptionRestricted, TUser, TUserRestricted } from '@pondfm/app-shared';
+import { useState } from "react";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { LogoutModal } from "../components/logout-modal";
+import {
+  TSession,
+  TSubscriptionRestricted,
+  TUser,
+  TUserRestricted,
+} from "@pondfm/app-shared";
+import { api } from "../../../utils/api/api";
 
-type TSessionStatus = 'loading' | 'authenticated' | 'unauthenticated';
+type TSessionStatus = "loading" | "authenticated" | "unauthenticated";
 
 export function useAuth() {
   const [showLogoutModal, setShowLogoutModal] = useState(false);
@@ -14,49 +19,51 @@ export function useAuth() {
     isPending,
     refetch: refetchSession,
   } = useQuery<TSession>({
-    queryKey: ['session'],
+    queryKey: ["session"],
     queryFn: async () => {
-      const res = await apiService.me();
-      return res.ok ? await res.json() : null;
+      const res = await api.auth.me();
+      return res.success ? res.data : null;
     },
     staleTime: Infinity,
   });
 
   const status: TSessionStatus = isPending
-    ? 'loading'
+    ? "loading"
     : session !== null
-      ? 'authenticated'
-      : 'unauthenticated';
+      ? "authenticated"
+      : "unauthenticated";
 
   const toggleLogoutModal = (state: boolean) => setShowLogoutModal(state);
 
-  const requestAuthorization = async (credentials: Pick<TUser, 'email'>) => {
-    return await apiService.requestAuthorization(credentials);
+  const requestAuthorization = async (credentials: Pick<TUser, "email">) => {
+    return await api.auth.requestAuthorization(credentials);
   };
 
   const authorize = async (code: string) => {
-    const res = await apiService.authorize(code);
-    if (res.ok) {
+    const res = await api.auth.authorize(code);
+    if (res.success) {
       await refetchSession();
     }
     return res;
   };
 
   const logout = async () => {
-    const res = await apiService.logout();
-    if (res.ok) {
+    const res = await api.auth.logout();
+    if (res.success) {
       refetchSession();
     }
     return res;
   };
 
-  const refreshSession = async (newSession?: Omit<Partial<TSession>, 'user'> & {
-    user?: Partial<TUserRestricted> & {
-      subscription?: Partial<TSubscriptionRestricted>;
-    }
-  }) => {
+  const refreshSession = async (
+    newSession?: Omit<Partial<TSession>, "user"> & {
+      user?: Omit<Partial<TUserRestricted>, "subscription"> & {
+        subscription?: Partial<TSubscriptionRestricted>;
+      };
+    },
+  ) => {
     let payload;
-    queryClient.setQueryData(['session'], (oldSession: TSession) => {
+    queryClient.setQueryData(["session"], (oldSession: TSession) => {
       if (!oldSession) return oldSession;
       const newData = {
         ...oldSession,
@@ -66,13 +73,13 @@ export function useAuth() {
           subscription: {
             ...oldSession.user.subscription,
             ...newSession?.user?.subscription,
-          }
-        }
+          },
+        },
       };
 
-      return payload = newData;
+      return (payload = newData);
     });
-    return await apiService.refreshSession(payload);
+    return await api.auth.refreshSession(payload);
   };
 
   return {

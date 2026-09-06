@@ -7,17 +7,17 @@ export const updateTrackHandler = createHandler(
   async (req: AuthenticatedExpressRequest, res) => {
     const session = req.session;
     const track = req.body;
-    await db.transaction(async trx => {
+    await db.transaction(async (trx) => {
       await postService.updateTrack(trx, {
         track: {
           ...track,
-          id: req.params.trackId
+          id: req.params.trackId,
         },
         editor: {
-          id: session.user.id
-        }
+          id: session.user.id,
+        },
       });
     });
     return res.end();
-  }
-)
+  },
+);

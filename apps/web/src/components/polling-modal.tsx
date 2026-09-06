@@ -16,6 +16,7 @@ type PollingModalProps = {
   successMessage: string;
   title: string;
   onOk: () => void;
+  onSuccess?: UsePollingParameters['onSuccess'];
 };
 
 export function PollingModal({ title, ...props }: PollingModalProps) {
@@ -26,8 +27,7 @@ export function PollingModal({ title, ...props }: PollingModalProps) {
   );
 }
 
-function ModalContent({ maxTries, pollingInterval, pollingFn, verifyData, pollingKey, errorMessage, successMessage, pendingMessage, onOk }: Omit<PollingModalProps, 'title'>) {
-  const { refreshSession } = useAuthContext();
+function ModalContent({ maxTries, pollingInterval, pollingFn, verifyData, onSuccess, pollingKey, errorMessage, successMessage, pendingMessage, onOk }: Omit<PollingModalProps, 'title'>) {
   const { status: sessionRefreshStatus, setStatus } = useStatus('loading');
   const { isError, isPending } = usePolling({
     maxTries,
@@ -37,18 +37,10 @@ function ModalContent({ maxTries, pollingInterval, pollingFn, verifyData, pollin
     onData: (data: any) => {
       const dataVerifyResult = verifyData(data);
       if (!dataVerifyResult) return true;
-      refreshSession({})
-        .then((res) => {
-          if (!res.ok) {
-            throw new Error("Something went wrong!");
-          }
-          else {
-            setStatus('success');
-          }
-        })
-        .catch(err => { console.log('Session refresh failed!', err.stack); setStatus('error') });
+      setStatus('success');
       return false;
     },
+    onSuccess,
     onMaxTries: () => {
       setStatus('error');
     }

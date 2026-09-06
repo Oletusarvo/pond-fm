@@ -1,14 +1,9 @@
-import { useRef, useState } from 'react';
-import { NotificationsModal } from '../components/notifications-modal';
-import { createProvider } from '../../../utils/create-provider';
-import { useFeedContext } from '../../../providers/feed-provider';
-import { useAuthContext } from '../../auth/providers/auth-provider';
-import { useQuery } from '@tanstack/react-query';
-import { apiService } from '../../../utils/api/api-service';
-import { useInfiniteFeed } from '../../../hooks/use-infinite-feed';
+import { useState } from "react";
+import { NotificationsModal } from "../components/notifications-modal";
+import { createProvider } from "../../../utils/create-provider";
 
 export const [NotificationsProvider, useNotificationsContext] = createProvider({
-  contextName: 'NotificationsProvider',
+  contextName: "NotificationsProvider",
   childComponent: () => {
     const { showNotificationsModal } = useNotificationsContext();
     return showNotificationsModal ? <NotificationsModal /> : null;

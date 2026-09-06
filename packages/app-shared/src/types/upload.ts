@@ -6,7 +6,7 @@ export type TUpload = {
   upload_folder_id: TUploadFolder['id'];
   filename: string;
   original_filename: string;
-  size: number;
+  size_bytes: number;
   mime_type: TMimeType;
   key: string;
 }

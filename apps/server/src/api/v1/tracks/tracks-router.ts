@@ -1,6 +1,5 @@
 import { getRouter } from '../../../utils/get-router';
 import { checkAuth } from '../../middleware/check-auth';
-import { createTrackHandler } from './handlers/create-track-handler';
 import { getDiscoveryFeed } from './handlers/get-discovery-feed';
 import { likeTrackHandler } from './handlers/like-track-handler';
 import { repostTrackHandler } from './handlers/repost-track-handler';
@@ -21,14 +20,6 @@ import { getTrackHandler } from './handlers/get-track-handler';
 import { deleteTrackHandler } from './handlers/delete-track-handler';
 
 const router = getRouter();
-router.post(
-  '/',
-  checkAuth(),
-  //createBodyParser(trackSchema),
-  upload.single('file'),
-  createTrackHandler,
-);
-
 
 router.get('/feed/main', checkAuth(false), getMainFeedHandler);
 router.get('/feed/discover', checkAuth(false), getDiscoveryFeed);

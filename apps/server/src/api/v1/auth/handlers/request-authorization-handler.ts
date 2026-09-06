@@ -1,3 +1,4 @@
+import { TUser } from '@pondfm/app-shared';
 import { authService, userService } from '../../../../container';
 import { db } from '../../../../db-config';
 import { emailService } from '../../../../services/email-service';
@@ -6,7 +7,7 @@ import { serviceError } from '../../../../utils/service-error';
 
 /**Creates a new auth token and user - if it doesn't exist - for authorization. */
 export const requestAuthorizationHandler = createHandler(async (req, res) => {
-  const { email } = req.body;
+  const { email } = req.body as Pick<TUser, 'email'>;
   await db.transaction(async trx => {
     const user = await userService.createIfNotExists(trx, { email });
     if (user.success == false) {

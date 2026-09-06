@@ -1,13 +1,10 @@
 import { usePlaybackContext } from "../providers/playback-provider";
 import { useScrobbleContext } from "../providers/scrobble-provider";
 import { Button } from "../../../components/button";
-import { Heart, Pause, Play, Speaker, Volume } from "lucide-react";
-import { useActionContext } from "../../../providers/action-provider";
+import { Pause, Play, Volume } from "lucide-react";
 import { useCallback, useState } from "react";
 import { useEventHandler } from "../../../hooks/use-event-handler";
 import { PostProvider } from "../../posts/providers/post-provider";
-import { usePost } from "../../posts/hooks/use-post";
-import { usePostActions } from "../../posts/hooks/use-post-actions";
 import { RepostButton } from "../../posts/components/repost-button";
 import { LikeButton } from "../../posts/components/like-button";
 import { useAuthContext } from "../../auth/providers/auth-provider";
@@ -52,19 +49,20 @@ export function MiniPlayerWithInfo() {
   const playbackService = usePlaybackContext();
   const scrobbleService = useScrobbleContext();
   const authService = useAuthContext();
+  const currentTrack = playbackService.currentPlayback?.track;
   return (
     <div className="flex flex-col w-full bg-slate-900 text-white h-pad py-2">
       <div className="flex w-full justify-between items-center py-2">
         <div className="flex flex-col gap-0 leading-3">
-          <h3 className="text-green-100 font-semibold text-sm">{playbackService.currentPlayback?.title}</h3>
-          <small>{playbackService?.currentPlayback?.author.username}</small>
+          <h3 className="text-green-100 font-semibold text-sm">{currentTrack?.title}</h3>
+          <small>{currentTrack?.author.username}</small>
         </div>
         {
-          playbackService.currentPlayback ? (
-            <PostProvider trackId={playbackService.currentPlayback.id}>
+          currentTrack ? (
+            <PostProvider trackId={currentTrack.id}>
               <div className="flex items-center gap-4">
                 {
-                  authService.session?.user.id !== playbackService.currentPlayback.author.id ? (
+                  authService.session?.user.id !== currentTrack.author.id ? (
                     <RepostButton />
                   ) : null
                 }
@@ -114,8 +112,9 @@ function PlayButton() {
 }
 function PlaybackTrack() {
   const { currentPlayback, updatePlaybackPosition } = usePlaybackContext();
+  const currentTrack = currentPlayback?.track;
   const { playbackPosition } = usePlaybackPositionContext();
-  const trackWidth = (currentPlayback ? playbackPosition / currentPlayback.duration : 0) * 100;
+  const trackWidth = (currentTrack ? playbackPosition / currentTrack.duration : 0) * 100;
 
   const onTrackClicked = (e: React.MouseEvent<HTMLDivElement>) => {
     const trackRect = e.currentTarget.getBoundingClientRect();
@@ -129,7 +128,7 @@ function PlaybackTrack() {
       Math.min(1, mouseXPos / trackRect.width)
     );
     updatePlaybackPosition(
-      percentage * currentPlayback.duration
+      percentage * currentTrack.duration
     );
   };
 
@@ -147,7 +146,7 @@ function PlaybackTime() {
   const { playbackPosition, convertToTimeString } = usePlaybackPositionContext();
   return (
     <div className="flex items-center">
-      <span className="text-sm font-mono">{convertToTimeString(playbackPosition)}/{convertToTimeString(currentPlayback?.duration || 0)}</span>
+      <span className="text-sm font-mono">{convertToTimeString(playbackPosition)}/{convertToTimeString(currentPlayback?.track.duration || 0)}</span>
     </div>
   );
 }

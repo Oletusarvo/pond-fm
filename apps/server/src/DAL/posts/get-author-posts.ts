@@ -10,7 +10,7 @@ import { onlyCanonicalPosts } from "./utils/only-canonical-posts";
 import { resolveQueryWithCursor } from "./utils/resolve-query-with-cursor";
 
 export async function getAuthorPosts(ctx: DBContext, config: FeedQueryConfig & { authorId: string }) {
-  const query = getUndistinctPostQuery(ctx);
+  const query = getUndistinctPostQuery(ctx, config.session);
   onlyCanonicalPosts(query);
   applyCursor(query, {
     cursor: config.cursor,
@@ -18,7 +18,7 @@ export async function getAuthorPosts(ctx: DBContext, config: FeedQueryConfig & {
     timestampColumn: 'post.created_at',
     idColumn: 'post.id'
   });
-  selectPost(query, config.session);
+  selectPost(query);
   selectTrack(query);
   query.where({ 'post.author_id': config.authorId })
   query.orderBy('post.created_at', 'desc');

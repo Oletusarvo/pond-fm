@@ -1,14 +1,18 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { TPlayback } from '../../../types/playback';
-import { apiService } from '../../../utils/api/api-service';
-import { useEventHandler } from '../../../hooks/use-event-handler';
-import { useActionContext } from '../../../providers/action-provider';
-import { PlaybackReducerState } from '../reducers/playback-reducer';
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { TPlayback } from "../../../types/playback";
+import { useEventHandler } from "../../../hooks/use-event-handler";
+import { useActionContext } from "../../../providers/action-provider";
+import { PlaybackReducerState } from "../reducers/playback-reducer";
+import { api } from "../../../utils/api/api";
 
 export function useAudioPlayer() {
-  const [currentPlayback, setCurrentPlayback] = useState<PlaybackReducerState | null>(null);
-  const [playbackState, setPlaybackState] = useState<'playing' | 'paused' | 'buffering'>('paused');
-  const playbackSrc = currentPlayback?.status === 'ready' ? currentPlayback.streamUrl : null;
+  const [currentPlayback, setCurrentPlayback] =
+    useState<PlaybackReducerState | null>(null);
+  const [playbackState, setPlaybackState] = useState<
+    "playing" | "paused" | "buffering"
+  >("paused");
+  const playbackSrc =
+    currentPlayback?.status === "ready" ? currentPlayback.streamUrl : null;
   const [playbackPosition, setPlaybackPosition] = useState(0);
   const audioRef = useRef<HTMLAudioElement>(null);
   const actionService = useActionContext();
@@ -16,26 +20,26 @@ export function useAudioPlayer() {
   /**Updates the current playback if it is different. */
   const updateCurrentPlayback = (playback: TPlayback | null) => {
     //Request a stream token.
-    if (currentPlayback?.id !== playback.id) {
-      apiService
-        .requestStreamToken(playback.id)
+    if (currentPlayback?.track.id !== playback.track.id) {
+      api.tracks
+        .requestStreamToken(playback.track.id)
         .then(async (res) => {
-          if (!res.ok) {
+          if (!res.success) {
             throw new Error("Failed to start stream!");
           }
 
-          const data = await res.json();
+          const data = res.data;
           setCurrentPlayback({
             ...playback,
-            status: 'ready',
+            status: "ready",
             streamUrl: data.streamUrl,
           });
         })
-        .catch(err => {
-          console.log('Fetching of stream token failed!', err.message);
+        .catch((err) => {
+          console.log("Fetching of stream token failed!", err.message);
           setCurrentPlayback({
             ...playback,
-            status: 'error',
+            status: "error",
           });
         });
     }
@@ -52,7 +56,7 @@ export function useAudioPlayer() {
 
   const stopPlayback = () => {
     audioRef.current?.pause();
-  }
+  };
 
   /**Toggles the state of the current playback. */
   const togglePlayback = async () => {
@@ -83,28 +87,28 @@ export function useAudioPlayer() {
 
   //Automatically play tracks when they are selected. Must be done here; the hidden audio-tag must be rendered before play is hit.
   useEffect(() => {
-    if (currentPlayback?.status === 'ready') {
+    if (currentPlayback?.status === "ready") {
       audioRef.current.currentTime = currentPlayback.start_position || 0;
       onPlay();
     }
-  }, [currentPlayback?.id, currentPlayback?.status]);
+  }, [currentPlayback?.track.id, currentPlayback?.status]);
 
   useEventHandler({
     service: actionService,
-    type: 'like-toggled',
+    type: "like-toggled",
     handler: (e: CustomEvent) => {
-      if (e.detail.id !== currentPlayback?.id) return;
-      setCurrentPlayback(prev => {
+      if (e.detail.id !== currentPlayback?.track.id) return;
+      setCurrentPlayback((prev) => {
         return {
           ...prev,
           stats: {
             ...prev.stats,
-            liked_by_me: e.detail.state
-          }
-        }
-      })
-    }
-  })
+            liked_by_me: e.detail.state,
+          },
+        };
+      });
+    },
+  });
 
   return {
     currentPlayback,
