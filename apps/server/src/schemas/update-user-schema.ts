@@ -1,5 +1,4 @@
+import { userSchema } from "@pondfm/app-shared";
 import z from "zod";
 
-export const updateUserSchema = z.object({
-  username: z.string().optional(),
-});
+export const updateUserSchema = userSchema.pick({ username: true }).optional();

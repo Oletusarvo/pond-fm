@@ -1,14 +1,11 @@
 import { createReadStream, statSync } from "node:fs";
 import path from "node:path";
 import { createHandler } from "../../../../utils/create-handler";
-import { postService } from "../../../../container";
 import { db } from "../../../../db-config";
-import { serverConfig } from "../../../../server-config";
-import { verifyJWT } from "../../../../utils/jwt";
-import { parseFile } from "music-metadata";
 import mime from "mime-types";
 import { tablenames } from "../../../../tablenames";
 
+/**@deprecated Use stream urls to an external object storage instead. */
 export const streamTrackHandler = createHandler(async (req, res) => {
   const trackId = req.params.trackId as string;
 

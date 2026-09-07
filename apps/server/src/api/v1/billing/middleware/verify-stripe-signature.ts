@@ -1,13 +1,17 @@
 import { createMiddleware, loadEnvVariable } from "@pondfm/server-utils";
 import { stripe } from "../../../../stripe-config";
 
+/**
+ * @summary Verifies the signature of requests made to the /billing/stripe/webhook endpoint.
+ * @tags Webhooks
+ */
 export const verifyStripeSignature = createMiddleware(
   async (req, res, next) => {
-    const signature = req.headers['stripe-signature'];
+    const signature = req.headers["stripe-signature"];
 
-    if (!signature || typeof signature !== 'string') {
+    if (!signature || typeof signature !== "string") {
       return res.status(400).json({
-        error: 'Missing Stripe-Signature header',
+        error: "Missing Stripe-Signature header",
       });
     }
 
@@ -15,7 +19,7 @@ export const verifyStripeSignature = createMiddleware(
       const event = stripe.webhooks.constructEvent(
         req.body, // must be the RAW request body (Buffer or string)
         signature,
-        loadEnvVariable('STRIPE_WEBHOOK_SIGNING_SECRET')
+        loadEnvVariable("STRIPE_WEBHOOK_SIGNING_SECRET"),
       );
 
       // Make the verified event available to later handlers
@@ -24,8 +28,8 @@ export const verifyStripeSignature = createMiddleware(
       next();
     } catch (error) {
       return res.status(400).json({
-        error: 'Invalid Stripe signature',
+        error: "Invalid Stripe signature",
       });
     }
-  }
-)
+  },
+);

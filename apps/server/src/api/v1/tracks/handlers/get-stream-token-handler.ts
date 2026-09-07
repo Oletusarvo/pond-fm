@@ -6,7 +6,9 @@ import { createHandler } from "../../../../utils/create-handler";
 import { urlSigner } from "../../../../features/url-signer/url-signer";
 import { TTrack } from "@pondfm/app-shared";
 
-/**Sets a token as a cookie, allowing starting of streams and counting of plays. */
+/**Creates a stream token cookie, allowing starting of streams and counting of plays.
+ * @returns An object containing a streamUrl-field
+ */
 export const getStreamTokenHandler = createHandler(async (req, res) => {
   const { trackId } = req.params as { trackId: string };
   const track = (await db(viewnames.tracks)

@@ -1,16 +1,30 @@
 import z from "zod";
-import { completeUploadSchema } from "./complete-upload-schema";
+import {
+  trackPublicSchema,
+  trackSchema,
+  uploadSchema,
+} from "@pondfm/app-shared";
 
-const audioMimeTypes = ["audio/mpeg", "audio/wav"] as const;
-const audioMimeTypeSchema = z.enum(audioMimeTypes);
-
-export const createUploadSchema = z
-  .object({
-    upload: z.object({
-      mimeType: audioMimeTypeSchema,
-      filename: z.string(),
-      size: z.coerce.number().pipe(z.int()),
-      bitRate: z.int().optional(),
-    }),
-  })
-  .and(completeUploadSchema);
+export const createUploadSchema = z.object({
+  upload: uploadSchema
+    .pick({
+      size_bytes: true,
+      mime_type: true,
+      filename: true,
+    })
+    .required(),
+  track: trackSchema
+    .pick({
+      title: true,
+    })
+    .required()
+    .and(
+      trackPublicSchema
+        .required()
+        .pick({
+          moods: true,
+          genre: true,
+        })
+        .required(),
+    ),
+});

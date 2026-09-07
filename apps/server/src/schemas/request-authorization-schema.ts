@@ -1,5 +1,6 @@
-import z from 'zod';
+import { userSchema } from "@pondfm/app-shared";
+import z from "zod";
 
 export const requestAuthorizationSchema = z.object({
-  email: z.email(),
+  email: userSchema.shape.email,
 });

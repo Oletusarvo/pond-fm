@@ -8,3 +8,4 @@ export * from "./types/session.js";
 export * from "./types/payment.js";
 export * from "./types/plan-id.js";
 export * from "./types/notification.js";
+export * from "./schemas/index.js";

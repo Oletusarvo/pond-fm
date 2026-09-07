@@ -28,7 +28,7 @@ export const createUploadHandler = createHandler(
 
     //Make sure the file size is within the quota of the user.
     const quotaVerificationResult = await verifyUploadQuota(
-      data.upload.size,
+      data.upload.size_bytes,
       session,
     );
     if (quotaVerificationResult.success !== true) {
@@ -56,8 +56,8 @@ export const createUploadHandler = createHandler(
           filename,
           key,
           original_filename: data.upload.filename,
-          size_bytes: data.upload.size,
-          mime_type: data.upload.mimeType,
+          size_bytes: data.upload.size_bytes,
+          mime_type: data.upload.mime_type,
         } as TUpload)
         .returning("id");
 
@@ -93,8 +93,8 @@ export const createUploadHandler = createHandler(
 
     const signedUrl = await urlSigner.upload.sign({
       key: uploadToken.key,
-      contentType: data.upload.mimeType,
-      contentLength: data.upload.size,
+      contentType: data.upload.mime_type,
+      contentLength: data.upload.size_bytes,
     });
 
     return res.status(200).json({
