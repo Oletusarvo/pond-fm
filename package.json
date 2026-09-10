@@ -11,7 +11,7 @@
     "start:server": "npm run start -w @pondfm/server",
     "start:tunnel:server": "cloudflared tunnel --url http://localhost:3002",
     "start:tunnel:upload": "cloudflared tunnel --url http://localhost:3003",
-    "build:packages": "npm run build -w @pondfm/crypto && npm run build -w @pondfm/server-utils"
+    "build:packages": "npm run build -w @pondfm/crypto && npm run build -w @pondfm/server-utils && npm run build -w @pondfm/app-shared"
   },
   "workspaces": [
     "apps/*",

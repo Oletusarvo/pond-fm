@@ -10,7 +10,7 @@ export function usePlayCount() {
     api.tracks
       .countPlay(trackId)
       .then((res) => {
-        if (res.ok) {
+        if (res.success) {
           playCountRef.current.dispatchEvent(
             new CustomEvent<{ id: string }>("track-played", {
               detail: { id: trackId },

@@ -13,6 +13,7 @@ import { UploadTrackModal } from "../features/posts/components/upload-track-moda
 import { GoProModal } from "../features/billing/components/go-pro-modal";
 import { SettingsModal } from "../features/auth/components/settings-modal";
 import { api } from "../utils/api/api";
+import { defaults } from "../utils/defaults";
 
 export function MainHeader() {
   const { status: authStatus } = useAuthContext();
@@ -127,7 +128,7 @@ function UserProfileButton() {
       shape='circle'
       variant='ghost'
       color='white'
-      onClick={() => navigate(`/user/${session.user.id}`)}
+      onClick={() => navigate(defaults.url.userTracks(session.user.id))}
     >
       <UserIcon />
     </Button>

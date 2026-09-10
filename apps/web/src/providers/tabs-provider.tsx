@@ -43,19 +43,22 @@ export const [
       Button: function ({
         children,
         index,
-      }: React.PropsWithChildren & { index: TTabIndex }) {
+        ...props
+      }: React.ComponentProps<typeof Button> & { index: TTabIndex }) {
         const { currentTab, updateCurrentTab } = hook();
         const isSelected = index === currentTab;
         const containerClassName = useClassName(
-          "border-b-2",
+          "border-b-2 xs:w-full md:w-24",
           isSelected ? "border-primary" : "border-transparent",
         );
         return (
           <div className={containerClassName}>
             <Button
+              {...props}
               variant='ghost'
               onClick={() => updateCurrentTab(index)}
               paddingEnabled
+              fullWidth
             >
               {children}
             </Button>

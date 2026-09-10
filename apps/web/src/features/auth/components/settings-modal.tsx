@@ -140,7 +140,7 @@ function DetailsSection() {
         </Form.Group>
         <Form.Group label='Bio'>
           <textarea
-            className='w-full resize-none text-sm text-slate-500 outline-none border-slate-200 border rounded-md px-4 py-2'
+            className='w-full resize-none text-sm text-slate-500 outline-none border-slate-200 border rounded-md px-4 py-2 min-h-24 '
             placeholder='Type your bio...'
             name='bio'
             onChange={updateDetails}

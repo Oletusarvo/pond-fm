@@ -8,6 +8,7 @@ import { UserHeader } from "../components/user-header";
 import { api } from "../../../utils/api/api";
 import { TabsProvider } from "../../../providers/tabs-provider";
 import { useSearchParams } from "react-router-dom";
+import { Heart, Music, Repeat } from "lucide-react";
 
 export function UserScreen() {
   const userService = useUserContext();
@@ -18,7 +19,7 @@ export function UserScreen() {
   }
 
   return (
-    <div className='flex flex-col w-full max-h-full'>
+    <div className='flex flex-col w-full'>
       <UserHeader />
       <Separator />
       <TabsProvider
@@ -29,10 +30,16 @@ export function UserScreen() {
           })
         }
       >
-        <div className='w-full flex h-pad'>
-          <TabsProvider.Button index={"tracks"}>Tracks</TabsProvider.Button>
-          <TabsProvider.Button index={"reposts"}>Reposts</TabsProvider.Button>
-          <TabsProvider.Button index={"likes"}>Likes</TabsProvider.Button>
+        <div className='w-full flex h-pad sticky top-0 bg-white z-10'>
+          <TabsProvider.Button index={"tracks"} icon={Music}>
+            Tracks
+          </TabsProvider.Button>
+          <TabsProvider.Button index={"reposts"} icon={Repeat}>
+            Reposts
+          </TabsProvider.Button>
+          <TabsProvider.Button index={"likes"} icon={Heart}>
+            Likes
+          </TabsProvider.Button>
         </div>
         <TabsProvider.Tab index={"tracks"}>
           <FeedProvider

@@ -5,16 +5,20 @@ import { DBContext } from "../../types/db-context";
 import { applyCursor } from "../posts/utils/apply-cursor";
 import { resolveQueryWithCursor } from "../posts/utils/resolve-query-with-cursor";
 
-export async function getFollowersOf(ctx: DBContext, config: { ofUserId: string; cursor?: TCursor }) {
+/**Returns the followers of a user. */
+export async function getFollowersOf(
+  ctx: DBContext,
+  config: { ofUserId: string; cursor?: TCursor },
+) {
   const query = ctx({ followers: tablenames.followers })
-    .join({ user: tablenames.users }, 'user.id', 'followers.follower_id')
-    .where({ 'followee_id': config.ofUserId })
-    .select('user.id', 'user.username');
+    .join({ user: tablenames.users }, "user.id", "followers.follower_id")
+    .where({ followee_id: config.ofUserId })
+    .select("user.id", "user.username");
   applyCursor(query, {
     cursor: config.cursor,
-    dir: 'desc',
-    idColumn: 'user.id',
-    timestampColumn: 'user.created_at'
-  })
+    dir: "desc",
+    idColumn: "user.id",
+    timestampColumn: "user.created_at",
+  });
   return await resolveQueryWithCursor(query, { pageSize: 10 });
 }

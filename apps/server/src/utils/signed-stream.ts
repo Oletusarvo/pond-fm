@@ -1,7 +1,7 @@
 import { signCommand } from "@pondfm/crypto";
-import { loadEnvVariable } from "./load-env-variable";
 import { db } from "../db-config";
 import { withTrack } from "../DAL/posts/with/with-track";
+import { loadEnvVariable } from "@pondfm/server-utils";
 
 /**Creates a signed url for streaming.
  * @deprecated Use urlSigner.stream.sign instead.

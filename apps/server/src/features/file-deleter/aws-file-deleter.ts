@@ -3,7 +3,8 @@ import { s3 } from "../../s3-config";
 import { IFileDeleter } from "./interfaces/file-deleter";
 
 export class AWSFileDeleter implements IFileDeleter {
-  async del(keys: string[]) {
+  /**Makes a call to the AWS cloud storage provider to delete all files matching the provided keys. */
+  async delete(keys: string[]) {
     try {
       await s3.send(
         new DeleteObjectsCommand({

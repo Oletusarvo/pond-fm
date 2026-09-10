@@ -1,19 +1,22 @@
-import { Repeat, Star } from 'lucide-react';
-import { usePostContext } from '../providers/post-provider';
-import { Link } from 'react-router-dom';
-import { ObjectEncoder } from '../../../utils/object-encoder';
+import { Repeat, Star } from "lucide-react";
+import { usePostContext } from "../providers/post-provider";
+import { Link } from "react-router-dom";
+import { ObjectEncoder } from "../../../utils/object-encoder";
+import { defaults } from "../../../utils/defaults";
 
 /**Renders a post author's username, or the post author followed by the tracks author in case of a repost. */
 export function PostAuthor() {
   const { post } = usePostContext();
   const isCanonicalAuthor = post?.is_canonical;
   const canonicalAuthorLink = (
-    <Link to={`/user/${post?.track.author.id}`}>
+    <Link to={defaults.url.userTracks(post?.track.author.id)}>
       {post?.track.author.username}
     </Link>
   );
   const posterLink = (
-    <Link to={`/user/${post?.author.id}`}>{post?.author.username}</Link>
+    <Link to={defaults.url.userTracks(post?.author.id)}>
+      {post?.author.username}
+    </Link>
   );
 
   return (
@@ -25,16 +28,13 @@ export function PostAuthor() {
             <Star
               size='12px'
               color='transparent'
-              fill={'var(--color-yellow-500)'}
+              fill={"var(--color-yellow-500)"}
             />
           </>
         ) : (
           <>
             {posterLink}
-            <Repeat
-              size='12px'
-              className='text-primary'
-            />
+            <Repeat size='12px' className='text-primary' />
             {canonicalAuthorLink}
           </>
         )}

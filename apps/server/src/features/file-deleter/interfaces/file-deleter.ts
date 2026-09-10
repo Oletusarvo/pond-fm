@@ -3,5 +3,5 @@ type TResult = {
 };
 
 export interface IFileDeleter {
-  del(keys: string[]): Promise<TResult>;
+  delete(keys: string[]): Promise<TResult>;
 }

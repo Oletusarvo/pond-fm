@@ -25,8 +25,8 @@ export function useUploadTrack({ data, ...props }: UseUploadTrackProps) {
       fileSizeRef.current = file.size;
       const res = await api.tracks.create.requestUploadUrl({
         upload: {
-          mimeType: file.type,
-          size: file.size,
+          mime_type: file.type as any,
+          size_bytes: file.size,
           filename: file.name,
         },
         track: {

@@ -38,7 +38,7 @@ export function UserHeader() {
   const FollowButtonIcon = followedByMe ? UserMinus : UserPlus;
 
   return (
-    <div className='flex flex-col w-full py-2 h-pad'>
+    <div className='flex flex-col w-full py-2 h-pad gap-1'>
       <div className='w-full leading-none flex flex-row justify-between xs:items-start'>
         <div className='flex sm:gap-8 xs:gap-2 md:items-center xs:items-start'>
           <div className='flex gap-2 items-center'>
@@ -59,7 +59,9 @@ export function UserHeader() {
           </span>
         </Button>
       </div>
-      <p className='text-sm text-slate-500'>{user.bio || "No bio."}</p>
+      <p className='text-sm text-slate-500 xs:w-full md:w-92'>
+        {user.bio || "No bio."}
+      </p>
       {/**Bottom controls */}
       <div className='flex w-full items-center justify-between'>
         <div className='flex items-center sm:gap-4 xs:gap-2'>

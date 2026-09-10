@@ -5,8 +5,8 @@ import { getUserQuery } from "./get-user-query";
 import { selectFollowedByMe } from "./select/select-followed-by-me";
 import { selectUser } from "./select/select-user";
 
-/**Returns a user for display to others. */
-export async function getDisplayUser(
+/**Returns the public information of a user. */
+export async function getPublicUser(
   ctx: DBContext,
   config: { id: string; session?: TSession },
 ) {

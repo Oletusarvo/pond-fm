@@ -4,14 +4,14 @@ import http from "http";
 import cookieParser from "cookie-parser";
 import { apiRouter } from "./api/api-router";
 
-import { tablenames, viewnames } from "./tablenames";
+import { tablenames } from "./tablenames";
 import { db } from "./db-config";
-import { signCommand } from "@pondfm/crypto";
 import { retry } from "@pondfm/server-utils";
-import { withTrack } from "./DAL/posts/with/with-track";
 import { stripeWebhookHandler } from "./api/v1/billing/webhooks/stripe/stripe-webhook-handler";
 import { verifyStripeSignature } from "./api/v1/billing/middleware/verify-stripe-signature";
 import { fileDeleter } from "./features/file-deleter/file-deleter";
+import { TUser } from "@pondfm/app-shared";
+import { TUploadFolder } from "@pondfm/app-shared/dist/types/upload-folder";
 
 require("dotenv").config();
 const app = express();
@@ -56,9 +56,10 @@ runCleanup().finally(() => {
 
 async function runCleanup() {
   console.log("Running cleanup...");
+  //Delete users that have not verified themselves within 24 hours.
   await retry(async () =>
     db(tablenames.users)
-      .where({ status: "pending_verification" })
+      .where({ status: "pending_verification" } as Pick<TUser, "status">)
       .whereRaw("CURRENT_TIMESTAMP - created_at >= INTERVAL '24h'")
       .del(),
   ).catch((err) => {
@@ -68,6 +69,8 @@ async function runCleanup() {
   await cleanupUnusedFilesAndTracks().catch((err) =>
     console.log("Failed to delete unused files!", err.stack),
   );
+
+  //Delete expired auth tokens.
   await retry(
     async () =>
       await db(tablenames.authTokens)
@@ -77,6 +80,7 @@ async function runCleanup() {
     console.log("Failed to delete expired auth tokens.", err.stack),
   );
 
+  //Delete expired upload tokens.
   await retry(
     async () =>
       await db(tablenames.uploadTokens)
@@ -90,12 +94,12 @@ async function runCleanup() {
 async function cleanupUnusedFilesAndTracks() {
   const foldersToDelete = (await db({ folder: tablenames.uploadFolders })
     .where(function () {
-      this.where({ status: "pending_upload" })
-        .orWhere({ status: "failed_upload" })
-        .orWhere({ status: "processing_audio" })
+      this.where({ status: "pending_upload" } as Partial<TUploadFolder>)
+        .orWhere({ status: "failed_upload" } as Partial<TUploadFolder>)
+        .orWhere({ status: "processing_audio" } as Partial<TUploadFolder>)
         .andWhereRaw("CURRENT_TIMESTAMP - updated_at >= INTERVAL '15min'");
     })
-    .orWhere({ status: "deleted" })
+    .orWhere({ status: "deleted" } as Partial<TUploadFolder>)
     .select(
       "id",
       db.raw(
@@ -109,7 +113,7 @@ async function cleanupUnusedFilesAndTracks() {
   }
 
   const keys = foldersToDelete.flatMap((f) => f.keys);
-  const result = await fileDeleter.del(keys);
+  const result = await fileDeleter.delete(keys);
   if (result.success) {
     await retry(
       async () =>

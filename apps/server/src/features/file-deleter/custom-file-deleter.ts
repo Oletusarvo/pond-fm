@@ -2,7 +2,8 @@ import { signCommand } from "@pondfm/crypto";
 import { IFileDeleter } from "./interfaces/file-deleter";
 
 export class CustomFileDeleter implements IFileDeleter {
-  async del(keys: string[]) {
+  /**Makes a call to the custom upload server to delete all files matching the passed keys. */
+  async delete(keys: string[]) {
     try {
       const clientId = process.env.LOCAL_UPLOAD_CLIENT_ID;
       const signature = signCommand(

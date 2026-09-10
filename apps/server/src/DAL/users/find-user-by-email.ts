@@ -7,6 +7,7 @@ import { selectUnseenNotificationCount } from "./select/select-notification-coun
 import { selectUser } from "./select/select-user";
 import { withUnseenNotificationCount } from "./with/with-unseen-notification-count";
 
+/**Returns a user by their email. */
 export async function findUserByEmail(
   ctx: DBContext,
   config: { email: string },

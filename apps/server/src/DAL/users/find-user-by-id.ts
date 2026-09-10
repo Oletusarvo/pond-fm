@@ -4,15 +4,25 @@ import { selectUnseenNotificationCount } from "./select/select-notification-coun
 import { selectUser } from "./select/select-user";
 import { withUnseenNotificationCount } from "./with/with-unseen-notification-count";
 
-export async function findUserById(ctx: DBContext, config: { user: { id: string } }) {
+/**Finds a user by id.
+ * @deprecated
+ */
+export async function findUserById(
+  ctx: DBContext,
+  config: { user: { id: string } },
+) {
   const query = getUserQuery(ctx);
   withUnseenNotificationCount(query);
-  query.leftJoin('unseen_notification_count', 'unseen_notification_count.recipient_id', 'users.id');
+  query.leftJoin(
+    "unseen_notification_count",
+    "unseen_notification_count.recipient_id",
+    "users.id",
+  );
   //withFollowerCount(query);
 
   selectUser(query);
   selectUnseenNotificationCount(query);
-  query.select('subscription.json AS subscription')
+  query.select("subscription.json AS subscription");
 
-  return await query.where({ 'user.id': config.user.id }).first();
+  return await query.where({ "user.id": config.user.id }).first();
 }

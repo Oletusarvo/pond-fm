@@ -10,7 +10,7 @@ export function useActions() {
     api.tracks
       .countPlay(trackId)
       .then((res) => {
-        if (res.ok) {
+        if (res.success) {
           eventsRef.current.dispatchEvent(
             new CustomEvent<{ id: string }>("track-played", {
               detail: { id: trackId },
@@ -37,7 +37,7 @@ export function useActions() {
     );
     const result = await cancelable.toggleTrackLike(trackId, initialState);
     if (result.executed) {
-      if (result.value.ok) return;
+      if (result.value.success) return;
       eventsRef.current.dispatchEvent(
         new CustomEvent(eventName, {
           detail: {
@@ -64,7 +64,7 @@ export function useActions() {
 
     const result = await cancelable.repost(trackId, initialState);
     if (result.executed) {
-      if (result.value.ok) return;
+      if (result.value.success) return;
       eventsRef.current.dispatchEvent(
         new CustomEvent(eventName, {
           detail: {

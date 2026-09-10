@@ -70,4 +70,8 @@ export class UsersApi {
     const res = await fetch(Api.withEndpoint(`users/${id}`), req);
     return await Api.asApiResponse<TUserPublic>(res);
   }
+
+  async tip(payload: any) {
+    throw new Error("Tipping not implemented!");
+  }
 }
