@@ -1,11 +1,11 @@
 import { getFollowersOf } from "../../../../DAL/users/get-followers";
 import { db } from "../../../../db-config";
-import { tablenames } from "../../../../tablenames";
-import { createHandler } from "../../../../utils/create-handler";
+import { createHandler } from "@pondfm/server-utils";
 
-export const getUserFollowers = createHandler(
-  async (req, res) => {
-    const followers = await getFollowersOf(db, { ofUserId: req.params.userId as string });
-    return res.json(followers);
-  }
-)
+/**Returns the followers of a user. */
+export const getUserFollowers = createHandler(async (req, res) => {
+  const followers = await getFollowersOf(db, {
+    ofUserId: req.params.userId as string,
+  });
+  return res.json(followers);
+});

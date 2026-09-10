@@ -1,4 +1,4 @@
-import { serviceError, TUserPublic } from "@pondfm/app-shared";
+import { serviceError, TUser, TUserPublic } from "@pondfm/app-shared";
 import { requestBuilder } from "../../request-builder";
 import { Api } from "../api";
 import { TApiResponse } from "../types";
@@ -11,20 +11,22 @@ export class UsersApi {
   /**Provides methods related to an authenticated users subscription. */
   subscriptions = new UserSubscriptionsApi();
 
-  async update(payload: { username?: string }) {
+  /**Updates a user's profile. */
+  async update(payload: Partial<Pick<TUser, "username" | "bio">>) {
     const req = requestBuilder
       .put()
       .body(payload)
       .json()
       .includeCredentials()
       .build();
-    const res = await fetch(Api.withEndpoint("users/username"), req);
+    const res = await fetch(Api.withEndpoint("users"), req);
     return await Api.asApiResponse<
       null,
       typeof serviceError.auth.unauthorized | typeof serviceError.auth.forbidden
     >(res);
   }
 
+  /**Follows a user. */
   async follow(id: string) {
     const req = requestBuilder.post().includeCredentials().build();
     const res = await fetch(Api.withEndpoint(`users/follow/${id}`), req);
@@ -33,12 +35,14 @@ export class UsersApi {
     );
   }
 
+  /**Unfollows a user. */
   async unfollow(id: string) {
     const req = requestBuilder.post().includeCredentials().build();
     const res = await fetch(Api.withEndpoint(`users/unfollow/${id}`), req);
     return await Api.asApiResponse<null>(res);
   }
 
+  /**Returns the followers of a user. */
   async getFollowers(userId: string, cursor?: string) {
     const req = requestBuilder.get().includeCredentials().build();
     const url = new URL(Api.withEndpoint(`users/followers/${userId}`));
@@ -49,6 +53,7 @@ export class UsersApi {
     return await Api.asApiResponse<TUserPublic[]>(res);
   }
 
+  /**Returns the users another follows. */
   async getFollowing(userId: string, cursor?: string) {
     const req = requestBuilder.get().includeCredentials().build();
     const url = new URL(Api.withEndpoint(`users/following/${userId}`));
@@ -59,6 +64,7 @@ export class UsersApi {
     return await Api.asApiResponse<TUserPublic[]>(res);
   }
 
+  /**Returns a user. */
   async get(id: string) {
     const req = requestBuilder.get().includeCredentials().build();
     const res = await fetch(Api.withEndpoint(`users/${id}`), req);

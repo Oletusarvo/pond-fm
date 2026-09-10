@@ -58,7 +58,7 @@ export class ApiService {
   /**Unlikes a track. */
   async unlikeTrack(trackId: string) {
     const req = requestBuilder
-      .del()
+      .delete()
       .body({ trackId })
       .json()
       .includeCredentials()
@@ -80,7 +80,7 @@ export class ApiService {
   /**Unreposts a track. */
   async unrepostTrack(trackId: string) {
     const req = requestBuilder
-      .del()
+      .delete()
       .body({ trackId })
       .json()
       .includeCredentials()
@@ -379,7 +379,7 @@ export class ApiService {
   }
 
   async deleteTrack(trackId: string) {
-    const req = requestBuilder.del().includeCredentials().build();
+    const req = requestBuilder.delete().includeCredentials().build();
     return await fetch(this.withEndpoint("tracks", trackId), req);
   }
 
@@ -394,7 +394,7 @@ export class ApiService {
 
   /**Cancels the users pro subscription. */
   async cancelSubscription() {
-    const req = requestBuilder.del().includeCredentials().build();
+    const req = requestBuilder.delete().includeCredentials().build();
     return await fetch(this.withEndpoint("billing/subscriptions/cancel"), req);
   }
 

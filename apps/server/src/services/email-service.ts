@@ -1,32 +1,40 @@
-import { getDomainUrl } from '../utils/get-domain-url';
-import { loadEnvVariable } from '../utils/load-env-variable';
+import { loadEnvVariable } from "@pondfm/server-utils";
+import { getDomainUrl } from "../utils/get-domain-url";
 
 /**Responsible for sending emails. */
 class EmailService {
   constructor(
     private endpoint: string,
     private apiKey: string,
-  ) { }
+  ) {}
 
   sendMagicLink(to: string, code: string) {
     const domainUrl = getDomainUrl();
     const html = this.createEmailHtml({
-      title: 'Greetings!',
+      title: "Greetings!",
       body: `You have requested to log into Pond.Fm<br/>If that wasn't you, please ignore this message.<br/>
               Otherwise please tap <a href="${domainUrl}/authorize?code=${code}">this link</a>, or paste the below code into the app:<br/>
               <span style="font-size=24px; font-weight=600; color=black">${code}</span>`,
     });
     return this.send({
       to,
-      subject: 'Log in to Pond.FM',
+      subject: "Log in to Pond.FM",
       html,
     });
   }
 
-  async send({ to, subject, html }: { to: string; subject: string; html: string }) {
-    const serviceEmail = loadEnvVariable('SERVICE_EMAIL', true);
+  async send({
+    to,
+    subject,
+    html,
+  }: {
+    to: string;
+    subject: string;
+    html: string;
+  }) {
+    const serviceEmail = loadEnvVariable("SERVICE_EMAIL", true);
     const body = JSON.stringify({
-      sender: { email: serviceEmail, name: 'Pond.fm' },
+      sender: { email: serviceEmail, name: "Pond.fm" },
       to: [{ email: to }],
       subject,
       htmlContent: html,
@@ -36,11 +44,11 @@ class EmailService {
       this.endpoint,
 
       {
-        method: 'POST',
+        method: "POST",
         body,
         headers: {
-          'api-key': this.apiKey.trim(),
-          'Content-Type': 'application/json',
+          "api-key": this.apiKey.trim(),
+          "Content-Type": "application/json",
         },
       },
     );
@@ -73,6 +81,6 @@ class EmailService {
 }
 
 export const emailService = new EmailService(
-  'https://api.brevo.com/v3/smtp/email',
-  loadEnvVariable('EMAIL_API_KEY'),
+  "https://api.brevo.com/v3/smtp/email",
+  loadEnvVariable("EMAIL_API_KEY"),
 );

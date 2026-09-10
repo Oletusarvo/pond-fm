@@ -1,24 +1,30 @@
 import { createNotification } from "../../../../DAL/notifications/create-notification";
 import { createFollow } from "../../../../DAL/users/create-follow";
 import { db } from "../../../../db-config";
-import { AuthenticatedExpressRequest } from "../../../../types/express";
-import { createHandler } from "../../../../utils/create-handler";
+
+import { createHandler } from "@pondfm/server-utils";
+import { TAuthenticatedRequest } from "../../../../types/request";
 
 export const followUserHandler = createHandler(
-  async (req: AuthenticatedExpressRequest, res) => {
+  async (req: TAuthenticatedRequest, res) => {
     const session = req.session;
-    await createFollow(db, { followerId: session.user.id, followeeId: req.params.userId as string });
+    await createFollow(db, {
+      followerId: session.user.id,
+      followeeId: req.params.userId as string,
+    });
     const notePromise = new Promise<void>(async (resolve, reject) => {
       await createNotification(db, {
         notification: {
-          type: 'follow',
+          type: "follow",
           sender_id: session.user.id,
-          recipient_id: req.params.userId as string
-        }
+          recipient_id: req.params.userId as string,
+        },
       });
       resolve();
     });
-    notePromise.catch(err => console.log('Failed to create a follow notification!', err.message));
+    notePromise.catch((err) =>
+      console.log("Failed to create a follow notification!", err.message),
+    );
     return res.end();
-  }
-)
+  },
+);

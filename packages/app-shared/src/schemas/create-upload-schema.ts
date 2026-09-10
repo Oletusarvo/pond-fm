@@ -1,9 +1,6 @@
 import z from "zod";
-import {
-  trackPublicSchema,
-  trackSchema,
-  uploadSchema,
-} from "@pondfm/app-shared";
+import { uploadSchema } from "./upload-schema.js";
+import { trackPublicSchema, trackSchema } from "./track-schema.js";
 
 export const createUploadSchema = z.object({
   upload: uploadSchema

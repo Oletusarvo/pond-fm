@@ -1,10 +1,10 @@
-import { getRouter } from "../../../utils/get-router";
+import { getRouter } from "@pondfm/server-utils";
 import { getGenresHandler } from "./handlers/get-genres-handler";
 import { getMoodsHandler } from "./handlers/get-moods-handler";
 
 const router = getRouter();
 
-router.get('/genres', getGenresHandler);
-router.get('/moods', getMoodsHandler);
+router.get("/genres", getGenresHandler);
+router.get("/moods", getMoodsHandler);
 
-export {router as tagsRouter}
+export { router as tagsRouter };

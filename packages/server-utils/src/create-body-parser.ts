@@ -1,10 +1,9 @@
-import z, { ZodType } from 'zod';
-import { createMiddleware } from './create-handler.js';
+import z, { ZodType } from "zod";
+import { createMiddleware } from "./create-handler.js";
 
 /**
  * Generates a middleware-function using the provided zod-schema to validate the body of requests, including it as the data-parameter of the request.
  * @param schema
- * @returns
  */
 export function createBodyParser(schema: ZodType) {
   return createMiddleware(async (req, res, next) => {

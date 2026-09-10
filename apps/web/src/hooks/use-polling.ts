@@ -1,19 +1,21 @@
 import { useQuery } from "@tanstack/react-query";
 import { useEffect, useRef } from "react";
+import { TApiResponse } from "../utils/api/types";
 
 type UseQueryParameters = Parameters<typeof useQuery>[0];
 
 type UsePollingProps = {
   maxTries?: number;
-  queryKey: UseQueryParameters['queryKey'];
-  queryFn: () => Promise<Response>;
-  pollingInterval?: UseQueryParameters['refetchInterval'];
+  queryKey: UseQueryParameters["queryKey"];
+  queryFn: () => Promise<TApiResponse>;
+  pollingInterval?: UseQueryParameters["refetchInterval"];
   onData: <T>(data: T) => boolean;
   onSuccess?: () => Promise<void> | void;
   onError?: (error: Error) => Promise<void> | void;
   onMaxTries?: () => void;
 };
 
+/**Provides functionality for polling the back-end. */
 export function usePolling({
   maxTries = Infinity,
   pollingInterval = 1500,
@@ -22,7 +24,7 @@ export function usePolling({
   onData,
   onError,
   onSuccess,
-  onMaxTries
+  onMaxTries,
 }: UsePollingProps) {
   const fetchEnabledRef = useRef(true);
   const tries = useRef(0);
@@ -30,14 +32,14 @@ export function usePolling({
     queryKey,
     queryFn: async () => {
       const res = await queryFn();
-      if (!res.ok) {
+      if (!res.success) {
         throw new Error("Failed to get subscription status!");
       }
 
-      return res.ok ? await res.json() : null;
+      return res.success ? res.data : null;
     },
     refetchInterval: pollingInterval,
-    enabled: fetchEnabledRef.current
+    enabled: fetchEnabledRef.current,
   });
 
   useEffect(() => {
@@ -49,8 +51,7 @@ export function usePolling({
         if (!fetchEnabledRef.current) {
           onSuccess();
         }
-      }
-      else {
+      } else {
         onError?.(error as Error);
       }
       if (tries.current >= maxTries) {
@@ -58,7 +59,16 @@ export function usePolling({
         onMaxTries?.();
       }
     }
-  }, [data, isFetching, isError, onData, onError, fetchEnabledRef.current, tries.current, maxTries]);
+  }, [
+    data,
+    isFetching,
+    isError,
+    onData,
+    onError,
+    fetchEnabledRef.current,
+    tries.current,
+    maxTries,
+  ]);
 
   return { isPending: isFetching, isError };
 }

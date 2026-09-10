@@ -17,7 +17,7 @@ export const verifyStripeSignature = createMiddleware(
 
     try {
       const event = stripe.webhooks.constructEvent(
-        req.body, // must be the RAW request body (Buffer or string)
+        req.body as any, // must be the RAW request body (Buffer or string)
         signature,
         loadEnvVariable("STRIPE_WEBHOOK_SIGNING_SECRET"),
       );

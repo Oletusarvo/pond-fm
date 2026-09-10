@@ -1,10 +1,6 @@
 import z from "zod";
 import { authorSchema } from "./author-schema.js";
 import { uploadSchema } from "./upload-schema.js";
-import {
-  baseUploadFolderSchema,
-  uploadFolderSchema,
-} from "./upload-folder-schema.js";
 import { idSchema } from "./defaults.js";
 
 export const trackSchema = z.object({

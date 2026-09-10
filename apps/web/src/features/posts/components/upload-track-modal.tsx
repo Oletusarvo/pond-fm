@@ -17,18 +17,85 @@ import { GenreSelector } from "./track-modal-selector";
 import { MoodSelector } from "./track-modal-selector";
 import { api } from "../../../utils/api/api";
 import { TApiResponse } from "../../../utils/api/types";
+import { createProvider } from "../../../utils/create-provider";
+import { File } from "lucide-react";
+import { useAction } from "../../../hooks/use-action";
 
+type UploadTrackModalStep = "upload-file" | "fill-details";
+
+const [
+  /**Provides global logic and methods for the upload modal.
+   * @todo
+   */
+  UploadTrackModalProvider,
+  useUploadTrackContext,
+] = createProvider({
+  contextName: "UploadTrackModalContext",
+  hook: () => {
+    const [step, setStep] = useState<UploadTrackModalStep>("upload-file");
+
+    const updateStep = (newStep: UploadTrackModalStep) => {
+      setStep(newStep);
+    };
+    return {
+      step,
+      updateStep,
+    };
+  },
+});
+
+/**Renders the form form uploading a new track. */
 export const UploadTrackModal = React.memo(function () {
   const { toggleState } = useToggleContext();
   const onClose = () => toggleState(false);
 
   return (
     <Modal title='Upload' onClose={onClose}>
-      <ModalContent onClose={onClose} />
+      <UploadTrackModalProvider>
+        <ModalContent onClose={onClose} />
+      </UploadTrackModalProvider>
     </Modal>
   );
 });
 
+/**
+ * Renders a form containing the file input.
+ * @todo
+ */
+function UploadFileStep() {
+  const inputRef = useRef<HTMLInputElement>(null);
+  const formRef = useRef<HTMLFormElement>(null);
+
+  const selectFile = () => {
+    if (!inputRef.current) return;
+    inputRef.current.click();
+  };
+
+  const onFileSelected = () => {};
+
+  return (
+    <form className='flex w-full items-center justify-center'>
+      <button
+        className='w-full h-full flex items-center justify-center'
+        onClick={selectFile}
+      >
+        <File />
+      </button>
+      <input
+        onChange={() => {
+          formRef.current?.submit();
+        }}
+        ref={inputRef}
+        type='file'
+        name='file'
+        hidden
+        accept='audio/mpeg,audio/wav'
+      />
+    </form>
+  );
+}
+
+/**Renders the content of the modal. Done as a separate component to stop re-renders of the modal when things change. */
 function ModalContent({ onClose }) {
   const genreRef = useRef<string | null>(null);
   const moodsRef = useRef<string[]>([]);
@@ -53,8 +120,8 @@ function ModalContent({ onClose }) {
       const res = await api.tracks.create.requestUploadUrl({
         upload: {
           filename: file.name,
-          mimeType: file.type,
-          size: file.size,
+          mime_type: file.type,
+          size_bytes: file.size,
         },
         track: {
           title: rest.title,
@@ -98,7 +165,7 @@ function ModalContent({ onClose }) {
       setTimeout(() => onClose(), 1500);
     },
     onError: async (res) => {
-      if (res.status === 409 && res.success === false) {
+      if (res.status === 409) {
         return res.error as string;
       }
     },
@@ -120,7 +187,8 @@ function ModalContent({ onClose }) {
       <div className='flex flex-col w-full'>
         <h2 className='font-semibold text-lg'>Upload Your Track</h2>
         <p className='text-slate-500'>
-          We currently support mp3 and wav uploads.
+          We currently support mp3 and wav uploads. Free plans are recommended
+          to upload mp3 files to conserve their storage quota.
         </p>
       </div>
 

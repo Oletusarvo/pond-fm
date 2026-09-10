@@ -5,6 +5,7 @@ import { useUserContext } from "../providers/user-proivder";
 import { FollowerItem } from "./follower-item";
 import { api } from "../../../utils/api/api";
 
+/**Renders the feed displaying the users another is following. */
 export function FollowingFeedModal() {
   const userService = useUserContext();
   const navigate = useNavigate();

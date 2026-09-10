@@ -1,6 +1,6 @@
 import { createReadStream, statSync } from "node:fs";
 import path from "node:path";
-import { createHandler } from "../../../../utils/create-handler";
+import { createHandler } from "@pondfm/server-utils";
 import { db } from "../../../../db-config";
 import mime from "mime-types";
 import { tablenames } from "../../../../tablenames";

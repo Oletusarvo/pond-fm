@@ -1,10 +1,6 @@
 import { db } from "../../../../db-config";
 import { tablenames, viewnames } from "../../../../tablenames";
-import {
-  AuthenticatedExpressRequest,
-  ExpressRequest,
-} from "../../../../types/express";
-import { createHandler } from "@pondfm/server-utils";
+import { createHandler, ExpressRequest } from "@pondfm/server-utils";
 import crypto from "crypto";
 import { serviceError } from "../../../../utils/service-error";
 import path from "path";
@@ -14,16 +10,23 @@ import {
   ServiceErrorResponse,
   ServiceSuccessResponse,
 } from "../../../../types/service-response";
-import { TSession, TSubscription } from "@pondfm/app-shared";
+import {
+  createUploadSchema,
+  TSession,
+  TSubscription,
+} from "@pondfm/app-shared";
 import { TUpload } from "@pondfm/app-shared/dist/types/upload";
 import { TUploadFolder } from "@pondfm/app-shared/dist/types/upload-folder";
 import { urlSigner } from "../../../../features/url-signer/url-signer";
-import { createUploadSchema } from "../../../../schemas/create-upload-schema";
 import z from "zod";
+import { TAuthenticatedRequest } from "../../../../types/request";
 
 export const createUploadHandler = createHandler(
-  async (req: AuthenticatedExpressRequest, res) => {
-    const data = req.body as z.infer<typeof createUploadSchema>;
+  async (
+    req: TAuthenticatedRequest<z.infer<typeof createUploadSchema>>,
+    res,
+  ) => {
+    const data = req.body;
     const session = req.session;
 
     //Make sure the file size is within the quota of the user.

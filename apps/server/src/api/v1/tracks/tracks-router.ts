@@ -1,4 +1,3 @@
-import { getRouter } from "../../../utils/get-router";
 import { checkAuth } from "../../middleware/check-auth";
 import { getDiscoveryFeed } from "./handlers/get-discovery-feed";
 import { likeTrackHandler } from "./handlers/like-track-handler";
@@ -11,13 +10,15 @@ import { getAuthorFeed } from "./handlers/get-author-feed-handler";
 import { getStreamTokenHandler } from "./handlers/get-stream-token-handler";
 import { verifyStreamToken } from "./middleware/verify-stream-token";
 import { getMainFeedHandler } from "./handlers/get-main-feed";
-import { createBodyParser } from "../../../utils/create-body-parser";
 import { updateTrackHandler } from "./handlers/update-track-handler";
-import { updateTrackScema } from "../../../schemas/update-track-schema";
+import { updateTrackSchema } from "../../../schemas/update-track-schema";
 import { getFollowedFeedHandler } from "./handlers/get-followed-feed";
 import { getTrackHandler } from "./handlers/get-track-handler";
 import { deleteTrackHandler } from "./handlers/delete-track-handler";
 import { trackInteractionSchema } from "../../../schemas/track-interaction-schema";
+import { createBodyParser, getRouter } from "@pondfm/server-utils";
+import { getAuthorRepostedFeedHandler } from "./handlers/get-author-reposted-feed-handler";
+import { getAuthorLikedFeedHandler } from "./handlers/get-author-liked-feed-handler";
 
 const router = getRouter();
 
@@ -45,6 +46,26 @@ router.get("/feed/followed", checkAuth(), getFollowedFeedHandler);
  * @tags Tracks
  */
 router.get("/feed/:authorId", checkAuth(false), getAuthorFeed);
+/**
+ * GET /tracks/feed/:authorId/reposted
+ * @summary Returns tracks reposted by a user.
+ * @tags Tracks
+ */
+router.get(
+  "/feed/:authorId/reposted",
+  checkAuth(false),
+  getAuthorRepostedFeedHandler,
+);
+/**
+ * GET /tracks/feed/:authorId/liked
+ * @summary Returns tracks liked by a user.
+ * @tags Tracks
+ */
+router.get(
+  "/feed/:authorId/liked",
+  checkAuth(false),
+  getAuthorLikedFeedHandler,
+);
 /**
  * GET /tracks/:id
  * @summary Returns a specific track by id.
@@ -111,7 +132,7 @@ router.get("/:trackId/stream", streamTrackHandler);
 router.put(
   "/:trackId",
   checkAuth(),
-  createBodyParser(updateTrackScema),
+  createBodyParser(updateTrackSchema),
   updateTrackHandler,
 );
 /**

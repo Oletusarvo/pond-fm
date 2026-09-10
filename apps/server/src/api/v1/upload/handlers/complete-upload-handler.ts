@@ -1,8 +1,8 @@
 import path from "path";
 import { db } from "../../../../db-config";
 import { tablenames, viewnames } from "../../../../tablenames";
-import { AuthenticatedExpressRequest } from "../../../../types/express";
-import { createHandler } from "../../../../utils/create-handler";
+
+import { createHandler } from "@pondfm/server-utils";
 import { generateWaveformDataFromStream } from "../../../../utils/generate-waveform-data";
 import { createReadStream } from "fs";
 import { Readable } from "stream";
@@ -11,9 +11,10 @@ import { retry } from "@pondfm/server-utils";
 import { TUploadFolder } from "@pondfm/app-shared/dist/types/upload-folder";
 import { TTrack } from "@pondfm/app-shared";
 import { urlSigner } from "../../../../features/url-signer/url-signer";
+import { TAuthenticatedRequest } from "../../../../types/request";
 
 export const completeUploadHandler = createHandler(
-  async (req: AuthenticatedExpressRequest, res) => {
+  async (req: TAuthenticatedRequest<void>, res) => {
     const session = req.session;
     const uploadToken = await db(tablenames.uploadTokens)
       .where({ code: req.params.code, user_id: session.user.id })

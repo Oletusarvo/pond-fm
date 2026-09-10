@@ -2,16 +2,21 @@ import { postService } from "../../../../container";
 import { db } from "../../../../db-config";
 import { createNotification } from "../../../../DAL/notifications/create-notification";
 import { tablenames } from "../../../../tablenames";
-import { AuthenticatedExpressRequest } from "../../../../types/express";
-import { createHandler } from "../../../../utils/create-handler";
+
+import { createHandler, tryCatch } from "@pondfm/server-utils";
 import { serviceError } from "../../../../utils/service-error";
-import { tryCatch } from "../../../../utils/try-catch";
+import { TAuthenticatedRequest } from "../../../../types/request";
+import { trackInteractionSchema } from "../../../../schemas/track-interaction-schema";
+import z from "zod";
 
 /**Records a repost by a user on a track by id. */
 export const repostTrackHandler = createHandler(
-  async (req: AuthenticatedExpressRequest, res) => {
+  async (
+    req: TAuthenticatedRequest<z.infer<typeof trackInteractionSchema>>,
+    res,
+  ) => {
     const session = req.session;
-    const { trackId } = req.body as { trackId: string };
+    const { trackId } = req.body;
     const result = await postService.repostTrack(db, {
       author: { id: session.user.id },
       track: { id: trackId },

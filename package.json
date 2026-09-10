@@ -1,6 +1,6 @@
 {
   "name": "@pondfm",
-  "version": "1.0.0",
+  "version": "0.9.0",
   "description": "A music sharing platform with purely chronological feeds without algorithmic curation.",
   "main": "index.js",
   "scripts": {

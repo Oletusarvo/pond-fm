@@ -1,17 +1,24 @@
-import { ReactNode } from 'react';
-import { Spinner } from '../components/spinner';
+import { ReactNode } from "react";
+import { Spinner } from "../components/spinner";
 
+/**Returns a new component that displays and alternate child when the showAlternate-prop is set. */
 export function withAlternateChildren<PropsT>(Component: React.FC<PropsT>) {
   return ({
     children,
     alternate,
     showAlternate,
     ...props
-  }: { alternate: ReactNode; showAlternate: boolean } & PropsT & React.PropsWithChildren) => {
-    return <Component {...(props as PropsT)}>{showAlternate ? alternate : children}</Component>;
+  }: { alternate: ReactNode; showAlternate: boolean } & PropsT &
+    React.PropsWithChildren) => {
+    return (
+      <Component {...(props as PropsT)}>
+        {showAlternate ? alternate : children}
+      </Component>
+    );
   };
 }
 
+/**Returns a new component that displays a loading spinner as the child when the loading-prop is set. */
 export function withLoader<PropsT>(Component: React.FC<PropsT>) {
   return ({
     children,
@@ -23,7 +30,8 @@ export function withLoader<PropsT>(Component: React.FC<PropsT>) {
       <EnhancedComponent
         {...(props as PropsT)}
         alternate={<Spinner />}
-        showAlternate={loading}>
+        showAlternate={loading}
+      >
         {children}
       </EnhancedComponent>
     );

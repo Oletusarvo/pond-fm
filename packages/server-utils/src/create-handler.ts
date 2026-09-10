@@ -1,7 +1,7 @@
-import { NextFunction } from 'express';
-import { tryCatch } from './try-catch.js';
-import { ExpressRequest, ExpressResponse } from './types/express.js';
-import { THandler, TMiddlewareHandler } from './types/handler.js';
+import { NextFunction } from "express";
+import { tryCatch } from "./try-catch.js";
+import { THandler, TMiddlewareHandler } from "./types/handler.js";
+import { ExpressRequest, ExpressResponse } from "./types/express.js";
 
 type TErrorHandler = (err: any, res: ExpressResponse) => ExpressResponse | void;
 
@@ -30,11 +30,16 @@ const runHandler = async <THandlerRet>(
  * @param onError
  * @returns
  */
-export function createHandler<
-  Req extends ExpressRequest = ExpressRequest,
->(handler: THandler<Req>, onError?: TErrorHandler) {
+export function createHandler<Req extends ExpressRequest = ExpressRequest>(
+  handler: THandler<Req>,
+  onError?: TErrorHandler,
+) {
   return async (req: ExpressRequest, res: ExpressResponse) => {
-    return await runHandler(res, async () => await handler(req as Req, res), onError);
+    return await runHandler(
+      res,
+      async () => await handler(req as Req, res),
+      onError,
+    );
   };
 }
 
@@ -43,10 +48,19 @@ export function createHandler<
  * @param handler
  * @returns
  */
-export function createMiddleware<
-  Req extends ExpressRequest = ExpressRequest,
->(handler: TMiddlewareHandler<Req>, onError?: TErrorHandler) {
-  return async (req: ExpressRequest, res: ExpressResponse, next: NextFunction) => {
-    return await runHandler(res, async () => await handler(req as Req, res, next), onError);
+export function createMiddleware<Req extends ExpressRequest = ExpressRequest>(
+  handler: TMiddlewareHandler<Req>,
+  onError?: TErrorHandler,
+) {
+  return async (
+    req: ExpressRequest,
+    res: ExpressResponse,
+    next: NextFunction,
+  ) => {
+    return await runHandler(
+      res,
+      async () => await handler(req as Req, res, next),
+      onError,
+    );
   };
 }

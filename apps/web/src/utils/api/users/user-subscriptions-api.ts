@@ -4,7 +4,7 @@ import { Api } from "../api";
 import { TApiResponse } from "../types";
 
 export class UserSubscriptionsApi {
-  /**Starts the process to upgrade a users subscription to pro. */
+  /**Starts the process to upgrade a user's subscription to pro. */
   async upgrade() {
     const req = requestBuilder.patch().includeCredentials().build();
     const res = await fetch(
@@ -17,9 +17,9 @@ export class UserSubscriptionsApi {
     >(res);
   }
 
-  /**Cancels the users pro subscription. */
+  /**Cancels the user's pro subscription. */
   async cancel() {
-    const req = requestBuilder.del().includeCredentials().build();
+    const req = requestBuilder.delete().includeCredentials().build();
     const res = await fetch(
       Api.withEndpoint("billing/subscriptions/cancel"),
       req,
@@ -27,7 +27,7 @@ export class UserSubscriptionsApi {
     return await Api.asApiResponse<null>(res);
   }
 
-  /**Gets the status of a users subscription. */
+  /**Gets the status of a user's subscription. */
   async getStatus() {
     const req = requestBuilder.get().includeCredentials().build();
     const res = await fetch(

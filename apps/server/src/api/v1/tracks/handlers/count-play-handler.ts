@@ -1,12 +1,15 @@
 import { serverConfig } from "../../../../server-config";
 import { scrobbleService } from "../../../../container";
 import { db } from "../../../../db-config";
-import { AuthenticatedExpressRequest } from "../../../../types/express";
-import { createHandler } from "../../../../utils/create-handler";
+import { createHandler } from "@pondfm/server-utils";
 import { formatErrorMessage } from "../../../../utils/format-error-message";
+import {
+  TAuthenticatedRequest,
+  WithStreamToken,
+} from "../../../../types/request";
 
 export const countPlayHandler = createHandler(
-  async (req: AuthenticatedExpressRequest, res) => {
+  async (req: WithStreamToken<TAuthenticatedRequest>, res) => {
     const trackId = req.params.trackId;
     const session = req.session;
     const now = Date.now();

@@ -1,15 +1,13 @@
-import { JwtPayload } from "jsonwebtoken";
-import { AuthenticatedExpressRequest } from "../../types/express";
-import { createMiddleware } from "../../utils/create-handler";
-import { verifyJWT } from "../../utils/jwt";
 import { getAccessToken } from "./util/get-access-token";
 import { TSession } from "@pondfm/app-shared";
+import { createMiddleware, verifyJWT } from "@pondfm/server-utils";
+import { TAuthenticatedRequest } from "../../types/request";
 
 /**
- * @summary Creates a middleware-function that allows requests through if preventUnauthorizedAccess is false, otherwise returns 401 if an access token is not part of the request. Upon authorized access, adds a TSession-object as part of the request.
+Creates a middleware-function that allows requests through if preventUnauthorizedAccess is false, otherwise returns 401 if an access token is not part of the request. Upon authorized access, adds a TSession-object as part of the request.
  */
 export const checkAuth = (preventUnauthorizedAccess: boolean = true) =>
-  createMiddleware(async (req: AuthenticatedExpressRequest, res, next) => {
+  createMiddleware(async (req: TAuthenticatedRequest, res, next) => {
     const token = getAccessToken(req);
     if (!token && preventUnauthorizedAccess) {
       return res.status(401).end();

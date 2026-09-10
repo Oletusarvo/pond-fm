@@ -3,13 +3,18 @@ import { db } from "../../../../db-config";
 import { createNotification } from "../../../../DAL/notifications/create-notification";
 import { createTrackLike } from "../../../../DAL/posts/create-track-like";
 import { tablenames } from "../../../../tablenames";
-import { AuthenticatedExpressRequest } from "../../../../types/express";
-import { createHandler } from "../../../../utils/create-handler";
-import { tryCatch } from "../../../../utils/try-catch";
+
+import { createHandler, tryCatch } from "@pondfm/server-utils";
+import { TAuthenticatedRequest } from "../../../../types/request";
+import z from "zod";
+import { trackInteractionSchema } from "../../../../schemas/track-interaction-schema";
 
 /**Records a like on a track by id. */
 export const likeTrackHandler = createHandler(
-  async (req: AuthenticatedExpressRequest, res) => {
+  async (
+    req: TAuthenticatedRequest<z.infer<typeof trackInteractionSchema>>,
+    res,
+  ) => {
     const session = req.session;
     await createTrackLike(db, {
       trackId: req.body.trackId,

@@ -1,12 +1,17 @@
 import { deleteFollow } from "../../../../DAL/users/delete-follow";
 import { db } from "../../../../db-config";
-import { AuthenticatedExpressRequest } from "../../../../types/express";
-import { createHandler } from "../../../../utils/create-handler";
 
+import { createHandler } from "@pondfm/server-utils";
+import { TAuthenticatedRequest } from "../../../../types/request";
+
+/**Unfollows a user. */
 export const unfollowUserHandler = createHandler(
-  async (req: AuthenticatedExpressRequest, res) => {
+  async (req: TAuthenticatedRequest, res) => {
     const session = req.session;
-    await deleteFollow(db, { followerId: session.user.id, followeeId: req.params.userId as string });
+    await deleteFollow(db, {
+      followerId: session.user.id,
+      followeeId: req.params.userId as string,
+    });
     return res.end();
-  }
-)
+  },
+);

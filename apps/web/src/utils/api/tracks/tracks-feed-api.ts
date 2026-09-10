@@ -66,4 +66,20 @@ export class TracksFeedApi {
     const res = await fetch(url, req);
     return await Api.asApiResponse<TPostPublic[]>(res);
   }
+
+  /**Returns tracks liked by a user. */
+  async likedBy(userId: string, cursor?: string) {
+    const req = requestBuilder.get().includeCredentials().build();
+    const url = this.buildFeedUrl(`tracks/feed/${userId}/liked`, cursor);
+    const res = await fetch(url, req);
+    return await Api.asApiResponse<TPostPublic[]>(res);
+  }
+
+  /**Returns tracks reposted by a user. */
+  async repostedBy(userId: string, cursor?: string) {
+    const req = requestBuilder.get().includeCredentials().build();
+    const url = this.buildFeedUrl(`tracks/feed/${userId}/reposted`, cursor);
+    const res = await fetch(url, req);
+    return await Api.asApiResponse<TPostPublic[]>(res);
+  }
 }

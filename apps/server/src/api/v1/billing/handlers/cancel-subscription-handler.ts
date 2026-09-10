@@ -1,47 +1,51 @@
 import { createHandler, retry } from "@pondfm/server-utils";
-import { AuthenticatedExpressRequest } from "../../../../types/express";
+
 import { stripe } from "../../../../stripe-config";
 import { db } from "../../../../db-config";
 import { tablenames } from "../../../../tablenames";
 import { TPayment, TSubscription } from "@pondfm/app-shared";
+import { TAuthenticatedRequest } from "../../../../types/request";
 
+/**Cancels the currently authenticated users subcription. */
 export const cancelSubscriptionHandler = createHandler(
-  async (req: AuthenticatedExpressRequest, res) => {
-    const localSubscription = await db(tablenames.subscriptions)
-      .where({ user_id: req.session.user.id, plan_id: 'pro' })
-      .whereNotNull('stripe_subscription_id')
-      .first() as TSubscription;
+  async (req: TAuthenticatedRequest, res) => {
+    const localSubscription = (await db(tablenames.subscriptions)
+      .where({ user_id: req.session.user.id, plan_id: "pro" })
+      .whereNotNull("stripe_subscription_id")
+      .first()) as TSubscription;
 
     if (!localSubscription) {
       return res.status(409).json({
-        error: 'subscription:nothing-to-cancel'
+        error: "subscription:nothing-to-cancel",
       });
     }
 
-    const payment = await db(tablenames.payments)
+    const payment = (await db(tablenames.payments)
       .where({ subscription_user_id: localSubscription.user_id })
-      .select('stripe_payment_intent_id', 'refunded_at')
-      .orderBy('paid_at', 'desc')
-      .first() as Pick<TPayment, 'stripe_payment_intent_id' | 'refunded_at'>;
+      .select("stripe_payment_intent_id", "refunded_at")
+      .orderBy("paid_at", "desc")
+      .first()) as Pick<TPayment, "stripe_payment_intent_id" | "refunded_at">;
 
     if (payment.refunded_at) {
       return res.status(409).json({
-        error: 'subscription:already-refunded'
+        error: "subscription:already-refunded",
       });
     }
 
     //This handler should check if the subscription is within the 14-day refund window. If it is, cancel it outright and refund the customer. Otherwise set the subscription to cancel at the period end.
-    const subscription = await stripe.subscriptions.retrieve(localSubscription.stripe_subscription_id);
+    const subscription = await stripe.subscriptions.retrieve(
+      localSubscription.stripe_subscription_id,
+    );
     const createdAt = subscription.created * 1000;
 
-    const ageInDays =
-      (Date.now() - createdAt) / (1000 * 60 * 60 * 24);
+    const ageInDays = (Date.now() - createdAt) / (1000 * 60 * 60 * 24);
 
-    await db(tablenames.subscriptions).where({
-      user_id: localSubscription.user_id,
-    } as TSubscription)
+    await db(tablenames.subscriptions)
+      .where({
+        user_id: localSubscription.user_id,
+      } as TSubscription)
       .update({
-        status: 'canceled'
+        status: "canceled",
       } as TSubscription);
 
     try {
@@ -56,25 +60,24 @@ export const cancelSubscriptionHandler = createHandler(
         await stripe.refunds.create({
           payment_intent: payment.stripe_payment_intent_id,
         });
-      }
-      else {
+      } else {
         //Cancel at period end; do not refund.
         await stripe.subscriptions.update(subscription.id, {
           cancel_at_period_end: true,
         });
       }
-    }
-    catch (err) {
+    } catch (err) {
       //Revert the db update
-      await db(tablenames.subscriptions).where({
-        user_id: localSubscription.user_id,
-        status: 'canceled'
-      } as TSubscription)
+      await db(tablenames.subscriptions)
+        .where({
+          user_id: localSubscription.user_id,
+          status: "canceled",
+        } as TSubscription)
         .update({
-          status: 'active'
+          status: "active",
         } as TSubscription);
     }
 
     return res.end();
-  }
-)
+  },
+);

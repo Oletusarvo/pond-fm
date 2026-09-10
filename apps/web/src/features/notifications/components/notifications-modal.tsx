@@ -49,7 +49,7 @@ function ModalContent() {
 
 function Notification({ notification }) {
   const navigate = useNavigate();
-  const notificationsService = useNotificationsContext();
+  const { toggleState: toggleModalState } = useToggleContext();
   const timestamp = formatDistanceToNow(new Date(notification.created_at), {
     addSuffix: true,
   });
@@ -74,9 +74,9 @@ function Notification({ notification }) {
         : "followed you";
   return (
     <div
-      className='flex w-full items-center text-black gap-2 py-4'
+      className='flex w-full items-center text-black gap-2 py-4 cursor-pointer'
       onClick={() => {
-        notificationsService.toggleShowNotificationsModal(false);
+        toggleModalState(false);
         navigate(`/user/${notification.sender.id}`);
       }}
     >

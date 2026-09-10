@@ -1,12 +1,13 @@
 import { serviceError, TPostPublic, TTrackPublic } from "@pondfm/app-shared";
 import { requestBuilder } from "../../request-builder";
 import { Api } from "../api";
-import { TApiResponse } from "../types";
 import { TracksCreateApi } from "./tracks-create-api";
 import { TracksFeedApi } from "./tracks-feed-api";
 
 export class TracksApi {
+  /**Provides methods related to track feeds. */
   feed = new TracksFeedApi();
+  /**Provides methods related to track uploading and creation. */
   create = new TracksCreateApi();
 
   /**Requests a stream token. */
@@ -28,7 +29,7 @@ export class TracksApi {
 
   /**Deletes a track. */
   async delete(id: string) {
-    const req = requestBuilder.del().includeCredentials().build();
+    const req = requestBuilder.delete().includeCredentials().build();
     const res = await fetch(Api.withEndpoint("tracks", id), req);
     return await Api.asApiResponse<
       null,
@@ -90,7 +91,7 @@ export class TracksApi {
   /**Unlikes a track. */
   async unlike(id: string) {
     const req = requestBuilder
-      .del()
+      .delete()
       .body({ trackId: id })
       .json()
       .includeCredentials()
@@ -117,7 +118,7 @@ export class TracksApi {
   /**Unreposts a track. */
   async unrepost(id: string) {
     const req = requestBuilder
-      .del()
+      .delete()
       .body({ trackId: id })
       .json()
       .includeCredentials()

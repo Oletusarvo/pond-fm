@@ -1,11 +1,10 @@
-import { getRouter } from "../../../utils/get-router";
+import { createUploadSchema } from "@pondfm/app-shared";
 import { checkAuth } from "../../middleware/check-auth";
 import { completeUploadHandler } from "./handlers/complete-upload-handler";
 import { createUploadHandler } from "./handlers/create-upload-handler";
-import { createBodyParser } from "../../../utils/create-body-parser";
-import { createUploadSchema } from "../../../schemas/create-upload-schema";
 import { uploadFileHandler } from "./handlers/upload-file-handler";
 import { verifyUploadHeaderSignature } from "./middleware/verify-upload-header-signature";
+import { getRouter, createBodyParser } from "@pondfm/server-utils";
 
 const router = getRouter();
 

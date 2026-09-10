@@ -1,11 +1,9 @@
 import { v4 } from "uuid";
 import { serverConfig } from "../../server-config";
-import { createMiddleware } from "../../utils/create-handler";
-import { createJWT } from "../../utils/jwt";
+import { createJWT, createMiddleware } from "@pondfm/server-utils";
 
 /**
- * @summary Generates a session cookie if one doesn't exist.
- * @tags Cookies
+ * Generates a session cookie if one doesn't exist.
  */
 export const includeSessionCookie = createMiddleware(async (req, res, next) => {
   const sessionCookie = req.cookies[serverConfig.anonymousSessionCookieName];

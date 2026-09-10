@@ -1,6 +1,6 @@
-import { serverConfig } from '../../../../server-config';
-import { createMiddleware } from '../../../../utils/create-handler';
-import { verifyJWT } from '../../../../utils/jwt';
+import { createMiddleware, verifyJWT } from "@pondfm/server-utils";
+import { serverConfig } from "../../../../server-config";
+import { TRequest, WithStreamToken } from "../../../../types/request";
 
 /**Checks a stream token is present as a cookie and verifies it.
  * It being for the track it refers to is left for other middleware or handlers. */
@@ -15,6 +15,6 @@ export const verifyStreamToken = createMiddleware(async (req, res, next) => {
   if (now >= tokenData.expires) {
     return res.status(401).end();
   }
-  req.streamToken = tokenData;
+  (req as WithStreamToken<TRequest>).streamToken = tokenData;
   next();
 });

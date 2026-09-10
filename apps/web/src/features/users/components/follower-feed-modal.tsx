@@ -5,6 +5,7 @@ import { useUserContext } from "../providers/user-proivder";
 import { FollowerItem } from "./follower-item";
 import { api } from "../../../utils/api/api";
 
+/**Renders the modal displaying a users followers. */
 export function FollowerFeedModal() {
   const userService = useUserContext();
   const navigate = useNavigate();

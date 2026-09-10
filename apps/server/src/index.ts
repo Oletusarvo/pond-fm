@@ -9,7 +9,7 @@ import { db } from "./db-config";
 import { signCommand } from "@pondfm/crypto";
 import { retry } from "@pondfm/server-utils";
 import { withTrack } from "./DAL/posts/with/with-track";
-import { stripeWebhookHandler } from "./api/v1/billing/webhooks/stripe-webhook-handler";
+import { stripeWebhookHandler } from "./api/v1/billing/webhooks/stripe/stripe-webhook-handler";
 import { verifyStripeSignature } from "./api/v1/billing/middleware/verify-stripe-signature";
 import { fileDeleter } from "./features/file-deleter/file-deleter";
 

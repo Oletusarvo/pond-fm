@@ -1,12 +1,10 @@
-import { Button, LoaderButton } from './button';
+import { Button, LoaderButton } from "./button";
 
-type FormProps = React.ComponentProps<'form'>;
+type FormProps = React.ComponentProps<"form">;
 
 export function Form({ children, ...props }: FormProps) {
   return (
-    <form
-      {...props}
-      className='flex flex-col w-full gap-4'>
+    <form {...props} className='flex flex-col w-full gap-4'>
       {children}
     </form>
   );
@@ -19,7 +17,7 @@ type FormGroupProps = React.PropsWithChildren & {
 Form.Group = function ({ children, label }: FormGroupProps) {
   return (
     <div className='flex flex-col w-full'>
-      <label className='text-sm text-slate-500 ml-1'>{label}</label>
+      <label className='text-xs text-slate-500 ml-1'>{label}</label>
       {children}
     </div>
   );
@@ -36,8 +34,8 @@ type FormControlsProps = {
 Form.Controls = function ({
   loading,
   disabled,
-  cancelText = 'Cancel',
-  acceptText = 'Ok',
+  cancelText = "Cancel",
+  acceptText = "Ok",
   onCancel,
 }: FormControlsProps) {
   return (
@@ -49,7 +47,8 @@ Form.Controls = function ({
         paddingEnabled
         type='button'
         variant='outlined'
-        fullWidth>
+        fullWidth
+      >
         {cancelText}
       </Button>
       <LoaderButton
@@ -59,7 +58,8 @@ Form.Controls = function ({
         paddingEnabled
         type='submit'
         variant='contained'
-        fullWidth>
+        fullWidth
+      >
         {acceptText}
       </LoaderButton>
     </div>

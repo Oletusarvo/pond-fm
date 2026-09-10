@@ -1,6 +1,6 @@
+import { getRouter, createBodyParser } from "@pondfm/server-utils";
 import { updateUserSchema } from "../../../schemas/update-user-schema";
-import { createBodyParser } from "../../../utils/create-body-parser";
-import { getRouter } from "../../../utils/get-router";
+
 import { checkAuth } from "../../middleware/check-auth";
 import { followUserHandler } from "./handlers/follow-user-handler";
 import { getNotificationsHandler } from "./handlers/get-notifications-handler";

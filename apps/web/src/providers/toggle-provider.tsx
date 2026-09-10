@@ -5,29 +5,39 @@ import { setupContext } from "../utils/setup-context";
 
 type ToggleProviderProps = React.PropsWithChildren & {
   initialState?: boolean;
-}
+};
 
-const [ToggleContext, useToggleContext] = setupContext<{
-  isOn: boolean;
-  toggleState: (state: boolean) => void;
-}>({ name: 'ToggleContext' });
+export const [
+  /**Provides functionality for toggling things on and off. */
+  ToggleProvider,
+  /**Accesses the methods of a ToggleContext. */
+  useToggleContext,
+] = createProvider({
+  contextName: "ToggleContext",
+  hook: ({ initialState }: ToggleProviderProps) => {
+    const [isOn, setIsOn] = useState(initialState || false);
+    const toggleState = useCallback(
+      (state: boolean) => setIsOn(state),
+      [setIsOn],
+    );
+    return {
+      isOn,
+      toggleState,
+    };
+  },
+  extend: (hook) => {
+    return {
+      Trigger: function ({ children }: React.PropsWithChildren) {
+        const { isOn, toggleState } = hook();
+        return (
+          <PassProps onClick={() => toggleState(!isOn)}>{children}</PassProps>
+        );
+      },
 
-function ToggleProvider({ children, initialState }: ToggleProviderProps) {
-  const [isOn, setIsOn] = useState(initialState || false);
-  const toggleState = useCallback((state: boolean) => setIsOn(state), [setIsOn]);
-  return (
-    <ToggleContext.Provider value={{ isOn, toggleState }}>{children}</ToggleContext.Provider>
-  );
-}
-
-ToggleProvider.Trigger = function ({ children }: React.PropsWithChildren) {
-  const { isOn, toggleState } = useToggleContext();
-  return <PassProps onClick={() => toggleState(!isOn)}>{children}</PassProps>
-}
-
-ToggleProvider.Target = function ({ children }: React.PropsWithChildren) {
-  const { isOn } = useToggleContext();
-  return isOn ? children : null;
-}
-
-export { ToggleProvider, useToggleContext };
+      Target: function ({ children }: React.PropsWithChildren) {
+        const { isOn } = hook();
+        return isOn ? children : null;
+      },
+    };
+  },
+});

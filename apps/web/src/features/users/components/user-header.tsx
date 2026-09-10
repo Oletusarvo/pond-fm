@@ -5,7 +5,7 @@ import { useQueryClient } from "@tanstack/react-query";
 import { useUserContext } from "../../users/providers/user-proivder";
 import { Music, User, UserMinus, UserPlus } from "lucide-react";
 
-/**@todo This should be moved under features/users/components */
+/**Renders the header at the top of a user's profile screen. */
 export function UserHeader() {
   const { user, ...userService } = useUserContext();
   const [followedByMe, setFollowedByMe] = useState(user.followed_by_me);
@@ -47,18 +47,21 @@ export function UserHeader() {
               {user.username}
             </h2>
           </div>
-          <Button
-            color={followedByMe ? "danger" : "primary"}
-            variant='ghost'
-            onClick={onFollowButtonClicked}
-            icon={FollowButtonIcon}
-          >
-            <span className='text-xs'>
-              {followedByMe ? "Unfollow" : "Follow"}
-            </span>
-          </Button>
         </div>
-
+        <Button
+          color={followedByMe ? "danger" : "primary"}
+          variant='ghost'
+          onClick={onFollowButtonClicked}
+          icon={FollowButtonIcon}
+        >
+          <span className='text-xs'>
+            {followedByMe ? "Unfollow" : "Follow"}
+          </span>
+        </Button>
+      </div>
+      <p className='text-sm text-slate-500'>{user.bio || "No bio."}</p>
+      {/**Bottom controls */}
+      <div className='flex w-full items-center justify-between'>
         <div className='flex items-center sm:gap-4 xs:gap-2'>
           <Button
             variant='ghost'
@@ -79,7 +82,6 @@ export function UserHeader() {
           </Button>
         </div>
       </div>
-      <p className='text-sm text-slate-500'>{user.bio || "No bio."}</p>
     </div>
   );
 }

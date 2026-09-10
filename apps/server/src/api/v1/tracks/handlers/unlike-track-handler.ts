@@ -1,11 +1,16 @@
 import { postService } from "../../../../container";
 import { db } from "../../../../db-config";
-import { AuthenticatedExpressRequest } from "../../../../types/express";
-import { createHandler } from "../../../../utils/create-handler";
+import { createHandler } from "@pondfm/server-utils";
+import { TAuthenticatedRequest } from "../../../../types/request";
+import z from "zod";
+import { trackInteractionSchema } from "../../../../schemas/track-interaction-schema";
 
 /**Removes a like from a track. */
 export const unlikeTrackHandler = createHandler(
-  async (req: AuthenticatedExpressRequest, res) => {
+  async (
+    req: TAuthenticatedRequest<z.infer<typeof trackInteractionSchema>>,
+    res,
+  ) => {
     const session = req.session;
     await postService.unlikeTrack(db, {
       user_id: session.user.id,

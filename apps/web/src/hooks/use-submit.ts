@@ -6,6 +6,7 @@ export type UseSubmitProps = Omit<Parameters<typeof useAction>[0], "fn"> & {
   ) => ReturnType<Parameters<typeof useAction>[0]["fn"]>;
 };
 
+/**Provides functionality for submitting forms. */
 export function useSubmit({ fetchFn, ...props }: UseSubmitProps) {
   const { action, status, loading } = useAction({
     ...props,

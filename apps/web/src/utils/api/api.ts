@@ -10,10 +10,12 @@ export class Api {
     ? "http://localhost:3002/api/v1"
     : "https://pond-fm-api.onrender.com/api/v1";
 
+  /**Returns a joined url-string of the api-endpoint with the provided string args appended after it.  */
   static withEndpoint(...args: string[]) {
     return joinStrings([this.endpoint, ...args], "/");
   }
 
+  /**Converts a Response into a TApiResponse. */
   static async asApiResponse<T = unknown, E = unknown>(
     res: Response,
   ): Promise<TApiResponse<T, E>> {
@@ -38,4 +40,5 @@ export class Api {
   tracks = new TracksApi();
 }
 
+/**Provides methods for interacting with the app back-end. */
 export const api = new Api();

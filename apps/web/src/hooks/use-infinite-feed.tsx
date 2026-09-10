@@ -9,6 +9,7 @@ export type UseInfiniteFeedProps = Omit<
   queryFn: (cursor?: string) => Promise<TApiResponse>;
 };
 
+/**Provides functionality for building infinite feeds. Uses tanstack useInfiniteQuery; abstracting away most of its setup. */
 export function useInfiniteFeed({ queryFn, ...props }: UseInfiniteFeedProps) {
   const { data, fetchNextPage, ...query } = useInfiniteQuery({
     ...props,

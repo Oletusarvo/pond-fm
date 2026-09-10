@@ -10,18 +10,13 @@ export function RepostModal() {
   const { post, toggleRepost } = usePostContext();
   const postActions = usePostActions({ trackId: post.track.id });
   return (
-    <Modal
-      title='Repost Track'
-      onClose={() => toggleRepost(false)}>
+    <Modal title='Repost Track' onClose={() => toggleRepost(false)}>
       <div className='flex flex-col w-full gap-4 items-center text-black'>
-        <Repeat
-          color='var(--color-primary)'
-          size='3rem'
-        />
+        <Repeat color='var(--color-primary)' size='3rem' />
         <span>
-          You are about to repost <strong>{post?.track.title}</strong> by{' '}
-          <strong>{post?.track.author.username}</strong>. Reposts cannot currently be undone. Are
-          you sure?
+          You are about to repost <strong>{post?.track.title}</strong> by{" "}
+          <strong>{post?.track.author.username}</strong>. Reposts are a
+          commitment and cannot be undone. Are you sure you wish to continue?
         </span>
 
         <div className='flex gap-4 w-full'>
@@ -30,7 +25,8 @@ export function RepostModal() {
             paddingEnabled
             onClick={() => toggleRepost(false)}
             variant='outlined'
-            fullWidth>
+            fullWidth
+          >
             Cancel
           </Button>
           <Button
@@ -41,12 +37,13 @@ export function RepostModal() {
               toggleRepost(false);
             }}
             variant='contained'
-            fullWidth icon={Repeat}>
-
+            fullWidth
+            icon={Repeat}
+          >
             Repost
           </Button>
         </div>
       </div>
     </Modal>
-  )
+  );
 }

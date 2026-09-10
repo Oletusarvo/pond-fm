@@ -18,6 +18,7 @@ class RequestBuilder {
     return this;
   }
 
+  /**Sets the body to a FormData-object. */
   formData(payload: FormData) {
     this.query.body = payload;
     return this;
@@ -25,33 +26,34 @@ class RequestBuilder {
 
   /**Sets the credentials-field of the request to "include". */
   includeCredentials() {
-    this.query.credentials = 'include';
+    this.query.credentials = "include";
     return this;
   }
 
   /**Sets the method to GET. */
   get() {
-    this.query.method = 'GET';
+    this.query.method = "GET";
     return this;
   }
   /**Sets the method to POST. */
   post() {
-    this.query.method = 'POST';
+    this.query.method = "POST";
     return this;
   }
   /**Sets the method to PUT. */
   put() {
-    this.query.method = 'PUT';
+    this.query.method = "PUT";
     return this;
   }
 
+  /**Sets the method to PATCH. */
   patch() {
-    this.query.method = 'PATCH';
+    this.query.method = "PATCH";
     return this;
   }
   /**Sets the method to DELETE. */
-  del() {
-    this.query.method = 'DELETE';
+  delete() {
+    this.query.method = "DELETE";
     return this;
   }
 
@@ -61,46 +63,50 @@ class RequestBuilder {
       ...this.query,
       headers: {
         ...this.query.headers,
-        'Content-Type': 'application/json',
+        "Content-Type": "application/json",
       },
     };
     return this;
   }
 
+  /**Sets the Authorization-header as a Bearer <token> value. */
   authorization(token: string) {
     this.query = {
       ...this.query,
       headers: {
         ...this.query.headers,
-        'Authorization': `Bearer ${token}`
-      }
-    }
+        Authorization: `Bearer ${token}`,
+      },
+    };
     return this;
   }
 
+  /**Adds a file as the body of the request. Also sets the Content-Type and Content-Length headers. */
   file(f: File) {
     this.query = {
       ...this.query,
       headers: {
         ...this.query.headers,
-        'Content-Type': f.type,
-        'Content-Length': f.size.toString(),
+        "Content-Type": f.type,
+        "Content-Length": f.size.toString(),
       },
       body: f,
-    }
+    };
     return this;
   }
 
-  noStore(){
+  /**Sets the Cache-Control header to no-store. */
+  noStore() {
     this.query = {
       ...this.query,
       headers: {
         ...this.query.headers,
-        'Cache-Control': 'no-store',
-      }
-    }
+        "Cache-Control": "no-store",
+      },
+    };
     return this;
   }
 }
 
+/**Utility-object for constructing http requests. */
 export const requestBuilder = new RequestBuilder();

@@ -1,9 +1,15 @@
 import { tablenames } from "../../tablenames";
 import { DBContext } from "../../types/db-context";
 
-export async function createAuthToken(ctx: DBContext, config: {
-  code: string; userId: string; expiresAt: Date;
-}) {
+/**Creates a single-use authorization token for logins. */
+export async function createAuthToken(
+  ctx: DBContext,
+  config: {
+    code: string;
+    userId: string;
+    expiresAt: Date;
+  },
+) {
   await ctx(tablenames.authTokens)
     .insert({
       code: config.code,
@@ -11,6 +17,6 @@ export async function createAuthToken(ctx: DBContext, config: {
       expires_at: config.expiresAt,
       is_used: false,
     })
-    .onConflict(['user_id'])
+    .onConflict(["user_id"])
     .merge();
 }

@@ -1,11 +1,11 @@
-import { AuthenticatedExpressRequest } from "../../../../types/express";
-import { createHandler } from "../../../../utils/create-handler";
+import { createHandler } from "@pondfm/server-utils";
 import { createWriteStream } from "fs";
 import path from "path";
+import { TAuthenticatedRequest } from "../../../../types/request";
 
 /**@todo set the upload token to used. */
 export const uploadFileHandler = createHandler(
-  async (req: AuthenticatedExpressRequest, res) => {
+  async (req: TAuthenticatedRequest, res) => {
     const key = req.params.key as string[];
     const file = createWriteStream(path.join(process.cwd(), key.join("/")), {
       highWaterMark: 64,

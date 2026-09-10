@@ -11,6 +11,10 @@ import { useUpgradeSubscription } from "../../billing/hooks/use-upgrade-subscrip
 import { useCancelSubscription } from "../../billing/hooks/use-cancel-subscription";
 import { ConfirmAction } from "../../../components/confirm-action";
 import { api } from "../../../utils/api/api";
+import { TUser, TUserRestricted } from "@pondfm/app-shared";
+import { useSubmit } from "../../../hooks/use-submit";
+import { Form } from "../../../components/form";
+import { useNavigate } from "react-router-dom";
 
 type Plan = "free" | "pro";
 
@@ -49,20 +53,16 @@ export function SettingsModal({
   onCancelSubscription,
 }: SettingsModalProps) {
   const { toggleState } = useToggleContext();
-  const authService = useAuthContext();
-  const { session } = authService;
-  const username = session?.user.username || "";
-  const [usernameDraft, setUsernameDraft] = useState(username);
-  const usernameDirty =
-    usernameDraft.trim().length > 0 && usernameDraft.trim() !== username;
   const onClose = () => toggleState(false);
 
   return (
     <Modal title='Settings' onClose={onClose}>
       <div className='flex flex-col gap-6'>
-        <UsernameSection />
+        <DetailsSection />
         <Divider />
         <PlanSection />
+        <Divider />
+        <LogoutSection />
       </div>
     </Modal>
   );
@@ -70,7 +70,7 @@ export function SettingsModal({
 
 function SectionLabel({ children }: React.PropsWithChildren) {
   return (
-    <h4 className='text-xs font-semibold uppercase tracking-wide text-slate-400'>
+    <h4 className='text-xs font-semibold uppercase tracking-wide text-slate-400 ml-1'>
       {children}
     </h4>
   );
@@ -94,54 +94,71 @@ function Divider() {
   );
 }
 
-function UsernameSection() {
-  const authService = useAuthContext();
-  const [username, setUsername] = useState(
-    () => authService.session?.user.username || "",
-  );
-  const {
-    action: saveUsername,
-    loading,
-    status,
-  } = useAction({
-    fn: async () => {
-      return await api.users.update({ username });
+function DetailsSection() {
+  const { session, refreshSession } = useAuthContext();
+  const user = session?.user;
+  const [details, setDetails] = useState<
+    Partial<Pick<TUser, "username" | "bio">>
+  >({ username: user?.username, bio: user?.bio });
+  const [detailsDirty, setDetailsDirty] = useState(false);
+
+  const { submit, status, loading } = useSubmit({
+    fetchFn: async (payload) => {
+      const data = Object.fromEntries(payload) as typeof details;
+      return await api.users.update(data);
     },
-    onSuccess: () => {
-      authService.refreshSession({
-        user: {
-          username,
-        },
+    onSuccess: async () => {
+      setDetailsDirty(false);
+      await refreshSession({
+        user: { username: details.username, bio: details.bio },
       });
     },
   });
 
+  const updateDetails = (e: any) => {
+    setDetails((prev) => {
+      return {
+        ...prev,
+        [e.target.name]: e.target.value,
+      };
+    });
+    setDetailsDirty(true);
+  };
+
   return (
-    <section className='flex flex-col gap-2'>
-      <SectionLabel>Username</SectionLabel>
-      <div className='flex items-center gap-2'>
-        <Input
-          defaultValue={username}
-          maxLength={30}
-          placeholder='Choose a username'
-          onChange={(e) => setUsername(e.target.value)}
-        />
+    <section className='flex flex-col w-full gap-2'>
+      <SectionLabel>Profile</SectionLabel>
+      <form className='flex flex-col gap-2 w-full items-end' onSubmit={submit}>
+        <Form.Group label='Username'>
+          <Input
+            name='username'
+            defaultValue={user?.username}
+            maxLength={30}
+            placeholder='Choose a username'
+            onChange={updateDetails}
+          />
+        </Form.Group>
+        <Form.Group label='Bio'>
+          <textarea
+            className='w-full resize-none text-sm text-slate-500 outline-none border-slate-200 border rounded-md px-4 py-2'
+            placeholder='Type your bio...'
+            name='bio'
+            onChange={updateDetails}
+            defaultValue={user.bio}
+          />
+        </Form.Group>
+
         <LoaderButton
+          type='submit'
+          variant='text'
           loading={loading}
-          variant='contained'
-          disabled={loading || status === "success"}
-          onClick={saveUsername}
-          paddingEnabled
-          shape='rounded'
+          disabled={loading || !detailsDirty || status === "success"}
         >
-          Save
+          {status === "success" && !detailsDirty
+            ? "Profile saved!"
+            : "Save Profile"}
         </LoaderButton>
-      </div>
-      {status === "success" && (
-        <p className='flex items-center gap-1 text-sm text-teal-600'>
-          <Check size={14} /> Username updated
-        </p>
-      )}
+      </form>
     </section>
   );
 }
@@ -288,6 +305,36 @@ function PlanSection() {
           </ConfirmAction>
         )}
       </div>
+    </section>
+  );
+}
+
+function LogoutSection() {
+  const authService = useAuthContext();
+  const navigate = useNavigate();
+
+  const {
+    action: logout,
+    status,
+    loading,
+  } = useAction({
+    fn: async () => {
+      return await authService.logout();
+    },
+    onSuccess: () => {
+      navigate("/");
+    },
+  });
+  return (
+    <section className='flex flex-col gap-2 w-full items-end'>
+      <LoaderButton
+        variant='text'
+        onClick={logout}
+        loading={loading}
+        disabled={loading || status === "success"}
+      >
+        Logout
+      </LoaderButton>
     </section>
   );
 }

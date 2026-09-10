@@ -1,5 +1,5 @@
-import { TPostPublic } from '@pondfm/app-shared';
-import { TPlayback } from '../types/playback';
+import { TPostPublic } from "@pondfm/app-shared";
+import { TPlayback } from "../types/playback";
 
 /**Converts a post to a playback-object. */
 export function postToPlayback(post: TPostPublic): TPlayback {

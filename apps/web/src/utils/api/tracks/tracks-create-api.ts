@@ -1,21 +1,10 @@
-import { serviceError } from "@pondfm/app-shared";
+import { serviceError, TCreateUpload } from "@pondfm/app-shared";
 import { requestBuilder } from "../../request-builder";
 import { Api } from "../api";
 
 export class TracksCreateApi {
   /**Requests an upload url. */
-  async requestUploadUrl(payload: {
-    upload: {
-      filename: string;
-      mimeType: string;
-      size: number;
-    };
-    track: {
-      title: string;
-      moods: string[];
-      genre: string;
-    };
-  }) {
+  async requestUploadUrl(payload: TCreateUpload) {
     const req = requestBuilder
       .body(payload)
       .json()

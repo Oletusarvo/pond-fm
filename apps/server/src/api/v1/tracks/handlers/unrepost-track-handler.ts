@@ -1,10 +1,15 @@
 import { postService } from "../../../../container";
 import { db } from "../../../../db-config";
-import { AuthenticatedExpressRequest } from "../../../../types/express";
-import { createHandler } from "../../../../utils/create-handler";
+import { createHandler } from "@pondfm/server-utils";
+import { TAuthenticatedRequest } from "../../../../types/request";
+import z from "zod";
+import { trackInteractionSchema } from "../../../../schemas/track-interaction-schema";
 
 export const unrepostTrackHandler = createHandler(
-  async (req: AuthenticatedExpressRequest, res) => {
+  async (
+    req: TAuthenticatedRequest<z.infer<typeof trackInteractionSchema>>,
+    res,
+  ) => {
     const session = req.session;
     await postService.unrepostTrack(db, {
       editor: { id: session.user.id },

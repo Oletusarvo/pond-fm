@@ -1,7 +1,8 @@
-import { serverConfig } from '../../../server-config';
-import { ExpressRequest } from '../../../types/express';
+import { serverConfig } from "../../../server-config";
+import { TRequest } from "../../../types/request";
 
-export function getAccessToken(req: ExpressRequest) {
+/**Retrieves the access token with the name defined in serverConfig.accessTokenName from the request cookies. */
+export function getAccessToken(req: TRequest) {
   //First try the cookie.
   let token = req.cookies[serverConfig.accessTokenName];
   return token;

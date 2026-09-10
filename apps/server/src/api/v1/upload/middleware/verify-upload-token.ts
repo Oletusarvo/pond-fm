@@ -1,16 +1,27 @@
-import { AuthenticatedExpressRequest, ExpressRequest } from "../../../../types/express";
-import { createMiddleware } from "../../../../utils/create-handler";
-import { verifyJWT } from "../../../../utils/jwt";
-import { tryCatch } from "../../../../utils/try-catch";
+import {
+  createMiddleware,
+  ExpressRequest,
+  tryCatch,
+  verifyJWT,
+} from "@pondfm/server-utils";
+import {
+  TAuthenticatedRequest,
+  WithUploadToken,
+} from "../../../../types/request";
 
 export const verifyUploadToken = createMiddleware(
-  async (req: AuthenticatedExpressRequest, res, next) => {
-    const token = req.headers.authorization?.split(' ').at(1);
+  async (req: WithUploadToken<TAuthenticatedRequest>, res, next) => {
+    const token = req.headers.authorization?.split(" ").at(1);
 
     if (!token) {
       return res.status(401).end();
     }
-    const [payload, err] = await tryCatch(() => verifyJWT(token) as ExpressRequest['uploadToken']);
+    const [payload, err] = await tryCatch(
+      () =>
+        verifyJWT(
+          token,
+        ) as WithUploadToken<TAuthenticatedRequest>["uploadToken"],
+    );
 
     if (err) {
       return res.status(401).end();
@@ -21,5 +32,5 @@ export const verifyUploadToken = createMiddleware(
     }
     req.uploadToken = payload;
     next();
-  }
-)
+  },
+);

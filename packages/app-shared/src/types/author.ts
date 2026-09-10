@@ -1,4 +1,4 @@
 import z from "zod";
-import type { TUser } from "./user.js";
+import type { authorSchema } from "../schemas/author-schema.js";
 
-export type TAuthor = Pick<TUser, "id" | "username">;
+export type TAuthor = z.infer<typeof authorSchema>;

@@ -4,7 +4,7 @@ import { Api } from "../api";
 import { TApiResponse } from "../types";
 
 export class UserNotificationsApi {
-  /**Gets the authenticated users notifications. */
+  /**Gets the authenticated user's notifications. */
   async get(cursor?: string) {
     const req = requestBuilder.get().includeCredentials().build();
     const url = new URL(Api.withEndpoint(`users/notifications`));
@@ -18,7 +18,7 @@ export class UserNotificationsApi {
     >(res);
   }
 
-  /**Marks the authenticated users notifications as seen. */
+  /**Marks the authenticated user's notifications as seen. */
   async markAsSeen() {
     const req = requestBuilder.put().json().includeCredentials().build();
     const res = await fetch(

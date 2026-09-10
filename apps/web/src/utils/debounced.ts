@@ -8,7 +8,9 @@ export const debounced = {
   }, 700),
 };
 
+/**Contains useful methods called from within the cancelPrevious-method. */
 export const cancelable = {
+  /**Toggles a like on a track. */
   toggleTrackLike: cancelPrevious(async (trackId: string, isLiked: boolean) => {
     return isLiked ? api.tracks.unlike(trackId) : api.tracks.like(trackId);
   }, 1000),

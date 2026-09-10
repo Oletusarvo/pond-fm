@@ -6,3 +6,4 @@ export * from "./track-schema.js";
 export * from "./upload-folder-schema.js";
 export * from "./upload-schema.js";
 export * from "./user-schema.js";
+export * from "./create-upload-schema.js";

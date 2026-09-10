@@ -2,7 +2,7 @@ import { serverConfig } from "../../../../server-config";
 import { postService } from "../../../../container";
 import { db } from "../../../../db-config";
 import { viewnames } from "../../../../tablenames";
-import { createHandler } from "../../../../utils/create-handler";
+import { createHandler } from "@pondfm/server-utils";
 import { urlSigner } from "../../../../features/url-signer/url-signer";
 import { TTrack } from "@pondfm/app-shared";
 

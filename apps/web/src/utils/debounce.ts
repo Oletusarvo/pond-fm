@@ -1,3 +1,4 @@
+/**Delays the execution of a function. */
 export function debounce<TArgs extends any[], TRet>(
   fn: (...args: TArgs) => TRet | Promise<TRet>,
   timeout: number,

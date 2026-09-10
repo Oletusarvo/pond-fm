@@ -1,20 +1,38 @@
-import { Context, ReactNode } from 'react';
-import { setupContext } from './setup-context';
+import { setupContext } from "./setup-context";
 
-type CreateProviderProps<THookReturn, THookProps = void> = {
+type CreateProviderProps<
+  THookReturn,
+  THookProps = void,
+  TExtendProps extends Record<string, React.FC<any>> | void = void,
+> = {
+  /**A function containing the logic of the provider. */
   hook: (props: THookProps) => THookReturn & { ChildComponent?: React.FC<any> };
+  /**A component that should be included among the children of the context provider. */
   childComponent?: React.FC<THookReturn>;
-  extend?: (Ctx: React.FC<THookProps>, hook: (props: THookProps) => THookReturn) => void,
+  /**A function returning an object used to extend the context provider. */
+  extend?: (hook: () => THookReturn) => TExtendProps;
+  /**The name of the context. Used in error messages to identify it. */
   contextName: string;
 };
-export function createProvider<THookReturn, THookProps>({
+
+/**Creates a context provider and a hook to access it. */
+export function createProvider<
+  THookReturn,
+  THookProps,
+  TExtendProps extends Record<string, React.FC<any>>,
+>({
   hook,
   contextName,
   extend,
   childComponent: ChildComponent,
-}: CreateProviderProps<THookReturn, THookProps>) {
-  const [Context, useContext] = setupContext<THookReturn>({ name: contextName });
-  function Provider({ children, ...props }: React.PropsWithChildren & THookProps) {
+}: CreateProviderProps<THookReturn, THookProps, TExtendProps>) {
+  const [Context, useContext] = setupContext<THookReturn>({
+    name: contextName,
+  });
+  const Provider = ({
+    children,
+    ...props
+  }: React.PropsWithChildren & THookProps) => {
     const value = hook({ ...(props as THookProps) });
 
     return (
@@ -23,7 +41,13 @@ export function createProvider<THookReturn, THookProps>({
         {ChildComponent ? <ChildComponent {...value} /> : null}
       </Context.Provider>
     );
+  };
+  const extendProps = extend?.(useContext);
+  if (extendProps) {
+    Object.assign(Provider, extendProps);
   }
-  extend?.(Provider, hook);
-  return [Provider, useContext] as const;
+  return [
+    Provider as React.FC<THookProps & React.PropsWithChildren> & TExtendProps,
+    useContext,
+  ] as const;
 }

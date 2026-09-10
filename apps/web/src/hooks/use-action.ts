@@ -21,6 +21,7 @@ type UseActionProps<T, E, ArgsT extends any[]> = {
   onFinished?: () => Promise<void> | void;
 };
 
+/**Provides functionality for calling an asynchronous method while keeping track of the state of the call. */
 export function useAction<T = unknown, E = unknown, ArgsT extends any[] = []>({
   fn,
   onSuccess,

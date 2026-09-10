@@ -7,7 +7,12 @@ import { FollowerFeedModal } from "../components/follower-feed-modal";
 import { FollowingFeedModal } from "../components/following-feed-modal";
 import { api } from "../../../utils/api/api";
 
-export const [UserProvider, useUserContext] = createProvider({
+export const [
+  /**Provides functionality for the UserScreen.*/
+  UserProvider,
+  /**Accesses the functionality provided by a UserProvider. */
+  useUserContext,
+] = createProvider({
   contextName: "UserContext",
   hook: () => {
     const { id } = useParams();

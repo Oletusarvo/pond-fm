@@ -1,10 +1,11 @@
 import { db } from "../../../../db-config";
 import { tablenames } from "../../../../tablenames";
-import { AuthenticatedExpressRequest } from "../../../../types/express";
-import { createHandler } from "../../../../utils/create-handler";
+
+import { createHandler } from "@pondfm/server-utils";
+import { TAuthenticatedRequest } from "../../../../types/request";
 
 export const deleteTrackHandler = createHandler(
-  async (req: AuthenticatedExpressRequest, res) => {
+  async (req: TAuthenticatedRequest, res) => {
     const session = req.session;
     const rowsAffected = await db(tablenames.uploadFolders)
       .where({

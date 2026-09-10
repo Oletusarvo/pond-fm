@@ -1,5 +1,5 @@
-import { ExpressRequest } from '../types/express';
-import { decodeCursor } from './cursor';
+import { ExpressRequest } from "@pondfm/server-utils";
+import { decodeCursor } from "./cursor";
 
 export function getCursor(req: ExpressRequest) {
   const { cursor: encodedCursor } = req.query as { cursor: string };
