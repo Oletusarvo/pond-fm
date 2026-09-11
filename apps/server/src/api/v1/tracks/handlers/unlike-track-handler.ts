@@ -1,4 +1,4 @@
-import { postService } from "../../../../container";
+import { services } from "../../../../container";
 import { db } from "../../../../db-config";
 import { createHandler } from "@pondfm/server-utils";
 import { TAuthenticatedRequest } from "../../../../types/request";
@@ -12,7 +12,7 @@ export const unlikeTrackHandler = createHandler(
     res,
   ) => {
     const session = req.session;
-    await postService.unlikeTrack(db, {
+    await services.posts.unlikeTrack(db, {
       user_id: session.user.id,
       track_id: req.body.trackId,
     });

@@ -1,4 +1,4 @@
-import { postService } from "../../../../container";
+import { services } from "../../../../container";
 import { db } from "../../../../db-config";
 import { createHandler } from "@pondfm/server-utils";
 import { TAuthenticatedRequest } from "../../../../types/request";
@@ -11,7 +11,7 @@ export const unrepostTrackHandler = createHandler(
     res,
   ) => {
     const session = req.session;
-    await postService.unrepostTrack(db, {
+    await services.posts.unrepostTrack(db, {
       editor: { id: session.user.id },
       track: { id: req.body.trackId },
     });

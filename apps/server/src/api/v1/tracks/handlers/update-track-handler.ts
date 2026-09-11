@@ -1,5 +1,5 @@
 import z from "zod";
-import { postService } from "../../../../container";
+import { services } from "../../../../container";
 import { db } from "../../../../db-config";
 
 import { createHandler } from "@pondfm/server-utils";
@@ -14,7 +14,7 @@ export const updateTrackHandler = createHandler(
     const session = req.session;
     const track = req.body;
     await db.transaction(async (trx) => {
-      await postService.updateTrack(trx, {
+      await services.posts.updateTrack(trx, {
         track: {
           ...track,
           id: req.params.trackId as string,

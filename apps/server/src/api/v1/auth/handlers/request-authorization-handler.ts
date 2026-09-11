@@ -1,7 +1,7 @@
 import { TUser, userSchema } from "@pondfm/app-shared";
-import { authService, userService } from "../../../../container";
+import { services } from "../../../../container";
 import { db } from "../../../../db-config";
-import { emailService } from "../../../../services/email-service";
+import { emailService } from "../../../../business-services/email-service";
 
 import { serviceError } from "../../../../utils/service-error";
 import { createHandler } from "@pondfm/server-utils";
@@ -15,7 +15,7 @@ export const requestAuthorizationHandler = createHandler(
   async (req: TRequest<z.infer<typeof schema>>, res) => {
     const { email } = req.body;
     await db.transaction(async (trx) => {
-      const user = await userService.createIfNotExists(trx, { email });
+      const user = await services.users.createIfNotExists(trx, { email });
       if (user.success == false) {
         return res.status(409).json({
           error: serviceError.auth.userQuotaExceeded,
@@ -23,7 +23,7 @@ export const requestAuthorizationHandler = createHandler(
       }
 
       //Create an auth token and a database entry with a temporary code.
-      const code = await authService.createAuthorizationCode(trx, {
+      const code = await services.auth.createAuthorizationCode(trx, {
         userId: user.data.id,
       });
       if (process.env.AUTH_ENVIRONMENT === "production") {

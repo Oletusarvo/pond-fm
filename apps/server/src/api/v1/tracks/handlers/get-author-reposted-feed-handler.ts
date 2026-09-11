@@ -1,17 +1,13 @@
 import { createHandler } from "@pondfm/server-utils";
 import { TAuthenticatedRequest } from "../../../../types/request";
-import { tablenames, viewnames } from "../../../../tablenames";
-import { getPostQuery } from "../../../../DAL/posts/get-post-query";
 import { db } from "../../../../db-config";
 import { selectPost } from "../../../../DAL/posts/select/select-post";
 import { selectTrack } from "../../../../DAL/posts/select/select-track";
 import { fromDistinctPost } from "../../../../DAL/posts/from/from-distinct-post";
-import { fromUndistinctPost } from "../../../../DAL/posts/from/from-undistinct-post";
 import { resolveQueryWithCursor } from "../../../../DAL/posts/utils/resolve-query-with-cursor";
 import { applyCursor } from "../../../../DAL/posts/utils/apply-cursor";
 import { getCursor } from "../../../../utils/get-cursor";
 import { getDistinctPostQuery } from "../../../../DAL/posts/get-distinct-post-query";
-import { onlyCanonicalPosts } from "../../../../DAL/posts/utils/only-canonical-posts";
 
 /**Returns tracks reposted by a user. */
 export const getAuthorRepostedFeedHandler = createHandler(

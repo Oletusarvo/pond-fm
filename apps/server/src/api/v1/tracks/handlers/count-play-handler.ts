@@ -1,5 +1,5 @@
 import { serverConfig } from "../../../../server-config";
-import { scrobbleService } from "../../../../container";
+import { services } from "../../../../container";
 import { db } from "../../../../db-config";
 import { createHandler } from "@pondfm/server-utils";
 import { formatErrorMessage } from "../../../../utils/format-error-message";
@@ -24,7 +24,7 @@ export const countPlayHandler = createHandler(
 
     await db.transaction(
       async (trx) =>
-        await scrobbleService.countPlay(
+        await services.scrobbles.countPlay(
           {
             track_id: trackId,
             user_id: session?.user.id,
@@ -34,7 +34,7 @@ export const countPlayHandler = createHandler(
         ),
     );
     //Fire and forget
-    const pruningPromise = scrobbleService.pruneUniqueListeners(trackId, db);
+    const pruningPromise = services.scrobbles.pruneUniqueListeners(trackId, db);
     pruningPromise.catch((err) => {
       console.log(
         formatErrorMessage(

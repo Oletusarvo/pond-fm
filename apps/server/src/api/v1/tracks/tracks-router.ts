@@ -1,24 +1,10 @@
 import { checkAuth } from "../../middleware/check-auth";
-import { getDiscoveryFeed } from "./handlers/get-discovery-feed";
-import { likeTrackHandler } from "./handlers/like-track-handler";
-import { repostTrackHandler } from "./handlers/repost-track-handler";
 import { streamTrackHandler } from "./handlers/stream-track-handler";
-import { unlikeTrackHandler } from "./handlers/unlike-track-handler";
-import { unrepostTrackHandler } from "./handlers/unrepost-track-handler";
-import { countPlayHandler } from "./handlers/count-play-handler";
-import { getAuthorFeed } from "./handlers/get-author-feed-handler";
-import { getStreamTokenHandler } from "./handlers/get-stream-token-handler";
 import { verifyStreamToken } from "./middleware/verify-stream-token";
-import { getMainFeedHandler } from "./handlers/get-main-feed";
-import { updateTrackHandler } from "./handlers/update-track-handler";
 import { updateTrackSchema } from "../../../schemas/update-track-schema";
-import { getFollowedFeedHandler } from "./handlers/get-followed-feed";
-import { getTrackHandler } from "./handlers/get-track-handler";
-import { deleteTrackHandler } from "./handlers/delete-track-handler";
 import { trackInteractionSchema } from "../../../schemas/track-interaction-schema";
 import { createBodyParser, getRouter } from "@pondfm/server-utils";
-import { getAuthorRepostedFeedHandler } from "./handlers/get-author-reposted-feed-handler";
-import { getAuthorLikedFeedHandler } from "./handlers/get-author-liked-feed-handler";
+import { handlers } from "../../../container";
 
 const router = getRouter();
 
@@ -27,25 +13,29 @@ const router = getRouter();
  * @summary Returns a feed of tracks sorted newest first.
  * @tags Tracks
  */
-router.get("/feed/main", checkAuth(false), getMainFeedHandler);
+router.get("/feed/main", checkAuth(false), handlers.tracks.feed.main);
 /**
  * GET /tracks/feed/discover
  * @summary Returns a feed of tracks that have not hit their unique listeners threshold, sorted oldest first.
  * @tags Tracks
  */
-router.get("/feed/discover", checkAuth(false), getDiscoveryFeed);
+router.get(
+  "/feed/discover",
+  checkAuth(false),
+  handlers.tracks.feed.undiscovered,
+);
 /**
  * GET /tracks/feed/discover
  * @summary Returns a feed of tracks from users the currently authenticated user is following.
  * @tags Tracks
  */
-router.get("/feed/followed", checkAuth(), getFollowedFeedHandler);
+router.get("/feed/followed", checkAuth(), handlers.tracks.feed.byFollowed);
 /**
  * GET /tracks/feed/:authorId
  * @summary Returns a feed of tracks by a specific user by id.
  * @tags Tracks
  */
-router.get("/feed/:authorId", checkAuth(false), getAuthorFeed);
+router.get("/feed/:authorId", checkAuth(false), handlers.tracks.feed.byAuthor);
 /**
  * GET /tracks/feed/:authorId/reposted
  * @summary Returns tracks reposted by a user.
@@ -54,7 +44,7 @@ router.get("/feed/:authorId", checkAuth(false), getAuthorFeed);
 router.get(
   "/feed/:authorId/reposted",
   checkAuth(false),
-  getAuthorRepostedFeedHandler,
+  handlers.tracks.feed.repostedBy,
 );
 /**
  * GET /tracks/feed/:authorId/liked
@@ -64,26 +54,26 @@ router.get(
 router.get(
   "/feed/:authorId/liked",
   checkAuth(false),
-  getAuthorLikedFeedHandler,
+  handlers.tracks.feed.likedBy,
 );
 /**
  * GET /tracks/:id
  * @summary Returns a specific track by id.
  * @tags Tracks
  */
-router.get("/:trackId", getTrackHandler);
+router.get("/:trackId", handlers.tracks.get);
 /**
  * POST /tracks/like
  * @summary Adds a like by the currently authenticated user on a track by id.
  * @tags Tracks
  */
-router.post("/like", checkAuth(), likeTrackHandler);
+router.post("/like", checkAuth(), handlers.tracks.like);
 /**
  * DELETE /tracks/like
  * @summary Deletes a like by the currently authenticated user on a track by id.
  * @tags Tracks
  */
-router.delete("/like", checkAuth(), unlikeTrackHandler);
+router.delete("/like", checkAuth(), handlers.tracks.unlike);
 /**
  * POST /tracks/repost
  * @summary Adds a repost by the currently authenticated user of a track by id.
@@ -93,7 +83,7 @@ router.post(
   "/repost",
   checkAuth(),
   createBodyParser(trackInteractionSchema),
-  repostTrackHandler,
+  handlers.tracks.repost,
 );
 /**
  * DELETE /tracks/repost
@@ -104,20 +94,20 @@ router.delete(
   "/repost",
   checkAuth(),
   createBodyParser(trackInteractionSchema),
-  unrepostTrackHandler,
+  handlers.tracks.unrepost,
 );
 /**
  * POST /tracks/:id/play
  * @summary Increments the play count of a track by id. Requests will only be processed if a valid stream token is present.
  * @tags Tracks
  */
-router.post("/:trackId/play", verifyStreamToken, countPlayHandler);
+router.post("/:trackId/play", verifyStreamToken, handlers.tracks.countPlay);
 /**
  * GET /tracks/:id/stream/token
  * @summary Returns a stream token for a track by id.
  * @tags Tracks
  */
-router.get("/:trackId/stream/token", getStreamTokenHandler);
+router.get("/:trackId/stream/token", handlers.tracks.stream.token);
 /**
  * GET /tracks/:id/stream
  * @summary Starts a stream of a track by id.
@@ -133,12 +123,12 @@ router.put(
   "/:trackId",
   checkAuth(),
   createBodyParser(updateTrackSchema),
-  updateTrackHandler,
+  handlers.tracks.update,
 );
 /**
  * DELETE /tracks/:id
  * @summary Deletes a track by id.
  * @tags Tracks
  */
-router.delete("/:trackId", checkAuth(), deleteTrackHandler);
+router.delete("/:trackId", checkAuth(), handlers.tracks.delete);
 export { router as tracksRouter };

@@ -14,14 +14,21 @@ export const GenreSelector = React.memo(function GenreSelector(
 ) {
   return (
     <div className='flex flex-col gap-1'>
-      <GenreFilter onChange={props.onGenresChanged} />
-      <MoodFilter onChange={props.onMoodsChanged} />
+      <GenreFilter
+        onChange={props.onGenresChanged}
+        initialGenres={props.initialGenres}
+      />
+      <MoodFilter
+        onChange={props.onMoodsChanged}
+        initialMoods={props.initialMoods}
+      />
     </div>
   );
 });
 
-function GenreFilter({ onChange }) {
+function GenreFilter({ onChange, initialGenres }) {
   const { items, toggleItem } = useToggleList<string>({
+    initialItems: initialGenres,
     onChanged: (genres) => onChange(genres),
   });
   const { data: genres, isPending: genresPending } = useMainGenres();
@@ -35,8 +42,9 @@ function GenreFilter({ onChange }) {
   );
 }
 
-function MoodFilter({ onChange }) {
+function MoodFilter({ onChange, initialMoods }) {
   const { items, toggleItem } = useToggleList<string>({
+    initialItems: initialMoods,
     onChanged: (moods) => onChange(moods),
   });
   const { data: moods, isPending: moodsPending } = useMoods();

@@ -1,4 +1,4 @@
-import { postService } from "../../../../container";
+import { services } from "../../../../container";
 import { db } from "../../../../db-config";
 import { createNotification } from "../../../../DAL/notifications/create-notification";
 import { tablenames } from "../../../../tablenames";
@@ -17,7 +17,7 @@ export const repostTrackHandler = createHandler(
   ) => {
     const session = req.session;
     const { trackId } = req.body;
-    const result = await postService.repostTrack(db, {
+    const result = await services.posts.repostTrack(db, {
       author: { id: session.user.id },
       track: { id: trackId },
     });

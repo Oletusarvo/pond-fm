@@ -8,7 +8,7 @@ import { createHandler } from "@pondfm/server-utils";
 import { TAuthenticatedRequest } from "../../../../types/request";
 
 /**Returns the main track feed. */
-export const getDiscoveryFeed = createHandler(
+export const getUndiscoveredFeedHandler = createHandler(
   async (req: TAuthenticatedRequest, res) => {
     const cursor = getCursor(req);
     const { genres, moods } = req.query as {

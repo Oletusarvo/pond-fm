@@ -1,7 +1,9 @@
-import { useRef, useState, useTransition } from 'react';
-import { useToggleList } from '../../../hooks/use-toggle-list';
+import { useRef, useState, useTransition } from "react";
+import { useToggleList } from "../../../hooks/use-toggle-list";
 
 type GenreSelectorProps = {
+  initialGenres?: string[];
+  initialMoods?: string[];
   onGenresChanged?: (genre: string[]) => void;
   onMoodsChanged?: (styles: string[]) => void;
   onGenreAdded?: (genre: string) => void;
@@ -11,18 +13,28 @@ type GenreSelectorProps = {
 };
 
 export function useGenreSelector({
-  onGenreAdded, onGenreRemoved, onMoodAdded, onMoodRemoved,
+  initialGenres,
+  initialMoods,
+  onGenreAdded,
+  onGenreRemoved,
+  onMoodAdded,
+  onMoodRemoved,
   onGenresChanged,
   onMoodsChanged,
 }: GenreSelectorProps = {}) {
   const { items: genres, toggleItem: toggleGenre } = useToggleList<string>({
-    onChanged: genres => onGenresChanged?.(genres)
+    initialItems: initialGenres,
+    onChanged: (genres) => onGenresChanged?.(genres),
   });
   const { items: moods, toggleItem: toggleMood } = useToggleList<string>({
-    onChanged: moods => onMoodsChanged?.(moods)
+    initialItems: initialMoods,
+    onChanged: (moods) => onMoodsChanged?.(moods),
   });
 
   return {
-    genres, moods, toggleGenre, toggleMood
+    genres,
+    moods,
+    toggleGenre,
+    toggleMood,
   };
 }

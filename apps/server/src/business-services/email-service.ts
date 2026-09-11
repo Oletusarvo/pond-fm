@@ -2,7 +2,7 @@ import { loadEnvVariable } from "@pondfm/server-utils";
 import { getDomainUrl } from "../utils/get-domain-url";
 
 /**Responsible for sending emails. */
-class EmailService {
+export class EmailService {
   constructor(
     private endpoint: string,
     private apiKey: string,
