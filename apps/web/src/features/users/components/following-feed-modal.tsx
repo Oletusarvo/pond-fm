@@ -4,6 +4,7 @@ import { Feed } from "../../../components/feed";
 import { useUserContext } from "../providers/user-proivder";
 import { FollowerItem } from "./follower-item";
 import { api } from "../../../utils/api/api";
+import { defaults } from "../../../utils/defaults";
 
 /**Renders the feed displaying the users another is following. */
 export function FollowingFeedModal() {
@@ -22,7 +23,7 @@ export function FollowingFeedModal() {
             user={item}
             onClick={() => {
               userService.toggleShowFollowingModal(false);
-              navigate(`/user/${item.id}`);
+              navigate(defaults.url.userTracks(item.id));
             }}
           />
         )}

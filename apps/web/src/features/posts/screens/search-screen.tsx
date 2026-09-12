@@ -10,11 +10,17 @@ import { FeedProvider } from "../../../providers/feed-provider";
 import { Input } from "../../../components/input";
 import { PostFeedScreenContainer } from "../components/post-feed-screen-container";
 import { Separator } from "../../../components/separator";
+import { useSearchParams } from "react-router-dom";
 
 /**Renders a screen allowing a user to search tracks by their title or author. */
 export function SearchFeedScreen() {
-  const [search, setSearch] = useState<string>();
-  const updateSearch = debounce((value: string) => setSearch(value), 700);
+  //const [search, setSearch] = useState<string>();
+  const [searchParams, setSearchParams] = useSearchParams();
+  const search = searchParams.get("q");
+  const updateSearch = debounce(
+    (value: string) => setSearchParams({ q: value }),
+    700,
+  );
 
   return (
     <PostFeedScreenContainer>
@@ -24,6 +30,7 @@ export function SearchFeedScreen() {
         description='Search for tracks by their title or author username'
       >
         <Input
+          defaultValue={search}
           type='search'
           placeholder='Search by title or author username...'
           onChange={(e) => updateSearch(e.target.value)}

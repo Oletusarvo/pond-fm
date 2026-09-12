@@ -4,6 +4,7 @@ import { Feed } from "../../../components/feed";
 import { useUserContext } from "../providers/user-proivder";
 import { FollowerItem } from "./follower-item";
 import { api } from "../../../utils/api/api";
+import { defaults } from "../../../utils/defaults";
 
 /**Renders the modal displaying a users followers. */
 export function FollowerFeedModal() {
@@ -22,7 +23,7 @@ export function FollowerFeedModal() {
             user={item}
             onClick={() => {
               userService.toggleShowFollowerModal(false);
-              navigate(`/user/${item.id}`);
+              navigate(defaults.url.userTracks(item.id));
             }}
           />
         )}
