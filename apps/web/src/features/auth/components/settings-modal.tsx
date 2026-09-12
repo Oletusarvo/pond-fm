@@ -172,7 +172,9 @@ function PlanSection() {
         new Date(session.user.subscription.current_period_start).getTime()) /
       (1000 * 60 * 60 * 24)
     : null;
+
   const withinRefundWindow = session && daysSinceSubscriptionStart <= 14;
+
   const planExpiresAt = session
     ? new Date(session.user.subscription.current_period_end)
     : null;
@@ -212,9 +214,19 @@ function PlanSection() {
         <p className='font-semibold text-black'>
           {plan === "pro" ? "Pond Pro" : "Free"}
         </p>
-        <p className='text-xs text-slate-500'>
-          {plan === "pro" ? "5€/month · billed annually" : "0€/month"}
-        </p>
+        <div className='text-xs text-slate-500 flex flex-col'>
+          <span>
+            {plan === "pro" ? "5€/month · billed annually" : "0€/month"}
+          </span>
+          {plan === "pro" ? (
+            <span>
+              {planExpiresAt.toLocaleDateString("en")} ·{" "}
+              {session?.user.subscription.cancel_at_period_end
+                ? "Plan expires"
+                : "Plan renews"}
+            </span>
+          ) : null}
+        </div>
       </div>
     );
   };

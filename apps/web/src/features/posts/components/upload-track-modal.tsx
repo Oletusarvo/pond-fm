@@ -226,19 +226,13 @@ function ModalContent({ onClose }) {
         <Form.Group label='Style (Max 3)'>
           <MoodSelector onChange={(moods) => (moodsRef.current = moods)} />
         </Form.Group>
-        <div className='flex w-full gap-2'>
-          <Button
-            variant='outlined'
-            color='primary'
-            fullWidth
-            shape='rounded'
-            paddingEnabled
-            onClick={onClose}
-          >
+        <div className='flex w-full gap-4 justify-end'>
+          <Button variant='ghost' color='primary' onClick={onClose}>
             Cancel
           </Button>
 
           <SubmitButton
+            variant='ghost'
             loading={loading}
             disabled={status === "success" || loading}
           >
@@ -262,19 +256,10 @@ function ModalContent({ onClose }) {
 
 const SubmitButton = React.memo(function ({
   children,
-  loading,
-  disabled,
-}: React.PropsWithChildren & { loading: boolean; disabled: boolean }) {
+  ...props
+}: React.ComponentProps<typeof LoaderButton>) {
   return (
-    <LoaderButton
-      type='submit'
-      variant='contained'
-      loading={loading}
-      disabled={disabled}
-      fullWidth
-      shape='rounded'
-      paddingEnabled
-    >
+    <LoaderButton {...props} type='submit'>
       {children}
     </LoaderButton>
   );

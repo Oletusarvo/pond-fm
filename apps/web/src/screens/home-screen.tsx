@@ -96,6 +96,8 @@ export function HomeScreen() {
         >
           Github
         </Link>
+        <Link to='/resources/terms-of-service.pdf'>Terms Of Service</Link>
+        <Link to='/resources/privacy-policy'>Privacy Policy</Link>
       </footer>
     </>
   );

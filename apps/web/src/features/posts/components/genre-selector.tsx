@@ -9,19 +9,16 @@ import { useToggleList } from "../../../hooks/use-toggle-list";
 type GenreSelectorProps = Parameters<typeof useGenreSelector>[0];
 
 /**Renders a selector for genres and moods. */
-export const GenreSelector = React.memo(function GenreSelector(
-  props: GenreSelectorProps,
-) {
+export const GenreSelector = React.memo(function GenreSelector({
+  onGenresChanged,
+  onMoodsChanged,
+  initialGenres,
+  initialMoods,
+}: GenreSelectorProps) {
   return (
     <div className='flex flex-col gap-1'>
-      <GenreFilter
-        onChange={props.onGenresChanged}
-        initialGenres={props.initialGenres}
-      />
-      <MoodFilter
-        onChange={props.onMoodsChanged}
-        initialMoods={props.initialMoods}
-      />
+      <GenreFilter onChange={onGenresChanged} initialGenres={initialGenres} />
+      <MoodFilter onChange={onMoodsChanged} initialMoods={initialMoods} />
     </div>
   );
 });

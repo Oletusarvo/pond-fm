@@ -74,6 +74,18 @@ export function UserHeader() {
             <ToggleProvider.Trigger>
               <Button variant='ghost'>
                 <span className='text-xs font-semibold text-primary'>
+                  {user.follower_count} Followers
+                </span>
+              </Button>
+            </ToggleProvider.Trigger>
+            <ToggleProvider.Target>
+              <FollowerFeedModal />
+            </ToggleProvider.Target>
+          </ToggleProvider>
+          <ToggleProvider>
+            <ToggleProvider.Trigger>
+              <Button variant='ghost'>
+                <span className='text-xs font-semibold text-primary'>
                   {" "}
                   {user.following_count} Following
                 </span>
@@ -81,18 +93,6 @@ export function UserHeader() {
             </ToggleProvider.Trigger>
             <ToggleProvider.Target>
               <FollowingFeedModal />
-            </ToggleProvider.Target>
-          </ToggleProvider>
-          <ToggleProvider>
-            <ToggleProvider.Trigger>
-              <Button variant='ghost'>
-                <span className='text-xs font-semibold text-primary'>
-                  {user.follower_count} Followers
-                </span>
-              </Button>
-            </ToggleProvider.Trigger>
-            <ToggleProvider.Target>
-              <FollowerFeedModal />
             </ToggleProvider.Target>
           </ToggleProvider>
         </div>
