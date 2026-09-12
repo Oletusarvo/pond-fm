@@ -27,7 +27,7 @@ export function SearchFeedScreen() {
       <PostFeedHeader
         icon={<Search />}
         title='Search'
-        description='Search for tracks by their title or author username'
+        description='Search for tracks by their title or author username.'
       >
         <Input
           defaultValue={search}

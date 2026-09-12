@@ -14,18 +14,22 @@ export const getSearchFeedHandler = createHandler(
     const q = req.query.q as string;
 
     if (q) {
+      const params = q.split(" ");
       const session = req.session;
       const query = getUndistinctPostQuery(db, session);
       onlyCanonicalPosts(query);
       selectTrack(query);
       selectPost(query);
-      query.where(function () {
-        const str = `%${q}%`;
-        this.whereILike("track.title", str).orWhereILike(
-          "track_author.username",
-          str,
-        );
+      params.forEach((param) => {
+        query.where(function () {
+          const str = `%${param}%`;
+          this.whereILike("track.title", str).orWhereILike(
+            "track_author.username",
+            str,
+          );
+        });
       });
+
       const cursor = getCursor(req);
       applyCursor(query, {
         cursor,

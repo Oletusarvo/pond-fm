@@ -5,28 +5,21 @@ import { useUserContext } from "../providers/user-proivder";
 import { FollowerItem } from "./follower-item";
 import { api } from "../../../utils/api/api";
 import { defaults } from "../../../utils/defaults";
+import { useToggleContext } from "../../../providers/toggle-provider";
 
 /**Renders the modal displaying a users followers. */
 export function FollowerFeedModal() {
+  const { toggleState: toggleModal } = useToggleContext();
   const userService = useUserContext();
-  const navigate = useNavigate();
   return (
     <FeedModal
       title={`Followers of ${userService.user.username}`}
-      onClose={() => userService.toggleShowFollowerModal(false)}
+      onClose={() => toggleModal(false)}
       queryKey={["followers", userService.user?.id]}
       queryFn={(cursor) => api.users.getFollowers(userService.user?.id, cursor)}
     >
       <Feed
-        renderComponent={({ item }) => (
-          <FollowerItem
-            user={item}
-            onClick={() => {
-              userService.toggleShowFollowerModal(false);
-              navigate(defaults.url.userTracks(item.id));
-            }}
-          />
-        )}
+        renderComponent={({ item }) => <FollowerItem user={item} />}
         keyExtractor={(item) => item?.id}
       />
     </FeedModal>
