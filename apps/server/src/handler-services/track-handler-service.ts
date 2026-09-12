@@ -15,6 +15,7 @@ import { repostTrackHandler } from "../api/v1/tracks/handlers/repost-track-handl
 import { unrepostTrackHandler } from "../api/v1/tracks/handlers/unrepost-track-handler";
 import { getStreamTokenHandler } from "../api/v1/tracks/handlers/get-stream-token-handler";
 import { countPlayHandler } from "../api/v1/tracks/handlers/count-play-handler";
+import { getSearchFeedHandler } from "../api/v1/tracks/handlers/get-search-feed";
 
 export class TrackHandlerService {
   feed = {
@@ -32,6 +33,7 @@ export class TrackHandlerService {
     likedBy: getAuthorLikedFeedHandler.bind(
       this,
     ) as typeof getAuthorLikedFeedHandler,
+    search: getSearchFeedHandler.bind(this) as typeof getSearchFeedHandler,
   };
 
   create = {

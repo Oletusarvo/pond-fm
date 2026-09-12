@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { PollingModal } from "../../../components/polling-modal";
 import { api } from "../../../utils/api/api";
 
+/**The screen shown after a succesful subcription upgrade. Polls the server until a users subscription has been updated, then updates the local session.*/
 export function BillingSuccessScreen() {
   const { session, refreshSession } = useAuthContext();
   const navigate = useNavigate();

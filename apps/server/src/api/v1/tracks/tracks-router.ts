@@ -31,6 +31,12 @@ router.get(
  */
 router.get("/feed/followed", checkAuth(), handlers.tracks.feed.byFollowed);
 /**
+ * GET /tracks/feed/search
+ * @summary Returns a feed of tracks where the title or author username matches the q-search parameter.
+ * @tags Tracks
+ */
+router.get("/feed/search", checkAuth(false), handlers.tracks.feed.search);
+/**
  * GET /tracks/feed/:authorId
  * @summary Returns a feed of tracks by a specific user by id.
  * @tags Tracks

@@ -34,11 +34,15 @@ export function MainHeader() {
           <ResponsiveLink to='/new' className='font-semibold'>
             New
           </ResponsiveLink>
+
           {authStatus === "authenticated" ? (
             <ResponsiveLink to='/followed' className='font-semibold'>
               Followed
             </ResponsiveLink>
           ) : null}
+          <ResponsiveLink to='/search' className='font-semibold'>
+            Search
+          </ResponsiveLink>
         </nav>
       </div>
 

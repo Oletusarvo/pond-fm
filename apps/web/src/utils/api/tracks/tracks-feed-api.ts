@@ -82,4 +82,15 @@ export class TracksFeedApi {
     const res = await fetch(url, req);
     return await Api.asApiResponse<TPostPublic[]>(res);
   }
+
+  /**Returns tracks where the title or author username matches the search string. */
+  async search(cursor?: string, search?: string) {
+    const req = requestBuilder.get().includeCredentials().build();
+    const url = this.buildFeedUrl(`tracks/feed/search`, cursor);
+    if (search) {
+      url.searchParams.set("q", search);
+    }
+    const res = await fetch(url, req);
+    return await Api.asApiResponse<TPostPublic[]>(res);
+  }
 }

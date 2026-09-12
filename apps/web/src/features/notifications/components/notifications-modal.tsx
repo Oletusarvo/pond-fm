@@ -9,6 +9,7 @@ import { useNavigate } from "react-router-dom";
 import { useQueryClient } from "@tanstack/react-query";
 import { useToggleContext } from "../../../providers/toggle-provider";
 import { api } from "../../../utils/api/api";
+import { defaults } from "../../../utils/defaults";
 
 export function NotificationsModal() {
   const { toggleState } = useToggleContext();
@@ -77,7 +78,7 @@ function Notification({ notification }) {
       className='flex w-full items-center text-black gap-2 py-4 cursor-pointer'
       onClick={() => {
         toggleModalState(false);
-        navigate(`/user/${notification.sender.id}`);
+        navigate(defaults.url.userTracks(notification.sender.id));
       }}
     >
       <Icon {...iconProps} size='1.2rem' />

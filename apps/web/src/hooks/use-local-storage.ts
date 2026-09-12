@@ -3,31 +3,24 @@ import { joinStrings } from "../utils/join-strings";
 
 type TValue = string | number | (string | number)[];
 
-export function useLocalStorage(key: string[], initialValue?: TValue) {
+/**Manages a state whose value is saved into local storage by the provided key on updates. */
+export function useLocalStorageState(key: string[], initialValue?: TValue) {
   const itemKey = useMemo(() => joinStrings(key), [key]);
   const [value, setValue] = useState(() => {
     const storedValue = localStorage.getItem(itemKey);
     if (storedValue) {
       try {
-        console.log("Attempting to parse as json...", storedValue);
-        const parsedValue = JSON.parse(storedValue);
-        console.log(typeof parsedValue, parsedValue);
-        return parsedValue;
+        return JSON.parse(storedValue);
       } catch (err) {
         //Not parseable as json; return value as is.
-        console.log("Not parseable as json; returning raw value.");
         return storedValue;
       }
     }
-    //Stored value not parseable as json or defined; return the initial value.
-    console.log(
-      "No item stored for key " + itemKey + "; returning initial value.",
-      initialValue,
-    );
+    //Stored value not parseable as json or is undefined; return the initial value.
     return initialValue;
   });
 
-  const updateLocalStorage = (value: TValue) => {
+  const updateLocalStorageState = (value: TValue) => {
     setValue(value);
     const valueToStore = JSON.stringify(value);
     localStorage.setItem(itemKey, valueToStore);
@@ -35,6 +28,6 @@ export function useLocalStorage(key: string[], initialValue?: TValue) {
 
   return {
     value,
-    updateLocalStorage,
+    updateLocalStorageState: updateLocalStorageState,
   };
 }

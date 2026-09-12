@@ -9,7 +9,7 @@ import {
   useInfiniteFeed,
   UseInfiniteFeedProps,
 } from "../../../hooks/use-infinite-feed";
-import { useLocalStorage } from "../../../hooks/use-local-storage";
+import { useLocalStorageState } from "../../../hooks/use-local-storage";
 
 type FeedScreenProps = {
   title: string;
@@ -29,16 +29,11 @@ export function PostFeedScreen({
   queryKey,
   icon,
 }: FeedScreenProps) {
-  const { value: genres, updateLocalStorage: updateGenres } = useLocalStorage(
-    ["genres"],
-    [],
-  );
-  const { value: moods, updateLocalStorage: updateMoods } = useLocalStorage(
-    ["moods"],
-    [],
-  );
+  const { value: genres, updateLocalStorageState: updateGenres } =
+    useLocalStorageState(["genres"], []);
+  const { value: moods, updateLocalStorageState: updateMoods } =
+    useLocalStorageState(["moods"], []);
   const [transition, startTransition] = useTransition();
-  console.log(genres, moods, ["electronic"]);
   return (
     <PostFeedScreenContainer>
       <PostFeedHeader icon={icon} title={title} description={description}>

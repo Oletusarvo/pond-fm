@@ -10,14 +10,29 @@ type Fn<T, E, ArgsT extends any[] = any[]> = (
 ) => Promise<TApiResponse<T, E>>;
 
 type UseActionProps<T, E, ArgsT extends any[]> = {
+  /**
+   * The asynchronous method to call.
+   */
   fn: Fn<T, E, ArgsT>;
+  /**
+   * The method called when the action finishes successfully. Can optionally return a string which is set as the status.
+   */
   onSuccess?: (
     res: TApiSuccessResponse<T>,
   ) => Promise<string | void> | void | string;
+  /**
+   * The method called if the action fails. Can optionally return a string which is set as the status.
+   */
   onError?: (
     res: TApiErrorResponse<E>,
   ) => Promise<string | void> | void | string;
+  /**
+   * The method called if the action throws an error. Optionally returns a string which is set as the status.
+   */
   onException?: (err: Error) => Promise<string | void> | string | void;
+  /**
+   * The method called after onSuccess and onError.
+   */
   onFinished?: () => Promise<void> | void;
 };
 

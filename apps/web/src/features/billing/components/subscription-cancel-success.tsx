@@ -3,6 +3,7 @@ import { PollingModal } from "../../../components/polling-modal";
 import { useNavigate } from "react-router-dom";
 import { api } from "../../../utils/api/api";
 
+/**The screen shown after a user has successfully canceled their subscription.  */
 export function SubscriptionCancelSuccess() {
   const navigate = useNavigate();
   const { session, refreshSession } = useAuthContext();
