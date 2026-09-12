@@ -1,4 +1,4 @@
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Button } from "../components/button";
 import { useAuthContext } from "../features/auth/providers/auth-provider";
 import { Spinner } from "../components/spinner";
@@ -73,6 +73,30 @@ export function HomeScreen() {
           <br />
         </p>
       </section>
+      <footer className='bg-gray-800 w-full flex flex-col py-32 h-pad text-white'>
+        <h3 className='mb-4'>Links</h3>
+        <Link
+          to='https://www.soundcloud.com/oletusarvo'
+          className='font-semibold'
+          target='_blank'
+        >
+          Soundcloud
+        </Link>
+        <Link
+          to='https://instagram/oletusarvo'
+          className='font-semibold'
+          target='_blank'
+        >
+          Instagram
+        </Link>
+        <Link
+          to='https://instagram/oletusarvo'
+          className='font-semibold'
+          target='_blank'
+        >
+          Github
+        </Link>
+      </footer>
     </>
   );
 }
