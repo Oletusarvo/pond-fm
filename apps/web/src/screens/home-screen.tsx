@@ -73,31 +73,45 @@ export function HomeScreen() {
           <br />
         </p>
       </section>
-      <footer className='bg-gray-800 w-full flex flex-col py-32 h-pad text-white'>
-        <h3 className='mb-4'>Links</h3>
-        <Link
-          to='https://www.soundcloud.com/oletusarvo'
-          className='font-semibold'
-          target='_blank'
-        >
-          Soundcloud
-        </Link>
-        <Link
-          to='https://instagram/oletusarvo'
-          className='font-semibold'
-          target='_blank'
-        >
-          Instagram
-        </Link>
-        <Link
-          to='https://instagram/oletusarvo'
-          className='font-semibold'
-          target='_blank'
-        >
-          Github
-        </Link>
-        <Link to='/resources/terms-of-service.pdf'>Terms Of Service</Link>
-        <Link to='/resources/privacy-policy'>Privacy Policy</Link>
+      <footer className='bg-gray-800 w-full flex flex-col py-32 h-pad text-white xs:items-center md:items-start'>
+        <div className='flex flex-col'>
+          <h3 className='mb-4'>Links</h3>
+          <Link
+            to='https://www.soundcloud.com/oletusarvo'
+            className='font-semibold'
+            target='_blank'
+          >
+            Soundcloud
+          </Link>
+          <Link
+            to='https://instagram/oletusarvo'
+            className='font-semibold'
+            target='_blank'
+          >
+            Instagram
+          </Link>
+          <Link
+            to='https://instagram/oletusarvo'
+            className='font-semibold'
+            target='_blank'
+          >
+            Github
+          </Link>
+          <Link
+            to='/resources/terms-of-service.pdf'
+            className='font-semibold'
+            target='_blank'
+          >
+            Terms Of Service
+          </Link>
+          <Link
+            to='/resources/privacy-policy'
+            className='font-semibold'
+            target='_blank'
+          >
+            Privacy Policy
+          </Link>
+        </div>
       </footer>
     </>
   );

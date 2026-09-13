@@ -1,4 +1,11 @@
-import React, { ReactNode, useState, useTransition } from "react";
+import React, {
+  ReactNode,
+  SetStateAction,
+  Suspense,
+  useMemo,
+  useState,
+  useTransition,
+} from "react";
 import { Separator } from "../../../components/separator";
 import { PostFeed } from "../components/post-feed";
 import { PostFeedScreenContainer } from "../components/post-feed-screen-container";
@@ -10,6 +17,22 @@ import {
   UseInfiniteFeedProps,
 } from "../../../hooks/use-infinite-feed";
 import { useLocalStorageState } from "../../../hooks/use-local-storage";
+import { TagList } from "../components/tag-list";
+import { useMainGenres } from "../hooks/use-main-genres";
+import { useMoods } from "../hooks/use-moods";
+import { createProvider } from "../../../utils/create-provider";
+import { setupContext } from "../../../utils/setup-context";
+import { debounce } from "../../../utils/debounce";
+
+const [QueryValuesContext, useQueryValuesContext] = setupContext<{
+  moods: string[];
+  genres: string[];
+}>({ name: "QueryValuesContext" });
+
+const [QuerySetterContext, useQuerySetterContext] = setupContext<{
+  setQueryMoods: React.Dispatch<SetStateAction<string[]>>;
+  setQueryGenres: React.Dispatch<SetStateAction<string[]>>;
+}>({ name: "QuerySetterContext" });
 
 type FeedScreenProps = {
   title: string;
@@ -29,37 +52,89 @@ export function PostFeedScreen({
   queryKey,
   icon,
 }: FeedScreenProps) {
-  const { value: genres, updateLocalStorageState: updateGenres } =
-    useLocalStorageState(["genres"], []);
-  const { value: moods, updateLocalStorageState: updateMoods } =
-    useLocalStorageState(["moods"], []);
-  const [transition, startTransition] = useTransition();
+  const [queryGenres, setQueryGenres] = useState([]);
+  const [queryMoods, setQueryMoods] = useState([]);
+
+  const queryKeyMemoed = useMemo(() => {
+    return [
+      ...queryKey,
+      ...queryGenres.sort().join(";"),
+      ...queryMoods.sort().join(";"),
+    ];
+  }, [queryGenres, queryMoods, queryKey]);
+
   return (
     <PostFeedScreenContainer>
       <PostFeedHeader icon={icon} title={title} description={description}>
-        <GenreSelector
-          initialGenres={genres}
-          initialMoods={moods}
-          onGenresChanged={(g) => startTransition(() => updateGenres(g))}
-          onMoodsChanged={(s) =>
-            startTransition(() => {
-              updateMoods(s);
-            })
-          }
-        />
+        <QuerySetterContext.Provider
+          value={{
+            setQueryGenres,
+            setQueryMoods,
+          }}
+        >
+          <GenreSelectorComponent />
+        </QuerySetterContext.Provider>
       </PostFeedHeader>
 
       <Separator />
-      <FeedProvider
-        queryFn={(cursor?: string) => queryFn(genres, moods, cursor as string)}
-        queryKey={[
-          ...queryKey,
-          genres.sort().join(";"),
-          moods.sort().join(";"),
-        ]}
+      <QueryValuesContext.Provider
+        value={{
+          genres: queryGenres,
+          moods: queryMoods,
+        }}
       >
-        <PostFeed />
-      </FeedProvider>
+        <FeedComponent queryFn={queryFn} queryKey={queryKeyMemoed} />
+      </QueryValuesContext.Provider>
     </PostFeedScreenContainer>
+  );
+}
+
+function FeedComponent({ queryFn, queryKey }) {
+  const { genres, moods } = useQueryValuesContext();
+  return (
+    <FeedProvider
+      queryFn={(cursor?: string) => queryFn(genres, moods, cursor as string)}
+      queryKey={queryKey}
+    >
+      <PostFeed />
+    </FeedProvider>
+  );
+}
+
+function GenreSelectorComponent() {
+  const [transition, startTransition] = useTransition();
+  const { value: selectedGenres, setState: setGenres } = useLocalStorageState(
+    ["genres"],
+    [],
+  );
+  const { value: selectedMoods, setState: setMoods } = useLocalStorageState(
+    ["moods"],
+    [],
+  );
+  const { setQueryGenres, setQueryMoods } = useQuerySetterContext();
+  const queryDelay = 800;
+  const updateQueryGenres = debounce(
+    (genres) =>
+      startTransition(() => {
+        setQueryGenres(genres);
+        setGenres(genres);
+      }),
+    queryDelay,
+  );
+  const updateQueryMoods = debounce(
+    (moods) =>
+      startTransition(() => {
+        setQueryMoods(moods);
+        setMoods(moods);
+      }),
+    queryDelay,
+  );
+  return (
+    <GenreSelector
+      initialGenres={selectedGenres}
+      initialMoods={selectedMoods}
+      onGenresChanged={updateQueryGenres}
+      onMoodsChanged={updateQueryMoods}
+    />
   );
 }

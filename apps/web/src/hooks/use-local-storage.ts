@@ -20,14 +20,15 @@ export function useLocalStorageState(key: string[], initialValue?: TValue) {
     return initialValue;
   });
 
-  const updateLocalStorageState = (value: TValue) => {
-    setValue(value);
-    const valueToStore = JSON.stringify(value);
+  const setState = (state: TValue | ((prev: TValue) => TValue)) => {
+    const newValue = typeof state === "function" ? state(value) : state;
+    setValue(newValue);
+    const valueToStore = JSON.stringify(newValue);
     localStorage.setItem(itemKey, valueToStore);
   };
 
   return {
     value,
-    updateLocalStorageState: updateLocalStorageState,
+    setState: setState,
   };
 }

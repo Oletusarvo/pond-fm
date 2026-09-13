@@ -20,7 +20,7 @@ export function Post() {
   const { session } = useAuthContext();
   const { post } = usePostContext();
   return (
-    <div className='flex py-2 rounded-md bg-white w-full flex-col gap-1 items-start h-pad'>
+    <div className='flex py-2 rounded-md bg-white w-full flex-col gap-1 items-start h-pad min-h-40 shrink-0 grow-0'>
       <div className='flex justify-between w-full items-start'>
         <div className='flex flex-col leading-none items-start'>
           <PostAuthor />

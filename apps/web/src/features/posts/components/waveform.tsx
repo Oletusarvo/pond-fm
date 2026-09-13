@@ -1,5 +1,5 @@
-import React, { useEffect, useRef } from 'react';
-import WaveSurfer from 'wavesurfer.js';
+import React, { useEffect, useRef, useState } from "react";
+import WaveSurfer from "wavesurfer.js";
 
 type WaveformProps = {
   waveform: number[];
@@ -25,8 +25,8 @@ export const Waveform = React.memo(function Waveform({
       peaks: [waveform],
       // Appearance
       height: 64,
-      waveColor: '#d6d6d6',
-      progressColor: '#00BCFF',
+      waveColor: "#d6d6d6",
+      progressColor: "#00BCFF",
 
       // Make it look like SoundCloud
       barWidth: 2,
@@ -53,7 +53,7 @@ export const Waveform = React.memo(function Waveform({
     if (!waveSurferRef.current) {
       return;
     }
-    const unsubscribe = waveSurferRef.current.on('ready', () =>
+    const unsubscribe = waveSurferRef.current.on("ready", () =>
       waveSurferRef.current.setTime(playbackPosition),
     );
     waveSurferRef.current.setTime(playbackPosition);
@@ -64,7 +64,7 @@ export const Waveform = React.memo(function Waveform({
 
   useEffect(() => {
     if (!waveSurferRef.current) return;
-    const unsubscribe = waveSurferRef.current.on('click', t => {
+    const unsubscribe = waveSurferRef.current.on("click", (t) => {
       const currentTime = t * duration;
       onWaveformClicked(currentTime);
     });
@@ -77,10 +77,11 @@ export const Waveform = React.memo(function Waveform({
   return (
     <div
       ref={containerRef}
+      className='animate-fade-in'
       style={{
-        width: '100%',
-        cursor: 'pointer',
+        width: "100%",
+        cursor: "pointer",
       }}
-    />
+    ></div>
   );
 });
