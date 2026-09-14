@@ -26,6 +26,7 @@ export type TUser = {
   followed_by_me: boolean;
   status: TUserStatus;
   subscription: TSubscription;
+  urls: string[];
 };
 
 /**The user type displayed for the authenticated user themselves. */
@@ -42,6 +43,7 @@ export type TUserPublic = Pick<
   | "follower_count"
   | "following_count"
   | "followed_by_me"
+  | "urls"
 > & {
   subscription: TSubscriptionPublic;
 };

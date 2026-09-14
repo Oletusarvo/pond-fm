@@ -7,10 +7,11 @@ import { Music, User, UserMinus, UserPlus } from "lucide-react";
 import { ToggleProvider } from "../../../providers/toggle-provider";
 import { FollowingFeedModal } from "./following-feed-modal";
 import { FollowerFeedModal } from "./follower-feed-modal";
+import { FaBrandIconLink } from "../../../components/fa-brand-icon-link";
 
 /**Renders the header at the top of a user's profile screen. */
 export function UserHeader() {
-  const { user, ...userService } = useUserContext();
+  const { user } = useUserContext();
   const [followedByMe, setFollowedByMe] = useState(user.followed_by_me);
 
   const queryClient = useQueryClient();
@@ -39,16 +40,16 @@ export function UserHeader() {
   };
 
   const FollowButtonIcon = followedByMe ? UserMinus : UserPlus;
-
+  const urls = user.urls;
   return (
-    <div className='flex flex-col w-full py-2 h-pad gap-1'>
+    <div className='flex flex-col w-full py-2 h-pad gap-4'>
       <div className='w-full leading-none flex flex-row justify-between xs:items-start'>
         <div className='flex sm:gap-8 xs:gap-2 md:items-center xs:items-start'>
           <div className='flex gap-2 items-center'>
             <div className='flex items-center justify-center w-8 h-8 rounded-full bg-primary text-white'>
               <User size='1rem' />
             </div>
-            <h2 className='text-xs font-semibold text-primary'>
+            <h2 className='text-sm font-semibold text-primary'>
               {user.username}
             </h2>
           </div>
@@ -67,6 +68,20 @@ export function UserHeader() {
       <p className='text-sm text-slate-500 xs:w-full md:w-92'>
         {user.bio || "No bio."}
       </p>
+      {urls ? (
+        <div className='flex flex-col gap-2'>
+          {urls.map((url, i) => {
+            return (
+              <FaBrandIconLink
+                key={i}
+                to={url}
+                className='text-sm text-primary'
+                target='_blank'
+              />
+            );
+          })}
+        </div>
+      ) : null}
       {/**Bottom controls */}
       <div className='flex w-full items-center justify-between'>
         <div className='flex items-center sm:gap-4 xs:gap-2'>

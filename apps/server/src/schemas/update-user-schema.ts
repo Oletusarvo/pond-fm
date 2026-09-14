@@ -2,5 +2,5 @@ import { userSchema } from "@pondfm/app-shared";
 import z from "zod";
 
 export const updateUserSchema = userSchema
-  .pick({ username: true, bio: true })
+  .pick({ username: true, bio: true, urls: true })
   .partial();

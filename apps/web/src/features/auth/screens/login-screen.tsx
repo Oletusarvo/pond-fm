@@ -41,53 +41,60 @@ function ModalContent({ close }) {
   });
 
   return (
-    <Form onSubmit={submit}>
-      <Form.Group label='Email'>
-        <Input
-          name='email'
-          placeholder='Enter your email...'
-          type='email'
-          required
-        />
-        <span className='text-slate-500 text-xs'>
-          Check your inbox for a sign-in link. It’ll be valid for 15 minutes.
-        </span>
-      </Form.Group>
+    <div className='flex flex-col w-full gap-8'>
+      <p className='text-slate-500'>
+        We handle logins via magic-links at the moment. Please provide an email
+        into which you'd like us to send it. An account will be created for you
+        if you have never logged onto the platform before.
+      </p>
+      <Form onSubmit={submit}>
+        <Form.Group label='Email'>
+          <Input
+            name='email'
+            placeholder='Enter your email...'
+            type='email'
+            required
+          />
+          <span className='text-slate-500 text-xs'>
+            Check your inbox for the magic-link. It’ll be valid for 15 minutes.
+          </span>
+        </Form.Group>
 
-      <div className='flex gap-2 w-full'>
-        <Button
-          disabled={status === "success" || loading}
-          type='button'
-          onClick={close}
-          fullWidth
-          paddingEnabled
-          variant='outlined'
-          shape='rounded'
-        >
-          Cancel
-        </Button>
-        <LoaderButton
-          disabled={loading || status === "success"}
-          loading={loading}
-          type='submit'
-          fullWidth
-          paddingEnabled
-          variant='contained'
-          shape='rounded'
-        >
-          Login
-        </LoaderButton>
-      </div>
-      {status === "success" ? (
-        <SuccessMessage>
-          Please check your email. We have sent you a link through which to
-          complete your login process.
-        </SuccessMessage>
-      ) : status === "auth:user-quota-exceeded" ? (
-        <ErrorMessage>
-          Unfortunately we do not accept more users at this time.
-        </ErrorMessage>
-      ) : null}
-    </Form>
+        <div className='flex gap-2 w-full'>
+          <Button
+            disabled={status === "success" || loading}
+            type='button'
+            onClick={close}
+            fullWidth
+            paddingEnabled
+            variant='outlined'
+            shape='rounded'
+          >
+            Cancel
+          </Button>
+          <LoaderButton
+            disabled={loading || status === "success"}
+            loading={loading}
+            type='submit'
+            fullWidth
+            paddingEnabled
+            variant='contained'
+            shape='rounded'
+          >
+            Login
+          </LoaderButton>
+        </div>
+        {status === "success" ? (
+          <SuccessMessage>
+            Please check your email. We have sent you a link through which to
+            complete your login process.
+          </SuccessMessage>
+        ) : status === "auth:user-quota-exceeded" ? (
+          <ErrorMessage>
+            Unfortunately we do not accept more users at this time.
+          </ErrorMessage>
+        ) : null}
+      </Form>
+    </div>
   );
 }

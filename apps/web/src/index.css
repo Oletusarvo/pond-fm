@@ -1,4 +1,4 @@
-@import 'tailwindcss';
+@import "tailwindcss";
 
 @keyframes FadeInAnimation {
   0% {
@@ -25,7 +25,6 @@
   --warning: var(--color-orange-400);
   --success: var(--color-green-400);
   --error: var(--color-red-400);
-   
 }
 
 @theme {
@@ -40,7 +39,7 @@
   flex-flow: column;
   width: 100vw;
   height: calc(var(--vh) * 100);
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
   color: black;
 }
 
@@ -79,14 +78,47 @@ button {
   display: none;
 }
 
-@media screen and (max-width: 1023px) {
+@media screen and (max-width: 1200px) {
+  .h-pad {
+    padding-inline: --spacing(32);
+  }
+}
+
+@media screen and (max-width: 1000px) {
+  .h-pad {
+    padding-inline: --spacing(8);
+  }
+}
+
+@media screen and (max-width: 850px) {
+  .h-pad {
+    padding-inline: --spacing(4);
+  }
+}
+
+@media screen and (max-width: 650px) {
   .h-pad {
     padding-inline: --spacing(2);
   }
 }
 
-@media screen and (min-width: 1024px) {
+@media screen and (min-width: 1201px) {
   .h-pad {
-    padding-inline: --spacing(32);
+    padding-inline: --spacing(64);
   }
+}
+
+.scrollable {
+  overflow: auto; /* or overflow-y: auto */
+
+  /* Firefox */
+  scrollbar-width: none;
+
+  /* IE and old Edge */
+  -ms-overflow-style: none;
+}
+
+/* Chrome, Safari, Opera */
+.scrollable::-webkit-scrollbar {
+  display: none;
 }

@@ -2,6 +2,12 @@ import { Link, useNavigate } from "react-router-dom";
 import { Button } from "../components/button";
 import { useAuthContext } from "../features/auth/providers/auth-provider";
 import { Spinner } from "../components/spinner";
+import { ReactNode } from "react";
+import { Network, Repeat, Rss, Sprout } from "lucide-react";
+import { PassProps } from "../components/pass-props";
+import { defaults } from "../utils/defaults";
+import { useClassName } from "../hooks/use-class-name";
+import { FaIconLink } from "../components/fa-icon-link";
 
 /**Renders the home screen. */
 export function HomeScreen() {
@@ -46,19 +52,19 @@ export function HomeScreen() {
           )}
         </Button>
       </section>
-      <section className='h-pad py-16 bg-primary text-white flex-1'>
-        <h2 className='text-xl font-semibold mb-4'>What is Pond.fm?</h2>
+      <section className='h-pad py-16 flex-1'>
+        <SectionHeading>What is Pond.fm?</SectionHeading>
 
-        <p className='text-base'>
+        <p className='text-base text-slate-600'>
           Pond.fm is a music sharing platform built on a simple idea: your music
           should get a chance to be heard regardless of how popular you are.
           That's where our <strong>Undiscovered</strong> feed comes in. Any
-          track with fewer than 25 unique listeners (or 100 for pro accounts),
-          stays there, oldest first — so instead of getting buried under a wave
-          of new uploads, your music keeps surfacing to real listeners until it
-          earns an audience on its own merit. Once you cross that threshold,
-          you've genuinely been discovered. The <strong>New</strong> feed will
-          display the newest tracks uploaded or reposted in chronological order
+          track with fewer than {defaults.plans.free.unique_listener_threshold}{" "}
+          unique listeners (or {defaults.plans.pro.unique_listener_threshold}{" "}
+          for pro accounts), stays there, oldest first, until it reaches the
+          unique number of listeners. Once you cross that threshold, you've
+          genuinely been discovered. The <strong>New</strong> feed will display
+          the newest tracks uploaded or reposted in chronological order.
           <br />
           <br />
           To help the right listeners find you, Pond.fm is experimenting with
@@ -67,52 +73,195 @@ export function HomeScreen() {
           subgenres, they think in how they want music to make them feel.
           <br />
           <br />
-          No engagement-driven recommendations, no black-box feeds — just
-          chronological streams that give every artist a fair shot.
+          None of the feeds on pond are driven by engagement based algorithms;
+          in fact we don't use algorithms of any kind. Everything is presented
+          to you in chronological order.
           <br />
           <br />
         </p>
       </section>
-      <footer className='bg-gray-800 w-full flex flex-col py-32 h-pad text-white xs:items-center md:items-start'>
-        <div className='flex flex-col'>
-          <h3 className='mb-4'>Links</h3>
-          <Link
-            to='https://www.soundcloud.com/oletusarvo'
-            className='font-semibold'
-            target='_blank'
+      <section className='h-pad py-16 flex-1'>
+        <SectionHeading>Features</SectionHeading>
+        <div className='w-full grid md:grid-cols-2 xs:grid-cols-1 gap-4'>
+          <FeatureItem
+            title='A Fair Shot At Being Discovered'
+            icon={<Sprout />}
           >
-            Soundcloud
-          </Link>
-          <Link
-            to='https://instagram/oletusarvo'
-            className='font-semibold'
-            target='_blank'
+            Pond FM implements the <strong>Undiscovered</strong> feed, where all
+            uploaded tracks stay until they have accumulated the unique
+            listeners defined by their subscription. Tracks on this feed are
+            sorted in chronological order, oldest first, so new uploads won't
+            bury older ones.
+          </FeatureItem>
+          <FeatureItem title='No Algorithmic Curation' icon={<Rss />}>
+            The <strong>New</strong> feed will display tracks and reposts in
+            simple chronological order, newest first. Pond FM purposefully does
+            not implement algorithmic curation.
+          </FeatureItem>
+          <FeatureItem title='Stay In The Loop' icon={<Network />}>
+            The <strong>Followed</strong> feed will display tracks uploaded by
+            the users you follow, newest first.
+          </FeatureItem>
+          <FeatureItem title='Reposts' icon={<Repeat />}>
+            Heard a great track you think deserves to be heard by others? Tap
+            the repost button to bump the track back to the top of the{" "}
+            <strong>New</strong> feed. Reposts on Pond are a commitment and
+            cannot be undone.
+          </FeatureItem>
+        </div>
+      </section>
+      <section className='h-pad py-16 flex-1 flex flex-col'>
+        <SectionHeading>Plans</SectionHeading>
+        <p className='text-slate-600 mb-4'>
+          Pond FM offers two account tiers: Free and Pro. Pro users receive
+          bigger unique listener thresholds and storage quotas for building an
+          audience and a catalogue, while supporting the platform. Once you have
+          an account, please test the platform out, and if you like it, consider
+          upgrading to pro.
+        </p>
+        <div className='grid grid-cols-2 gap-4'>
+          <PlanItem
+            priceInSubunits={0}
+            title='Free'
+            listContent={[
+              `${defaults.plans.free.unique_listener_threshold} unique listeners on the Undiscovered feed.`,
+              `${defaults.plans.free.storage} of storage for your tracks.`,
+              "Occasional ads among the feeds.",
+            ]}
           >
-            Instagram
-          </Link>
-          <Link
-            to='https://instagram/oletusarvo'
-            className='font-semibold'
-            target='_blank'
+            A basic plan for your artistry. Provides enough free storage space
+            to make a difference, and a reasonable threshold for unique
+            listeners for your tracks. Free plans are recommended to upload mp3
+            files to make the most of their quota. All new accounts start on
+            this plan.
+          </PlanItem>
+          <PlanItem
+            priceInSubunits={500}
+            title='Pro'
+            listContent={[
+              `${defaults.plans.pro.unique_listener_threshold} unique listeners on the Undiscovered feed.`,
+              `${defaults.plans.pro.storage} of storage for your tracks.`,
+              "No ads ever.",
+            ]}
           >
-            Github
-          </Link>
-          <Link
-            to='/resources/terms-of-service.pdf'
-            className='font-semibold'
-            target='_blank'
-          >
-            Terms Of Service
-          </Link>
-          <Link
-            to='/resources/privacy-policy'
-            className='font-semibold'
-            target='_blank'
-          >
-            Privacy Policy
-          </Link>
+            For those who don't want to run out of space anytime soon, want to
+            keep their tracks around on the undiscovered-feed a little longer,
+            and want to support the platform. Upgrading to this plan can be done
+            once you have logged in for the first time.
+          </PlanItem>
+        </div>
+      </section>
+      <footer className='bg-gray-800 w-full flex flex-col gap-8 py-32 h-pad text-white xs:items-center md:justify-start md:items-start'>
+        <div className='flex flex-col gap-8'>
+          <div className='flex flex-col'>
+            <h3 className='mb-2'>Links</h3>
+            <FaIconLink
+              faCode='fa-soundcloud'
+              to='https://www.soundcloud.com/oletusarvo'
+              className='font-semibold'
+              target='_blank'
+            >
+              Soundcloud
+            </FaIconLink>
+            <FaIconLink
+              faCode='fa-bandcamp'
+              to='https://oletusarvo.bandcamp.com'
+              className='font-semibold'
+              target='_blank'
+            >
+              Bandcamp
+            </FaIconLink>
+            <FaIconLink
+              faCode='fa-instagram'
+              to='https://www.instagram.com/oletusarvo.art'
+              className='font-semibold'
+              target='_blank'
+            >
+              Instagram
+            </FaIconLink>
+            <FaIconLink
+              faCode='fa-github'
+              to='https://github.com/oletusarvo'
+              className='font-semibold'
+              target='_blank'
+            >
+              Github
+            </FaIconLink>
+          </div>
+          <div className='flex flex-col'>
+            <h3 className='mb-2'>Resources</h3>
+            <Link
+              to='/resources/terms-of-service.pdf'
+              className='font-semibold'
+              target='_blank'
+            >
+              Terms Of Service
+            </Link>
+            <Link
+              to='/resources/privacy-policy'
+              className='font-semibold'
+              target='_blank'
+            >
+              Privacy Policy
+            </Link>
+          </div>
+        </div>
+        <div className='mt-auto w-full text-sm italic'>
+          &copy; oletusarvo 2026
         </div>
       </footer>
     </>
+  );
+}
+
+function SectionHeading({
+  children,
+}: Omit<React.ComponentProps<"h2">, "className">) {
+  return <h2 className='text-xl font-semibold mb-4'>{children}</h2>;
+}
+
+function FeatureItem({
+  children,
+  icon,
+  title,
+}: React.PropsWithChildren & { title: string; icon: ReactNode }) {
+  return (
+    <div className='rounded-md border-primary/20 bg-primary/10 border py-4 px-8'>
+      <div className='flex items-center gap-2 mb-4 text-primary'>
+        <div className='rounded-full bg-primary text-white w-8 h-8 flex items-center justify-center'>
+          <PassProps size='1rem'>{icon}</PassProps>
+        </div>
+
+        <h3 className='font-semibold'>{title}</h3>
+      </div>
+      <p>{children}</p>
+    </div>
+  );
+}
+
+function PlanItem({
+  title,
+  priceInSubunits,
+  listContent,
+  children,
+}: React.PropsWithChildren & {
+  title: string;
+  listContent: string[];
+  priceInSubunits: number;
+}) {
+  const price = priceInSubunits / 100;
+  return (
+    <div className='rounded-md border-primary/20 bg-primary/10 py-4 px-8 border flex flex-col gap-4 items-start'>
+      <h3 className='text-lg font-semibold text-primary'>{title}</h3>
+      <div className='border border-amber-500/20 bg-amber-500/10 text-amber-500 font-semibold px-8 py-2 rounded-md'>
+        {price.toFixed(2)}€/month
+      </div>
+      <p>{children}</p>
+      <ul className='list-disc text-slate-700'>
+        {listContent.map((content, i) => {
+          return <li key={i}>{content}</li>;
+        })}
+      </ul>
+    </div>
   );
 }

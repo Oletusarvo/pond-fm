@@ -15,4 +15,5 @@ export const userSchema = z.object({
   bio: z.string(),
   status: z.enum(userStatusTypes),
   subscription: subscriptionSchema,
+  urls: z.array(z.url()),
 });

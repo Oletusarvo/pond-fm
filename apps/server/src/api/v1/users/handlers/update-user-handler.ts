@@ -10,10 +10,21 @@ import { TAuthenticatedRequest } from "../../../../types/request";
 export const updateUserHandler = createHandler(
   async (req: TAuthenticatedRequest<z.infer<typeof updateUserSchema>>, res) => {
     const session = req.session;
-    const payload = req.body;
-    await db(tablenames.users)
-      .where({ id: session.user.id } as TUser)
-      .update(payload);
+    const { urls, ...payload } = req.body;
+    await db.transaction(async (trx) => {
+      await db(tablenames.users)
+        .where({ id: session.user.id } as TUser)
+        .update(payload);
+      if (urls) {
+        await trx(tablenames.userUrls)
+          .where({ user_id: session.user.id })
+          .del();
+        await trx(tablenames.userUrls).insert(
+          urls.map((url) => ({ user_id: session.user.id, url })),
+        );
+      }
+    });
+
     return res.end();
   },
 );

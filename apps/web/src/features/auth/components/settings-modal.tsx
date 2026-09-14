@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { startTransition, useState } from "react";
 import { Check, Crown, Waves } from "lucide-react";
 import { Modal } from "../../../components/modal";
 import { useClassName } from "../../../hooks/use-class-name";
@@ -11,10 +11,11 @@ import { useUpgradeSubscription } from "../../billing/hooks/use-upgrade-subscrip
 import { useCancelSubscription } from "../../billing/hooks/use-cancel-subscription";
 import { ConfirmAction } from "../../../components/confirm-action";
 import { api } from "../../../utils/api/api";
-import { TUser, TUserRestricted } from "@pondfm/app-shared";
+import { TUser, TUserPublic, TUserRestricted } from "@pondfm/app-shared";
 import { useSubmit } from "../../../hooks/use-submit";
 import { Form } from "../../../components/form";
 import { useNavigate } from "react-router-dom";
+import { useQueryClient } from "@tanstack/react-query";
 
 type Plan = "free" | "pro";
 
@@ -57,7 +58,7 @@ export function SettingsModal({
 
   return (
     <Modal title='Settings' onClose={onClose}>
-      <div className='flex flex-col gap-6'>
+      <div className='flex flex-col gap-4 scrollable'>
         <DetailsSection />
         <Divider />
         <PlanSection />
@@ -98,20 +99,41 @@ function DetailsSection() {
   const { session, refreshSession } = useAuthContext();
   const user = session?.user;
   const [details, setDetails] = useState<
-    Partial<Pick<TUser, "username" | "bio">>
-  >({ username: user?.username, bio: user?.bio });
+    Partial<Pick<TUser, "username" | "bio" | "urls">>
+  >({ username: user?.username, bio: user?.bio, urls: user?.urls });
   const [detailsDirty, setDetailsDirty] = useState(false);
-
+  const queryClient = useQueryClient();
   const { submit, status, loading } = useSubmit({
     fetchFn: async (payload) => {
       const data = Object.fromEntries(payload) as typeof details;
-      return await api.users.update(data);
+      const { url1, url2, url3, ...rest } = data as any;
+      const urls = [url1, url2, url3].filter((url) => url);
+      const res = await api.users.update({
+        ...rest,
+        urls,
+      });
+      //Refresh the user screen data.
+      queryClient.setQueryData(["user", user?.id], (oldData: TUserPublic) => {
+        if (!oldData) return oldData;
+        return {
+          ...oldData,
+          username: data.username,
+          bio: data.bio,
+          urls,
+        };
+      });
+      await refreshSession({
+        user: {
+          username: data.username,
+          bio: data.bio,
+          urls,
+        },
+      });
+
+      return res;
     },
     onSuccess: async () => {
       setDetailsDirty(false);
-      await refreshSession({
-        user: { username: details.username, bio: details.bio },
-      });
     },
   });
 
@@ -122,6 +144,10 @@ function DetailsSection() {
         [e.target.name]: e.target.value,
       };
     });
+    setDetailsDirty(true);
+  };
+
+  const updateUrls = (url: string) => {
     setDetailsDirty(true);
   };
 
@@ -145,6 +171,33 @@ function DetailsSection() {
             name='bio'
             onChange={updateDetails}
             defaultValue={user.bio}
+          />
+        </Form.Group>
+        <Form.Group label='Link 1'>
+          <Input
+            onChange={(e) => updateUrls(e.target.value)}
+            defaultValue={session?.user.urls?.at(0)}
+            type='url'
+            name='url1'
+            placeholder='Place a link you want to share here...'
+          />
+        </Form.Group>
+        <Form.Group label='Link 2'>
+          <Input
+            onChange={(e) => updateUrls(e.target.value)}
+            defaultValue={session?.user.urls?.at(1)}
+            type='url'
+            name='url2'
+            placeholder='Place a link you want to share here...'
+          />
+        </Form.Group>
+        <Form.Group label='Link 3'>
+          <Input
+            onChange={(e) => updateUrls(e.target.value)}
+            defaultValue={session?.user.urls?.at(2)}
+            type='url'
+            name='url3'
+            placeholder='Place a link you want to share here...'
           />
         </Form.Group>
 
@@ -338,15 +391,18 @@ function LogoutSection() {
     },
   });
   return (
-    <section className='flex flex-col gap-2 w-full items-end'>
-      <LoaderButton
-        variant='text'
-        onClick={logout}
-        loading={loading}
-        disabled={loading || status === "success"}
-      >
-        Logout
-      </LoaderButton>
+    <section className='flex flex-col gap-2 w-full'>
+      <SectionLabel>Other</SectionLabel>
+      <div className='flex w-full justify-end'>
+        <LoaderButton
+          variant='text'
+          onClick={logout}
+          loading={loading}
+          disabled={loading || status === "success"}
+        >
+          Logout
+        </LoaderButton>
+      </div>
     </section>
   );
 }

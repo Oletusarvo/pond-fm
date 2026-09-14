@@ -7,5 +7,6 @@ export function selectUser(query: Knex.QueryBuilder) {
     "users.username",
     "users.status",
     "users.bio",
+    "users.urls",
   );
 }

@@ -12,7 +12,7 @@ export class UsersApi {
   subscriptions = new UserSubscriptionsApi();
 
   /**Updates a user's profile. */
-  async update(payload: Partial<Pick<TUser, "username" | "bio">>) {
+  async update(payload: Partial<Pick<TUser, "username" | "bio" | "urls">>) {
     const req = requestBuilder
       .put()
       .body(payload)

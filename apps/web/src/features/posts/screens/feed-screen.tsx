@@ -1,7 +1,6 @@
 import React, {
   ReactNode,
   SetStateAction,
-  Suspense,
   useMemo,
   useState,
   useTransition,
@@ -12,23 +11,18 @@ import { PostFeedScreenContainer } from "../components/post-feed-screen-containe
 import { PostFeedHeader } from "../components/post-feed-header";
 import { GenreSelector } from "../components/genre-selector";
 import { FeedProvider } from "../../../providers/feed-provider";
-import {
-  useInfiniteFeed,
-  UseInfiniteFeedProps,
-} from "../../../hooks/use-infinite-feed";
+import { UseInfiniteFeedProps } from "../../../hooks/use-infinite-feed";
 import { useLocalStorageState } from "../../../hooks/use-local-storage";
-import { TagList } from "../components/tag-list";
-import { useMainGenres } from "../hooks/use-main-genres";
-import { useMoods } from "../hooks/use-moods";
-import { createProvider } from "../../../utils/create-provider";
 import { setupContext } from "../../../utils/setup-context";
 import { debounce } from "../../../utils/debounce";
 
+/**Context for the genre and mood query values, to stop the GenreSelector from re-rendering and lagging when they are updated. */
 const [QueryValuesContext, useQueryValuesContext] = setupContext<{
   moods: string[];
   genres: string[];
 }>({ name: "QueryValuesContext" });
 
+/**Query setter context for the GenreSelector, so it isn't re-rendered when the query values change. */
 const [QuerySetterContext, useQuerySetterContext] = setupContext<{
   setQueryMoods: React.Dispatch<SetStateAction<string[]>>;
   setQueryGenres: React.Dispatch<SetStateAction<string[]>>;
@@ -45,6 +39,8 @@ type FeedScreenProps = {
   queryKey: string[];
   icon?: ReactNode;
 };
+
+/**Renders a feed screen. */
 export function PostFeedScreen({
   title,
   description,
@@ -72,7 +68,7 @@ export function PostFeedScreen({
             setQueryMoods,
           }}
         >
-          <GenreSelectorComponent />
+          <GenreSelectorSection />
         </QuerySetterContext.Provider>
       </PostFeedHeader>
 
@@ -83,13 +79,13 @@ export function PostFeedScreen({
           moods: queryMoods,
         }}
       >
-        <FeedComponent queryFn={queryFn} queryKey={queryKeyMemoed} />
+        <FeedSection queryFn={queryFn} queryKey={queryKeyMemoed} />
       </QueryValuesContext.Provider>
     </PostFeedScreenContainer>
   );
 }
 
-function FeedComponent({ queryFn, queryKey }) {
+function FeedSection({ queryFn, queryKey }) {
   const { genres, moods } = useQueryValuesContext();
   return (
     <FeedProvider
@@ -101,7 +97,7 @@ function FeedComponent({ queryFn, queryKey }) {
   );
 }
 
-function GenreSelectorComponent() {
+function GenreSelectorSection() {
   const [transition, startTransition] = useTransition();
   const { value: selectedGenres, setState: setGenres } = useLocalStorageState(
     ["genres"],
