@@ -42,6 +42,7 @@ function ModalContent() {
 
   return (
     <Feed
+      adsEnabled={false}
       renderComponent={({ item }) => <Notification notification={item} />}
       keyExtractor={(item) => item.id}
     />

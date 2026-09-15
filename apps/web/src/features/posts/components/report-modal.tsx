@@ -76,7 +76,7 @@ function ModalContent({ close }) {
             placeholder='Please provide additional information why you believe this content is infringing...'
           />
         </Form.Group>
-        <div className='flex flex-col w-full gap-1'>
+        <div className='flex flex-col w-full gap-2'>
           <Button
             type='submit'
             variant='contained'

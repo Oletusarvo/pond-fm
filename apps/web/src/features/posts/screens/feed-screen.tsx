@@ -108,7 +108,7 @@ function GenreSelectorSection() {
     [],
   );
   const { setQueryGenres, setQueryMoods } = useQuerySetterContext();
-  const queryDelay = 800;
+  const queryDelay = 700;
   const updateQueryGenres = debounce(
     (genres) =>
       startTransition(() => {

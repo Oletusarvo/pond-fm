@@ -15,7 +15,7 @@ export const updateUserHandler = createHandler(
       await db(tablenames.users)
         .where({ id: session.user.id } as TUser)
         .update(payload);
-      if (urls) {
+      if (urls && urls.length) {
         await trx(tablenames.userUrls)
           .where({ user_id: session.user.id })
           .del();

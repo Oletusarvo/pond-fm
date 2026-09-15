@@ -64,7 +64,6 @@ export function useAuth() {
   ) => {
     let payload;
     queryClient.setQueryData(["session"], (oldSession: TSession) => {
-      console.log(oldSession, newSession);
       if (!oldSession) return oldSession;
       const newData = {
         ...oldSession,

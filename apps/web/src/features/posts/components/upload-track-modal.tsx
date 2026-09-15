@@ -207,6 +207,9 @@ function ModalContent({ onClose }) {
         <small>Quota consumed {storageQuotaConsumed.toFixed(2)}%</small>
       </div>
       <Form onSubmit={submit}>
+        <Form.Group label='File'>
+          <Input required type='file' name='file' />
+        </Form.Group>
         <Form.Group label='Title'>
           <Input
             required
@@ -216,17 +219,13 @@ function ModalContent({ onClose }) {
           />
         </Form.Group>
 
-        <Form.Group label='File'>
-          <Input required type='file' name='file' />
-        </Form.Group>
-
         <Form.Group label='Main Genre'>
           <GenreSelector onChange={(genre) => (genreRef.current = genre)} />
         </Form.Group>
         <Form.Group label='Style (Max 3)'>
           <MoodSelector onChange={(moods) => (moodsRef.current = moods)} />
         </Form.Group>
-        <div className='flex flex-col w-full gap-1'>
+        <div className='flex flex-col w-full gap-2'>
           <SubmitButton
             fullWidth
             paddingEnabled

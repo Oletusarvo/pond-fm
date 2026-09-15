@@ -9,11 +9,13 @@ import { AdInjector } from "../features/ads/components/ad-injector";
 import { useAuthContext } from "../features/auth/providers/auth-provider";
 
 type FeedScreenProps = {
+  adsEnabled?: React.ComponentProps<typeof AdInjector>["enabled"];
   keyExtractor?: (item: any) => string;
   renderComponent: (item: any) => ReactNode;
   onEmptyComponent?: () => ReactNode;
 };
 export function Feed({
+  adsEnabled,
   renderComponent: RenderComponent,
   keyExtractor,
   onEmptyComponent: OnEmptyComponent,
@@ -42,20 +44,7 @@ export function Feed({
 
   return (
     <div className='flex flex-col w-full flex-1 overflow-y-scroll max-h-full'>
-      <AdInjector
-        interval={10}
-        enabled={() => {
-          if (!session) return true;
-          const subscription = session.user.subscription;
-          if (
-            subscription.plan_id === "free" ||
-            ["unpaid", "incomplete"].includes(subscription.status)
-          )
-            return true;
-
-          return false;
-        }}
-      >
+      <AdInjector interval={12} enabled={adsEnabled}>
         {data.map((item, i) => {
           return (
             <React.Fragment key={keyExtractor?.(item)}>
