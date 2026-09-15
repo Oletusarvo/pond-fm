@@ -12,10 +12,16 @@ export function CountButton({
   "onClick" | "disabled" | "color" | "icon"
 >) {
   const convertedCount = useMemo(() => {
+    const thousand = 1e3;
+    const million = 1e6;
     const rawCount =
-      value >= 1000 ? value / 1000 : value >= 1000000 ? value / 1000000 : value;
+      value >= thousand
+        ? value / thousand
+        : value >= million
+          ? value / million
+          : value;
     const roundedCount = Math.round(rawCount * 100) / 100;
-    const postFix = value >= 1000 ? "k" : value >= 1000000 ? "m" : "";
+    const postFix = value >= thousand ? "k" : value >= million ? "m" : "";
     return `${roundedCount.toLocaleString("fi")}${postFix}`;
   }, [value]);
 

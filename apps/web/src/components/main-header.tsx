@@ -24,6 +24,7 @@ export function MainHeader() {
         <Link to='/'>
           <h2 className='font-semibold cursive'>
             🐸<span>Pond.fm</span>
+            <small className='ml-1'>Beta</small>
           </h2>
         </Link>
         |{" "}

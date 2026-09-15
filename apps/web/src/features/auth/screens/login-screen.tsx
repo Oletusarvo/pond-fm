@@ -60,18 +60,7 @@ function ModalContent({ close }) {
           </span>
         </Form.Group>
 
-        <div className='flex gap-2 w-full'>
-          <Button
-            disabled={status === "success" || loading}
-            type='button'
-            onClick={close}
-            fullWidth
-            paddingEnabled
-            variant='outlined'
-            shape='rounded'
-          >
-            Cancel
-          </Button>
+        <div className='flex flex-col gap-2 w-full'>
           <LoaderButton
             disabled={loading || status === "success"}
             loading={loading}
@@ -83,6 +72,17 @@ function ModalContent({ close }) {
           >
             Login
           </LoaderButton>
+          <Button
+            disabled={status === "success" || loading}
+            type='button'
+            onClick={close}
+            fullWidth
+            paddingEnabled
+            variant='ghost'
+            shape='rounded'
+          >
+            Cancel
+          </Button>
         </div>
         {status === "success" ? (
           <SuccessMessage>

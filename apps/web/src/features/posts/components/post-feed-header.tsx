@@ -17,7 +17,7 @@ export function PostFeedHeader({
   return (
     <div className='py-2 w-full h-pad'>
       <div className='flex flex-col pb-2'>
-        <div className='flex gap-1 items-center'>
+        <div className='flex gap-1 items-baseline'>
           {icon ? (
             <PassProps size='1rem' color='var(--color-primary)'>
               {icon}

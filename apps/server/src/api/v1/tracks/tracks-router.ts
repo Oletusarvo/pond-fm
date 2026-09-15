@@ -67,7 +67,7 @@ router.get(
  * @summary Returns a specific track by id.
  * @tags Tracks
  */
-router.get("/:trackId", handlers.tracks.get);
+router.get("/:trackId", checkAuth(false), handlers.tracks.get);
 /**
  * POST /tracks/like
  * @summary Adds a like by the currently authenticated user on a track by id.

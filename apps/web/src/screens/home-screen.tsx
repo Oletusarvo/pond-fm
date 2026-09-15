@@ -55,7 +55,7 @@ export function HomeScreen() {
       <section className='h-pad py-16 flex-1'>
         <SectionHeading>What is Pond?</SectionHeading>
 
-        <p className='text-base text-slate-600'>
+        <p className='text-base 2xl:w-[70%]'>
           Pond is a music sharing platform built on a simple idea: your music
           should get a chance to be heard regardless of how popular you are.
           That's where our <strong>Undiscovered</strong> feed comes in. Any
@@ -113,12 +113,14 @@ export function HomeScreen() {
       </section>
       <section className='h-pad py-16 flex-1 flex flex-col bg-primary/10'>
         <SectionHeading>Account Types</SectionHeading>
-        <p className='text-slate-600 mb-4'>
+        <p className='mb-4 2xl:w-[70%]'>
           Pond has two account tiers: Free and Pro. Pro users receive bigger
           unique listener thresholds and storage quotas for building an audience
           and a catalogue, while supporting the platform. Once you have an
           account, please test the platform out, and if you like it, consider
-          upgrading to Pro.
+          upgrading to Pro. The quotas and limits on each tier are preliminary;
+          they may be raised in the future depending how the Pond experiment
+          performs.
         </p>
         <div className='grid xs:grid-cols-1 md:grid-cols-2 gap-4'>
           <PlanItem

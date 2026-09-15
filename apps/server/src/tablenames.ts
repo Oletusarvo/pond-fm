@@ -24,6 +24,7 @@ export const tablenames = {
   serviceSettings: "service_settings_data",
   uploadFolders: "upload.upload_folder_data",
   userUrls: "auth.user_url_data",
+  playData: "post.play_data",
 } as const;
 
 export const viewnames = {

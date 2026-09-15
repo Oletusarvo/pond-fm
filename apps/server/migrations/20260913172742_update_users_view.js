@@ -1,4 +1,4 @@
-const constructUserView = require("../migration-utils/views/user-view");
+const { constructUserViewV2 } = require("../migration-utils/views/user-view");
 
 /**
  * @param { import("knex").Knex } knex
@@ -7,7 +7,9 @@ const constructUserView = require("../migration-utils/views/user-view");
 exports.up = function (knex) {
   return knex.schema
     .withSchema("auth")
-    .createViewOrReplace("user_view", (view) => constructUserView(knex, view));
+    .createViewOrReplace("user_view", (view) =>
+      constructUserViewV2(knex, view),
+    );
 };
 
 /**
