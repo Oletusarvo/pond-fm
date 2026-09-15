@@ -259,7 +259,7 @@ function PlanItem({
 }) {
   const price = priceInSubunits / 100;
   return (
-    <div className='rounded-md border-primary/20 bg-primary/10 py-4 px-8 border flex flex-col gap-4 items-start'>
+    <div className='rounded-md bg-white py-4 px-8 border border-black/10 flex flex-col gap-4 items-start'>
       <h3 className='text-lg font-semibold text-primary'>{title}</h3>
       <div className='flex flex-col leading-tight'>
         <div className='flex gap-1 items-baseline'>

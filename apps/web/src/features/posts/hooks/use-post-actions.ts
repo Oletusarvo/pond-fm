@@ -1,6 +1,6 @@
 import { api } from "../../../utils/api/api";
 import { cancelable } from "../../../utils/debounced";
-import { usePost } from "./use-post";
+import { usePost, usePostStore } from "./use-post";
 
 type UsePostActionsProps = {
   trackId: string;
@@ -17,12 +17,14 @@ export function usePostActions({
   onRepost,
   onRepostRollback,
 }: UsePostActionsProps) {
+  //const postStore = usePostStore();
   const { post, updatePost } = usePost(id);
+  //const postStore = usePostStore();
   const countPlay = async () => {
     const initialPlayCount = post.track.stats.play_count;
     const newPlayCount = initialPlayCount + 1;
 
-    api.tracks
+    await api.tracks
       .countPlay(post.track.id)
       .then((res) => {
         if (!res.success) return;

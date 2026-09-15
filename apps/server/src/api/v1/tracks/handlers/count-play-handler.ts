@@ -15,6 +15,13 @@ export const countPlayHandler = createHandler(
     const now = Date.now();
 
     if (req.streamToken?.trackId !== trackId) {
+      console.log(
+        "Failed to count a play on track with id ",
+        trackId,
+        "; The id in the stream token does not match! (" +
+          req.streamToken?.trackId +
+          ")",
+      );
       return res.status(409).end();
     }
 

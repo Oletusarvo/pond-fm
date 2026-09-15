@@ -45,7 +45,7 @@
 
 @media screen and (max-width: 500px) {
   #root {
-    font-size: var(--text-sm);
+    font-size: var(--text-base);
   }
 }
 

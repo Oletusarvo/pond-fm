@@ -9,7 +9,7 @@ export function useAudioPlayer() {
   const [currentPlayback, setCurrentPlayback] =
     useState<PlaybackReducerState | null>(null);
   const [playbackState, setPlaybackState] = useState<
-    "playing" | "paused" | "buffering"
+    "playing" | "paused" | "buffering" | "error"
   >("paused");
   const playbackSrc =
     currentPlayback?.status === "ready" ? currentPlayback.streamUrl : null;
@@ -18,10 +18,11 @@ export function useAudioPlayer() {
   const actionService = useActionContext();
 
   /**Updates the current playback if it is different. */
-  const updateCurrentPlayback = (playback: TPlayback | null) => {
+  const updateCurrentPlayback = async (playback: TPlayback | null) => {
     //Request a stream token.
+
     if (currentPlayback?.track.id !== playback.track.id) {
-      api.tracks
+      await api.tracks
         .requestStreamToken(playback.track.id)
         .then(async (res) => {
           if (!res.success) {
@@ -29,6 +30,7 @@ export function useAudioPlayer() {
           }
 
           const data = res.data;
+
           setCurrentPlayback({
             ...playback,
             status: "ready",
@@ -106,6 +108,17 @@ export function useAudioPlayer() {
             liked_by_me: e.detail.state,
           },
         };
+      });
+    },
+  });
+
+  useEventHandler({
+    service: audioRef.current,
+    type: "error",
+    handler: (e: any) => {
+      setCurrentPlayback({
+        ...currentPlayback,
+        status: "error",
       });
     },
   });

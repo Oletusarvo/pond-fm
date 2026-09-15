@@ -18,7 +18,7 @@ import { tablenames } from "../tablenames";
 import { db } from "../db-config";
 import { withTrack } from "../DAL/posts/with/with-track";
 import { TUpload } from "@pondfm/app-shared/dist/types/upload";
-import { TTrack } from "@pondfm/app-shared";
+import { playCountThresholdSeconds, TTrack } from "@pondfm/app-shared";
 import { createJWT, tryCatch } from "@pondfm/server-utils";
 
 /**Responsible for handling business-logic related to individual posts and tracks. */
@@ -112,14 +112,9 @@ export class PostService {
     const streamStarted = Date.now();
     //Stream start + duration of the track + a grace period of 10 seconds, in milliseconds.
     const expires = streamStarted + track.duration * 1000 + 10000;
-    const threshold =
-      track.duration <= 30
-        ? 1
-        : track.duration <= 60
-          ? 30 / track.duration
-          : track.duration <= 480
-            ? 0.33
-            : null;
+    /**The fraction of the track duration after which a play can be counted. */
+    const threshold = playCountThresholdSeconds / track.duration;
+    /**The amount of time in seconds the track has to be listened to until a play can be counted. */
     const requiredListenTime = threshold ? threshold * track.duration : 159;
     const countValidAt = streamStarted + requiredListenTime * 1000;
     const token = createJWT({
