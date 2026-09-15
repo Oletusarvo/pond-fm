@@ -6,6 +6,12 @@ import { useEffect, useState } from "react";
 import { usePostStore } from "../hooks/use-post";
 import { Post } from "../components/post";
 import { api } from "../../../utils/api/api";
+import {
+  UserProvider,
+  useUserContext,
+} from "../../users/providers/user-proivder";
+import { UserHeader } from "../../users/components/user-header";
+import { Separator } from "../../../components/separator";
 
 export function TrackScreen() {
   const { trackId } = useParams();
@@ -21,7 +27,6 @@ export function TrackScreen() {
 
   useEffect(() => {
     if (!isPending && data) {
-      console.log("Ryyppäx");
       postStore.setPosts([data]);
       setPostPending(false);
     }
@@ -30,9 +35,25 @@ export function TrackScreen() {
   if (isPending || postPending) {
     return <Spinner />;
   }
+
   return (
-    <PostProvider trackId={data.track.id}>
-      <Post />
-    </PostProvider>
+    <UserProvider id={data.track.author.id}>
+      <Content trackId={trackId} />
+    </UserProvider>
+  );
+}
+
+function Content({ trackId }) {
+  const { isPending: userIdPending } = useUserContext();
+  if (userIdPending) return <Spinner />;
+
+  return (
+    <div className='flex flex-col w-full'>
+      <UserHeader />
+      <Separator />
+      <PostProvider trackId={trackId}>
+        <Post />
+      </PostProvider>
+    </div>
   );
 }

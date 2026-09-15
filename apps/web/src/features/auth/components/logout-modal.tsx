@@ -38,17 +38,7 @@ function ModalContent({ cancel }) {
   return (
     <div className='flex flex-col gap-8 w-full'>
       <p>You are about to log out. Are you sure?</p>
-      <div className='flex w-full gap-2'>
-        <Button
-          fullWidth
-          shape='rounded'
-          onClick={cancel}
-          variant='outlined'
-          paddingEnabled
-          disabled={buttonsDisabled}
-        >
-          Cancel
-        </Button>
+      <div className='flex flex-col w-full gap-2'>
         <LoaderButton
           loading={loading}
           fullWidth
@@ -60,6 +50,16 @@ function ModalContent({ cancel }) {
         >
           Logout
         </LoaderButton>
+        <Button
+          fullWidth
+          shape='rounded'
+          onClick={cancel}
+          variant='ghost'
+          paddingEnabled
+          disabled={buttonsDisabled}
+        >
+          Cancel
+        </Button>
       </div>
       {status === "error" ? (
         <ErrorMessage>Logout failed! Please try again.</ErrorMessage>

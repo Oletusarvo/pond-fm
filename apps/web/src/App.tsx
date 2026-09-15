@@ -9,7 +9,10 @@ import { HomeLayout } from "./layouts/home-layout";
 import { AuthorizationScreen } from "./features/auth/screens/authorization-screen";
 import { UploadTrackScreen } from "./features/posts/screens/upload-track-screen";
 import { MainScreenFeed } from "./features/posts/screens/main-feed-screen";
-import { UserScreen } from "./features/users/screens/user-screen";
+import {
+  UserScreen,
+  UserScreenWrapper,
+} from "./features/users/screens/user-screen";
 import { ScrobbleProvider } from "./features/audio/providers/scrobble-provider";
 import { SettingsProvider } from "./features/auth/providers/settings-provider";
 import { ActionProvider } from "./providers/action-provider";
@@ -19,68 +22,70 @@ import { TrackScreen } from "./features/posts/screens/track-screen";
 import { BillingSuccessScreen } from "./features/billing/components/billing-success";
 import { SubscriptionCancelSuccess } from "./features/billing/components/subscription-cancel-success";
 import { SearchFeedScreen } from "./features/posts/screens/search-screen";
+import { AdProvider } from "./features/ads/components/ad-injector";
 
 function App() {
   return (
     <QueryClientProvider client={new QueryClient()}>
       <AuthProvider>
-        <ActionProvider>
-          <PlaybackProvider>
-            <ScrobbleProvider>
-              <div className='flex flex-col w-full h-full'>
-                <BrowserRouter>
-                  <SettingsProvider>
-                    <Routes>
-                      <Route path='/' element={<MainLayout />}>
-                        <Route
-                          path='/billing/success'
-                          element={<BillingSuccessScreen />}
-                        />
-                        <Route
-                          path='/billing/cancel/success'
-                          element={<SubscriptionCancelSuccess />}
-                        />
-                        <Route path='/' element={<HomeLayout />}>
-                          <Route path='login' element={<LoginScreen />} />
+        <AdProvider>
+          <ActionProvider>
+            <PlaybackProvider>
+              <ScrobbleProvider>
+                <div className='flex flex-col w-full h-full'>
+                  <BrowserRouter>
+                    <SettingsProvider>
+                      <Routes>
+                        <Route path='/' element={<MainLayout />}>
                           <Route
-                            path='authorize'
-                            element={<AuthorizationScreen />}
+                            path='/billing/success'
+                            element={<BillingSuccessScreen />}
+                          />
+                          <Route
+                            path='/billing/cancel/success'
+                            element={<SubscriptionCancelSuccess />}
+                          />
+                          <Route path='/' element={<HomeLayout />}>
+                            <Route path='login' element={<LoginScreen />} />
+                            <Route
+                              path='authorize'
+                              element={<AuthorizationScreen />}
+                            />
+                          </Route>
+                          <Route
+                            path='undiscovered'
+                            element={<UndiscoveredFeedScreen />}
+                          />
+                          <Route
+                            path='followed'
+                            element={<FollowedFeedScreen />}
+                          />
+                          <Route
+                            path='user/:id'
+                            element={<UserScreenWrapper />}
+                          />
+                          <Route path='new' element={<MainScreenFeed />} />
+                          <Route path='search' element={<SearchFeedScreen />} />
+
+                          <Route
+                            path='upload'
+                            element={<UploadTrackScreen />}
+                          />
+                          <Route path='login' element={<LoginScreen />} />
+
+                          <Route
+                            path='track/:trackId'
+                            element={<TrackScreen />}
                           />
                         </Route>
-                        <Route
-                          path='undiscovered'
-                          element={<UndiscoveredFeedScreen />}
-                        />
-                        <Route
-                          path='followed'
-                          element={<FollowedFeedScreen />}
-                        />
-                        <Route
-                          path='user/:id'
-                          element={
-                            <UserProvider>
-                              <UserScreen />
-                            </UserProvider>
-                          }
-                        />
-                        <Route path='new' element={<MainScreenFeed />} />
-                        <Route path='search' element={<SearchFeedScreen />} />
-
-                        <Route path='upload' element={<UploadTrackScreen />} />
-                        <Route path='login' element={<LoginScreen />} />
-
-                        <Route
-                          path='track/:trackId'
-                          element={<TrackScreen />}
-                        />
-                      </Route>
-                    </Routes>
-                  </SettingsProvider>
-                </BrowserRouter>
-              </div>
-            </ScrobbleProvider>
-          </PlaybackProvider>
-        </ActionProvider>
+                      </Routes>
+                    </SettingsProvider>
+                  </BrowserRouter>
+                </div>
+              </ScrobbleProvider>
+            </PlaybackProvider>
+          </ActionProvider>
+        </AdProvider>
       </AuthProvider>
     </QueryClientProvider>
   );

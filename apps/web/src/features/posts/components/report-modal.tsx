@@ -36,13 +36,13 @@ function ModalContent({ close }) {
 
   return (
     <div className='flex flex-col gap-8'>
-      <div className='flex flex-col gap-2 items-start'>
+      <div className='flex flex-col gap-4 items-start'>
         <h2 className='font-semibold text-lg'>Reporting {post.track.title}</h2>
         <div className=' flex gap-2 items-center font-mono text-xs p-1 bg-primary/10 text-primary border-primary/20 border rounded-md'>
           <Info size='1rem' />
           <span>{post.track.id}</span>
         </div>
-        <p className='text-slate-500'>
+        <p className='leading-5'>
           We take copyright infringement seriously. Please provide the following
           information for us so we can review the content.{" "}
           <i className='text-primary'>
@@ -76,12 +76,24 @@ function ModalContent({ close }) {
             placeholder='Please provide additional information why you believe this content is infringing...'
           />
         </Form.Group>
-        <div className='flex items-center gap-4 justify-end'>
-          <Button variant='ghost' onClick={close}>
-            Cancel
-          </Button>
-          <Button type='submit' variant='ghost'>
+        <div className='flex flex-col w-full gap-1'>
+          <Button
+            type='submit'
+            variant='contained'
+            fullWidth
+            paddingEnabled
+            shape='rounded'
+          >
             Send
+          </Button>
+          <Button
+            variant='ghost'
+            onClick={close}
+            fullWidth
+            paddingEnabled
+            shape='rounded'
+          >
+            Cancel
           </Button>
         </div>
         {status === "not-implemented" ? (

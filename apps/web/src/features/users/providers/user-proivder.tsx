@@ -11,8 +11,7 @@ export const [
   useUserContext,
 ] = createProvider({
   contextName: "UserContext",
-  hook: () => {
-    const { id } = useParams();
+  hook: ({ id }: { id: string }) => {
     const { data: user, isPending } = useQuery({
       queryKey: ["user", id],
       queryFn: async () => {

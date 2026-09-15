@@ -226,18 +226,27 @@ function ModalContent({ onClose }) {
         <Form.Group label='Style (Max 3)'>
           <MoodSelector onChange={(moods) => (moodsRef.current = moods)} />
         </Form.Group>
-        <div className='flex w-full gap-4 justify-end'>
-          <Button variant='ghost' color='primary' onClick={onClose}>
-            Cancel
-          </Button>
-
+        <div className='flex flex-col w-full gap-1'>
           <SubmitButton
-            variant='ghost'
+            fullWidth
+            paddingEnabled
+            shape='rounded'
+            variant='contained'
             loading={loading}
             disabled={status === "success" || loading}
           >
             Upload
           </SubmitButton>
+          <Button
+            shape='rounded'
+            variant='ghost'
+            color='primary'
+            onClick={onClose}
+            fullWidth
+            paddingEnabled
+          >
+            Cancel
+          </Button>
         </div>
         {status === "upload:quota-exceeded" ? (
           <ErrorMessage>

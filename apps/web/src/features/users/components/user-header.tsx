@@ -8,11 +8,16 @@ import { ToggleProvider } from "../../../providers/toggle-provider";
 import { FollowingFeedModal } from "./following-feed-modal";
 import { FollowerFeedModal } from "./follower-feed-modal";
 import { FaBrandIconLink } from "../../../components/fa-brand-icon-link";
+import { useNavigate } from "react-router-dom";
+import { defaults } from "../../../utils/defaults";
+import { useAuthContext } from "../../auth/providers/auth-provider";
 
 /**Renders the header at the top of a user's profile screen. */
 export function UserHeader() {
+  const { status } = useAuthContext();
   const { user } = useUserContext();
   const [followedByMe, setFollowedByMe] = useState(user.followed_by_me);
+  const navigate = useNavigate();
 
   const queryClient = useQueryClient();
   const onFollowButtonClicked = async () => {
@@ -42,10 +47,13 @@ export function UserHeader() {
   const FollowButtonIcon = followedByMe ? UserMinus : UserPlus;
   const urls = user.urls;
   return (
-    <div className='flex flex-col w-full py-2 h-pad gap-4'>
+    <div className='flex flex-col w-full py-2 h-pad gap-4 items-start'>
       <div className='w-full leading-none flex flex-row justify-between xs:items-start'>
         <div className='flex sm:gap-8 xs:gap-2 md:items-center xs:items-start'>
-          <div className='flex gap-2 items-center'>
+          <div
+            className='flex gap-2 items-center cursor-pointer'
+            onClick={() => navigate(defaults.url.userTracks(user.id))}
+          >
             <div className='flex items-center justify-center w-8 h-8 rounded-full bg-primary text-white'>
               <User size='1rem' />
             </div>
@@ -55,12 +63,13 @@ export function UserHeader() {
           </div>
         </div>
         <Button
+          disabled={status === "unauthenticated"}
           color={followedByMe ? "danger" : "primary"}
           variant='ghost'
           onClick={onFollowButtonClicked}
           icon={FollowButtonIcon}
         >
-          <span className='text-xs'>
+          <span className='text-sm'>
             {followedByMe ? "Unfollow" : "Follow"}
           </span>
         </Button>

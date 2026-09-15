@@ -8,6 +8,7 @@ import { selectPost } from "../../../../DAL/posts/select/select-post";
 import { getCursor } from "../../../../utils/get-cursor";
 import { applyCursor } from "../../../../DAL/posts/utils/apply-cursor";
 import { resolveQueryWithCursor } from "../../../../DAL/posts/utils/resolve-query-with-cursor";
+import { getDistinctPostQuery } from "../../../../DAL/posts/get-distinct-post-query";
 
 export const getSearchFeedHandler = createHandler(
   async (req: TAuthenticatedRequest, res) => {
@@ -16,7 +17,7 @@ export const getSearchFeedHandler = createHandler(
     if (q) {
       const params = q.split(" ");
       const session = req.session;
-      const query = getUndistinctPostQuery(db, session);
+      const query = getDistinctPostQuery(db, session);
       onlyCanonicalPosts(query);
       selectTrack(query);
       selectPost(query);

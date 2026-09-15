@@ -2,17 +2,18 @@ import { Separator } from "../../../components/separator";
 import { PostFeed } from "../../posts/components/post-feed";
 
 import { Spinner } from "../../../components/spinner";
-import { useUserContext } from "../providers/user-proivder";
+import { UserProvider, useUserContext } from "../providers/user-proivder";
 import { FeedProvider } from "../../../providers/feed-provider";
 import { UserHeader } from "../components/user-header";
 import { api } from "../../../utils/api/api";
 import { TabsProvider } from "../../../providers/tabs-provider";
-import { useSearchParams } from "react-router-dom";
+import { useParams, useSearchParams } from "react-router-dom";
 import { Heart, Music, Repeat } from "lucide-react";
 
 export function UserScreen() {
   const userService = useUserContext();
   const [searchParams, setSearchParams] = useSearchParams();
+
   const initialTab = searchParams.get("tab");
   if (userService.isPending) {
     return <Spinner />;
@@ -73,5 +74,14 @@ export function UserScreen() {
         </TabsProvider.Tab>
       </TabsProvider>
     </div>
+  );
+}
+
+export function UserScreenWrapper() {
+  const { id } = useParams();
+  return (
+    <UserProvider id={id}>
+      <UserScreen />
+    </UserProvider>
   );
 }

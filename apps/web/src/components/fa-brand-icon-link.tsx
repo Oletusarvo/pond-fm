@@ -1,5 +1,6 @@
 import { Link } from "react-router-dom";
 import { FaIconLink } from "./fa-icon-link";
+import { Link2 } from "lucide-react";
 
 const urlFaCodes = {
   "soundcloud.com": "fa-soundcloud",

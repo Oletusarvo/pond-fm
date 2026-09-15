@@ -5,14 +5,15 @@ import { useToggleContext } from "../../../providers/toggle-provider";
 import { Modal } from "../../../components/modal";
 import { Button, LoaderButton } from "../../../components/button";
 import { useUpgradeSubscription } from "../hooks/use-upgrade-subscription";
+import { defaults } from "../../../utils/defaults";
 
 type GoProModalProps = {
   onUpgrade?: () => void;
 };
 
 const PRO_FEATURES = [
-  "Your tracks appear in the undiscovered feed until they have accumulated 100 unique listeners (up from 25)",
-  "5GB of storage (up from 150MB)",
+  `Your tracks appear in the undiscovered feed until they have accumulated ${defaults.plans.pro.unique_listener_threshold} unique listeners (up from ${defaults.plans.free.unique_listener_threshold})`,
+  `${defaults.plans.pro.storage} of storage (up from ${defaults.plans.free.storage})`,
   "No ads, ever",
 ] as const;
 

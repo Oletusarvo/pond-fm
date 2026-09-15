@@ -42,7 +42,7 @@ function ModalContent({ close }) {
 
   return (
     <div className='flex flex-col w-full gap-8'>
-      <p className='text-slate-500'>
+      <p>
         We handle logins via magic-links at the moment. Please provide an email
         into which you'd like us to send it. An account will be created for you
         if you have never logged onto the platform before.

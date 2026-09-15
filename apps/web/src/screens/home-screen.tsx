@@ -53,27 +53,28 @@ export function HomeScreen() {
         </Button>
       </section>
       <section className='h-pad py-16 flex-1'>
-        <SectionHeading>What is Pond.fm?</SectionHeading>
+        <SectionHeading>What is Pond?</SectionHeading>
 
         <p className='text-base text-slate-600'>
-          Pond.fm is a music sharing platform built on a simple idea: your music
+          Pond is a music sharing platform built on a simple idea: your music
           should get a chance to be heard regardless of how popular you are.
           That's where our <strong>Undiscovered</strong> feed comes in. Any
           track with fewer than {defaults.plans.free.unique_listener_threshold}{" "}
           unique listeners (or {defaults.plans.pro.unique_listener_threshold}{" "}
-          for pro accounts), stays there, oldest first, until it reaches the
-          unique number of listeners. Once you cross that threshold, you've
-          genuinely been discovered. The <strong>New</strong> feed will display
-          the newest tracks uploaded or reposted in chronological order.
+          for Pro accounts), stays there, oldest first, until it reaches it.
+          Once your track crosses that threshold, you've genuinely been
+          discovered. The <strong>New</strong> feed will display uploaded or
+          reposted tracks in chronological order regardless of how many unique
+          listeners they have accumulated.
           <br />
           <br />
-          To help the right listeners find you, Pond.fm is experimenting with
+          To help the right listeners find you, Pond is experimenting with
           allowing tracks to be tagged not by subgenres, but by moods along
-          their main genre — because most listeners don't think in a maze of
-          subgenres, they think in how they want music to make them feel.
+          their main genre, because most listeners don't think in a maze of
+          subgenres, but how they want music to make them feel.
           <br />
           <br />
-          None of the feeds on pond are driven by engagement based algorithms;
+          None of the feeds on Pond are driven by engagement based algorithms;
           in fact we don't use algorithms of any kind. Everything is presented
           to you in chronological order.
           <br />
@@ -87,7 +88,7 @@ export function HomeScreen() {
             title='A Fair Shot At Being Discovered'
             icon={<Sprout />}
           >
-            Pond FM implements the <strong>Undiscovered</strong> feed, where all
+            Pond implements the <strong>Undiscovered</strong> feed, where all
             uploaded tracks stay until they have accumulated the unique
             listeners defined by their subscription. Tracks on this feed are
             sorted in chronological order, oldest first, so new uploads won't
@@ -95,7 +96,7 @@ export function HomeScreen() {
           </FeatureItem>
           <FeatureItem title='No Algorithmic Curation' icon={<Rss />}>
             The <strong>New</strong> feed will display tracks and reposts in
-            simple chronological order, newest first. Pond FM purposefully does
+            simple chronological order, newest first. Pond does not, and will
             not implement algorithmic curation.
           </FeatureItem>
           <FeatureItem title='Stay In The Loop' icon={<Network />}>
@@ -110,14 +111,14 @@ export function HomeScreen() {
           </FeatureItem>
         </div>
       </section>
-      <section className='h-pad py-16 flex-1 flex flex-col'>
-        <SectionHeading>Plans</SectionHeading>
+      <section className='h-pad py-16 flex-1 flex flex-col bg-primary/10'>
+        <SectionHeading>Account Types</SectionHeading>
         <p className='text-slate-600 mb-4'>
-          Pond FM offers two account tiers: Free and Pro. Pro users receive
-          bigger unique listener thresholds and storage quotas for building an
-          audience and a catalogue, while supporting the platform. Once you have
-          an account, please test the platform out, and if you like it, consider
-          upgrading to pro.
+          Pond has two account tiers: Free and Pro. Pro users receive bigger
+          unique listener thresholds and storage quotas for building an audience
+          and a catalogue, while supporting the platform. Once you have an
+          account, please test the platform out, and if you like it, consider
+          upgrading to Pro.
         </p>
         <div className='grid grid-cols-2 gap-4'>
           <PlanItem
@@ -126,12 +127,12 @@ export function HomeScreen() {
             listContent={[
               `${defaults.plans.free.unique_listener_threshold} unique listeners on the Undiscovered feed.`,
               `${defaults.plans.free.storage} of storage for your tracks.`,
-              "Occasional ads among the feeds.",
+              "Occasional ads among the feeds to help keep us afloat.",
             ]}
           >
             A basic plan for your artistry. Provides enough free storage space
             to make a difference, and a reasonable threshold for unique
-            listeners for your tracks. Free plans are recommended to upload mp3
+            listeners for your tracks. We recommend free plans to upload mp3
             files to make the most of their quota. All new accounts start on
             this plan.
           </PlanItem>
@@ -150,6 +151,15 @@ export function HomeScreen() {
             once you have logged in for the first time.
           </PlanItem>
         </div>
+      </section>
+      <section className='h-pad py-16 flex-1 flex flex-col bg-primary/10'>
+        <SectionHeading>Early Access</SectionHeading>
+        <p>
+          Pond is just now getting started. We have implemented the bare minimum
+          for the idea to be viable and provide users its core value, thus the
+          service does not support comments, profile- or track images, yet. If
+          the service turns out to work out, these will be added later.
+        </p>
       </section>
       <footer className='bg-gray-800 w-full flex flex-col gap-8 py-32 h-pad text-white xs:items-center md:justify-start md:items-start'>
         <div className='flex flex-col gap-8'>
@@ -226,7 +236,7 @@ function FeatureItem({
   title,
 }: React.PropsWithChildren & { title: string; icon: ReactNode }) {
   return (
-    <div className='rounded-md border-primary/20 bg-primary/10 border py-4 px-8'>
+    <div className='rounded-md border-primary/20 bg-primary/10 border py-4 px-8 min-h-64'>
       <div className='flex items-center gap-2 mb-4 text-primary'>
         <div className='rounded-full bg-primary text-white w-8 h-8 flex items-center justify-center'>
           <PassProps size='1rem'>{icon}</PassProps>
@@ -253,9 +263,16 @@ function PlanItem({
   return (
     <div className='rounded-md border-primary/20 bg-primary/10 py-4 px-8 border flex flex-col gap-4 items-start'>
       <h3 className='text-lg font-semibold text-primary'>{title}</h3>
-      <div className='border border-amber-500/20 bg-amber-500/10 text-amber-500 font-semibold px-8 py-2 rounded-md'>
-        {price.toFixed(2)}€/month
+      <div className='flex flex-col leading-tight'>
+        <div className='flex gap-1 items-baseline'>
+          <span className='text-3xl'>
+            {(Math.round(price * 100) / 100).toLocaleString("en")}
+          </span>
+          <span className='text-slate-500'>€/month</span>
+        </div>
+        {price > 0 ? <small>Billed annually</small> : null}
       </div>
+
       <p>{children}</p>
       <ul className='list-disc text-slate-700'>
         {listContent.map((content, i) => {

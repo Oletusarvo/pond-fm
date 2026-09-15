@@ -16,6 +16,7 @@ import { useSubmit } from "../../../hooks/use-submit";
 import { Form } from "../../../components/form";
 import { useNavigate } from "react-router-dom";
 import { useQueryClient } from "@tanstack/react-query";
+import { defaults } from "../../../utils/defaults";
 
 type Plan = "free" | "pro";
 
@@ -202,10 +203,11 @@ function DetailsSection() {
         </Form.Group>
 
         <LoaderButton
+          icon={status === "success" && !detailsDirty ? Check : null}
           type='submit'
           variant='text'
           loading={loading}
-          disabled={loading || !detailsDirty || status === "success"}
+          disabled={loading || !detailsDirty}
         >
           {status === "success" && !detailsDirty
             ? "Profile saved!"
@@ -288,11 +290,10 @@ function PlanSection() {
     return (
       <ul className='flex flex-col gap-1 text-sm text-slate-600'>
         <li>
-          {plan === "pro"
-            ? "100 unique listeners on the discovery feed"
-            : "25 unique listeners on the discovery feed."}
+          {defaults.plans[plan].unique_listener_threshold} unique listeners on
+          the discovery feed.
         </li>
-        <li>{plan === "pro" ? "5GB of storage" : "150MB of storage"}</li>
+        <li>{defaults.plans[plan].storage} of storage for your tracks.</li>
         <li>{plan === "pro" ? "No ads" : "Ads"}</li>
       </ul>
     );
@@ -365,7 +366,11 @@ function PlanSection() {
                 ? "You're still within your 14-day refund window. Canceling now refunds your payment and moves you back to Free right away."
                 : ` Your refund window has passed. Canceling keeps Pro active until
             ${planExpiresAt ? formatDate(planExpiresAt) : "your term ends"}, then you'll move to
-            Free. You won't be charged again, and this payment isn't refunded.`}
+            Free. You won't be charged again, and this payment isn't refunded.`}{" "}
+              <span className='text-amber-700'>
+                Canceling a Pro plan will cause your oldest tracks contributing
+                to the Free plan storage quota overage to be deleted.
+              </span>
             </p>
           </ConfirmAction>
         )}

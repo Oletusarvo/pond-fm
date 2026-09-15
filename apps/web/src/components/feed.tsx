@@ -1,10 +1,12 @@
-import { ReactNode, useEffect } from 'react';
-import { useInfiniteFeed } from '../hooks/use-infinite-feed';
-import { Separator } from './separator';
-import React from 'react';
-import { LoadingFiller } from './loading-filler';
-import { useFeedContext } from '../providers/feed-provider';
-import { Sentinel } from './sentinel';
+import { ReactNode, useEffect } from "react";
+import { useInfiniteFeed } from "../hooks/use-infinite-feed";
+import { Separator } from "./separator";
+import React from "react";
+import { LoadingFiller } from "./loading-filler";
+import { useFeedContext } from "../providers/feed-provider";
+import { Sentinel } from "./sentinel";
+import { AdInjector } from "../features/ads/components/ad-injector";
+import { useAuthContext } from "../features/auth/providers/auth-provider";
 
 type FeedScreenProps = {
   keyExtractor?: (item: any) => string;
@@ -17,13 +19,13 @@ export function Feed({
   onEmptyComponent: OnEmptyComponent,
 }: FeedScreenProps) {
   const { data, isPending, isError, error, fetchNextPage } = useFeedContext();
+  const { session } = useAuthContext();
 
   if (isPending) {
     return <LoadingFiller />;
-  }
-  else if (isError) {
+  } else if (isError) {
     console.log(error);
-    return <span className="text-red-900">Failed to load feed!</span>
+    return <span className='text-red-900'>Failed to load feed!</span>;
   }
 
   if (!data.length) {
@@ -40,14 +42,30 @@ export function Feed({
 
   return (
     <div className='flex flex-col w-full flex-1 overflow-y-scroll max-h-full'>
-      {data.map((item, i) => {
-        return (
-          <React.Fragment key={keyExtractor?.(item)}>
-            <RenderComponent item={item} />
-            {i < data.length - 1 ? <Separator /> : null}
-          </React.Fragment>
-        );
-      })}
+      <AdInjector
+        interval={10}
+        enabled={() => {
+          if (!session) return true;
+          const subscription = session.user.subscription;
+          if (
+            subscription.plan_id === "free" ||
+            ["unpaid", "incomplete"].includes(subscription.status)
+          )
+            return true;
+
+          return false;
+        }}
+      >
+        {data.map((item, i) => {
+          return (
+            <React.Fragment key={keyExtractor?.(item)}>
+              <RenderComponent item={item} />
+              {i < data.length - 1 ? <Separator /> : null}
+            </React.Fragment>
+          );
+        })}
+      </AdInjector>
+
       <Sentinel onVisible={() => fetchNextPage()} />
     </div>
   );

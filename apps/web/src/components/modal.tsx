@@ -36,8 +36,8 @@ export const Modal = React.memo(function Modal({
     );
     return (
       <div className={className}>
-        <div className='flex items-center w-full justify-between pt-2 pb-4 text-slate-500'>
-          <h3 className='font-semibold'>{title}</h3>
+        <div className='flex items-center w-full justify-between pt-2 pb-4'>
+          <h3 className='font-semibold text-slate-500'>{title}</h3>
           <Button
             hidden={!onClose}
             paddingEnabled
