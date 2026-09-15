@@ -120,7 +120,7 @@ export function HomeScreen() {
           account, please test the platform out, and if you like it, consider
           upgrading to Pro.
         </p>
-        <div className='grid grid-cols-2 gap-4'>
+        <div className='grid xs:grid-cols-1 md:grid-cols-2 gap-4'>
           <PlanItem
             priceInSubunits={0}
             title='Free'
@@ -216,9 +216,7 @@ export function HomeScreen() {
             </Link>
           </div>
         </div>
-        <div className='mt-auto w-full text-sm italic'>
-          &copy; oletusarvo 2026
-        </div>
+        <div className='mt-auto text-sm italic '>&copy; oletusarvo 2026</div>
       </footer>
     </>
   );
