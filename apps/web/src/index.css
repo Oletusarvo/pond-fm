@@ -80,7 +80,7 @@ button {
 
 @media screen and (max-width: 1200px) {
   .h-pad {
-    padding-inline: --spacing(32);
+    padding-inline: --spacing(16);
   }
 }
 
@@ -104,7 +104,7 @@ button {
 
 @media screen and (min-width: 1201px) {
   .h-pad {
-    padding-inline: --spacing(64);
+    padding-inline: --spacing(48);
   }
 }
 
@@ -135,7 +135,7 @@ button {
 
   display: inline-grid;
   place-content: center;
-
+  flex-shrink: 0;
   cursor: pointer;
   transition:
     background-color 120ms ease,

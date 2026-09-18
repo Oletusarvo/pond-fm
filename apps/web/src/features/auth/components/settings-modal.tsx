@@ -145,6 +145,9 @@ function DetailsSection() {
     },
   });
 
+  const authService = useAuthContext();
+  const navigate = useNavigate();
+
   const updateDetails = (e: any) => {
     setDetails((prev) => {
       return {
@@ -221,9 +224,7 @@ function DetailsSection() {
       </form>
       <Separator />
       <div className='flex flex-col gap-2 items-start'>
-        <Button shape='rounded' variant='ghost'>
-          Logout
-        </Button>
+        <LogoutButton />
         <ConfirmAction
           variant='danger'
           intentButton={
@@ -238,6 +239,41 @@ function DetailsSection() {
         </ConfirmAction>
       </div>
     </section>
+  );
+}
+
+function LogoutButton() {
+  const authService = useAuthContext();
+  const navigate = useNavigate();
+  const {
+    action: logout,
+    status,
+    loading,
+  } = useAction({
+    fn: async () => {
+      return await authService.logout();
+    },
+    onSuccess: () => {
+      navigate("/");
+    },
+  });
+  return (
+    <ConfirmAction
+      variant='default'
+      intentButton={
+        <LoaderButton
+          loading={loading}
+          disabled={status === "loading" || status === "success"}
+          shape='rounded'
+          variant='ghost'
+          onClick={logout}
+        >
+          Logout
+        </LoaderButton>
+      }
+    >
+      Are you sure you wish to logout?
+    </ConfirmAction>
   );
 }
 
