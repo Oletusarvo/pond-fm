@@ -51,9 +51,7 @@ export function Button({
   const className = useClassName(
     "flex text-sm items-center justify-center active:scale-95 cursor-pointer transition-all duration-100 font-semibold gap-2 border text-nowrap flex-nowrap",
     color !== "inherit" ? colors[color][variant] : "",
-    ["ghost", "text", "contained"].includes(variant)
-      ? "border-transparent"
-      : "",
+    ["ghost", "text", "contained"].includes(variant) ? "border-transparent" : "",
     shadow ? "shadow-md" : "",
     shape === "circle"
       ? "rounded-full min-w-4 min-h-4 aspect-square"

@@ -34,10 +34,8 @@ export function HomeScreen() {
           <span className='text-center text-base'>
             A music sharing platform where all tracks get a fair shot at getting heard.
           </span>
-          <div className='text-green-900 text-sm p-2 border border-primary/20 bg-primary/10 rounded-md'>
-            {" "}
-            We're currently in <strong>early access</strong>, with 500 spots open — join now while
-            spots remain.
+          <div className='text-red-900 text-sm p-2 border border-red-900/20 bg-red-900/10 rounded-md'>
+            The service has not yet been released. This page is a demo.
           </div>
           <div className='flex gap-2 w-full mt-4'>
             {status === "unauthenticated" ? (
@@ -205,10 +203,10 @@ export function HomeScreen() {
           </div>
           <div className='flex flex-col'>
             <h3 className='mb-2'>Resources</h3>
-            <Link to='/resources/terms-of-service.pdf' className='font-semibold' target='_blank'>
+            <Link to='/legal/terms-of-service.pdf' className='font-semibold' target='_blank'>
               Terms Of Service
             </Link>
-            <Link to='/resources/privacy-policy' className='font-semibold' target='_blank'>
+            <Link to='/legal/privacy-policy.pdf' className='font-semibold' target='_blank'>
               Privacy Policy
             </Link>
             <Link to='' className='font-semibold' target='_blank'>

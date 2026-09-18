@@ -387,7 +387,7 @@ function PlanSection() {
         {plan === "pro" && (
           <ConfirmAction
             onConfirm={async () => await cancelSubscription()}
-            variant='warning.outlined'
+            variant='warning'
             intentButton={
               <Button variant='ghost' shape='rounded'>
                 Cancel Subscription

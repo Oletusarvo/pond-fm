@@ -62,11 +62,11 @@ function ModalContent({ close }) {
           <input className='checkbox' type='checkbox' name='terms_accepted' required />
           <label>
             I have read, and accept the{" "}
-            <Link to='/terms-of-service.pdf' className='text-primary'>
+            <Link to='/legal/terms-of-service.pdf' className='text-primary' target='_blank'>
               Terms Of Service
             </Link>{" "}
             and the{" "}
-            <Link to='/privacy-policy.pdf' className='text-primary'>
+            <Link to='/legal/privacy-policy.pdf' className='text-primary' target='_blank'>
               Privacy Policy
             </Link>
           </label>
