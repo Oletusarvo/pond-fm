@@ -24,10 +24,7 @@ export class AuthService {
    * @returns A JWT-token encoding the authorized user's data.
    * @deprecated
    */
-  async authorizeUserByCode(
-    ctx: DBContext,
-    config: Parameters<typeof findValidTokenByCode>[1],
-  ) {
+  async authorizeUserByCode(ctx: DBContext, config: Parameters<typeof findValidTokenByCode>[1]) {
     const authToken = await this.repos.auth.findValidTokenByCode(ctx, config);
     if (!authToken) {
       return {
@@ -41,34 +38,6 @@ export class AuthService {
         data: authToken,
       };
     }
-  }
-  /**@deprecated */
-  async createSessionToken(
-    ctx: DBContext,
-    config: { authToken: { user_email: TUser["email"] } },
-  ) {
-    const savedUser = await this.repos.users.findByEmail(ctx, {
-      email: config.authToken.user_email,
-    });
-    if (savedUser.status === "pending_verification") {
-      await ctx(tablenames.users)
-        .where({ id: savedUser.id, status: "pending_verification" } as TUser)
-        .update({
-          status: "active",
-        } as TUser);
-    }
-
-    const token = createJWT(
-      { user: savedUser },
-      {
-        expiresIn: "90d",
-      },
-    );
-
-    return {
-      success: true,
-      data: token,
-    };
   }
 
   /**Creates an authorization code. */

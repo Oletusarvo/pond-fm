@@ -1,12 +1,7 @@
 import { useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { LogoutModal } from "../components/logout-modal";
-import {
-  TSession,
-  TSubscriptionRestricted,
-  TUser,
-  TUserRestricted,
-} from "@pondfm/app-shared";
+import { TSession, TSubscriptionRestricted, TUser, TUserRestricted } from "@pondfm/app-shared";
 import { api } from "../../../utils/api/api";
 
 type TSessionStatus = "loading" | "authenticated" | "unauthenticated";
@@ -37,6 +32,14 @@ export function useAuth() {
 
   const requestAuthorization = async (credentials: Pick<TUser, "email">) => {
     return await api.auth.requestAuthorization(credentials);
+  };
+
+  const signup = async (credentials: Pick<TUser, "email" | "username">) => {
+    const res = await api.auth.signup(credentials);
+    if (res.success) {
+      await refreshSession();
+    }
+    return res;
   };
 
   const authorize = async (code: string) => {
@@ -84,6 +87,7 @@ export function useAuth() {
 
   return {
     authorize,
+    signup,
     requestAuthorization,
     logout,
     toggleLogoutModal,

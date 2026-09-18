@@ -1,0 +1,38 @@
+body {
+  font-family: sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.main-heading {
+  color: rgb(48, 103, 18);
+}
+
+.main-text {
+  color: rgb(64, 63, 63);
+}
+
+.main-button {
+  background-color: green;
+  border-radius: 4px;
+  padding-inline: 1rem;
+  padding-block: 0.5rem;
+  border: none;
+  color: white;
+  transition: transform 0.2s ease-in-out;
+  cursor: pointer;
+  font-size: 16px;
+}
+
+.main-button:active {
+  transform: scale(0.95);
+}
+
+.bottom-disclaimer {
+  font-size: 12px;
+  font-style: italic;
+}
+
+a {
+  text-decoration: none;
+}

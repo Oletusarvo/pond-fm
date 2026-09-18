@@ -1,0 +1,24 @@
+<!doctype html>
+
+<html>
+  <head>
+    <link rel="stylesheet" href="styles/main.css" />
+  </head>
+  <body>
+    <h1 class="main-heading">Log In To {{appName}}</h1>
+    <p class="main-text">
+      You have requested to log in to {{appName}} <br />
+      Please paste the below code into the app:<br /><br />
+
+      <span style="font-size: 24px; font-weight: 600; color: black">{{code}}</span>
+    </p>
+    <p>Or tap the button below:</p>
+    <a href="{{url}}">
+      <button class="main-button">Log In</button>
+    </a>
+
+    <p class="bottom-disclaimer" style="font-size: 12px; font-style: italic">
+      If you didn't request to log in, please ignore this message.
+    </p>
+  </body>
+</html>

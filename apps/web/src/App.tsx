@@ -9,10 +9,7 @@ import { HomeLayout } from "./layouts/home-layout";
 import { AuthorizationScreen } from "./features/auth/screens/authorization-screen";
 import { UploadTrackScreen } from "./features/posts/screens/upload-track-screen";
 import { MainScreenFeed } from "./features/posts/screens/main-feed-screen";
-import {
-  UserScreen,
-  UserScreenWrapper,
-} from "./features/users/screens/user-screen";
+import { UserScreen, UserScreenWrapper } from "./features/users/screens/user-screen";
 import { ScrobbleProvider } from "./features/audio/providers/scrobble-provider";
 import { SettingsProvider } from "./features/auth/providers/settings-provider";
 import { ActionProvider } from "./providers/action-provider";
@@ -23,6 +20,8 @@ import { BillingSuccessScreen } from "./features/billing/components/billing-succ
 import { SubscriptionCancelSuccess } from "./features/billing/components/subscription-cancel-success";
 import { SearchFeedScreen } from "./features/posts/screens/search-screen";
 import { AdProvider } from "./features/ads/components/ad-injector";
+import { RegisterScreen } from "./features/auth/screens/register-modal";
+import { VerifyScreen } from "./features/auth/screens/verify-screen";
 
 function App() {
   return (
@@ -37,46 +36,27 @@ function App() {
                     <SettingsProvider>
                       <Routes>
                         <Route path='/' element={<MainLayout />}>
-                          <Route
-                            path='/billing/success'
-                            element={<BillingSuccessScreen />}
-                          />
+                          <Route path='/billing/success' element={<BillingSuccessScreen />} />
                           <Route
                             path='/billing/cancel/success'
                             element={<SubscriptionCancelSuccess />}
                           />
                           <Route path='/' element={<HomeLayout />}>
                             <Route path='login' element={<LoginScreen />} />
-                            <Route
-                              path='authorize'
-                              element={<AuthorizationScreen />}
-                            />
+                            <Route path='signup' element={<RegisterScreen />} />
+                            <Route path='authorize' element={<AuthorizationScreen />} />
+                            <Route path='verify' element={<VerifyScreen />} />
                           </Route>
-                          <Route
-                            path='undiscovered'
-                            element={<UndiscoveredFeedScreen />}
-                          />
-                          <Route
-                            path='followed'
-                            element={<FollowedFeedScreen />}
-                          />
-                          <Route
-                            path='user/:id'
-                            element={<UserScreenWrapper />}
-                          />
+                          <Route path='undiscovered' element={<UndiscoveredFeedScreen />} />
+                          <Route path='followed' element={<FollowedFeedScreen />} />
+                          <Route path='user/:id' element={<UserScreenWrapper />} />
                           <Route path='new' element={<MainScreenFeed />} />
                           <Route path='search' element={<SearchFeedScreen />} />
 
-                          <Route
-                            path='upload'
-                            element={<UploadTrackScreen />}
-                          />
+                          <Route path='upload' element={<UploadTrackScreen />} />
                           <Route path='login' element={<LoginScreen />} />
 
-                          <Route
-                            path='track/:trackId'
-                            element={<TrackScreen />}
-                          />
+                          <Route path='track/:trackId' element={<TrackScreen />} />
                         </Route>
                       </Routes>
                     </SettingsProvider>

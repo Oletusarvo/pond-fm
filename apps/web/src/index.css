@@ -122,3 +122,48 @@ button {
 .scrollable::-webkit-scrollbar {
   display: none;
 }
+
+.checkbox {
+  appearance: none;
+  -webkit-appearance: none;
+
+  width: 1.25rem;
+  height: 1.25rem;
+
+  border: 2px solid var(--color-gray-300);
+  border-radius: 0.25rem;
+
+  display: inline-grid;
+  place-content: center;
+
+  cursor: pointer;
+  transition:
+    background-color 120ms ease,
+    border-color 120ms ease;
+}
+
+.checkbox::before {
+  content: "";
+  width: 0.35rem;
+  height: 0.65rem;
+
+  border-right: 2px solid white;
+  border-bottom: 2px solid white;
+
+  transform: rotate(45deg) scale(0);
+  transition: transform 120ms ease;
+}
+
+.checkbox:checked {
+  background-color: var(--color-primary);
+  border-color: var(--color-primary);
+}
+
+.checkbox:checked::before {
+  transform: rotate(45deg) scale(1);
+}
+
+.checkbox:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+}

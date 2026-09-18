@@ -12,6 +12,7 @@ type FeedScreenProps = {
   adsEnabled?: React.ComponentProps<typeof AdInjector>["enabled"];
   keyExtractor?: (item: any) => string;
   renderComponent: (item: any) => ReactNode;
+  /**The content shown if the feed has no items. */
   onEmptyComponent?: () => ReactNode;
 };
 export function Feed({
@@ -27,7 +28,12 @@ export function Feed({
     return <LoadingFiller />;
   } else if (isError) {
     console.log(error);
-    return <span className='text-red-900'>Failed to load feed!</span>;
+
+    return (
+      <div className='flex w-full flex-col justify-center items-center flex-1 h-full'>
+        <span className='text-red-900'>Failed to load feed!</span>
+      </div>
+    );
   }
 
   if (!data.length) {

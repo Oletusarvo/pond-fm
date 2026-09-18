@@ -9,53 +9,10 @@ import {
   ServiceSuccessResponse,
 } from "../types/service-response";
 import crypto from "crypto";
-import { findUserByEmail } from "../DAL/users/find-user-by-email";
+import { findUserById } from "../DAL/users/find-user-by-id";
 import { getLookupQuery } from "../DAL/util/get-lookup-query";
 import { serviceError } from "../utils/service-error";
 
 export class UserService {
   constructor(private repo: UserRepository) {}
-
-  async createIfNotExists(
-    ctx: DBContext,
-    config: Parameters<typeof findUserByEmail>[1],
-  ) {
-    let user = await ctx(tablenames.users)
-      .where({ email: config.email })
-      .select("id")
-      .first();
-    if (!user) {
-      const rowsAffected = await db.transaction(
-        async (trx) =>
-          await trx(tablenames.serviceSettings)
-            .forUpdate()
-            .whereRaw("registered_users < max_users")
-            .increment("registered_users", 1),
-      );
-
-      if (rowsAffected == 0) {
-        return {
-          success: false,
-          error: serviceError.auth.userQuotaExceeded,
-        } as ServiceErrorResponse;
-      }
-
-      //Create a new pending user record.
-      const defaultUserId = crypto.randomBytes(8).toString("hex");
-      const userNumber = BigInt("0x" + defaultUserId).toString();
-      const defaultUserName = `user-${userNumber}`;
-      user = await this.repo.createNewUser(ctx, {
-        user: { email: config.email, username: defaultUserName },
-      });
-      await ctx(tablenames.subscriptions).insert({
-        user_id: user.id,
-        plan_id: "free",
-        status: "active",
-      });
-    }
-
-    return { success: true, data: user } as ServiceSuccessResponse<{
-      id: string;
-    }>;
-  }
 }

@@ -1,7 +1,7 @@
 {
   "name": "@pondfm",
   "version": "0.9.0",
-  "description": "A music sharing platform with purely chronological feeds without algorithmic curation.",
+  "description": "A music sharing platform where all tracks get a fair shot at getting heard.",
   "main": "index.js",
   "scripts": {
     "dev:web": "npm run dev -w @pondfm/web",
@@ -18,8 +18,5 @@
     "packages/*"
   ],
   "author": "oletusarvo",
-  "license": "ISC",
-  "dependencies": {
-    "multer": "^2.2.0"
-  }
+  "license": "ISC"
 }

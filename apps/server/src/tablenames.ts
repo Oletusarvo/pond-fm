@@ -25,6 +25,7 @@ export const tablenames = {
   uploadFolders: "upload.upload_folder_data",
   userUrls: "auth.user_url_data",
   playData: "post.play_data",
+  passwordResetSessions: "auth.password_reset_session_data",
 } as const;
 
 export const viewnames = {

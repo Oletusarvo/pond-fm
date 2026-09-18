@@ -8,5 +8,6 @@ export function selectUser(query: Knex.QueryBuilder) {
     "users.status",
     "users.bio",
     "users.urls",
+    "users.unseen_notification_count",
   );
 }

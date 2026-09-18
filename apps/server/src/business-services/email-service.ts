@@ -1,5 +1,8 @@
 import { loadEnvVariable } from "@pondfm/server-utils";
 import { getDomainUrl } from "../utils/get-domain-url";
+import { appName } from "@pondfm/app-shared";
+import { readFile } from "fs/promises";
+import path from "path";
 
 /**Responsible for sending emails. */
 export class EmailService {
@@ -8,33 +11,32 @@ export class EmailService {
     private apiKey: string,
   ) {}
 
-  sendMagicLink(to: string, code: string) {
+  async sendMagicLink(to: string, code: string) {
     const domainUrl = getDomainUrl();
-    const html = this.createEmailHtml({
-      title: "Greetings!",
-      body: `You have requested to log into Pond.Fm<br/>If that wasn't you, please ignore this message.<br/>
-              Otherwise please tap <a href="${domainUrl}/authorize?code=${code}">this link</a>, or paste the below code into the app:<br/><br/>
-              <span style="font-size=24px; font-weight=600; color=black">${code}</span>`,
+    const templateSource = await readFile(
+      path.join(process.cwd(), "./src/html-templates/magic-link-template.html"),
+      {
+        encoding: "utf-8",
+      },
+    );
+    const template = Handlebars.template(templateSource);
+    const html = template({
+      appName: "Amphitune",
+      code,
+      url: `${domainUrl}/authorize?code=${code}`,
     });
+
     return this.send({
       to,
-      subject: "Log in to Pond.FM",
+      subject: `Log in to ${appName}`,
       html,
     });
   }
 
-  async send({
-    to,
-    subject,
-    html,
-  }: {
-    to: string;
-    subject: string;
-    html: string;
-  }) {
+  async send({ to, subject, html }: { to: string; subject: string; html: string }) {
     const serviceEmail = loadEnvVariable("SERVICE_EMAIL", true);
     const body = JSON.stringify({
-      sender: { email: serviceEmail, name: "Pond.fm" },
+      sender: { email: serviceEmail, name: appName },
       to: [{ email: to }],
       subject,
       htmlContent: html,
@@ -74,7 +76,7 @@ export class EmailService {
         <p class="body-text">
           ${body}
         </p>
-        <i>With regards, the Pond.fm Team.</i>
+        <i>With regards, the ${appName} Team.</i>
       </html>
     `;
   }

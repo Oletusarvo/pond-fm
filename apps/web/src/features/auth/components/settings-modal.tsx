@@ -17,6 +17,8 @@ import { Form } from "../../../components/form";
 import { useNavigate } from "react-router-dom";
 import { useQueryClient } from "@tanstack/react-query";
 import { defaults } from "../../../utils/defaults";
+import { TabsProvider } from "../../../providers/tabs-provider";
+import { Separator } from "../../../components/separator";
 
 type Plan = "free" | "pro";
 
@@ -58,13 +60,20 @@ export function SettingsModal({
   const onClose = () => toggleState(false);
 
   return (
-    <Modal title='Settings' onClose={onClose}>
+    <Modal title='Settings' onClose={onClose} fullHeight>
       <div className='flex flex-col gap-4 scrollable'>
-        <DetailsSection />
-        <Divider />
-        <PlanSection />
-        <Divider />
-        <LogoutSection />
+        <TabsProvider initialTab={"profile"}>
+          <div className='flex w-full'>
+            <TabsProvider.Button index='profile'>Profile</TabsProvider.Button>
+            <TabsProvider.Button index='plan'>Subscription</TabsProvider.Button>
+          </div>
+          <TabsProvider.Tab index='profile'>
+            <DetailsSection />
+          </TabsProvider.Tab>
+          <TabsProvider.Tab index='plan'>
+            <PlanSection />
+          </TabsProvider.Tab>
+        </TabsProvider>
       </div>
     </Modal>
   );
@@ -81,11 +90,7 @@ function SectionLabel({ children }: React.PropsWithChildren) {
 function Divider() {
   // A quiet nod to the pond: a single ripple line rather than a plain rule.
   return (
-    <svg
-      viewBox='0 0 200 8'
-      className='w-full h-2 text-slate-200'
-      preserveAspectRatio='none'
-    >
+    <svg viewBox='0 0 200 8' className='w-full h-2 text-slate-200' preserveAspectRatio='none'>
       <path
         d='M0 4 Q 12.5 0, 25 4 T 50 4 T 75 4 T 100 4 T 125 4 T 150 4 T 175 4 T 200 4'
         fill='none'
@@ -99,9 +104,11 @@ function Divider() {
 function DetailsSection() {
   const { session, refreshSession } = useAuthContext();
   const user = session?.user;
-  const [details, setDetails] = useState<
-    Partial<Pick<TUser, "username" | "bio" | "urls">>
-  >({ username: user?.username, bio: user?.bio, urls: user?.urls });
+  const [details, setDetails] = useState<Partial<Pick<TUser, "username" | "bio" | "urls">>>({
+    username: user?.username,
+    bio: user?.bio,
+    urls: user?.urls,
+  });
   const [detailsDirty, setDetailsDirty] = useState(false);
   const queryClient = useQueryClient();
   const { submit, status, loading } = useSubmit({
@@ -209,11 +216,27 @@ function DetailsSection() {
           loading={loading}
           disabled={loading || !detailsDirty}
         >
-          {status === "success" && !detailsDirty
-            ? "Profile saved!"
-            : "Save Profile"}
+          {status === "success" && !detailsDirty ? "Profile saved!" : "Save Profile"}
         </LoaderButton>
       </form>
+      <Separator />
+      <div className='flex flex-col gap-2 items-start'>
+        <Button shape='rounded' variant='ghost'>
+          Logout
+        </Button>
+        <ConfirmAction
+          variant='danger'
+          intentButton={
+            <Button shape='rounded' variant='ghost' color='danger'>
+              Delete Account
+            </Button>
+          }
+        >
+          Deleting an account will also delete all tracks and all likes and reposts on those tracks,
+          as well as all likes you have given and all reposts you have created. Are you sure you
+          wish to continue? The action cannot be undone.
+        </ConfirmAction>
+      </div>
     </section>
   );
 }
@@ -223,16 +246,13 @@ function PlanSection() {
   const { session } = useAuthContext();
 
   const daysSinceSubscriptionStart = session
-    ? (Date.now() -
-        new Date(session.user.subscription.current_period_start).getTime()) /
+    ? (Date.now() - new Date(session.user.subscription.current_period_start).getTime()) /
       (1000 * 60 * 60 * 24)
     : null;
 
   const withinRefundWindow = session && daysSinceSubscriptionStart <= 14;
 
-  const planExpiresAt = session
-    ? new Date(session.user.subscription.current_period_end)
-    : null;
+  const planExpiresAt = session ? new Date(session.user.subscription.current_period_end) : null;
 
   const { cancelSubscription, loading } = useCancelSubscription({
     onSuccess: () => {
@@ -245,10 +265,8 @@ function PlanSection() {
   const plan = authService.session?.user.subscription.plan_id;
 
   const cardClassName = useClassName(
-    "flex flex-col gap-3 rounded-md border p-4",
-    plan === "pro"
-      ? "border-amber-200 bg-amber-50"
-      : "border-slate-200 bg-slate-50",
+    "flex flex-col gap-3 rounded-md border p-4 w-full",
+    plan === "pro" ? "border-amber-200 bg-amber-50" : "border-slate-200 bg-slate-50",
   );
 
   const Icon = () => {
@@ -266,19 +284,13 @@ function PlanSection() {
   const PlanDetails = () => {
     return (
       <div>
-        <p className='font-semibold text-black'>
-          {plan === "pro" ? "Pond Pro" : "Free"}
-        </p>
+        <p className='font-semibold text-black'>{plan === "pro" ? "Pond Pro" : "Free"}</p>
         <div className='text-xs text-slate-500 flex flex-col'>
-          <span>
-            {plan === "pro" ? "5€/month · billed annually" : "0€/month"}
-          </span>
+          <span>{plan === "pro" ? "5€/month · billed annually" : "0€/month"}</span>
           {plan === "pro" ? (
             <span>
               {planExpiresAt.toLocaleDateString("en")} ·{" "}
-              {session?.user.subscription.cancel_at_period_end
-                ? "Plan expires"
-                : "Plan renews"}
+              {session?.user.subscription.cancel_at_period_end ? "Plan expires" : "Plan renews"}
             </span>
           ) : null}
         </div>
@@ -290,8 +302,7 @@ function PlanSection() {
     return (
       <ul className='flex flex-col gap-1 text-sm text-slate-600'>
         <li>
-          {defaults.plans[plan].unique_listener_threshold} unique listeners on
-          the discovery feed.
+          {defaults.plans[plan].unique_listener_threshold} unique listeners on the discovery feed.
         </li>
         <li>{defaults.plans[plan].storage} of storage for your tracks.</li>
         <li>{plan === "pro" ? "No ads" : "Ads"}</li>
@@ -322,7 +333,7 @@ function PlanSection() {
   };
 
   return (
-    <section className='flex flex-col gap-3'>
+    <section className='flex flex-col gap-2 items-start'>
       <SectionLabel>Plan</SectionLabel>
       <div className={cardClassName}>
         <div className='flex items-center justify-between'>
@@ -333,20 +344,15 @@ function PlanSection() {
         </div>
 
         <PlanFeaturesList />
-
+      </div>
+      <div className='flex w-full flex-col items-start'>
         {plan === "free" && <UpgradePlanButton />}
-
         {plan === "pro" && (
           <ConfirmAction
             onConfirm={async () => await cancelSubscription()}
             variant='warning.outlined'
             intentButton={
-              <Button
-                fullWidth
-                variant='outlined'
-                paddingEnabled
-                shape='rounded'
-              >
+              <Button variant='ghost' shape='rounded'>
                 Cancel Subscription
               </Button>
             }
@@ -368,8 +374,8 @@ function PlanSection() {
             ${planExpiresAt ? formatDate(planExpiresAt) : "your term ends"}, then you'll move to
             Free. You won't be charged again, and this payment isn't refunded.`}{" "}
               <span className='text-amber-700'>
-                Canceling a Pro plan will cause your oldest tracks contributing
-                to the Free plan storage quota overage to be deleted.
+                Canceling a Pro plan will cause your oldest tracks contributing to the Free plan
+                storage quota overage to be deleted.
               </span>
             </p>
           </ConfirmAction>

@@ -10,6 +10,7 @@ import { getUserHandler } from "./handlers/get-user-handler";
 import { markNotificationsAsSeenHandler } from "./handlers/mark-notifications-as-seen-handler";
 import { unfollowUserHandler } from "./handlers/unfollow-user-handler";
 import { updateUserHandler } from "./handlers/update-user-handler";
+import { deleteUserHandler } from "./handlers/delete-user-handler";
 
 const router = getRouter();
 
@@ -18,12 +19,7 @@ const router = getRouter();
  * @summary Updates the currently authenticated user.
  * @tags Users
  */
-router.put(
-  "/",
-  checkAuth(),
-  createBodyParser(updateUserSchema),
-  updateUserHandler,
-);
+router.put("/", checkAuth(), createBodyParser(updateUserSchema), updateUserHandler);
 /**
  * GET /users/notifications
  * @summary Returns the notifications of the currently authenticated user.
@@ -36,11 +32,7 @@ router.get("/notifications", checkAuth(), getNotificationsHandler);
  * @summary Marks all notifications of the currently authenticated user as seen.
  * @tags Users
  */
-router.put(
-  "/notifications/mark-as-seen",
-  checkAuth(),
-  markNotificationsAsSeenHandler,
-);
+router.put("/notifications/mark-as-seen", checkAuth(), markNotificationsAsSeenHandler);
 /**
  * POST /users/follow/:id
  * @summary Adds the currently authenticated user as a follower of another user by id.
@@ -71,5 +63,6 @@ router.get("/following/:userId", getUserFollowing);
  * @tags Users
  */
 router.get("/:userId", checkAuth(false), getUserHandler);
+router.delete("/", checkAuth(), deleteUserHandler);
 
 export { router as usersRouter };

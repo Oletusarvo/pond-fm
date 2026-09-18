@@ -7,6 +7,7 @@ type ModalProps = React.PropsWithChildren & {
   onClose?: () => void;
   title: string;
   fullScreen?: boolean;
+  fullHeight?: boolean;
 };
 
 export const Modal = React.memo(function Modal({
@@ -14,6 +15,7 @@ export const Modal = React.memo(function Modal({
   onClose,
   title,
   fullScreen,
+  fullHeight,
 }: ModalProps) {
   function Container() {
     const className = useClassName(
@@ -30,27 +32,18 @@ export const Modal = React.memo(function Modal({
   const Body = React.memo(function Body() {
     const className = useClassName(
       "bg-white p-4 flex flex-col overflow-y-scroll max-h-full animate-fade-in animate-grow-in min-h-32",
-      fullScreen
-        ? "w-full h-full"
-        : "xs:w-full md:w-[60%] lg:w-[50%] xl:w-[40%] rounded-md",
+      fullScreen ? "w-full h-full" : "xs:w-full md:w-[60%] lg:w-[50%] xl:w-[40%] rounded-md",
+      fullHeight ? "h-full" : "h-auto",
     );
     return (
       <div className={className}>
         <div className='flex items-center w-full justify-between pt-2 pb-4'>
           <h3 className='font-semibold text-slate-500'>{title}</h3>
-          <Button
-            hidden={!onClose}
-            paddingEnabled
-            onClick={onClose}
-            variant='ghost'
-            shape='circle'
-          >
+          <Button hidden={!onClose} paddingEnabled onClick={onClose} variant='ghost' shape='circle'>
             <X />
           </Button>
         </div>
-        <div className='flex flex-col overflow-hidden overflow-y-scroll py-4'>
-          {children}
-        </div>
+        <div className='flex flex-col overflow-hidden overflow-y-scroll py-4'>{children}</div>
       </div>
     );
   });

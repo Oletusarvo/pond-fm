@@ -15,10 +15,7 @@ import { TUploadFolder } from "@pondfm/app-shared/dist/types/upload-folder";
 
 require("dotenv").config();
 const app = express();
-const allowedOrigins = [
-  "http://localhost:5173",
-  "https://pond-fm.onrender.com",
-];
+const allowedOrigins = ["http://localhost:5173", "https://pond-fm.onrender.com"];
 app.use(cookieParser());
 app.use(
   cors({
@@ -56,14 +53,23 @@ runCleanup().finally(() => {
 
 async function runCleanup() {
   console.log("Running cleanup...");
-  //Delete users that have not verified themselves within 24 hours.
-  await retry(async () =>
-    db(tablenames.users)
-      .where({ status: "pending_verification" } as Pick<TUser, "status">)
-      .whereRaw("CURRENT_TIMESTAMP - created_at >= INTERVAL '24h'")
-      .del(),
+  //Delete users that have not verified themselves within 30 minutes.
+  await retry(
+    async () =>
+      await db(tablenames.users)
+        .where({ status: "pending_verification" } as Pick<TUser, "status">)
+        .whereRaw("CURRENT_TIMESTAMP - created_at >= INTERVAL '30min'")
+        .del(),
   ).catch((err) => {
     console.log("Failed to delete expired pending users.", err.stack);
+  });
+
+  //Delete users that have been deleted, and have been in that state for one day.
+  await retry(async () => {
+    await db(tablenames.users)
+      .where({ status: "deleted" } as TUser)
+      .andWhereRaw("CURRENT_TIMESTAMP - deleted_at >= INTERVAL '24h'")
+      .del();
   });
 
   await cleanupUnusedFilesAndTracks().catch((err) =>
@@ -72,23 +78,13 @@ async function runCleanup() {
 
   //Delete expired auth tokens.
   await retry(
-    async () =>
-      await db(tablenames.authTokens)
-        .where("expires_at", "<=", db.fn.now())
-        .del(),
-  ).catch((err) =>
-    console.log("Failed to delete expired auth tokens.", err.stack),
-  );
+    async () => await db(tablenames.authTokens).where("expires_at", "<=", db.fn.now()).del(),
+  ).catch((err) => console.log("Failed to delete expired auth tokens.", err.stack));
 
   //Delete expired upload tokens.
   await retry(
-    async () =>
-      await db(tablenames.uploadTokens)
-        .where("expires_at", "<=", db.fn.now())
-        .del(),
-  ).catch((err) =>
-    console.log("Failed to delete expired upload tokens.", err.stack),
-  );
+    async () => await db(tablenames.uploadTokens).where("expires_at", "<=", db.fn.now()).del(),
+  ).catch((err) => console.log("Failed to delete expired upload tokens.", err.stack));
 }
 
 async function cleanupUnusedFilesAndTracks() {

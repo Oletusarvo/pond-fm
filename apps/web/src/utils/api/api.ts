@@ -16,20 +16,21 @@ export class Api {
   }
 
   /**Converts a Response into a TApiResponse. */
-  static async asApiResponse<T = unknown, E = unknown>(
-    res: Response,
-  ): Promise<TApiResponse<T, E>> {
-    return res.ok
-      ? {
-          status: res.status,
-          success: true,
-          data: await extractJsonBody(res),
-        }
-      : {
-          status: res.status,
-          success: false,
-          error: await extractJsonBody(res),
-        };
+  static async asApiResponse<T = unknown, E = unknown>(res: Response): Promise<TApiResponse<T, E>> {
+    if (res.ok) {
+      return {
+        status: res.status,
+        success: true,
+        data: await extractJsonBody(res),
+      };
+    } else {
+      const error = await extractJsonBody(res);
+      return {
+        status: res.status,
+        success: false,
+        error: error?.error,
+      };
+    }
   }
 
   /**Provides authorization-related methods. */

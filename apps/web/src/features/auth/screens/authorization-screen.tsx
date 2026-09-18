@@ -6,10 +6,7 @@ import { Button, LoaderButton } from "../../../components/button";
 import { Form } from "../../../components/form";
 import { Input } from "../../../components/input";
 import { useSubmit } from "../../../hooks/use-submit";
-import {
-  ErrorMessage,
-  SuccessMessage,
-} from "../../../components/helper-message";
+import { ErrorMessage, SuccessMessage } from "../../../components/helper-message";
 
 export function AuthorizationScreen() {
   const navigate = useNavigate();
@@ -43,19 +40,15 @@ function ModalContent({ onClose }) {
       <Form onSubmit={submit} ref={formRef}>
         <p>To sign in, please submit the code we sent you.</p>
         <Form.Group label='Code'>
-          <Input name='code' type='text' required defaultValue={code} />
+          <Input
+            name='code'
+            type='text'
+            required
+            defaultValue={code}
+            placeholder='Please paste the code we sent you here...'
+          />
         </Form.Group>
-        <div className='flex gap-2 w-full'>
-          <Button
-            disabled={buttonsDisabled}
-            variant='outlined'
-            fullWidth
-            paddingEnabled
-            shape='rounded'
-            onClick={onClose}
-          >
-            Cancel
-          </Button>
+        <div className='flex flex-col gap-2 w-full'>
           <LoaderButton
             loading={loading}
             disabled={buttonsDisabled}
@@ -66,6 +59,16 @@ function ModalContent({ onClose }) {
           >
             {status !== "error" ? "Submit" : "Try Again"}
           </LoaderButton>
+          <Button
+            disabled={buttonsDisabled}
+            variant='ghost'
+            fullWidth
+            paddingEnabled
+            shape='rounded'
+            onClick={onClose}
+          >
+            Cancel
+          </Button>
         </div>
       </Form>
       {status === "success" ? (

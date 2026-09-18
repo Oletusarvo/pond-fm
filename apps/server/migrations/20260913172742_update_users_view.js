@@ -7,9 +7,8 @@ const { constructUserViewV2 } = require("../migration-utils/views/user-view");
 exports.up = function (knex) {
   return knex.schema
     .withSchema("auth")
-    .createViewOrReplace("user_view", (view) =>
-      constructUserViewV2(knex, view),
-    );
+    .dropViewIfExists("user_view")
+    .createViewOrReplace("user_view", (view) => constructUserViewV2(knex, view));
 };
 
 /**
