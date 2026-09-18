@@ -259,18 +259,19 @@ function LogoutButton() {
   });
   return (
     <ConfirmAction
-      variant='default'
-      intentButton={
+      variant='warning'
+      onConfirm={logout}
+      confirmButton={
         <LoaderButton
           loading={loading}
           disabled={status === "loading" || status === "success"}
           shape='rounded'
           variant='ghost'
-          onClick={logout}
         >
           Logout
         </LoaderButton>
       }
+      intentButton={<Button variant='ghost'>Logout</Button>}
     >
       Are you sure you wish to logout?
     </ConfirmAction>

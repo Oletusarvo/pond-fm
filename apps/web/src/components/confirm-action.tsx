@@ -91,9 +91,7 @@ export function ConfirmAction({
       </div>
       <div className='flex gap-2 items-center'>
         <PassProps onClick={() => setIsConfirming(false)}>{intentCancelButton}</PassProps>
-        <PassProps onClick={onConfirm} color={buttonColor.split(".")[0]}>
-          {confirmButton}
-        </PassProps>
+        <PassProps onClick={onConfirm}>{confirmButton}</PassProps>
       </div>
     </div>
   ) : (
