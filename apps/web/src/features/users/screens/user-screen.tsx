@@ -20,7 +20,7 @@ export function UserScreen() {
   }
 
   return (
-    <div className='flex flex-col w-full'>
+    <div className='flex flex-col w-full h-full'>
       <UserHeader />
       <Separator />
       <TabsProvider
@@ -44,9 +44,7 @@ export function UserScreen() {
         </div>
         <TabsProvider.Tab index={"tracks"}>
           <FeedProvider
-            queryFn={(cursor) =>
-              api.tracks.feed.byAuthor(userService.user.id, cursor)
-            }
+            queryFn={(cursor) => api.tracks.feed.byAuthor(userService.user.id, cursor)}
             queryKey={["feed", "author", userService.user.id]}
           >
             <PostFeed />
@@ -54,9 +52,7 @@ export function UserScreen() {
         </TabsProvider.Tab>
         <TabsProvider.Tab index={"reposts"}>
           <FeedProvider
-            queryFn={(cursor) =>
-              api.tracks.feed.repostedBy(userService.user.id, cursor)
-            }
+            queryFn={(cursor) => api.tracks.feed.repostedBy(userService.user.id, cursor)}
             queryKey={["feed", "reposted", userService.user.id]}
           >
             <PostFeed />
@@ -64,9 +60,7 @@ export function UserScreen() {
         </TabsProvider.Tab>
         <TabsProvider.Tab index={"likes"}>
           <FeedProvider
-            queryFn={(cursor) =>
-              api.tracks.feed.likedBy(userService.user.id, cursor)
-            }
+            queryFn={(cursor) => api.tracks.feed.likedBy(userService.user.id, cursor)}
             queryKey={["feed", "liked", userService.user.id]}
           >
             <PostFeed />
