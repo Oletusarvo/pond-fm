@@ -13,12 +13,7 @@ export class UsersApi {
 
   /**Updates a user's profile. */
   async update(payload: Partial<Pick<TUser, "username" | "bio" | "urls">>) {
-    const req = requestBuilder
-      .put()
-      .body(payload)
-      .json()
-      .includeCredentials()
-      .build();
+    const req = requestBuilder.put().body(payload).json().includeCredentials().build();
     const res = await fetch(Api.withEndpoint("users"), req);
     return await Api.asApiResponse<
       null,
@@ -26,13 +21,18 @@ export class UsersApi {
     >(res);
   }
 
+  /**Deletes a user. */
+  async delete() {
+    const req = requestBuilder.includeCredentials().delete().build();
+    const res = await fetch(Api.withEndpoint("users"), req);
+    return await Api.asApiResponse(res);
+  }
+
   /**Follows a user. */
   async follow(id: string) {
     const req = requestBuilder.post().includeCredentials().build();
     const res = await fetch(Api.withEndpoint(`users/follow/${id}`), req);
-    return await Api.asApiResponse<null, typeof serviceError.auth.unauthorized>(
-      res,
-    );
+    return await Api.asApiResponse<null, typeof serviceError.auth.unauthorized>(res);
   }
 
   /**Unfollows a user. */

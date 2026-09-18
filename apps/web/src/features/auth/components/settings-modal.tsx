@@ -1,5 +1,5 @@
 import React, { startTransition, useState } from "react";
-import { Check, Crown, Waves } from "lucide-react";
+import { Check, Crown, Delete, Waves } from "lucide-react";
 import { Modal } from "../../../components/modal";
 import { useClassName } from "../../../hooks/use-class-name";
 import { Button, LoaderButton } from "../../../components/button";
@@ -225,18 +225,7 @@ function DetailsSection() {
       <Separator />
       <div className='flex flex-col gap-2 items-start'>
         <LogoutButton />
-        <ConfirmAction
-          variant='danger'
-          intentButton={
-            <Button shape='rounded' variant='ghost' color='danger'>
-              Delete Account
-            </Button>
-          }
-        >
-          Deleting an account will also delete all tracks and all likes and reposts on those tracks,
-          as well as all likes you have given and all reposts you have created. Are you sure you
-          wish to continue? The action cannot be undone.
-        </ConfirmAction>
+        <DeleteAccountButton />
       </div>
     </section>
   );
@@ -274,6 +263,41 @@ function LogoutButton() {
       intentButton={<Button variant='ghost'>Logout</Button>}
     >
       Are you sure you wish to logout?
+    </ConfirmAction>
+  );
+}
+
+function DeleteAccountButton() {
+  const { logout } = useAuthContext();
+  const { action, status, loading } = useAction({
+    fn: async () => await api.users.delete(),
+    onError: (res) => res.error as string,
+    onSuccess: async () => {
+      await logout();
+    },
+  });
+  return (
+    <ConfirmAction
+      onConfirm={action}
+      variant='danger'
+      confirmButton={
+        <LoaderButton
+          variant='ghost'
+          loading={loading}
+          disabled={status === "loading" || status === "success"}
+        >
+          Delete Account
+        </LoaderButton>
+      }
+      intentButton={
+        <Button shape='rounded' variant='ghost' color='danger'>
+          Delete Account
+        </Button>
+      }
+    >
+      Deleting an account will also delete all tracks and all likes and reposts on those tracks, as
+      well as all likes you have given and all reposts you have created. Are you sure you wish to
+      continue? The action cannot be undone.
     </ConfirmAction>
   );
 }

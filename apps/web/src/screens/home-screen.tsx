@@ -35,7 +35,7 @@ export function HomeScreen() {
             A music sharing platform where all tracks get a fair shot at getting heard.
           </span>
           <div className='text-red-900 text-sm p-2 border border-red-900/20 bg-red-900/10 rounded-md'>
-            The service has not yet been released. This page is a demo.
+            The service has not yet been released yet. This page is a demo.
           </div>
           <div className='flex gap-2 w-full mt-4'>
             {status === "unauthenticated" ? (

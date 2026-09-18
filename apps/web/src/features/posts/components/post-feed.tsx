@@ -34,7 +34,7 @@ export function PostFeed() {
         onEmptyComponent={() => {
           return (
             <div className='flex flex-col w-full flex-1 items-center justify-center'>
-              <h3 className='text-xl font-bold'>No tracks found.</h3>
+              <h3 className='text-xl font-bold text-primary'>No tracks found.</h3>
             </div>
           );
         }}
