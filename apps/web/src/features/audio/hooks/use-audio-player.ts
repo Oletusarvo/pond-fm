@@ -6,21 +6,24 @@ import { PlaybackReducerState } from "../reducers/playback-reducer";
 import { api } from "../../../utils/api/api";
 
 export function useAudioPlayer() {
-  const [currentPlayback, setCurrentPlayback] =
-    useState<PlaybackReducerState | null>(null);
-  const [playbackState, setPlaybackState] = useState<
-    "playing" | "paused" | "buffering" | "error"
-  >("paused");
-  const playbackSrc =
-    currentPlayback?.status === "ready" ? currentPlayback.streamUrl : null;
+  const [currentPlayback, setCurrentPlayback] = useState<PlaybackReducerState | null>(null);
+  const [playbackState, setPlaybackState] = useState<"playing" | "paused" | "buffering" | "error">(
+    "paused",
+  );
+  const playbackSrc = currentPlayback?.status === "ready" ? currentPlayback.streamUrl : null;
   const [playbackPosition, setPlaybackPosition] = useState(0);
   const audioRef = useRef<HTMLAudioElement>(null);
   const actionService = useActionContext();
 
   /**Updates the current playback if it is different. */
   const updateCurrentPlayback = async (playback: TPlayback | null) => {
+    if (!playback) {
+      setCurrentPlayback(null);
+      return;
+    }
+    //Pause playback
+    audioRef.current?.pause();
     //Request a stream token.
-
     if (currentPlayback?.track.id !== playback.track.id) {
       await api.tracks
         .requestStreamToken(playback.track.id)
