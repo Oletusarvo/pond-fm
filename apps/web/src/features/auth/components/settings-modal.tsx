@@ -104,20 +104,25 @@ function Divider() {
 function DetailsSection() {
   const { session, refreshSession } = useAuthContext();
   const user = session?.user;
-  const [details, setDetails] = useState<Partial<Pick<TUser, "username" | "bio" | "urls">>>({
+  const [details, setDetails] = useState<
+    Partial<Pick<TUser, "username" | "bio" | "urls" | "email">>
+  >({
     username: user?.username,
     bio: user?.bio,
     urls: user?.urls,
+    email: null,
   });
   const [detailsDirty, setDetailsDirty] = useState(false);
   const queryClient = useQueryClient();
   const { submit, status, loading } = useSubmit({
     fetchFn: async (payload) => {
       const data = Object.fromEntries(payload) as typeof details;
-      const { url1, url2, url3, ...rest } = data as any;
+      const { url1, url2, url3, email, ...rest } = data as any;
       const urls = [url1, url2, url3].filter((url) => url);
       const res = await api.users.update({
         ...rest,
+        //Only set the email if it is different from the initial value.
+        email: email !== session?.user.email ? email : null,
         urls,
       });
       //Refresh the user screen data.
@@ -166,6 +171,19 @@ function DetailsSection() {
     <section className='flex flex-col w-full gap-2'>
       <SectionLabel>Profile</SectionLabel>
       <form className='flex flex-col gap-2 w-full items-end' onSubmit={submit}>
+        <Form.Group label='Email'>
+          <Input
+            type='email'
+            name='email'
+            defaultValue={user?.email}
+            required
+            placeholder='Update your email...'
+            onChange={updateDetails}
+          />
+          <small className='ml-1 text-gray-500'>
+            Updated emails must be verified before they take effect.
+          </small>
+        </Form.Group>
         <Form.Group label='Username'>
           <Input
             name='username'
@@ -255,12 +273,16 @@ function LogoutButton() {
           loading={loading}
           disabled={status === "loading" || status === "success"}
           shape='rounded'
-          variant='ghost'
+          variant='text'
         >
           Logout
         </LoaderButton>
       }
-      intentButton={<Button variant='ghost'>Logout</Button>}
+      intentButton={
+        <Button variant='text' shape='rounded'>
+          Logout
+        </Button>
+      }
     >
       Are you sure you wish to logout?
     </ConfirmAction>
@@ -282,7 +304,7 @@ function DeleteAccountButton() {
       variant='danger'
       confirmButton={
         <LoaderButton
-          variant='ghost'
+          variant='text'
           loading={loading}
           disabled={status === "loading" || status === "success"}
         >
@@ -290,7 +312,7 @@ function DeleteAccountButton() {
         </LoaderButton>
       }
       intentButton={
-        <Button shape='rounded' variant='ghost' color='danger'>
+        <Button shape='rounded' variant='text' color='danger'>
           Delete Account
         </Button>
       }
@@ -312,10 +334,10 @@ function PlanSection() {
     : null;
 
   const withinRefundWindow = session && daysSinceSubscriptionStart <= 14;
-
   const planExpiresAt = session ? new Date(session.user.subscription.current_period_end) : null;
 
   const { cancelSubscription, loading } = useCancelSubscription({
+    mode: withinRefundWindow ? "immediate" : "at_period_end",
     onSuccess: () => {
       //Should update the user's session.
       toggleState(false);
@@ -351,7 +373,7 @@ function PlanSection() {
           {plan === "pro" ? (
             <span>
               {planExpiresAt.toLocaleDateString("en")} ·{" "}
-              {session?.user.subscription.cancel_at_period_end ? "Plan expires" : "Plan renews"}
+              {session?.user.subscription.cancel_at_period_end ? "Plan expires." : "Plan renews."}
             </span>
           ) : null}
         </div>
@@ -366,7 +388,7 @@ function PlanSection() {
           {defaults.plans[plan].unique_listener_threshold} unique listeners on the discovery feed.
         </li>
         <li>{defaults.plans[plan].storage} of storage for your tracks.</li>
-        <li>{plan === "pro" ? "No ads" : "Ads"}</li>
+        <li>{plan === "pro" ? "No ads." : "Ads."}</li>
       </ul>
     );
   };
@@ -382,10 +404,9 @@ function PlanSection() {
     return (
       <LoaderButton
         loading={loading}
-        variant='contained'
+        variant='ghost'
         disabled={status === "success" || loading}
         onClick={upgradeSubscription}
-        paddingEnabled
         shape='rounded'
       >
         Go Pro — 5€/month
@@ -408,12 +429,12 @@ function PlanSection() {
       </div>
       <div className='flex w-full flex-col items-start'>
         {plan === "free" && <UpgradePlanButton />}
-        {plan === "pro" && (
+        {plan === "pro" && !session?.user.subscription.cancel_at_period_end ? (
           <ConfirmAction
             onConfirm={async () => await cancelSubscription()}
             variant='warning'
             intentButton={
-              <Button variant='ghost' shape='rounded'>
+              <Button variant='text' shape='rounded'>
                 Cancel Subscription
               </Button>
             }
@@ -440,7 +461,7 @@ function PlanSection() {
               </span>
             </p>
           </ConfirmAction>
-        )}
+        ) : null}
       </div>
     </section>
   );

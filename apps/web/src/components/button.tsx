@@ -50,7 +50,15 @@ export function Button({
 }: ButtonProps) {
   const className = useClassName(
     "flex text-sm items-center justify-center active:scale-95 cursor-pointer transition-all duration-100 font-semibold gap-2 border text-nowrap flex-nowrap",
+
     color !== "inherit" ? colors[color][variant] : "",
+    color !== "inherit"
+      ? variant === "contained"
+        ? "disabled:bg-gray-400"
+        : variant === "outlined"
+          ? "disabled:border-gray-400 disabled:text-gray-400"
+          : "disabled:text-gray-400"
+      : "",
     ["ghost", "text", "contained"].includes(variant) ? "border-transparent" : "",
     shadow ? "shadow-md" : "",
     shape === "circle"
@@ -59,7 +67,8 @@ export function Button({
         ? "rounded-md"
         : "",
     fullWidth ? "w-full" : "",
-    paddingEnabled ? (variant !== "ghost" ? "py-2 px-4" : "p-2") : "",
+    shape !== "circle" ? (variant !== "text" ? "px-4 h-10" : "") : "h-auto aspect-square",
+    paddingEnabled ? (shape !== "circle" ? "px-4" : "p-2") : "",
   );
   return (
     <button {...props} type={props.type || "button"} className={className}>

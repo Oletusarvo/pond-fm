@@ -53,10 +53,7 @@ export class PostService {
     return { success: true };
   }
 
-  async unrepostTrack(
-    ctx: DBContext,
-    config: { editor: { id: string }; track: { id: string } },
-  ) {
+  async unrepostTrack(ctx: DBContext, config: { editor: { id: string }; track: { id: string } }) {
     //Prevent unreposting if the post isn't a repost, or if the editor isn't the one who reposted.
     const query = getPostQuery(ctx);
     query
@@ -73,10 +70,7 @@ export class PostService {
   }
 
   /**Likes a posted track. */
-  async likeTrack(
-    ctx: DBContext,
-    config: Parameters<typeof createTrackLike>[1],
-  ) {
+  async likeTrack(ctx: DBContext, config: Parameters<typeof createTrackLike>[1]) {
     return await this.repos.postRepo
       .createTrackLike(ctx, config)
       .then(() => {
@@ -85,10 +79,7 @@ export class PostService {
       .catch((err) => {
         const msg = err.message.toLowerCase();
 
-        if (
-          msg.includes("duplicate") &&
-          msg.includes("track_like_data_unique")
-        ) {
+        if (msg.includes("duplicate") && msg.includes("track_like_data_unique")) {
           return {
             success: false,
             error: serviceError.post?.duplicateLike,
@@ -99,16 +90,20 @@ export class PostService {
       });
   }
 
-  async unlikeTrack(
-    ctx: DBContext,
-    config: Parameters<typeof deleteTrackLike>[1],
-  ) {
+  async unlikeTrack(ctx: DBContext, config: Parameters<typeof deleteTrackLike>[1]) {
     await this.repos.postRepo.deleteTrackLike(ctx, config);
     return { success: true } as ServiceSuccessResponse<void>;
   }
 
   /**Returns a token allowing fetching of streams and counting plays.*/
-  async createStreamToken(track: Pick<TTrack, "key" | "duration" | "id">) {
+  async createStreamToken(
+    ctx: Knex.Transaction,
+    options: {
+      track: Pick<TTrack, "key" | "duration" | "id">;
+      user: { session_id: string; id?: string };
+    },
+  ) {
+    const { user, track } = options;
     const streamStarted = Date.now();
     //Stream start + duration of the track + a grace period of 10 seconds, in milliseconds.
     const expires = streamStarted + track.duration * 1000 + 10000;
@@ -117,12 +112,22 @@ export class PostService {
     /**The amount of time in seconds the track has to be listened to until a play can be counted. */
     const requiredListenTime = threshold ? threshold * track.duration : 159;
     const countValidAt = streamStarted + requiredListenTime * 1000;
+
+    const [streamSession] = await ctx(tablenames.streamSessions)
+      .insert({
+        stream_started_at: new Date(streamStarted),
+        play_countable_at: new Date(countValidAt),
+        track_id: track.id,
+        expires_at: new Date(expires),
+        user_id: user.id,
+        session_id: user.session_id,
+        is_used: false,
+      })
+      .onConflict(["session_id", "track_id"])
+      .merge()
+      .returning("id");
     const token = createJWT({
-      id: v4(),
-      trackId: track.id,
-      streamStarted: streamStarted,
-      expires,
-      countValidAt,
+      stream_session_id: streamSession.id,
     });
     return { success: true, data: token } as ServiceSuccessResponse<string>;
   }

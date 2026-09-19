@@ -35,7 +35,7 @@ function ModalContent({ close }) {
   });
 
   return (
-    <div className='flex flex-col gap-8'>
+    <div className='flex flex-col gap-8 scrollable'>
       <div className='flex flex-col gap-4 items-start'>
         <h2 className='font-semibold text-lg'>Reporting {post.track.title}</h2>
         <div className=' flex gap-2 items-center font-mono text-xs p-1 bg-primary/10 text-primary border-primary/20 border rounded-md'>
@@ -43,14 +43,13 @@ function ModalContent({ close }) {
           <span>{post.track.id}</span>
         </div>
         <p className='leading-5'>
-          We take copyright infringement seriously. Please provide the following
-          information for us so we can review the content.{" "}
+          We take copyright infringement seriously. Please provide the following information for us
+          so we can review the content.{" "}
           <i className='text-primary'>
             The id of the track will be automatically included in the report.
           </i>
           <br />
-          Repeated abuse of the reporting process will lead to a ban from the
-          platform.
+          Repeated abuse of the reporting process will lead to a ban from the platform.
         </p>
       </div>
 
@@ -63,11 +62,7 @@ function ModalContent({ close }) {
           />
         </Form.Group>
         <Form.Group label='Who you represent'>
-          <Input
-            required
-            placeholder='Who you represent...'
-            name='representative'
-          />
+          <Input required placeholder='Who you represent...' name='representative' />
         </Form.Group>
         <Form.Group label='Message'>
           <Textarea
@@ -77,29 +72,16 @@ function ModalContent({ close }) {
           />
         </Form.Group>
         <div className='flex flex-col w-full gap-2'>
-          <Button
-            type='submit'
-            variant='contained'
-            fullWidth
-            paddingEnabled
-            shape='rounded'
-          >
+          <Button type='submit' variant='contained' fullWidth paddingEnabled shape='rounded'>
             Send
           </Button>
-          <Button
-            variant='ghost'
-            onClick={close}
-            fullWidth
-            paddingEnabled
-            shape='rounded'
-          >
+          <Button variant='ghost' onClick={close} fullWidth paddingEnabled shape='rounded'>
             Cancel
           </Button>
         </div>
         {status === "not-implemented" ? (
           <ErrorMessage>
-            This functionality has not yet been implemented! We appologize for
-            the inconvenience
+            This functionality has not yet been implemented! We appologize for the inconvenience
           </ErrorMessage>
         ) : null}
       </Form>

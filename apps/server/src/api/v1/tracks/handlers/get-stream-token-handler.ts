@@ -5,27 +5,30 @@ import { viewnames } from "../../../../tablenames";
 import { createHandler } from "@pondfm/server-utils";
 import { urlSigner } from "../../../../features/url-signer/url-signer";
 import { TTrack } from "@pondfm/app-shared";
+import { TAuthenticatedRequest, TRequest } from "../../../../types/request";
 
 /**Creates a stream token cookie, allowing starting of streams and counting of plays.
  */
-export const getStreamTokenHandler = createHandler(async (req, res) => {
+export const getStreamTokenHandler = createHandler(async (req: TAuthenticatedRequest, res) => {
   const { trackId } = req.params as { trackId: string };
   const track = (await db(viewnames.tracks)
     .where({ id: trackId })
     .select("key", "duration", "id")
     .first()) as Pick<TTrack, "key" | "duration" | "id">;
-  const result = await services.posts.createStreamToken(track);
 
+  const result = await db.transaction(
+    async (trx) =>
+      await services.posts.createStreamToken(trx, {
+        track,
+        user: { session_id: req.sessionToken.id, id: req.session?.user.id },
+      }),
+  );
   const signedStreamUrl = await urlSigner.stream.sign({
     key: track.key,
   });
 
   return res
-    .cookie(
-      serverConfig.streamTokenName,
-      result.data,
-      serverConfig.streamCookieSettings,
-    )
+    .cookie(serverConfig.streamTokenName, result.data, serverConfig.streamCookieSettings)
     .json({
       streamUrl: signedStreamUrl,
     });

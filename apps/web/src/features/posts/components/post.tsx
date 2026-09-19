@@ -34,19 +34,19 @@ export function Post() {
                 <UpdateTrackModal track={post.track} />
               </ToggleProvider.Target>
             </ToggleProvider>
-            {session?.user.id !== post.track.author.id ? (
-              <ToggleProvider>
-                <ToggleProvider.Trigger>
-                  <Button variant='ghost' color='danger'>
-                    <span className='text-xs text-red-700'>Report</span>
-                  </Button>
-                </ToggleProvider.Trigger>
-                <ToggleProvider.Target>
-                  <ReportModal />
-                </ToggleProvider.Target>
-              </ToggleProvider>
-            ) : null}
           </div>
+          {session?.user.id !== post.track.author.id ? (
+            <ToggleProvider>
+              <ToggleProvider.Trigger>
+                <Button variant='text' color='danger'>
+                  <span className='text-xs text-red-700'>Report</span>
+                </Button>
+              </ToggleProvider.Trigger>
+              <ToggleProvider.Target>
+                <ReportModal />
+              </ToggleProvider.Target>
+            </ToggleProvider>
+          ) : null}
         </div>
         <div className='flex flex-col items-end gap-1'>
           <UploadTime />

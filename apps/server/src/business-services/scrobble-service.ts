@@ -8,23 +8,21 @@ import { TrackAndUserId } from "../types/track-type";
 export class ScrobbleService {
   constructor(private repo: ScrobbleRepository) {}
 
-  /**Counts a play on a track and attempts to create a unique listener. If a listener is created, increments the unique listener count of the track. */
-  async countPlay(
+  /**Attempts to create a unique listener, and if one is created, increments the unique play count on the track. */
+  async countUniqueListener(
     listener: TrackAndUserId & { session_id: string },
     ctx: Knex.Transaction,
   ) {
-    await this.repo.incrementPlayCount(listener.track_id, ctx);
     const listenerCreated = await this.repo.createUniqueListener(listener, ctx);
     if (listenerCreated) {
       await this.repo.incrementUniquePlayCount(listener.track_id, ctx);
     }
-    /*
-    await ctx(tablenames.playData).insert({
-      track_id: listener.track_id,
-      user_id: listener.user_id,
-      session_id: listener.session_id,
-    });*/
+    return { success: true };
+  }
 
+  /**Counts a play on a track and attempts to create a unique listener. If a listener is created, increments the unique listener count of the track. */
+  async countPlay(listener: TrackAndUserId & { session_id: string }, ctx: Knex.Transaction) {
+    await this.repo.incrementPlayCount(listener.track_id, ctx);
     return { success: true } as ServiceSuccessResponse<void>;
   }
 

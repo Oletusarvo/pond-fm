@@ -29,11 +29,8 @@ export const requestAuthorizationHandler = createHandler(
       const code = await services.auth.createAuthorizationCode(trx, {
         userId: user.id,
       });
-      if (process.env.AUTH_ENVIRONMENT === "production") {
-        await emailService.sendMagicLink(email, code.data);
-      } else {
-        console.log("Temporary code log(remove once email is implemented): ", code);
-      }
+
+      await emailService.sendMagicLink(email, code.data);
     });
     return res.end();
   },

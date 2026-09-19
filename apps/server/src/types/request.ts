@@ -24,10 +24,6 @@ export type WithUploadToken<T extends TRequest> = T & {
 
 export type WithStreamToken<T extends TRequest> = T & {
   streamToken?: {
-    expires: number;
-    trackId: string;
-    id: string;
-    streamStarted: number;
-    countValidAt: number;
+    stream_session_id: string;
   };
 };

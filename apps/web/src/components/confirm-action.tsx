@@ -4,6 +4,7 @@ import { AlertCircle, CircleAlert, InfoIcon, TriangleAlert } from "lucide-react"
 import { Button, LoaderButton } from "./button";
 import { PassProps } from "./pass-props";
 import { useDetectClickOutside } from "../hooks/use-detect-click-outside";
+import { IconContainer } from "./icon";
 
 const colors = {
   default: {
@@ -84,9 +85,9 @@ export function ConfirmAction({
   return isConfirming ? (
     <div className={dialogContainerClassName} ref={ref as unknown as React.Ref<HTMLDivElement>}>
       <div className='flex gap-2 w-full items-center text-sm'>
-        <div className={iconContainerClassName}>
+        <IconContainer variant={variant as any}>
           <Icon className={dialogIconClassName} size='1rem' />
-        </div>
+        </IconContainer>
         <span>{children}</span>
       </div>
       <div className='flex gap-2 items-center'>

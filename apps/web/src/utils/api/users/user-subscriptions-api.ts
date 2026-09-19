@@ -7,33 +7,23 @@ export class UserSubscriptionsApi {
   /**Starts the process to upgrade a user's subscription to pro. */
   async upgrade() {
     const req = requestBuilder.patch().includeCredentials().build();
-    const res = await fetch(
-      Api.withEndpoint("billing/subscriptions/checkout"),
-      req,
+    const res = await fetch(Api.withEndpoint("billing/subscriptions/checkout"), req);
+    return await Api.asApiResponse<{ checkoutUrl: string }, typeof serviceError.auth.unauthorized>(
+      res,
     );
-    return await Api.asApiResponse<
-      { checkoutUrl: string },
-      typeof serviceError.auth.unauthorized
-    >(res);
   }
 
   /**Cancels the user's pro subscription. */
   async cancel() {
     const req = requestBuilder.delete().includeCredentials().build();
-    const res = await fetch(
-      Api.withEndpoint("billing/subscriptions/cancel"),
-      req,
-    );
+    const res = await fetch(Api.withEndpoint("billing/subscriptions/cancel"), req);
     return await Api.asApiResponse<null>(res);
   }
 
-  /**Gets the status of a user's subscription. */
+  /**Gets the server status of a user's subscription. */
   async getStatus() {
-    const req = requestBuilder.get().includeCredentials().build();
-    const res = await fetch(
-      Api.withEndpoint("billing/subscriptions/status"),
-      req,
-    );
+    const req = requestBuilder.get().includeCredentials().noStore().build();
+    const res = await fetch(Api.withEndpoint("billing/subscriptions/status"), req);
     return await Api.asApiResponse<
       Pick<TSubscriptionRestricted, "status" | "plan_id">,
       typeof serviceError.auth.unauthorized

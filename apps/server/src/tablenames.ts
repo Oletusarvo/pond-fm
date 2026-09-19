@@ -26,6 +26,8 @@ export const tablenames = {
   userUrls: "auth.user_url_data",
   playData: "post.play_data",
   passwordResetSessions: "auth.password_reset_session_data",
+  emailUpdateSessions: "auth.email_update_session_data",
+  streamSessions: "post.stream_session_data",
 } as const;
 
 export const viewnames = {

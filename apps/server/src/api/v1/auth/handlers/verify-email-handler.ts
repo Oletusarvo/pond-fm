@@ -10,6 +10,7 @@ import { TUser } from "@pondfm/app-shared";
 export const verifyEmailHandler = createHandler(
   async (req: TRequest<z.infer<typeof verifyEmailSchema>>, res) => {
     const { token } = req.body;
+    console.log(token);
     const payload = verifyJWT(token) as { user_id: string };
     if (!payload || !payload.user_id) {
       return res.status(401).end();

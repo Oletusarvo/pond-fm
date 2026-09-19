@@ -1,11 +1,15 @@
 import { useNavigate } from "react-router-dom";
 import { useAction } from "../../../hooks/use-action";
 import { api } from "../../../utils/api/api";
-import { extractJsonBody } from "../../../utils/extract-json-body";
 
-export function useCancelSubscription(
-  props: Omit<Parameters<typeof useAction>[0], "fn"> = {},
-) {
+type UseCancelSubscriptionProps = Omit<Parameters<typeof useAction>[0], "fn"> & {
+  mode?: "at_period_end" | "immediate";
+};
+
+export function useCancelSubscription({
+  mode = "immediate",
+  ...props
+}: UseCancelSubscriptionProps) {
   const navigate = useNavigate();
   const { action: cancelSubscription, ...rest } = useAction<null>({
     ...props,
@@ -13,7 +17,7 @@ export function useCancelSubscription(
       return await api.users.subscriptions.cancel();
     },
     onSuccess: async (res) => {
-      navigate("/billing/cancel/success");
+      navigate(`/billing/cancel/success?mode=${mode}`);
       return await props.onSuccess?.(res);
     },
   });

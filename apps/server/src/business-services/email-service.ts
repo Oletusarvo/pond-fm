@@ -1,8 +1,9 @@
-import { loadEnvVariable } from "@pondfm/server-utils";
+import { createJWT, loadEnvVariable } from "@pondfm/server-utils";
 import { getDomainUrl } from "../utils/get-domain-url";
 import { appName } from "@pondfm/app-shared";
 import { readFile } from "fs/promises";
 import path from "path";
+import Handlebars from "handlebars";
 
 /**Responsible for sending emails. */
 export class EmailService {
@@ -11,26 +12,73 @@ export class EmailService {
     private apiKey: string,
   ) {}
 
-  async sendMagicLink(to: string, code: string) {
-    const domainUrl = getDomainUrl();
-    const templateSource = await readFile(
-      path.join(process.cwd(), "./src/html-templates/magic-link-template.html"),
+  private async loadTemplateSource(filename: string) {
+    const templateSource = await readFile(path.join(process.cwd(), filename), {
+      encoding: "utf-8",
+    });
+    return templateSource;
+  }
+
+  private async runIfInProduction(fn: () => Promise<void>, onNotProductionEnvironment: () => void) {
+    if (process.env.AUTH_ENVIRONMENT === "production") {
+      await fn();
+    } else {
+      onNotProductionEnvironment();
+    }
+  }
+
+  async sendEmailVerificationLink(email: string, userId: string) {
+    const token = createJWT(
       {
-        encoding: "utf-8",
+        user_id: userId,
+      },
+      {
+        expiresIn: "10min",
       },
     );
-    const template = Handlebars.template(templateSource);
-    const html = template({
-      appName: "Amphitune",
-      code,
-      url: `${domainUrl}/authorize?code=${code}`,
-    });
+    await this.runIfInProduction(
+      async () => {
+        const domain = getDomainUrl();
+        //Send the verification email
+        const templateSource = await this.loadTemplateSource(
+          "./src/html-templates/verify-email-template.html",
+        );
+        const template = Handlebars.compile(templateSource);
+        const html = template({
+          url: `${domain}/verify?token=${token}`,
+        });
+        await this.send({
+          to: email,
+          subject: "Verify Your Email",
+          html,
+        });
+      },
+      () => console.log(`Email verification token: ` + token),
+    );
+  }
 
-    return this.send({
-      to,
-      subject: `Log in to ${appName}`,
-      html,
-    });
+  async sendMagicLink(to: string, code: string) {
+    await this.runIfInProduction(
+      async () => {
+        const domainUrl = getDomainUrl();
+        const templateSource = await this.loadTemplateSource(
+          "./src/html-templates/magic-link-template.html",
+        );
+        const template = Handlebars.compile(templateSource);
+        const html = template({
+          appName: "Amphitune",
+          code,
+          url: `${domainUrl}/authorize?code=${code}`,
+        });
+
+        await this.send({
+          to,
+          subject: `Log in to ${appName}`,
+          html,
+        });
+      },
+      () => console.log("Authorization code: ", code),
+    );
   }
 
   async send({ to, subject, html }: { to: string; subject: string; html: string }) {

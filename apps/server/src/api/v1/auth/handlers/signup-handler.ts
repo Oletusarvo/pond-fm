@@ -1,13 +1,10 @@
 import z from "zod";
 import { TRequest } from "../../../../types/request";
-import { createHandler, createJWT, loadEnvVariable } from "@pondfm/server-utils";
+import { createHandler } from "@pondfm/server-utils";
 import { signupSchema } from "../../../../schemas/signup-schema";
 import { db } from "../../../../db-config";
 import { tablenames } from "../../../../tablenames";
 import { services } from "../../../../container";
-import { readFile } from "fs/promises";
-import path from "path";
-import Handlebars from "handlebars";
 
 export const signupHandler = createHandler(
   async (req: TRequest<z.infer<typeof signupSchema>>, res) => {
@@ -26,40 +23,13 @@ export const signupHandler = createHandler(
         plan_id: "free",
         user_id: user.id,
       });
-      const token = createJWT(
-        {
-          user_id: user.id,
-        },
-        {
-          expiresIn: "10min",
-        },
-      );
-      if (process.env.AUTH_ENVIRONMENT === "production") {
-        const domain = loadEnvVariable("FRONT_END_URL");
-        //Send the verification email
-        const htmlFile = await readFile(
-          path.join(process.cwd(), "./src/html-templates/verify-email-template.html"),
-          {
-            encoding: "utf-8",
-          },
-        );
-        const template = Handlebars.template(htmlFile);
-        const html = template({
-          url: `${domain}/verify?token=${token}`,
-        });
-        await services.emails.send({
-          to: email,
-          subject: "Verify Your Email",
-          html,
-        });
-      } else {
-        console.log(`Email verification token: ` + token);
-      }
+      await services.emails.sendEmailVerificationLink(email, user.id);
     });
 
     return res.end();
   },
   (err, res) => {
+    console.log("Signup Failed");
     const msg = err.message.toUpperCase();
     if (msg.includes("DUPLICATE")) {
       if (msg.includes("EMAIL_UNIQUE")) {

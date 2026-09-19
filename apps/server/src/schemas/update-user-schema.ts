@@ -3,4 +3,7 @@ import z from "zod";
 
 export const updateUserSchema = userSchema
   .pick({ username: true, bio: true, urls: true })
+  .extend({
+    email: userSchema.shape.email,
+  })
   .partial();

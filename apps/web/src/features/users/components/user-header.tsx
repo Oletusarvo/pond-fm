@@ -25,23 +25,21 @@ export function UserHeader() {
     const newFollowed = !initialFollowed;
 
     setFollowedByMe(newFollowed);
-    await cancelable
-      .toggleFollow(user.id, initialFollowed)
-      .then(async (result) => {
-        if (result.executed) {
-          if (!result.value.success) {
-            setFollowedByMe(initialFollowed);
-          } else {
-            await queryClient.invalidateQueries({
-              queryKey: ["user", user.id],
-            });
+    await cancelable.toggleFollow(user.id, initialFollowed).then(async (result) => {
+      if (result.executed) {
+        if (!result.value.success) {
+          setFollowedByMe(initialFollowed);
+        } else {
+          await queryClient.invalidateQueries({
+            queryKey: ["user", user.id],
+          });
 
-            await queryClient.invalidateQueries({
-              queryKey: ["followers", user.id],
-            });
-          }
+          await queryClient.invalidateQueries({
+            queryKey: ["followers", user.id],
+          });
         }
-      });
+      }
+    });
   };
 
   const FollowButtonIcon = followedByMe ? UserMinus : UserPlus;
@@ -57,36 +55,25 @@ export function UserHeader() {
             <div className='flex items-center justify-center w-8 h-8 rounded-full bg-primary text-white'>
               <User size='1rem' />
             </div>
-            <h2 className='text-sm font-semibold text-primary'>
-              {user.username}
-            </h2>
+            <h2 className='text-sm font-semibold text-primary'>{user.username}</h2>
           </div>
         </div>
         <Button
           disabled={status === "unauthenticated"}
           color={followedByMe ? "danger" : "primary"}
-          variant='ghost'
+          variant='text'
           onClick={onFollowButtonClicked}
           icon={FollowButtonIcon}
         >
-          <span className='text-sm'>
-            {followedByMe ? "Unfollow" : "Follow"}
-          </span>
+          <span className='text-sm'>{followedByMe ? "Unfollow" : "Follow"}</span>
         </Button>
       </div>
-      <p className='text-sm text-slate-500 xs:w-full md:w-92'>
-        {user.bio || "No bio."}
-      </p>
+      <p className='text-sm text-slate-500 xs:w-full md:w-92'>{user.bio || "No bio."}</p>
       {urls ? (
         <div className='flex flex-col gap-2'>
           {urls.map((url, i) => {
             return (
-              <FaBrandIconLink
-                key={i}
-                to={url}
-                className='text-sm text-primary'
-                target='_blank'
-              />
+              <FaBrandIconLink key={i} to={url} className='text-sm text-primary' target='_blank' />
             );
           })}
         </div>
@@ -96,7 +83,7 @@ export function UserHeader() {
         <div className='flex items-center sm:gap-4 xs:gap-2'>
           <ToggleProvider>
             <ToggleProvider.Trigger>
-              <Button variant='ghost'>
+              <Button variant='text'>
                 <span className='text-xs font-semibold text-primary'>
                   {user.follower_count} Followers
                 </span>
@@ -108,7 +95,7 @@ export function UserHeader() {
           </ToggleProvider>
           <ToggleProvider>
             <ToggleProvider.Trigger>
-              <Button variant='ghost'>
+              <Button variant='text'>
                 <span className='text-xs font-semibold text-primary'>
                   {" "}
                   {user.following_count} Following

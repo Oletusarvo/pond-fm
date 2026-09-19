@@ -52,14 +52,14 @@ export function HomeScreen() {
             <Button
               onClick={heroButtonAction}
               paddingEnabled
-              variant='outlined'
+              variant={status === "authenticated" ? "contained" : "outlined"}
               shape='rounded'
               fullWidth
             >
               {status === "authenticated" ? (
                 "Logout"
               ) : status === "unauthenticated" ? (
-                "Log in with email"
+                "Login"
               ) : (
                 <Spinner />
               )}

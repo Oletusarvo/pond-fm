@@ -85,7 +85,7 @@ function ModalContent({ close }) {
             Sign up
           </LoaderButton>
           <Button
-            disabled={status === "success" || loading}
+            disabled={loading}
             type='button'
             onClick={close}
             fullWidth

@@ -85,6 +85,15 @@ async function runCleanup() {
   await retry(
     async () => await db(tablenames.uploadTokens).where("expires_at", "<=", db.fn.now()).del(),
   ).catch((err) => console.log("Failed to delete expired upload tokens.", err.stack));
+
+  //Delete expired stream tokens.
+  await retry(
+    async () =>
+      await db(tablenames.streamSessions).whereRaw("CURRENT_TIMESTAMP >= expires_at").del(),
+    {
+      delay: 1000,
+    },
+  );
 }
 
 async function cleanupUnusedFilesAndTracks() {
