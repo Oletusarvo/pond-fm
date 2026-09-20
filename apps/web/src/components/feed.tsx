@@ -7,9 +7,9 @@ import { useFeedContext } from "../providers/feed-provider";
 import { Sentinel } from "./sentinel";
 import { AdInjector } from "../features/ads/components/ad-injector";
 import { useAuthContext } from "../features/auth/providers/auth-provider";
-import { Ad } from "./ad-container";
+import { Ad, AdBanner } from "./ad-container";
 
-const adElement = import.meta.env.PROD ? <Ad /> : null;
+const adElement = import.meta.env.PROD ? <AdBanner /> : null;
 type FeedScreenProps = {
   adsEnabled?: React.ComponentProps<typeof AdInjector>["enabled"];
   keyExtractor?: (item: any) => string;
