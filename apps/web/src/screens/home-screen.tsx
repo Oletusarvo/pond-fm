@@ -37,7 +37,7 @@ export function HomeScreen() {
           <div className='text-red-900 text-sm p-2 border border-red-900/20 bg-red-900/10 rounded-md'>
             The service has not been released yet. This page is a demo.
           </div>
-          <div className='flex gap-2 w-full mt-4'>
+          <div className='flex gap-2 mt-4'>
             {status === "unauthenticated" ? (
               <Button
                 variant='contained'
@@ -238,7 +238,7 @@ function FeatureItem({
 
         <h3 className='font-semibold'>{title}</h3>
       </div>
-      <p>{children}</p>
+      <ResponsiveParagraph>{children}</ResponsiveParagraph>
     </div>
   );
 }
@@ -265,7 +265,7 @@ function PlanItem({
         {price > 0 ? <small>Billed annually</small> : null}
       </div>
 
-      <p>{children}</p>
+      <ResponsiveParagraph>{children}</ResponsiveParagraph>
       <ul className='list-disc text-slate-700'>
         {listContent.map((content, i) => {
           return <li key={i}>{content}</li>;
@@ -273,4 +273,8 @@ function PlanItem({
       </ul>
     </div>
   );
+}
+
+function ResponsiveParagraph({ children }: React.ComponentProps<"p">) {
+  return <p className='xs:w-full sm:max-w-[70%] md:max-w-full xl:max-w-[70%]'>{children}</p>;
 }

@@ -94,6 +94,15 @@ async function runCleanup() {
       delay: 1000,
     },
   );
+
+  //Delete expired email update tokens.
+  await retry(
+    async () =>
+      await db(tablenames.emailUpdateSessions).whereRaw("CURRENT_TIMESTAMP >= expires_at").del(),
+    {
+      delay: 1000,
+    },
+  );
 }
 
 async function cleanupUnusedFilesAndTracks() {

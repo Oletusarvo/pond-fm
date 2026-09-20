@@ -9,11 +9,13 @@ exports.up = function (knex) {
     tbl.uuid("id").primary().defaultTo(knex.fn.uuid());
     tbl
       .uuid("user_id")
+      .unique()
       .notNullable()
       .references("id")
       .inTable("auth.user_data")
       .onDelete("CASCADE")
       .onUpdate("CASCADE");
+    tbl.boolean("is_used").defaultTo(false);
     tbl.string("new_email").notNullable();
     tbl.timestamp("expires_at").notNullable();
   });

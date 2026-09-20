@@ -25,15 +25,18 @@ export const updateUserHandler = createHandler(
 
       if (email) {
         //Create an email update session, which resolves once the user clicks a link in an email.
-        const expires_at = new Date(Date.now() + 1000 * 60 * 15);
+        const expires_at = new Date(Date.now() + 1000 * 60 * 10);
         const [updateSession] = await trx(tablenames.emailUpdateSessions)
           .insert({
             new_email: email,
             user_id: session.user.id,
             expires_at,
+            is_used: false,
           })
+          .onConflict(["user_id"])
+          .merge()
           .returning("id");
-        //await services.emails.sendEmailUpdateVerificationLink(email, updateSession.id);
+        await services.emails.sendEmailResetLink(email, updateSession.id);
       }
     });
 

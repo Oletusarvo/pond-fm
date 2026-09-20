@@ -1,9 +1,8 @@
 import { createJWT, loadEnvVariable } from "@pondfm/server-utils";
 import { getDomainUrl } from "../utils/get-domain-url";
 import { appName } from "@pondfm/app-shared";
-import { readFile } from "fs/promises";
-import path from "path";
 import Handlebars from "handlebars";
+import { applyInlineCss, loadTemplateSource } from "../handlebars.config";
 
 /**Responsible for sending emails. */
 export class EmailService {
@@ -11,13 +10,6 @@ export class EmailService {
     private endpoint: string,
     private apiKey: string,
   ) {}
-
-  private async loadTemplateSource(filename: string) {
-    const templateSource = await readFile(path.join(process.cwd(), filename), {
-      encoding: "utf-8",
-    });
-    return templateSource;
-  }
 
   private async runIfInProduction(fn: () => Promise<void>, onNotProductionEnvironment: () => void) {
     if (process.env.AUTH_ENVIRONMENT === "production") {
@@ -40,13 +32,15 @@ export class EmailService {
       async () => {
         const domain = getDomainUrl();
         //Send the verification email
-        const templateSource = await this.loadTemplateSource(
+        const templateSource = await loadTemplateSource(
           "./src/html-templates/verify-email-template.html",
         );
         const template = Handlebars.compile(templateSource);
-        const html = template({
-          url: `${domain}/verify?token=${token}`,
-        });
+        const html = template(
+          applyInlineCss({
+            url: `${domain}/verify?token=${token}`,
+          }),
+        );
         await this.send({
           to: email,
           subject: "Verify Your Email",
@@ -61,15 +55,17 @@ export class EmailService {
     await this.runIfInProduction(
       async () => {
         const domainUrl = getDomainUrl();
-        const templateSource = await this.loadTemplateSource(
+        const templateSource = await loadTemplateSource(
           "./src/html-templates/magic-link-template.html",
         );
         const template = Handlebars.compile(templateSource);
-        const html = template({
-          appName: "Amphitune",
-          code,
-          url: `${domainUrl}/authorize?code=${code}`,
-        });
+        const html = template(
+          applyInlineCss({
+            appName: "Amphitune",
+            code,
+            url: `${domainUrl}/authorize?code=${code}`,
+          }),
+        );
 
         await this.send({
           to,
@@ -78,6 +74,24 @@ export class EmailService {
         });
       },
       () => console.log("Authorization code: ", code),
+    );
+  }
+
+  async sendEmailResetLink(to: string, sessionId: string) {
+    const token = createJWT({ session_id: sessionId }, { expiresIn: "30min" });
+    await this.runIfInProduction(
+      async () => {
+        const templateSource = await loadTemplateSource("reset-email-template.hmtl");
+        const template = Handlebars.compile(templateSource);
+        const frontEndDomain = getDomainUrl();
+        const html = template(
+          applyInlineCss({
+            url: `${frontEndDomain}/verify-email-reset?token=${token}`,
+          }),
+        );
+        await this.send({ to, subject: "Reset your Amphitune email", html });
+      },
+      () => console.log("Email reset token: ", token),
     );
   }
 

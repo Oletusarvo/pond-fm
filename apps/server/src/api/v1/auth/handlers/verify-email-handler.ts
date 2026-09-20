@@ -7,10 +7,10 @@ import { tablenames } from "../../../../tablenames";
 import { TUser } from "@pondfm/app-shared";
 
 /**Activates a user. */
-export const verifyEmailHandler = createHandler(
+export const activateUserHandler = createHandler(
   async (req: TRequest<z.infer<typeof verifyEmailSchema>>, res) => {
     const { token } = req.body;
-    console.log(token);
+
     const payload = verifyJWT(token) as { user_id: string };
     if (!payload || !payload.user_id) {
       return res.status(401).end();

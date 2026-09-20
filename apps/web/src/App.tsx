@@ -22,6 +22,7 @@ import { SearchFeedScreen } from "./features/posts/screens/search-screen";
 import { AdProvider } from "./features/ads/components/ad-injector";
 import { RegisterScreen } from "./features/auth/screens/register-modal";
 import { VerifyScreen } from "./features/auth/screens/verify-screen";
+import { VerifyEmailUpdateScreen } from "./features/auth/screens/verify-email-update-screen";
 
 function App() {
   return (
@@ -46,6 +47,10 @@ function App() {
                             <Route path='signup' element={<RegisterScreen />} />
                             <Route path='authorize' element={<AuthorizationScreen />} />
                             <Route path='verify' element={<VerifyScreen />} />
+                            <Route
+                              path='verify-email-update'
+                              element={<VerifyEmailUpdateScreen />}
+                            />
                           </Route>
                           <Route path='undiscovered' element={<UndiscoveredFeedScreen />} />
                           <Route path='followed' element={<FollowedFeedScreen />} />

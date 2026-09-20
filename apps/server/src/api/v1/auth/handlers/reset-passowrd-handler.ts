@@ -8,7 +8,8 @@ import { resetPasswordCredentialsSchema } from "../../../../schemas/reset-passow
 import z from "zod";
 
 /**Resets a user's password.
- * @unused This handler is planned for later.
+ * @todo
+ * @unused This handler is planned for later if passwords are introduced.
  */
 export const resetPasswordHandler = createHandler(
   async (req: TRequest<z.infer<typeof resetPasswordCredentialsSchema>>, res) => {

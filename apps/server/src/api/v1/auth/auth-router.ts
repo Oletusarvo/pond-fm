@@ -8,9 +8,10 @@ import { authorizeByCodeSchema } from "../../../schemas/authorize-by-code-schema
 import { refreshSessionHandler } from "./handlers/refresh-session-handler";
 import { createBodyParser, getRouter } from "@pondfm/server-utils";
 import { signupHandler } from "./handlers/signup-handler";
-import { verifyEmailHandler } from "./handlers/verify-email-handler";
+import { activateUserHandler } from "./handlers/verify-email-handler";
 import { signupSchema } from "../../../schemas/signup-schema";
 import { verifyEmailSchema } from "../../../schemas/verify-email-schema";
+import { verifyEmailResetHandler } from "./handlers/verify-email-reset-handler";
 
 const router = getRouter();
 
@@ -31,7 +32,13 @@ router.post(
  */
 router.post("/authorize", createBodyParser(authorizeByCodeSchema), authorizeByCodeHandler);
 router.post("/signup", createBodyParser(signupSchema), signupHandler);
-router.post("/verify", createBodyParser(verifyEmailSchema), verifyEmailHandler);
+router.post("/verify", createBodyParser(verifyEmailSchema), activateUserHandler);
+router.post(
+  "/verify-email-update",
+  checkAuth(),
+  createBodyParser(verifyEmailSchema),
+  verifyEmailResetHandler,
+);
 /**
  * POST /auth/logout
  * @summary Logs a user out.

@@ -54,4 +54,11 @@ export class AuthApi {
     const res = await fetch(Api.withEndpoint("auth/me/refresh"), req);
     return await Api.asApiResponse<null, typeof serviceError.auth.unauthorized>(res);
   }
+
+  /**Verifies a users email update. */
+  async verifyEmailUpdate(token: string) {
+    const req = requestBuilder.post().json().body({ token }).includeCredentials().build();
+    const res = await fetch(Api.withEndpoint("auth/verify-email-update"), req);
+    return await Api.asApiResponse<null, typeof serviceError.auth.unauthorized>(res);
+  }
 }
