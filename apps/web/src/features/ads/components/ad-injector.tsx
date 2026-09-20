@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useRef } from "react";
+import React, { ReactNode, useEffect, useMemo, useRef } from "react";
 import { create } from "zustand";
 import { createProvider } from "../../../utils/create-provider";
 
@@ -35,8 +35,7 @@ export const [AdProvider, useAdContext] = createProvider({
   hook: () => {
     const seenAdCount = useRef(0);
     const seenPostCount = useRef(0);
-    const incrementSeenPostCount = (value: number) =>
-      seenPostCount.current + value;
+    const incrementSeenPostCount = (value: number) => seenPostCount.current + value;
     const incrementSeenAdCount = (value: number) => seenAdCount.current + value;
     return {
       seenAdCount,
@@ -48,17 +47,13 @@ export const [AdProvider, useAdContext] = createProvider({
 });
 
 type AdInjectorProps = React.PropsWithChildren & {
+  adElement?: ReactNode;
   enabled?: boolean | (() => boolean);
   interval: number;
 };
 
-export function AdInjector({
-  children,
-  interval,
-  enabled = false,
-}: AdInjectorProps) {
-  const { incrementSeenPostCount, incrementSeenAdCount, seenPostCount } =
-    useAdContext();
+export function AdInjector({ children, adElement, interval, enabled = false }: AdInjectorProps) {
+  const { incrementSeenPostCount, incrementSeenAdCount, seenPostCount } = useAdContext();
 
   const getWetChildren = () => {
     const renderAds = typeof enabled === "function" ? enabled() : enabled;
@@ -69,9 +64,12 @@ export function AdInjector({
         incrementSeenAdCount(1);
         return (
           <>
-            <div className='bg-primary/10 w-full p-8 rounded-md shrink-0 flex h-8 items-center justify-center'>
-              <h2 className='text-lg font-semibold'>Ad goes here.</h2>
-            </div>
+            {adElement || (
+              <div className='bg-primary/10 w-full p-8 rounded-md shrink-0 flex h-8 items-center justify-center'>
+                <h2 className='text-lg font-semibold'>Ad goes here.</h2>
+              </div>
+            )}
+
             {child}
           </>
         );
