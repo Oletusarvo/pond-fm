@@ -1,14 +1,20 @@
-import { useEffect } from 'react';
-import { useInView } from 'react-intersection-observer';
+import { useEffect } from "react";
+import { useInView } from "react-intersection-observer";
 
-export function Sentinel({ onVisible }) {
+type SentinelProps = {
+  onVisible?: () => void;
+  onInvisible?: () => void;
+};
+export function Sentinel({ onVisible, onInvisible }: SentinelProps) {
   const { inView, ref } = useInView({
     threshold: 0.5,
   });
   useEffect(() => {
     if (inView) {
-      onVisible();
+      onVisible?.();
+    } else {
+      onInvisible?.();
     }
   }, [inView]);
-  return <div ref={ref} className="h-1 shrink-0" />;
+  return <div ref={ref} className='h-1 shrink-0' />;
 }
