@@ -62,7 +62,7 @@ export function AdInjector({ children, adElement, interval, enabled = false }: A
     return React.Children.map(children, (child, i) => {
       const numChildren = React.Children.count(children);
       const index = i + 1; //Skip rendering ad on the first item.
-      console.log(hasRenderedAd.current);
+
       const shouldRenderAd =
         i < numChildren - 1
           ? index % trigger === 0
