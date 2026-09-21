@@ -7,9 +7,10 @@ import { useFeedContext } from "../providers/feed-provider";
 import { Sentinel } from "./sentinel";
 import { AdInjector } from "../features/ads/components/ad-injector";
 import { useAuthContext } from "../features/auth/providers/auth-provider";
-import { Ad, AdBanner } from "./ad-container";
+import { Ad, AdBanner } from "../features/ads/components/ad-container";
 
 const adElement = import.meta.env.PROD ? <Ad /> : null;
+const adInterval = 10;
 type FeedScreenProps = {
   adsEnabled?: React.ComponentProps<typeof AdInjector>["enabled"];
   keyExtractor?: (item: any) => string;
@@ -52,7 +53,7 @@ export function Feed({
 
   return (
     <div className='flex flex-col w-full flex-1 overflow-y-scroll max-h-full'>
-      <AdInjector interval={12} enabled={adsEnabled} adElement={adElement}>
+      <AdInjector interval={adInterval} enabled={adsEnabled} adElement={adElement}>
         {data.map((item, i) => {
           return (
             <React.Fragment key={keyExtractor?.(item)}>

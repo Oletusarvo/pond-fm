@@ -54,23 +54,31 @@ type AdInjectorProps = React.PropsWithChildren & {
 
 export function AdInjector({ children, adElement, interval, enabled = false }: AdInjectorProps) {
   const { incrementSeenPostCount, incrementSeenAdCount, seenPostCount } = useAdContext();
-
+  const hasRenderedAd = useRef(false);
   const getWetChildren = () => {
     const renderAds = typeof enabled === "function" ? enabled() : enabled;
     if (!renderAds) return children;
-
+    const trigger = interval;
     return React.Children.map(children, (child, i) => {
-      if (i % interval === 0) {
+      const numChildren = React.Children.count(children);
+      const index = i + 1; //Skip rendering ad on the first item.
+      console.log(hasRenderedAd.current);
+      const shouldRenderAd =
+        i < numChildren - 1
+          ? index % trigger === 0
+          : //Render an ad after the last child if one hasn't been rendered yet. Do not flip back to false on re-renders; making the ad disappear.
+            hasRenderedAd.current || !hasRenderedAd.current;
+      if (shouldRenderAd) {
+        hasRenderedAd.current = true;
         incrementSeenAdCount(1);
         return (
           <>
+            {child}
             {adElement || (
               <div className='bg-primary/10 w-full p-8 rounded-md shrink-0 flex h-8 items-center justify-center'>
                 <h2 className='text-lg font-semibold'>Ad goes here.</h2>
               </div>
             )}
-
-            {child}
           </>
         );
       }
