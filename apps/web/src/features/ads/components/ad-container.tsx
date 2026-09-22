@@ -8,36 +8,27 @@ const AD_SCRIPT_SRC =
 
 export function Ad(props) {
   const containerRef = useRef<HTMLDivElement>(null);
-  const [shouldRender, setShouldRender] = useState(true);
+
   useEffect(() => {
     if (!containerRef.current) return;
 
-    let script: HTMLScriptElement;
-    if (shouldRender) {
-      // Prevent loading the ad more than once for this component instance.
-      if (containerRef.current.querySelector("script")) return;
+    // Prevent loading the ad more than once for this component instance.
+    if (containerRef.current.querySelector("script")) return;
 
-      script = document.createElement("script");
+    const script = document.createElement("script");
 
-      script.async = true;
-      script.setAttribute("data-cfasync", "false");
-      script.src = AD_SCRIPT_SRC;
+    script.async = true;
+    script.setAttribute("data-cfasync", "false");
+    script.src = AD_SCRIPT_SRC;
 
-      containerRef.current.appendChild(script);
-      return () => {
-        script?.remove();
-      };
-    } else {
+    containerRef.current.appendChild(script);
+    return () => {
       script?.remove();
-    }
-  }, [shouldRender]);
+    };
+  }, []);
 
   return (
     <div {...props} className='flex flex-col w-full'>
-      <Sentinel
-        onVisible={() => setShouldRender(true)}
-        onInvisible={() => setShouldRender(false)}
-      />
       <div ref={containerRef} id={AD_CONTAINER_ID} />
     </div>
   );
