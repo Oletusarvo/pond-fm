@@ -2,6 +2,9 @@ import React, { ReactElement, ReactNode, useEffect, useRef, useState } from "rea
 import { createProvider } from "../../../utils/create-provider";
 import { Ad } from "../components/ad-container";
 import { Sentinel } from "../../../components/sentinel";
+import { useInView } from "react-intersection-observer";
+import { useSentinel } from "../../../hooks/use-sentinel";
+import { PassProps } from "../../../components/pass-props";
 
 type AdProviderProps = {
   interval: number;
@@ -31,8 +34,17 @@ export const [AdProvider, useAdContext] = createProvider({
       Injector: function ({ children, adElement }: AdInjectorProps) {
         const { itemsSeen, enabled, interval, target } = hook();
         const [renderAd, setRenderAd] = useState(false);
-        const hasCounted = useRef(false);
         const shouldHide = useRef(false);
+        const { ref: adRef } = useSentinel({
+          threshold: 0,
+          onVisible: () => (shouldHide.current = true),
+          onInvisible: () => {
+            if (!shouldHide.current) return;
+            setRenderAd(false);
+          },
+        });
+
+        const hasCounted = useRef(false);
 
         const onVisible = () => {
           //Count items seen only once.
@@ -46,18 +58,18 @@ export const [AdProvider, useAdContext] = createProvider({
           console.log("Counted item...", itemsSeen.current);
         };
 
-        const onInvisible = () => {
-          if (!shouldHide.current) return;
-          setRenderAd(false);
-        };
-
         const shouldRenderAd = enabled && renderAd;
         return (
           <>
             {children}
-            <Sentinel onVisible={onVisible} onInvisible={onInvisible} />
-            {shouldRenderAd ? adElement || <DefaultAdElement /> : null}
-            <Sentinel onVisible={() => (shouldHide.current = true)} />
+            <Sentinel onVisible={onVisible} />
+            {shouldRenderAd ? (
+              adElement ? (
+                <PassProps ref={adRef}>{adElement}</PassProps>
+              ) : (
+                <DefaultAdElement ref={adRef} />
+              )
+            ) : null}
           </>
         );
       },
@@ -65,9 +77,12 @@ export const [AdProvider, useAdContext] = createProvider({
   },
 });
 
-function DefaultAdElement() {
+function DefaultAdElement(props) {
   return (
-    <div className='bg-primary/10 w-full p-8 rounded-md shrink-0 flex h-8 items-center justify-center'>
+    <div
+      {...props}
+      className='bg-primary/10 w-full p-8 rounded-md shrink-0 flex h-8 items-center justify-center'
+    >
       <h2 className='text-lg font-semibold'>Ad goes here.</h2>
     </div>
   );

@@ -6,7 +6,7 @@ const AD_CONTAINER_ID = "container-57d1ae3dbb6350d1a44008dd920f4ebe";
 const AD_SCRIPT_SRC =
   "https://pl31428127.profitableratecpmnetwork.com/57d1ae3dbb6350d1a44008dd920f4ebe/invoke.js";
 
-export function Ad() {
+export function Ad(props) {
   const containerRef = useRef<HTMLDivElement>(null);
   const [shouldRender, setShouldRender] = useState(true);
   useEffect(() => {
@@ -33,7 +33,7 @@ export function Ad() {
   }, [shouldRender]);
 
   return (
-    <div className='flex flex-col w-full'>
+    <div {...props} className='flex flex-col w-full'>
       <Sentinel
         onVisible={() => setShouldRender(true)}
         onInvisible={() => setShouldRender(false)}
