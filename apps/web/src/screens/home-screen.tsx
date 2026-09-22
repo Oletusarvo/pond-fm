@@ -29,7 +29,7 @@ export function HomeScreen() {
         <div className='flex flex-col xs:w-full md:w-[50%] items-center gap-2'>
           <div className='flex w-full justify-center'>
             <div className='w-32 h-32 flex items-center justify-center rounded-full bg-blue-500/10'>
-              <img src='/assets/frog-1.jpg' className='w-24 h-24' />
+              <img src='/assets/frog-1.png' className='w-24 h-24' />
             </div>
           </div>
           <div className='bg-linear-to-r from-blue-500 to-primary bg-clip-text'>
@@ -222,7 +222,12 @@ export function HomeScreen() {
             </Link>
           </div>
         </div>
-        <div className='mt-auto text-sm italic '>&copy; oletusarvo 2026</div>
+        <div className='flex flex-col gap-2'>
+          <div className='mt-auto text-sm italic'>&copy; oletusarvo 2026</div>
+          <Link className='text-sm italic' to='mailto:designsbyhayleyjackson@gmail.com'>
+            &copy; Artwork - Hayley Jackson
+          </Link>
+        </div>
       </footer>
     </>
   );
