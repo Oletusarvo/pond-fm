@@ -19,16 +19,16 @@ import { TrackScreen } from "./features/posts/screens/track-screen";
 import { BillingSuccessScreen } from "./features/billing/components/billing-success";
 import { SubscriptionCancelSuccess } from "./features/billing/components/subscription-cancel-success";
 import { SearchFeedScreen } from "./features/posts/screens/search-screen";
-import { AdProvider } from "./features/ads/components/ad-injector";
 import { RegisterScreen } from "./features/auth/screens/register-modal";
 import { VerifyScreen } from "./features/auth/screens/verify-screen";
 import { VerifyEmailUpdateScreen } from "./features/auth/screens/verify-email-update-screen";
+import { AdProvider } from "./features/ads/providers/ad-provider";
 
 function App() {
   return (
     <QueryClientProvider client={new QueryClient()}>
       <AuthProvider>
-        <AdProvider>
+        <AdProvider interval={2}>
           <ActionProvider>
             <PlaybackProvider>
               <ScrobbleProvider>

@@ -46,7 +46,7 @@ export const [AdProvider, useAdContext] = createProvider({
   },
 });
 
-type AdInjectorProps = React.PropsWithChildren & {
+export type AdInjectorProps = React.PropsWithChildren & {
   adElement?: ReactNode;
   enabled?: boolean | (() => boolean);
   interval: number;
