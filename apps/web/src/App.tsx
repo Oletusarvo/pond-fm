@@ -45,7 +45,7 @@ function App() {
                           <Route path='/' element={<HomeLayout />}>
                             <Route path='login' element={<LoginScreen />} />
                             <Route path='signup' element={<RegisterScreen />} />
-                            <Route path='authorize' element={<AuthorizationScreen />} />
+
                             <Route path='verify' element={<VerifyScreen />} />
                             <Route
                               path='verify-email-update'

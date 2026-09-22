@@ -27,6 +27,11 @@ export function HomeScreen() {
     <>
       <section className='h-pad w-full flex flex-col items-center justify-center py-16 gap-4'>
         <div className='flex flex-col xs:w-full md:w-[50%] items-center gap-2'>
+          <div className='flex w-full justify-center'>
+            <div className='w-32 h-32 flex items-center justify-center rounded-full bg-blue-500/10'>
+              <img src='/assets/frog-1.jpg' className='w-24 h-24' />
+            </div>
+          </div>
           <div className='bg-linear-to-r from-blue-500 to-primary bg-clip-text'>
             <h1 className='text-4xl font-bold text-transparent'>{appName}</h1>
           </div>
@@ -34,7 +39,7 @@ export function HomeScreen() {
           <span className='text-center text-base'>
             A music sharing platform where all tracks get a fair shot at getting heard.
           </span>
-          <div className='text-red-900 text-sm p-2 border border-red-900/20 bg-red-900/10 rounded-md'>
+          <div className='text-red-900 text-sm p-2 border border-red-500/20 bg-red-500/10 rounded-md text-center'>
             The service has not been released yet. This page is a demo.
           </div>
           <div className='flex gap-2 mt-4'>
@@ -91,6 +96,9 @@ export function HomeScreen() {
           <br />
           <br />
         </p>
+        <Button shape='rounded' paddingEnabled onClick={() => navigate("/undiscovered")}>
+          Explore Undiscovered Tracks
+        </Button>
       </section>
       <section className='h-pad py-16 flex-1'>
         <SectionHeading>Features</SectionHeading>

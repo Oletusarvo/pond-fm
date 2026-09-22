@@ -63,7 +63,7 @@ export class EmailService {
           applyInlineCss({
             appName: "Amphitune",
             code,
-            url: `${domainUrl}/authorize?code=${code}`,
+            url: `${domainUrl}/login?step=authorize&code=${code}`,
           }),
         );
 
