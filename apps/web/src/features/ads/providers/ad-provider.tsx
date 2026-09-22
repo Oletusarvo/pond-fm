@@ -32,6 +32,7 @@ export const [AdProvider, useAdContext] = createProvider({
         const { itemsSeen, enabled, interval, target } = hook();
         const [renderAd, setRenderAd] = useState(false);
         const hasCounted = useRef(false);
+        const shouldHide = useRef(false);
 
         const onVisible = () => {
           //Count items seen only once.
@@ -46,6 +47,7 @@ export const [AdProvider, useAdContext] = createProvider({
         };
 
         const onInvisible = () => {
+          if (!shouldHide.current) return;
           setRenderAd(false);
         };
 
@@ -55,6 +57,7 @@ export const [AdProvider, useAdContext] = createProvider({
             {children}
             <Sentinel onVisible={onVisible} onInvisible={onInvisible} />
             {shouldRenderAd ? adElement || <DefaultAdElement /> : null}
+            <Sentinel onVisible={() => (shouldHide.current = true)} />
           </>
         );
       },
