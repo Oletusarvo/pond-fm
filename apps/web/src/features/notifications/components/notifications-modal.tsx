@@ -42,7 +42,6 @@ function ModalContent() {
 
   return (
     <Feed
-      adsEnabled={false}
       renderComponent={({ item }) => <Notification notification={item} />}
       keyExtractor={(item) => item.id}
     />
@@ -65,9 +64,7 @@ function Notification({ notification }) {
         ? "var(--color-blue-500)"
         : "var(--color-primary)";
   const iconProps =
-    type === "like"
-      ? { color: "transparent", fill: iconColor }
-      : { color: iconColor };
+    type === "like" ? { color: "transparent", fill: iconColor } : { color: iconColor };
   const message =
     type === "like"
       ? "liked your track"
@@ -91,9 +88,7 @@ function Notification({ notification }) {
           </div>
 
           {notification.type !== "follow" ? (
-            <strong className='text-primary'>
-              {notification.track?.title}
-            </strong>
+            <strong className='text-primary'>{notification.track?.title}</strong>
           ) : null}
 
           {notification.seen_at === null ? (
