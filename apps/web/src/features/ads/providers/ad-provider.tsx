@@ -55,7 +55,6 @@ export const [AdProvider, useAdContext] = createProvider({
           if (itemsSeen.current % target === interval) {
             setRenderAd(true);
           }
-          console.log("Counted item...", itemsSeen.current);
         };
 
         const shouldRenderAd = enabled && renderAd;

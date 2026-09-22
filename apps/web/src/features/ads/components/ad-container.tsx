@@ -1,5 +1,4 @@
 import { useEffect, useRef, useState } from "react";
-import { Sentinel } from "../../../components/sentinel";
 
 const AD_CONTAINER_ID = "container-57d1ae3dbb6350d1a44008dd920f4ebe";
 
