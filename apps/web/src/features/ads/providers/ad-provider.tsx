@@ -52,8 +52,8 @@ export const [AdProvider, useAdContext] = createProvider({
         const shouldRenderAd = enabled && renderAd;
         return (
           <>
-            <Sentinel onVisible={onVisible} onInvisible={onInvisible} />
             {children}
+            <Sentinel onVisible={onVisible} onInvisible={onInvisible} />
             {shouldRenderAd ? adElement || <DefaultAdElement /> : null}
           </>
         );

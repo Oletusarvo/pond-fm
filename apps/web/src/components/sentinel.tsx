@@ -16,5 +16,5 @@ export function Sentinel({ onVisible, onInvisible }: SentinelProps) {
       onInvisible?.();
     }
   }, [inView]);
-  return <div ref={ref} className='h-1 shrink-0' />;
+  return <div ref={ref} className='shrink-0' />;
 }
