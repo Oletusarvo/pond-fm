@@ -19,7 +19,7 @@ export function MainLayout() {
   };
   return (
     <div className='flex flex-col w-full h-full grow-0'>
-      <AdProvider interval={5} enabled={adsEnabled}>
+      <AdProvider interval={10} enabled={adsEnabled}>
         <MainHeader />
         <main className='flex flex-col flex-1 overflow-y-scroll'>
           <Outlet />
