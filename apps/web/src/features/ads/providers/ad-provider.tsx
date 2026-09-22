@@ -35,17 +35,6 @@ export const [AdProvider, useAdContext] = createProvider({
         const { itemsSeen, enabled, interval, target } = hook();
         const [renderAd, setRenderAd] = useState(false);
         const shouldHide = useRef(false);
-        const { ref: adRef } = useSentinel({
-          threshold: 0,
-          onVisible: () => (shouldHide.current = true),
-          onInvisible: () => {
-            if (!shouldHide.current) return;
-            setRenderAd(false);
-          },
-        });
-
-        const hasCounted = useRef(false);
-
         const onVisible = () => {
           //Count items seen only once.
           if (hasCounted.current) return;
@@ -57,18 +46,33 @@ export const [AdProvider, useAdContext] = createProvider({
           }
         };
 
+        const { ref: itemRef } = useSentinel({
+          threshold: 0.5,
+          onVisible,
+        });
+
+        const { ref: adRef } = useSentinel({
+          threshold: 0,
+          onVisible: () => (shouldHide.current = true),
+          onInvisible: () => {
+            if (!shouldHide.current) return;
+            setRenderAd(false);
+          },
+        });
+
+        const hasCounted = useRef(false);
+
         const shouldRenderAd = enabled && renderAd;
+        const renderedAdElement = (
+          <PassProps ref={adRef}>{adElement || <DefaultAdElement />}</PassProps>
+        );
+
+        const itemElement = <PassProps ref={itemRef}>{children}</PassProps>;
+
         return (
           <>
-            {children}
-            <Sentinel onVisible={onVisible} />
-            {shouldRenderAd ? (
-              adElement ? (
-                <PassProps ref={adRef}>{adElement}</PassProps>
-              ) : (
-                <DefaultAdElement ref={adRef} />
-              )
-            ) : null}
+            {itemElement}
+            {shouldRenderAd ? renderedAdElement : null}
           </>
         );
       },

@@ -266,7 +266,7 @@ function PlanItem({
       </div>
 
       <ResponsiveParagraph>{children}</ResponsiveParagraph>
-      <ul className='list-disc text-slate-700'>
+      <ul className='list-disc text-slate-700 mt-auto'>
         {listContent.map((content, i) => {
           return <li key={i}>{content}</li>;
         })}

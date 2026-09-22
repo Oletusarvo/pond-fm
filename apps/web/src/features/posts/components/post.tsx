@@ -16,11 +16,14 @@ import { ReportModal } from "./report-modal";
 /**The main component responsible for rendering posts. Includes an AudioPlayer, stats and other information.
  * Must be a child of a PostProvider.
  */
-export function Post() {
+export function Post({ ref }: { ref?: React.RefObject<any> }) {
   const { session } = useAuthContext();
   const { post } = usePostContext();
   return (
-    <div className='flex py-2 rounded-md bg-white w-full flex-col gap-1 items-start h-pad'>
+    <div
+      ref={ref}
+      className='flex py-2 rounded-md bg-white w-full flex-col gap-1 items-start h-pad'
+    >
       <div className='flex justify-between w-full items-start'>
         <div className='flex flex-col leading-none items-start'>
           <PostAuthor />

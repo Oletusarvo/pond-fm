@@ -11,11 +11,11 @@ export function PostFeed() {
     <PopulatePostStore>
       <Feed
         keyExtractor={(item) => item?.id}
-        renderComponent={({ item }) => {
+        renderComponent={({ item, ref }) => {
           if (!item) return null;
           return (
             <PostProvider trackId={item.track.id}>
-              <Post />
+              <Post ref={ref} />
             </PostProvider>
           );
         }}
