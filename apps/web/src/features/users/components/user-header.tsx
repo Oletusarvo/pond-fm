@@ -11,18 +11,20 @@ import { FaBrandIconLink } from "../../../components/fa-brand-icon-link";
 import { useNavigate } from "react-router-dom";
 import { defaults } from "../../../utils/defaults";
 import { useAuthContext } from "../../auth/providers/auth-provider";
+import { useAuthenticatedAction } from "../../posts/hooks/use-return-to-url";
 
 /**Renders the header at the top of a user's profile screen. */
 export function UserHeader() {
   const { status } = useAuthContext();
   const { user } = useUserContext();
   const [followedByMe, setFollowedByMe] = useState(user.followed_by_me);
+
   const navigate = useNavigate();
 
   const queryClient = useQueryClient();
   const onFollowButtonClicked = async () => {
     if (status === "unauthenticated") {
-      return navigate(`/login?returnUrl=/user/${user.id}`);
+      return navigate(`/login?return=/user/${user.id}&callback=/user/${user.id}`);
     }
     const initialFollowed = followedByMe;
     const newFollowed = !initialFollowed;
