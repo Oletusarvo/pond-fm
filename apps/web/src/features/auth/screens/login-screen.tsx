@@ -14,14 +14,17 @@ const [LoginProvider, useLoginContext] = createProvider({
   contextName: "LoginContext",
   hook: ({ close }: { close: () => void | Promise<void> }) => {
     const [search, setSearchParams] = useSearchParams();
-    const returnUrl = search.get("return-url");
+    const returnUrl = search.get("return");
     const step = search.get("step");
     const [loginSuccess, setLoginSuccess] = useState(false);
 
     const updateStep = (step: string) => {
-      setSearchParams({
+      let options: { step: string; returnUrl?: string; callbackUrl?: string } = {
+        ...Object.fromEntries(search),
         step,
-      });
+      };
+
+      setSearchParams(options);
     };
 
     const updateLoginSuccess = (state: boolean) => setLoginSuccess(state);
@@ -38,7 +41,11 @@ const [LoginProvider, useLoginContext] = createProvider({
 
 export function LoginScreen() {
   const navigate = useNavigate();
-  const close = () => navigate("/");
+  const [search] = useSearchParams();
+  const close = () => {
+    const returnUrl = search.get("return");
+    navigate(returnUrl || "/");
+  };
   return (
     <Modal title='Login' onClose={close}>
       <LoginProvider close={close}>
@@ -136,7 +143,7 @@ function CredentialsContent() {
 }
 
 function AuthorizeStep() {
-  const { close, returnUrl, updateLoginSuccess } = useLoginContext();
+  const { close, updateLoginSuccess } = useLoginContext();
   const [params] = useSearchParams();
   const code = params.get("code");
 
@@ -149,7 +156,8 @@ function AuthorizeStep() {
     },
     onSuccess: () => {
       updateLoginSuccess(true);
-      navigate(returnUrl || "/undiscovered");
+      const callbackUrl = params.get("callback");
+      navigate(callbackUrl || "/undiscovered");
     },
   });
 

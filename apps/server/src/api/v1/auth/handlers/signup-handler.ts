@@ -5,10 +5,12 @@ import { signupSchema } from "../../../../schemas/signup-schema";
 import { db } from "../../../../db-config";
 import { tablenames } from "../../../../tablenames";
 import { services } from "../../../../container";
+import { serviceError } from "@pondfm/app-shared";
 
 export const signupHandler = createHandler(
   async (req: TRequest<z.infer<typeof signupSchema>>, res) => {
     const { email, username } = req.body;
+
     await db.transaction(async (trx) => {
       const [user] = await trx(tablenames.users)
         .insert({

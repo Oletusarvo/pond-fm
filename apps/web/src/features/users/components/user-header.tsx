@@ -21,10 +21,14 @@ export function UserHeader() {
 
   const queryClient = useQueryClient();
   const onFollowButtonClicked = async () => {
+    if (status === "unauthenticated") {
+      return navigate(`/login?returnUrl=/user/${user.id}`);
+    }
     const initialFollowed = followedByMe;
     const newFollowed = !initialFollowed;
 
     setFollowedByMe(newFollowed);
+
     await cancelable.toggleFollow(user.id, initialFollowed).then(async (result) => {
       if (result.executed) {
         if (!result.value.success) {
@@ -59,7 +63,6 @@ export function UserHeader() {
           </div>
         </div>
         <Button
-          disabled={status === "unauthenticated"}
           color={followedByMe ? "danger" : "primary"}
           variant='text'
           onClick={onFollowButtonClicked}

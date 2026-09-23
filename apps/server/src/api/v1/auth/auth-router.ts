@@ -12,6 +12,7 @@ import { activateUserHandler } from "./handlers/verify-email-handler";
 import { signupSchema } from "../../../schemas/signup-schema";
 import { verifyEmailSchema } from "../../../schemas/verify-email-schema";
 import { verifyEmailResetHandler } from "./handlers/verify-email-reset-handler";
+import { verifyUserQuota } from "./middleware/verify-user-quota";
 
 const router = getRouter();
 
@@ -31,8 +32,8 @@ router.post(
  * @tags Auth
  */
 router.post("/authorize", createBodyParser(authorizeByCodeSchema), authorizeByCodeHandler);
-router.post("/signup", createBodyParser(signupSchema), signupHandler);
-router.post("/verify", createBodyParser(verifyEmailSchema), activateUserHandler);
+router.post("/signup", verifyUserQuota, createBodyParser(signupSchema), signupHandler);
+router.post("/verify", verifyUserQuota, createBodyParser(verifyEmailSchema), activateUserHandler);
 router.post(
   "/verify-email-update",
   checkAuth(),

@@ -1,13 +1,7 @@
-import {
-  TApiErrorResponse,
-  TApiResponse,
-  TApiSuccessResponse,
-} from "../utils/api/types";
+import { TApiErrorResponse, TApiResponse, TApiSuccessResponse } from "../utils/api/types";
 import { useStatus } from "./use-status";
 
-type Fn<T, E, ArgsT extends any[] = any[]> = (
-  ...args: ArgsT
-) => Promise<TApiResponse<T, E>>;
+type Fn<T, E, ArgsT extends any[] = any[]> = (...args: ArgsT) => Promise<TApiResponse<T, E>>;
 
 type UseActionProps<T, E, ArgsT extends any[]> = {
   /**
@@ -17,15 +11,11 @@ type UseActionProps<T, E, ArgsT extends any[]> = {
   /**
    * The method called when the action finishes successfully. Can optionally return a string which is set as the status.
    */
-  onSuccess?: (
-    res: TApiSuccessResponse<T>,
-  ) => Promise<string | void> | void | string;
+  onSuccess?: (res: TApiSuccessResponse<T>) => Promise<string | void> | void | string;
   /**
    * The method called if the action fails. Can optionally return a string which is set as the status.
    */
-  onError?: (
-    res: TApiErrorResponse<E>,
-  ) => Promise<string | void> | void | string;
+  onError?: (res: TApiErrorResponse<E>) => Promise<string | void> | void | string;
   /**
    * The method called if the action throws an error. Optionally returns a string which is set as the status.
    */
@@ -44,7 +34,7 @@ export function useAction<T = unknown, E = unknown, ArgsT extends any[] = []>({
   onException,
   onFinished,
 }: UseActionProps<T, E, ArgsT>) {
-  const { status, setStatus, loading } = useStatus();
+  const { status, setStatus, loading, error } = useStatus();
   const action = async (...args: ArgsT) => {
     setStatus("loading");
     try {
@@ -62,5 +52,5 @@ export function useAction<T = unknown, E = unknown, ArgsT extends any[] = []>({
       setStatus((prev) => (prev === "loading" ? "idle" : prev));
     }
   };
-  return { action, loading, status };
+  return { action, loading, status, error };
 }

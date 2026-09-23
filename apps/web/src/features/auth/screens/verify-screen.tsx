@@ -5,6 +5,7 @@ import { api } from "../../../utils/api/api";
 import { ErrorMessage, SuccessMessage } from "../../../components/helper-message";
 import { useEffect } from "react";
 import { Button } from "../../../components/button";
+import { serviceError } from "@pondfm/app-shared";
 
 export function VerifyScreen() {
   return (
@@ -18,20 +19,19 @@ function ModalContent() {
   const [params] = useSearchParams();
   const token = params.get("token");
   const navigate = useNavigate();
-  const { action, status, loading } = useAction({
+  const { action, status, loading, error } = useAction({
     fn: async () => api.auth.verifyUser(token),
-    //onError: res => res.error as string,
+    onError: (res) => res.error as string,
   });
 
-  console.log(token);
   useEffect(() => {
     action();
   }, []);
 
   return (
     <div className='flex flex-col w-full gap-4'>
-      {status === "error" ? (
-        <ErrorMessage>Something went wrong!</ErrorMessage>
+      {status === "auth:user-quota-exceeded" ? (
+        <ErrorMessage>Unfortunately we do not accept more users at this time.</ErrorMessage>
       ) : status === "success" ? (
         <div className='flex w-full flex-col gap-2'>
           <SuccessMessage>Your email has been verified!</SuccessMessage>
@@ -45,9 +45,11 @@ function ModalContent() {
             Login
           </Button>
         </div>
-      ) : (
+      ) : loading ? (
         <p>Verifying your email. Please wait...</p>
-      )}
+      ) : error ? (
+        <ErrorMessage>Something went wrong!</ErrorMessage>
+      ) : null}
       {status === "error" ? (
         <div className='flex w-full flex-col gap-2'>
           <Button
@@ -69,6 +71,16 @@ function ModalContent() {
             Cancel
           </Button>
         </div>
+      ) : status === "auth:user-quota-exceeded" ? (
+        <Button
+          fullWidth
+          shape='rounded'
+          paddingEnabled
+          variant='contained'
+          onClick={() => navigate("/")}
+        >
+          Cancel
+        </Button>
       ) : null}
     </div>
   );

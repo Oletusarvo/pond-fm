@@ -37,7 +37,7 @@ function ModalContent({ close }) {
   return (
     <div className='flex flex-col w-full gap-8'>
       <div className='flex w-full justify-center'>
-        <div className='w-32 h-32 flex items-center justify-center rounded-full bg-blue-500/10'>
+        <div className='w-32 h-32 flex items-center justify-center rounded-full bg-primary/10'>
           <img src='/assets/frog-1.png' className='w-24 h-24' />
         </div>
       </div>

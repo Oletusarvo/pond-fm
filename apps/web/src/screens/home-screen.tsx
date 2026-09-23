@@ -28,8 +28,8 @@ export function HomeScreen() {
       <section className='h-pad w-full flex flex-col items-center justify-center py-16 gap-4'>
         <div className='flex flex-col xs:w-full md:w-[50%] items-center gap-2'>
           <div className='flex w-full justify-center'>
-            <div className='w-32 h-32 flex items-center justify-center rounded-full bg-blue-500/10'>
-              <img src='/assets/frog-1.png' className='w-24 h-24' />
+            <div className='w-32 h-32 flex items-center justify-center rounded-full bg-primary/10 overflow-hidden relative'>
+              <img src='/assets/frog-1.png' className='w-24 h-24 z-10' loading='lazy' />
             </div>
           </div>
           <div className='bg-linear-to-r from-blue-500 to-primary bg-clip-text'>

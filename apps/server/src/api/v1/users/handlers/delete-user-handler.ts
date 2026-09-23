@@ -7,18 +7,25 @@ import { TUploadFolder } from "@pondfm/app-shared/dist/types/upload-folder";
 export const deleteUserHandler = createHandler(async (req: TAuthenticatedRequest, res) => {
   const session = req.session;
   await db.transaction(async (trx) => {
-    await trx(tablenames.users).where({ id: session.user.id }).update({
-      status: "deleted",
-      deleted_at: db.fn.now(),
-      updated_at: db.fn.now(),
-    });
-
-    //Mark all upload folders as deleted.
-    await trx(tablenames.uploadFolders)
-      .where({ author_id: session.user.id })
+    const rowsAffected = await trx(tablenames.users)
+      .where({ id: session.user.id })
+      .andWhereNot({ status: "deleted" })
       .update({
         status: "deleted",
-      } as TUploadFolder);
+        deleted_at: db.fn.now(),
+        updated_at: db.fn.now(),
+      });
+
+    if (rowsAffected > 0) {
+      //Mark all upload folders as deleted.
+      await trx(tablenames.uploadFolders)
+        .where({ author_id: session.user.id })
+        .update({
+          status: "deleted",
+        } as TUploadFolder);
+
+      await trx(tablenames.serviceSettings).decrement("registered_users", 1);
+    }
   });
   return res.end();
 });
