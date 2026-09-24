@@ -15,13 +15,13 @@ body {
 .main-button {
   background-color: green;
   border-radius: 4px;
-  padding-inline: 1rem;
-  padding-block: 0.5rem;
+  padding: 0.5rem 1rem 0.5rem 1rem;
   border: none;
   color: white;
   transition: transform 0.2s ease-in-out;
   cursor: pointer;
   font-size: 16px;
+  font-weight: 600;
 }
 
 .main-button:active {
