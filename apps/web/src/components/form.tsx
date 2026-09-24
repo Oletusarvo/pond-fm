@@ -17,7 +17,7 @@ type FormGroupProps = React.PropsWithChildren & {
 Form.Group = function ({ children, label }: FormGroupProps) {
   return (
     <div className='flex flex-col w-full'>
-      <label className='text-xs text-slate-500 ml-1'>{label}</label>
+      <label className='text-sm text-slate-500 ml-1'>{label}</label>
       {children}
     </div>
   );

@@ -35,7 +35,7 @@ export const Modal = React.memo(function Modal({
       onClickOutside: () => onClose?.(),
     });
     const className = useClassName(
-      "bg-white p-4 flex flex-col overflow-y-scroll max-h-full animate-fade-in animate-grow-in min-h-32",
+      "bg-white p-4 flex flex-col overflow-hidden max-h-full animate-fade-in animate-grow-in min-h-32",
       fullScreen ? "w-full h-full" : "xs:w-full md:w-[60%] lg:w-[50%] xl:w-[40%] rounded-md",
       fullHeight ? "h-full" : "h-auto",
     );
@@ -47,7 +47,7 @@ export const Modal = React.memo(function Modal({
             <X />
           </Button>
         </div>
-        <div className='flex flex-col overflow-hidden overflow-y-scroll py-4'>{children}</div>
+        <div className='py-4'>{children}</div>
       </div>
     );
   });

@@ -7,6 +7,7 @@ type UseSentinelProps = {
   threshold?: number;
 };
 
+/**Uses the usInView-hook internally. Fires onVisible when the returned ref becomes visible, and onInvisible when it becomes invisible.*/
 export function useSentinel({ onVisible, onInvisible, threshold }: UseSentinelProps) {
   const { inView, ref } = useInView({
     threshold,

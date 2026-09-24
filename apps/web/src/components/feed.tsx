@@ -1,15 +1,10 @@
-import { ReactNode, useEffect } from "react";
-import { useInfiniteFeed } from "../hooks/use-infinite-feed";
+import { ReactNode } from "react";
 import { Separator } from "./separator";
 import React from "react";
 import { LoadingFiller } from "./loading-filler";
 import { useFeedContext } from "../providers/feed-provider";
 import { Sentinel } from "./sentinel";
 import { useAuthContext } from "../features/auth/providers/auth-provider";
-import { Ad, AdBanner } from "../features/ads/components/ad-container";
-import { AdProvider } from "../features/ads/providers/ad-provider";
-
-const adElement = import.meta.env.PROD ? <Ad /> : null;
 
 type FeedScreenProps = {
   keyExtractor?: (item: any) => string;
@@ -23,7 +18,6 @@ export function Feed({
   onEmptyComponent: OnEmptyComponent,
 }: FeedScreenProps) {
   const { data, isPending, isError, error, fetchNextPage } = useFeedContext();
-  const { session } = useAuthContext();
 
   if (isPending) {
     return <LoadingFiller />;
@@ -54,10 +48,7 @@ export function Feed({
       {data.map((item, i) => {
         return (
           <React.Fragment key={keyExtractor?.(item)}>
-            <AdProvider.Injector adElement={adElement}>
-              <RenderComponent item={item} />
-            </AdProvider.Injector>
-
+            <RenderComponent item={item} />
             {i < data.length - 1 ? <Separator /> : null}
           </React.Fragment>
         );
