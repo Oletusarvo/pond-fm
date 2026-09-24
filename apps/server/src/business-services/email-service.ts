@@ -36,11 +36,10 @@ export class EmailService {
           "./src/html-templates/verify-email-template.html",
         );
         const template = Handlebars.compile(templateSource);
-        const html = template(
-          applyInlineCss({
-            url: `${domain}/verify?token=${token}`,
-          }),
-        );
+        const templateConfig = await applyInlineCss({
+          url: `${domain}/verify?token=${token}`,
+        });
+        const html = template(templateConfig);
         await this.send({
           to: email,
           subject: "Verify Your Email",
@@ -59,14 +58,13 @@ export class EmailService {
           "./src/html-templates/magic-link-template.html",
         );
         const template = Handlebars.compile(templateSource);
-        const html = template(
-          applyInlineCss({
-            appName: "Amphitune",
-            code,
-            url: `${domainUrl}/login?step=authorize&code=${code}`,
-          }),
-        );
+        const templateConfig = await applyInlineCss({
+          appName: "Amphitune",
+          code,
+          url: `${domainUrl}/login?step=authorize&code=${code}`,
+        });
 
+        const html = template(templateConfig);
         await this.send({
           to,
           subject: `Log in to ${appName}`,
@@ -84,11 +82,10 @@ export class EmailService {
         const templateSource = await loadTemplateSource("reset-email-template.hmtl");
         const template = Handlebars.compile(templateSource);
         const frontEndDomain = getDomainUrl();
-        const html = template(
-          applyInlineCss({
-            url: `${frontEndDomain}/verify-email-reset?token=${token}`,
-          }),
-        );
+        const templateConfig = await applyInlineCss({
+          url: `${frontEndDomain}/verify-email-reset?token=${token}`,
+        });
+        const html = template(templateConfig);
         await this.send({ to, subject: "Reset your Amphitune email", html });
       },
       () => console.log("Email reset token: ", token),

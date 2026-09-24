@@ -17,6 +17,6 @@ export async function applyInlineCss(templateConfig: any) {
   });
   return {
     ...templateConfig,
-    inlineCss: cssSource,
+    inlineStyle: `<style>${cssSource}</style>`,
   };
 }
