@@ -11,6 +11,16 @@ export class UsersApi {
   /**Provides methods related to an authenticated users subscription. */
   subscriptions = new UserSubscriptionsApi();
 
+  /**Retrieves the play statistics of a users uploads. */
+  async getStatistics(interval: "week" | "month" | "year") {
+    const req = requestBuilder.get().includeCredentials().build();
+    const url = new URL(Api.withEndpoint("users/stats"));
+    url.searchParams.set("q", interval);
+    console.log(interval);
+    const res = await fetch(url, req);
+    return await Api.asApiResponse(res);
+  }
+
   /**Updates a user's profile. */
   async update(payload: Partial<Pick<TUser, "username" | "bio" | "urls">>) {
     const req = requestBuilder.put().body(payload).json().includeCredentials().build();

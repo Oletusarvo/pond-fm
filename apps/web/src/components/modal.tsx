@@ -35,19 +35,19 @@ export const Modal = React.memo(function Modal({
       onClickOutside: () => onClose?.(),
     });
     const className = useClassName(
-      "bg-white p-4 flex flex-col overflow-hidden max-h-full animate-fade-in animate-grow-in min-h-32",
+      "bg-white p-4 flex flex-col max-h-full animate-fade-in animate-grow-in min-h-32",
       fullScreen ? "w-full h-full" : "xs:w-full md:w-[60%] lg:w-[50%] xl:w-[40%] rounded-md",
       fullHeight ? "h-full" : "h-auto",
     );
     return (
       <div className={className} ref={ref as React.Ref<HTMLDivElement>}>
-        <div className='flex items-center w-full justify-between pt-2 pb-4'>
+        <div className='flex items-center w-full justify-between pb-4'>
           <h3 className='font-semibold text-slate-500'>{title}</h3>
           <Button hidden={!onClose} paddingEnabled onClick={onClose} variant='ghost' shape='circle'>
             <X />
           </Button>
         </div>
-        <div className='py-4'>{children}</div>
+        <div className='py-4 overflow-y-scroll scrollable'>{children}</div>
       </div>
     );
   });

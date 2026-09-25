@@ -26,6 +26,14 @@ export class ScrobbleService {
     return { success: true } as ServiceSuccessResponse<void>;
   }
 
+  /**Creates a new listen-event on a track. */
+  async createPlayEvent(event: { user_id: string; track_id: string }, ctx: DBContext) {
+    await ctx(tablenames.playData).insert({
+      user_id: event.user_id,
+      track_id: event.track_id,
+    });
+  }
+
   /**Prunes unique listener records of tracks with at least 100 unique listens. */
   async pruneUniqueListeners(trackId: string, ctx: DBContext) {
     const counts = await this.repo.getPlayCounts(trackId, ctx);

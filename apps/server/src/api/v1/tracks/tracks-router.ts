@@ -5,6 +5,7 @@ import { updateTrackSchema } from "../../../schemas/update-track-schema";
 import { trackInteractionSchema } from "../../../schemas/track-interaction-schema";
 import { createBodyParser, getRouter } from "@pondfm/server-utils";
 import { handlers } from "../../../container";
+import { getPlayCountStatsHandler } from "./handlers/get-track-stats-handler";
 
 const router = getRouter();
 
@@ -19,11 +20,7 @@ router.get("/feed/main", checkAuth(false), handlers.tracks.feed.main);
  * @summary Returns a feed of tracks that have not hit their unique listeners threshold, sorted oldest first.
  * @tags Tracks
  */
-router.get(
-  "/feed/discover",
-  checkAuth(false),
-  handlers.tracks.feed.undiscovered,
-);
+router.get("/feed/discover", checkAuth(false), handlers.tracks.feed.undiscovered);
 /**
  * GET /tracks/feed/discover
  * @summary Returns a feed of tracks from users the currently authenticated user is following.
@@ -47,21 +44,13 @@ router.get("/feed/:authorId", checkAuth(false), handlers.tracks.feed.byAuthor);
  * @summary Returns tracks reposted by a user.
  * @tags Tracks
  */
-router.get(
-  "/feed/:authorId/reposted",
-  checkAuth(false),
-  handlers.tracks.feed.repostedBy,
-);
+router.get("/feed/:authorId/reposted", checkAuth(false), handlers.tracks.feed.repostedBy);
 /**
  * GET /tracks/feed/:authorId/liked
  * @summary Returns tracks liked by a user.
  * @tags Tracks
  */
-router.get(
-  "/feed/:authorId/liked",
-  checkAuth(false),
-  handlers.tracks.feed.likedBy,
-);
+router.get("/feed/:authorId/liked", checkAuth(false), handlers.tracks.feed.likedBy);
 /**
  * GET /tracks/:id
  * @summary Returns a specific track by id.
@@ -102,6 +91,7 @@ router.delete(
   createBodyParser(trackInteractionSchema),
   handlers.tracks.unrepost,
 );
+
 /**
  * POST /tracks/:id/play
  * @summary Increments the play count of a track by id. Requests will only be processed if a valid stream token is present.
@@ -125,16 +115,12 @@ router.get("/:trackId/stream", streamTrackHandler);
  * @summary Updates the data of a track by id.
  * @tags Tracks
  */
-router.put(
-  "/:trackId",
-  checkAuth(),
-  createBodyParser(updateTrackSchema),
-  handlers.tracks.update,
-);
+router.put("/:trackId", checkAuth(), createBodyParser(updateTrackSchema), handlers.tracks.update);
 /**
  * DELETE /tracks/:id
  * @summary Deletes a track by id.
  * @tags Tracks
  */
 router.delete("/:trackId", checkAuth(), handlers.tracks.delete);
+
 export { router as tracksRouter };

@@ -12,12 +12,16 @@ import { useNavigate } from "react-router-dom";
 import { defaults } from "../../../utils/defaults";
 import { useAuthContext } from "../../auth/providers/auth-provider";
 import { useAuthenticatedAction } from "../../posts/hooks/use-return-to-url";
+import { usePlayData } from "../../charting/hooks/use-play-data-";
+import { PlaysPerDayChart, PlaysPerMonthChart } from "../../charting/components/play-count-chart";
+import { usePlayCount } from "../../audio/hooks/use-play-count";
 
 /**Renders the header at the top of a user's profile screen. */
 export function UserHeader() {
-  const { status } = useAuthContext();
+  const { status, session } = useAuthContext();
   const { user } = useUserContext();
   const [followedByMe, setFollowedByMe] = useState(user.followed_by_me);
+  const { data: playsPerDay, isLoading } = usePlayData("week");
 
   const navigate = useNavigate();
 
@@ -52,6 +56,7 @@ export function UserHeader() {
   const urls = user.urls;
   return (
     <div className='flex flex-col w-full py-2 h-pad gap-4 items-start'>
+      {/**Header portion */}
       <div className='w-full leading-none flex flex-row justify-between xs:items-start'>
         <div className='flex sm:gap-8 xs:gap-2 md:items-center xs:items-start'>
           <div
@@ -73,46 +78,83 @@ export function UserHeader() {
           <span className='text-sm'>{followedByMe ? "Unfollow" : "Follow"}</span>
         </Button>
       </div>
-      <p className='text-sm text-slate-500 xs:w-full md:w-92'>{user.bio || "No bio."}</p>
-      {urls ? (
-        <div className='flex flex-col gap-2'>
-          {urls.map((url, i) => {
-            return (
-              <FaBrandIconLink key={i} to={url} className='text-sm text-primary' target='_blank' />
-            );
-          })}
+      <div className='flex xs:flex-col md:flex-row w-full lg:justify-between gap-2'>
+        <div className='flex flex-col flex-1 gap-4'>
+          <p className='text-sm text-slate-500 xs:w-full md:w-92'>{user.bio || "No bio."}</p>
+          {urls ? (
+            <div className='flex flex-col gap-2'>
+              {urls.map((url, i) => {
+                return (
+                  <FaBrandIconLink
+                    key={i}
+                    to={url}
+                    className='text-sm text-primary'
+                    target='_blank'
+                  />
+                );
+              })}
+            </div>
+          ) : null}
+          {/**Bottom controls */}
+          <div className='flex w-full items-center justify-between'>
+            <div className='flex items-center sm:gap-4 xs:gap-2'>
+              <ToggleProvider>
+                <ToggleProvider.Trigger>
+                  <Button variant='text'>
+                    <span className='text-xs font-semibold text-primary'>
+                      {user.follower_count} Followers
+                    </span>
+                  </Button>
+                </ToggleProvider.Trigger>
+                <ToggleProvider.Target>
+                  <FollowerFeedModal />
+                </ToggleProvider.Target>
+              </ToggleProvider>
+              <ToggleProvider>
+                <ToggleProvider.Trigger>
+                  <Button variant='text'>
+                    <span className='text-xs font-semibold text-primary'>
+                      {" "}
+                      {user.following_count} Following
+                    </span>
+                  </Button>
+                </ToggleProvider.Trigger>
+                <ToggleProvider.Target>
+                  <FollowingFeedModal />
+                </ToggleProvider.Target>
+              </ToggleProvider>
+            </div>
+          </div>
         </div>
-      ) : null}
-      {/**Bottom controls */}
-      <div className='flex w-full items-center justify-between'>
-        <div className='flex items-center sm:gap-4 xs:gap-2'>
-          <ToggleProvider>
-            <ToggleProvider.Trigger>
-              <Button variant='text'>
-                <span className='text-xs font-semibold text-primary'>
-                  {user.follower_count} Followers
-                </span>
-              </Button>
-            </ToggleProvider.Trigger>
-            <ToggleProvider.Target>
-              <FollowerFeedModal />
-            </ToggleProvider.Target>
-          </ToggleProvider>
-          <ToggleProvider>
-            <ToggleProvider.Trigger>
-              <Button variant='text'>
-                <span className='text-xs font-semibold text-primary'>
-                  {" "}
-                  {user.following_count} Following
-                </span>
-              </Button>
-            </ToggleProvider.Trigger>
-            <ToggleProvider.Target>
-              <FollowingFeedModal />
-            </ToggleProvider.Target>
-          </ToggleProvider>
-        </div>
+        {status === "authenticated" && session?.user.id === user.id ? <ChartSelector /> : null}
       </div>
+    </div>
+  );
+}
+
+function ChartSelector() {
+  const [interval, setInterval] = useState<"week" | "month" | "year">("week");
+  const { data: playData, isLoading } = usePlayData(interval);
+  const title =
+    interval === "week"
+      ? "Plays last 7 days"
+      : interval === "month"
+        ? "Plays last 30 days"
+        : "Plays last 12 months";
+  return (
+    <div className='flex flex-col gap-2 xs:h-[200px] lg:h-auto sm:w-full lg:w-[450px]'>
+      <div className='flex justify-between'>
+        <h2 className='font-semibold text-sm'>{title}</h2>
+        <select onChange={(e) => setInterval(e.target.value as typeof interval)}>
+          <option value='week'>Last 7 days</option>
+          <option value='month'>Last 30 days</option>
+        </select>
+      </div>
+      {interval === "week" || interval === "month" ? (
+        <PlaysPerDayChart data={(playData as any[]) || []} />
+      ) : (
+        <PlaysPerMonthChart data={(playData as any[]) || []} />
+      )}
     </div>
   );
 }
