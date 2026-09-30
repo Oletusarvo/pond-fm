@@ -143,5 +143,5 @@ export class EmailService {
 
 export const emailService = new EmailService(
   "https://api.brevo.com/v3/smtp/email",
-  loadEnvVariable("EMAIL_API_KEY"),
+  loadEnvVariable("EMAIL_API_KEY", false),
 );
