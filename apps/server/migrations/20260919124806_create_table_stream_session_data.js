@@ -7,16 +7,16 @@ exports.up = function (knex) {
   return knex.schema.withSchema("post").createTable(tablename, (tbl) => {
     tbl.uuid("id").primary().defaultTo(knex.fn.uuid());
     tbl
-      .uuid("user_id")
-      .references("id")
+      .string("user_id")
+      .references("audius_user_id")
       .inTable("auth.user_data")
       .onDelete("CASCADE")
       .onUpdate("CASCADE");
     tbl.uuid("session_id").notNullable();
     tbl
-      .uuid("track_id")
+      .string("track_id")
       .notNullable()
-      .references("id")
+      .references("audius_track_id")
       .inTable("post.track_data")
       .onDelete("CASCADE")
       .onUpdate("CASCADE");

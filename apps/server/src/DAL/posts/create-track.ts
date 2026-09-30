@@ -6,18 +6,20 @@ import { createTrackMoods } from "./create-track-tags";
 import { getLookupQuery } from "../util/get-lookup-query";
 import { TTrack } from "@pondfm/app-shared";
 
-export async function createTrack(ctx: DBContext, config: { track: Pick<TTrack, 'title' | 'author_id' | 'primary_audio_id' | 'genre' | 'moods'> }) {
-  const { moods, genre, primary_audio_id, title, author_id } = config.track;
-  const [track] = await ctx(tablenames.tracks)
+export async function createTrack(
+  ctx: DBContext,
+  config: { track: Pick<TTrack, "title" | "author_id" | "genre" | "moods"> },
+) {
+  const { moods, genre, title, author_id } = config.track;
+  const [track] = (await ctx(tablenames.tracks)
     .insert({
       title,
       author_id,
-      primary_audio_id,
-      genre_id: getLookupQuery(tablenames.genres, genre)
+      genre_id: getLookupQuery(tablenames.genres, genre),
     })
-    .returning('*') as [TTrack];
+    .returning("*")) as [TTrack];
   await createTrackMoods(ctx, {
-    track: { id: track.id, moods }
+    track: { id: track.id, moods },
   });
   return track;
 }

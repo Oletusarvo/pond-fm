@@ -1,5 +1,5 @@
 import { useClassName } from "../../../hooks/use-class-name";
-import { usePostContext } from "../providers/post-provider";
+import { useTrackContext } from "../providers/post-provider";
 
 /**
  * Renders a label indicating the quality of a track's audio.
@@ -7,7 +7,7 @@ import { usePostContext } from "../providers/post-provider";
  * @todo
  * */
 export function TrackQualityLabel() {
-  const { post } = usePostContext();
+  const { track: post } = useTrackContext();
   const track = post.track;
   const className = useClassName(
     "rounded-sm border py-px px-1 bg-amber-500/10 border-amber-500/20 text-yellow-500 text-xs font-semibold",

@@ -8,7 +8,7 @@ import { TAuthenticatedRequest } from "../../../../types/request";
 export const refreshSessionHandler = createHandler(async (req: TAuthenticatedRequest, res) => {
   const session = req.session;
   const user = await findUserById(db, {
-    id: session.user.id,
+    audius_user_id: session.user.audius_user_id,
   });
 
   const token = createJWT({

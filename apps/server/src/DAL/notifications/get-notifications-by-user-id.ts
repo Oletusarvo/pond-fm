@@ -6,17 +6,20 @@ import { resolveQueryWithCursor } from "../posts/utils/resolve-query-with-cursor
 import { getNotificationQuery } from "./get-notification-query";
 import { selectNotification } from "./select/select-notification";
 
-export async function getNotificationsByUserId(ctx: DBContext, config: { user: { id: string }; cursor?: TCursor }) {
+export async function getNotificationsByUserId(
+  ctx: DBContext,
+  config: { user: { audius_user_id: string }; cursor?: TCursor },
+) {
   const query = getNotificationQuery(ctx);
-  query.from({ notifications: tablenames.notifications })
-  query.where({ 'notifications.recipient_id': config.user.id });
-  query.orderBy('notifications.created_at', 'desc');
+  query.from({ notifications: tablenames.notifications });
+  query.where({ "notifications.recipient_id": config.user.audius_user_id });
+  query.orderBy("notifications.created_at", "desc");
   query.limit(10 + 1);
   applyCursor(query, {
-    dir: 'desc',
-    timestampColumn: 'notifications.created_at',
-    idColumn: 'notifications.id',
-    cursor: config.cursor
+    dir: "desc",
+    timestampColumn: "notifications.created_at",
+    idColumn: "notifications.id",
+    cursor: config.cursor,
   });
 
   return await resolveQueryWithCursor(query, { pageSize: 10 });

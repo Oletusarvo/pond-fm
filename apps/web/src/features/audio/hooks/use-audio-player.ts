@@ -26,7 +26,7 @@ export function useAudioPlayer() {
     //Request a stream token.
     if (currentPlayback?.track.id !== playback.track.id) {
       await api.tracks
-        .requestStreamToken(playback.track.id)
+        .requestStreamUrl(playback.track.id)
         .then(async (res) => {
           if (!res.success) {
             throw new Error("Failed to start stream!");

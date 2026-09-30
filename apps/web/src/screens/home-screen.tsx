@@ -8,6 +8,9 @@ import { PassProps } from "../components/pass-props";
 import { defaults } from "../utils/defaults";
 import { useClassName } from "../hooks/use-class-name";
 import { FaIconLink } from "../components/fa-icon-link";
+import { TabsProvider } from "../providers/tabs-provider";
+import { audiusSdk } from "../utils/audius.config";
+import { api } from "../utils/api/api";
 
 const appName = "Amphitune";
 /**Renders the home screen. */
@@ -15,11 +18,12 @@ export function HomeScreen() {
   const navigate = useNavigate();
   const { toggleLogoutModal, status } = useAuthContext();
 
-  const heroButtonAction = () => {
+  const heroButtonAction = async () => {
     if (status === "authenticated") {
       toggleLogoutModal(true);
     } else if (status === "unauthenticated") {
-      navigate("/login");
+      //await audiusSdk.oauth.login({ scope: "write" });
+      window.location.href = "http://localhost:3002/api/v1/auth/audius/authorize";
     }
   };
 
@@ -43,17 +47,6 @@ export function HomeScreen() {
             The service has not been released yet. This page is a demo.
           </div>
           <div className='flex gap-2 mt-4'>
-            {status === "unauthenticated" ? (
-              <Button
-                variant='contained'
-                paddingEnabled
-                shape='rounded'
-                fullWidth
-                onClick={() => navigate("/signup")}
-              >
-                Signup
-              </Button>
-            ) : null}
             <Button
               onClick={heroButtonAction}
               paddingEnabled
@@ -64,7 +57,7 @@ export function HomeScreen() {
               {status === "authenticated" ? (
                 "Logout"
               ) : status === "unauthenticated" ? (
-                "Login"
+                "Login With Audius"
               ) : (
                 <Spinner />
               )}
@@ -72,23 +65,19 @@ export function HomeScreen() {
           </div>
         </div>
       </section>
+
       <section className='h-pad py-16 flex-1'>
         <SectionHeading>What is {appName}?</SectionHeading>
 
         <p className='text-base 2xl:w-[70%]'>
-          {appName} is a music sharing platform built on a simple idea: your music should get a
-          chance to be heard regardless of how popular you are. That's where our{" "}
-          <strong>Undiscovered</strong> feed comes in. Any track with fewer than{" "}
+          {appName} is a music sharing platform built on top of <strong>Audius</strong>, with a
+          simple idea: your music should get a chance to be heard regardless of how popular you are.
+          That's where our <strong>Undiscovered</strong> feed comes in. Any track with fewer than{" "}
           {defaults.plans.free.unique_listener_threshold} unique listeners (or{" "}
           {defaults.plans.pro.unique_listener_threshold} for Pro accounts), stays there, oldest
           first, until it reaches it. Once your track crosses that threshold, you've genuinely been
           discovered. The <strong>New</strong> feed will display uploaded or reposted tracks in
           chronological order regardless of how many unique listeners they have accumulated.
-          <br />
-          <br />
-          To help the right listeners find you, {appName} is experimenting with allowing tracks to
-          be tagged not by subgenres, but by moods along their main genre, because most listeners
-          don't think in a maze of subgenres, but how they want music to make them feel.
           <br />
           <br />
           None of the feeds on {appName} are driven by engagement based algorithms; in fact we don't
@@ -120,7 +109,8 @@ export function HomeScreen() {
           <FeatureItem title='Reposts' icon={<Repeat />}>
             Heard a great track you think deserves to be heard by others? Tap the repost button to
             bump the track back to the top of the <strong>New</strong> feed. Reposts on {appName}{" "}
-            are a commitment and cannot be undone.
+            are a commitment and cannot be undone. Reposts on Amphitune will not trigger a repost on
+            Audius.
           </FeatureItem>
         </div>
       </section>
@@ -228,6 +218,7 @@ export function HomeScreen() {
             &copy; Artwork - Hayley Jackson
           </Link>
         </div>
+        <img src='/assets/audius-logo-black.webp' width='150px' className='invert' />
       </footer>
     </>
   );

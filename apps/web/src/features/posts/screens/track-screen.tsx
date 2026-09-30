@@ -1,15 +1,12 @@
 import { useQuery } from "@tanstack/react-query";
 import { useParams } from "react-router-dom";
 import { Spinner } from "../../../components/spinner";
-import { PostProvider } from "../providers/post-provider";
+import { TrackProvider } from "../providers/post-provider";
 import { useEffect, useState } from "react";
-import { usePostStore } from "../hooks/use-post";
+import { useTrackStore } from "../hooks/use-post";
 import { Post } from "../components/post";
 import { api } from "../../../utils/api/api";
-import {
-  UserProvider,
-  useUserContext,
-} from "../../users/providers/user-proivder";
+import { UserProvider, useUserContext } from "../../users/providers/user-proivder";
 import { UserHeader } from "../../users/components/user-header";
 import { Separator } from "../../../components/separator";
 
@@ -23,11 +20,11 @@ export function TrackScreen() {
       return res.success ? res.data : null;
     },
   });
-  const postStore = usePostStore();
+  const postStore = useTrackStore();
 
   useEffect(() => {
     if (!isPending && data) {
-      postStore.setPosts([data]);
+      postStore.setTracks([data]);
       setPostPending(false);
     }
   }, [data, isPending, setPostPending]);
@@ -51,9 +48,9 @@ function Content({ trackId }) {
     <div className='flex flex-col w-full'>
       <UserHeader />
       <Separator />
-      <PostProvider trackId={trackId}>
+      <TrackProvider trackId={trackId}>
         <Post />
-      </PostProvider>
+      </TrackProvider>
     </div>
   );
 }

@@ -55,7 +55,7 @@ export function UserHeader() {
   const FollowButtonIcon = followedByMe ? UserMinus : UserPlus;
   const urls = user.urls;
   return (
-    <div className='flex flex-col w-full py-2 h-pad gap-4 items-start'>
+    <div className='flex flex-col w-full py-2 gap-4 items-start'>
       {/**Header portion */}
       <div className='w-full leading-none flex flex-row justify-between xs:items-start'>
         <div className='flex sm:gap-8 xs:gap-2 md:items-center xs:items-start'>

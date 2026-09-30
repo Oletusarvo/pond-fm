@@ -1,14 +1,9 @@
-import { TPostPublic, TTrackPublic } from "@pondfm/app-shared";
+import { TTrackPublic } from "@pondfm/app-shared";
 import { requestBuilder } from "../../request-builder";
 import { Api } from "../api";
 
 export class TracksFeedApi {
-  private buildFeedUrl(
-    endpoint: string,
-    cursor?: string,
-    genres?: string[],
-    moods?: string[],
-  ) {
+  private buildFeedUrl(endpoint: string, cursor?: string, genres?: string[], moods?: string[]) {
     const url = new URL(Api.withEndpoint(endpoint));
     if (cursor) {
       url.searchParams.set("cursor", cursor);
@@ -26,14 +21,9 @@ export class TracksFeedApi {
   /**Returns the discovery feed. */
   async undiscovered(cursor?: string, genres?: string[], moods?: string[]) {
     const req = requestBuilder.get().includeCredentials().build();
-    const url = this.buildFeedUrl(
-      `tracks/feed/discover`,
-      cursor,
-      genres,
-      moods,
-    );
+    const url = this.buildFeedUrl(`tracks/undiscovered`, cursor, genres, moods);
     const res = await fetch(url, req);
-    return await Api.asApiResponse<TPostPublic[]>(res);
+    return await Api.asApiResponse<TTrackPublic[]>(res);
   }
 
   /**Returns the main feed. */
@@ -41,19 +31,14 @@ export class TracksFeedApi {
     const req = requestBuilder.get().includeCredentials().build();
     const url = this.buildFeedUrl(`tracks/feed/main`, cursor, genres, moods);
     const res = await fetch(url, req);
-    return await Api.asApiResponse<TPostPublic[]>(res);
+    return await Api.asApiResponse<TTrackPublic[]>(res);
   }
 
   async byFollowed(cursor?: string, genres?: string[], moods?: string[]) {
     const req = requestBuilder.get().includeCredentials().build();
-    const url = this.buildFeedUrl(
-      `tracks/feed/followed`,
-      cursor,
-      genres,
-      moods,
-    );
+    const url = this.buildFeedUrl(`tracks/feed/followed`, cursor, genres, moods);
     const res = await fetch(url, req);
-    return await Api.asApiResponse<TPostPublic[]>(res);
+    return await Api.asApiResponse<TTrackPublic[]>(res);
   }
 
   /**Returns tracks posted by a specific user. */
@@ -64,7 +49,7 @@ export class TracksFeedApi {
       url.searchParams.set("cursor", cursor);
     }
     const res = await fetch(url, req);
-    return await Api.asApiResponse<TPostPublic[]>(res);
+    return await Api.asApiResponse<TTrackPublic[]>(res);
   }
 
   /**Returns tracks liked by a user. */
@@ -72,7 +57,7 @@ export class TracksFeedApi {
     const req = requestBuilder.get().includeCredentials().build();
     const url = this.buildFeedUrl(`tracks/feed/${userId}/liked`, cursor);
     const res = await fetch(url, req);
-    return await Api.asApiResponse<TPostPublic[]>(res);
+    return await Api.asApiResponse<TTrackPublic[]>(res);
   }
 
   /**Returns tracks reposted by a user. */
@@ -80,7 +65,7 @@ export class TracksFeedApi {
     const req = requestBuilder.get().includeCredentials().build();
     const url = this.buildFeedUrl(`tracks/feed/${userId}/reposted`, cursor);
     const res = await fetch(url, req);
-    return await Api.asApiResponse<TPostPublic[]>(res);
+    return await Api.asApiResponse<TTrackPublic[]>(res);
   }
 
   /**Returns tracks where the title or author username matches the search string. */
@@ -91,6 +76,6 @@ export class TracksFeedApi {
       url.searchParams.set("q", search);
     }
     const res = await fetch(url, req);
-    return await Api.asApiResponse<TPostPublic[]>(res);
+    return await Api.asApiResponse<TTrackPublic[]>(res);
   }
 }

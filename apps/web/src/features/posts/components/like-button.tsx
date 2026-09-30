@@ -1,5 +1,5 @@
 import { Heart } from "lucide-react";
-import { usePostContext } from "../providers/post-provider";
+import { useTrackContext } from "../providers/post-provider";
 import { CountButton } from "./count-button";
 import { useAuthContext } from "../../auth/providers/auth-provider";
 import { usePostActions } from "../hooks/use-post-actions";
@@ -8,12 +8,12 @@ import { useReturnToTrack } from "../hooks/use-return-to-url";
 
 /**Renders a CountButton with a Heart-icon. */
 export function LikeButton() {
-  const { post } = usePostContext();
+  const { track: post } = useTrackContext();
   const location = useLocation();
-  const postActions = usePostActions({ trackId: post.track.id });
+  const postActions = usePostActions({ trackId: post.id });
   const color = "var(--color-red-500)";
   const onClick = useReturnToTrack({
-    id: post.track.id,
+    id: post.id,
     action: postActions.toggleLike,
   });
 
@@ -23,11 +23,11 @@ export function LikeButton() {
       icon={(props) => (
         <Heart
           {...props}
-          color={post?.track.stats.liked_by_me ? "transparent" : color}
-          fill={post?.track.stats.liked_by_me ? color : "transparent"}
+          color={post?.liked_by_me ? "transparent" : color}
+          fill={post?.liked_by_me ? color : "transparent"}
         />
       )}
-      value={post?.track.stats.like_count}
+      value={post?.like_count}
       onClick={onClick}
     />
   );

@@ -1,5 +1,5 @@
 import { PlaybackProvider } from "./features/audio/providers/playback-provider";
-import { BrowserRouter, Route, Routes } from "react-router-dom";
+import { BrowserRouter, Outlet, Route, Routes } from "react-router-dom";
 import { UndiscoveredFeedScreen } from "./features/posts/screens/undiscovered-feed-screen";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { LoginScreen } from "./features/auth/screens/login-screen";
@@ -23,6 +23,7 @@ import { RegisterScreen } from "./features/auth/screens/signup-screen";
 import { VerifyScreen } from "./features/auth/screens/verify-screen";
 import { VerifyEmailUpdateScreen } from "./features/auth/screens/verify-email-update-screen";
 import { AdProvider } from "./features/ads/providers/ad-provider";
+import { HomeLayout2 } from "./layouts/home-layout-2";
 
 function App() {
   return (
@@ -52,16 +53,26 @@ function App() {
                               element={<VerifyEmailUpdateScreen />}
                             />
                           </Route>
-                          <Route path='undiscovered' element={<UndiscoveredFeedScreen />} />
-                          <Route path='followed' element={<FollowedFeedScreen />} />
-                          <Route path='user/:id' element={<UserScreenWrapper />} />
-                          <Route path='new' element={<MainScreenFeed />} />
-                          <Route path='search' element={<SearchFeedScreen />} />
+                          <Route
+                            path=''
+                            element={
+                              <div className='flex w-full flex-col h-pad'>
+                                <Outlet />
+                              </div>
+                            }
+                          >
+                            <Route path='undiscovered' element={<UndiscoveredFeedScreen />} />
+                            <Route path='new' element={<MainScreenFeed />} />
+                            <Route path='followed' element={<FollowedFeedScreen />} />
+                            <Route path='user/:id' element={<UserScreenWrapper />} />
 
-                          <Route path='upload' element={<UploadTrackScreen />} />
-                          <Route path='login' element={<LoginScreen />} />
+                            <Route path='search' element={<SearchFeedScreen />} />
 
-                          <Route path='track/:trackId' element={<TrackScreen />} />
+                            <Route path='upload' element={<UploadTrackScreen />} />
+                            <Route path='login' element={<LoginScreen />} />
+
+                            <Route path='track/:trackId' element={<TrackScreen />} />
+                          </Route>
                         </Route>
                       </Routes>
                     </SettingsProvider>

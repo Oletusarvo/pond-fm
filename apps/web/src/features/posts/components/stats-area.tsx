@@ -1,5 +1,5 @@
 import { Play, Settings } from "lucide-react";
-import { usePostContext } from "../providers/post-provider";
+import { useTrackContext } from "../providers/post-provider";
 import { CountButton } from "./count-button";
 import { LikeButton } from "./like-button";
 import { RepostButton } from "./repost-button";
@@ -12,16 +12,10 @@ import { Button } from "../../../components/button";
  * authenticated user is the author of the post track.
  */
 export function StatsArea() {
-  const { post } = usePostContext();
-  const stats = post?.track.stats;
+  const { track: post } = useTrackContext();
   return (
     <div className='flex xs:gap-2 md:gap-5 items-center'>
-      <CountButton
-        disabled={true}
-        color='inherit'
-        icon={Play}
-        value={stats?.play_count}
-      />
+      <CountButton disabled={true} color='inherit' icon={Play} value={post?.play_count} />
 
       <LikeButton />
       <RepostButton />

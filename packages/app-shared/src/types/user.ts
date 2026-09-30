@@ -17,6 +17,8 @@ export type TUserStatus = z.infer<typeof userStatusSchema>;
 /**The type for users. */
 export type TUser = {
   id: string;
+  audius_user_id: string;
+  audius_handle: string;
   email: string;
   username: string;
   bio?: string;
@@ -37,13 +39,7 @@ export type TUserRestricted = Omit<TUser, "subscription"> & {
 /**The user type displayed to the public. */
 export type TUserPublic = Pick<
   TUser,
-  | "id"
-  | "username"
-  | "bio"
-  | "follower_count"
-  | "following_count"
-  | "followed_by_me"
-  | "urls"
+  "id" | "username" | "bio" | "follower_count" | "following_count" | "followed_by_me" | "urls"
 > & {
   subscription: TSubscriptionPublic;
 };

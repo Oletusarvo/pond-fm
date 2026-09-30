@@ -1,6 +1,6 @@
 import { api } from "../../../utils/api/api";
 import { cancelable } from "../../../utils/debounced";
-import { usePost, usePostStore } from "./use-post";
+import { useTrack, useTrackStore } from "./use-post";
 
 type UsePostActionsProps = {
   trackId: string;
@@ -18,14 +18,14 @@ export function usePostActions({
   onRepostRollback,
 }: UsePostActionsProps) {
   //const postStore = usePostStore();
-  const { post, updatePost } = usePost(id);
+  const { track: post, updateTrack: updatePost } = useTrack(id);
   //const postStore = usePostStore();
   const countPlay = async () => {
-    const initialPlayCount = post.track.stats.play_count;
+    const initialPlayCount = post.play_count;
     const newPlayCount = initialPlayCount + 1;
 
     await api.tracks
-      .countPlay(post.track.id)
+      .countPlay(post.id)
       .then((res) => {
         if (!res.success) return;
         updatePost({
@@ -42,18 +42,12 @@ export function usePostActions({
   };
 
   const toggleLike = async () => {
-    const initialIsLiked = post?.track.stats.liked_by_me;
-    const initialLikeCount = Number(post?.track.stats.like_count);
+    const initialIsLiked = post?.liked_by_me;
+    const initialLikeCount = Number(post?.like_count);
     const initialPost = { ...post };
     updatePost({
-      track: {
-        stats: {
-          like_count: initialIsLiked
-            ? initialLikeCount - 1
-            : initialLikeCount + 1,
-          liked_by_me: !initialIsLiked,
-        },
-      },
+      like_count: initialIsLiked ? initialLikeCount - 1 : initialLikeCount + 1,
+      liked_by_me: !initialIsLiked,
     });
     onLikeToggled?.();
     const result = await cancelable.toggleTrackLike(id, initialIsLiked);
@@ -68,19 +62,16 @@ export function usePostActions({
 
   const repost = async () => {
     const initialPost = { ...post };
-    const initialIsReposted = post?.track.stats.reposted_by_me;
-    const initialCount = Number(post?.track.stats.repost_count);
+    const initialIsReposted = post?.reposted_by_me;
+    const initialCount = Number(post?.repost_count);
     if (initialIsReposted) {
       return;
     }
     updatePost({
-      track: {
-        stats: {
-          reposted_by_me: !initialIsReposted,
-          repost_count: initialIsReposted ? initialCount - 1 : initialCount + 1,
-        },
-      },
+      reposted_by_me: !initialIsReposted,
+      repost_count: initialIsReposted ? initialCount - 1 : initialCount + 1,
     });
+
     onRepost?.();
     const result = await cancelable.repost(id, initialIsReposted);
     if (result.executed) {

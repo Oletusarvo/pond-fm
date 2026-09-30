@@ -9,21 +9,22 @@ import { selectTrack } from "./select/select-track";
 
 export function getNotificationQuery(ctx: DBContext) {
   const query = ctx.queryBuilder();
-  query
-    .leftJoin('track', 'track.id', 'notifications.track_id')
-    .join({ recipient: 'author_json' }, 'recipient.id', 'notifications.recipient_id')
-    .join({ sender: 'author_json' }, 'sender.id', 'notifications.sender_id');
-
   withAuthor(query);
-  query.with('track', qb => {
-    qb.select('id', db.raw("JSON_BUILD_OBJECT('id', id, 'title', title) AS json")).from(
-      tablenames.tracks,
-    );
+  query
+    .leftJoin("track", "track.audius_track_id", "notifications.track_id")
+    .join({ recipient: "author_json" }, "recipient.audius_user_id", "notifications.recipient_id")
+    .join({ sender: "author_json" }, "sender.audius_user_id", "notifications.sender_id");
+
+  query.with("track", (qb) => {
+    qb.select(
+      "audius_track_id",
+      db.raw("JSON_BUILD_OBJECT('audius_track_id', audius_track_id) AS json"),
+    ).from(tablenames.tracks);
   });
   selectNotification(query);
   selectRecipient(query);
   selectSender(query);
   selectTrack(query);
-  query.orderBy('notifications.created_at', 'desc');
+  query.orderBy("notifications.created_at", "desc");
   return query;
 }

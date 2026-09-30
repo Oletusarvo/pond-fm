@@ -1,5 +1,5 @@
 import { useMemo } from "react";
-import { usePostContext } from "../providers/post-provider";
+import { useTrackContext } from "../providers/post-provider";
 import { Button } from "../../../components/button";
 
 /**Renders a button with a counter beside it. */

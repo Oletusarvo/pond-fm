@@ -28,6 +28,7 @@ export const tablenames = {
   passwordResetSessions: "auth.password_reset_session_data",
   emailUpdateSessions: "auth.email_reset_session_data",
   streamSessions: "post.stream_session_data",
+  loginSessions: "auth.login_session_data",
 } as const;
 
 export const viewnames = {
@@ -37,4 +38,5 @@ export const viewnames = {
   tracks: "post.track_view",
   subscriptions: "billing.subscription_view",
   users: "auth.user_view",
+  posts: "post.post_view",
 } as const;

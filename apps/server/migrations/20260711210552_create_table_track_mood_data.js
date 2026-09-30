@@ -1,25 +1,25 @@
-const tablename = 'mood_data';
+const tablename = "mood_data";
 /**
  * @param { import("knex").Knex } knex
  * @returns { Promise<void> }
  */
 exports.up = function (knex) {
-  return knex.schema.withSchema('post').createTable(tablename, tbl => {
+  return knex.schema.withSchema("post").createTable(tablename, (tbl) => {
     tbl
-      .uuid('track_id')
+      .string("track_id")
       .notNullable()
-      .references('id')
-      .inTable('post.track_data')
-      .onDelete('CASCADE')
-      .onUpdate('CASCADE');
+      .references("audius_track_id")
+      .inTable("post.track_data")
+      .onDelete("CASCADE")
+      .onUpdate("CASCADE");
     tbl
-      .integer('mood_id')
+      .integer("mood_id")
       .notNullable()
-      .references('id')
-      .inTable('post.mood_type')
-      .onDelete('CASCADE')
-      .onUpdate('CASCADE');
-    tbl.primary(['track_id', 'mood_id']);
+      .references("id")
+      .inTable("post.mood_type")
+      .onDelete("CASCADE")
+      .onUpdate("CASCADE");
+    tbl.primary(["track_id", "mood_id"]);
   });
 };
 
@@ -28,5 +28,5 @@ exports.up = function (knex) {
  * @returns { Promise<void> }
  */
 exports.down = function (knex) {
-  return knex.schema.withSchema('post').dropTableIfExists(tablename);
+  return knex.schema.withSchema("post").dropTableIfExists(tablename);
 };

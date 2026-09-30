@@ -72,19 +72,10 @@ async function runCleanup() {
       .del();
   });
 
-  await cleanupUnusedFilesAndTracks().catch((err) =>
-    console.log("Failed to delete unused files!", err.stack),
-  );
-
   //Delete expired auth tokens.
   await retry(
     async () => await db(tablenames.authTokens).where("expires_at", "<=", db.fn.now()).del(),
   ).catch((err) => console.log("Failed to delete expired auth tokens.", err.stack));
-
-  //Delete expired upload tokens.
-  await retry(
-    async () => await db(tablenames.uploadTokens).where("expires_at", "<=", db.fn.now()).del(),
-  ).catch((err) => console.log("Failed to delete expired upload tokens.", err.stack));
 
   //Delete expired stream tokens.
   await retry(
@@ -102,6 +93,13 @@ async function runCleanup() {
     {
       delay: 1000,
     },
+  );
+
+  //Delete expired login tokens.
+  await retry(
+    async () =>
+      await db(tablenames.loginSessions).whereRaw("expires_at <= CURRENT_TIMESTAMP").del(),
+    { delay: 1000 },
   );
 }
 

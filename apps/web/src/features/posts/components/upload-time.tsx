@@ -1,8 +1,8 @@
-import { formatDistanceToNow } from 'date-fns';
-import { usePostContext } from '../providers/post-provider';
+import { formatDistanceToNow } from "date-fns";
+import { useTrackContext } from "../providers/post-provider";
 
 export function UploadTime() {
-  const { post } = usePostContext();
+  const { track: post } = useTrackContext();
   const text = formatDistanceToNow(new Date(post?.created_at || 0), {
     addSuffix: true,
   });

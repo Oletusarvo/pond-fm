@@ -11,12 +11,9 @@ export class TracksApi {
   create = new TracksCreateApi();
 
   /**Requests a stream token. */
-  async requestStreamToken(trackId: string) {
+  async requestStreamUrl(trackId: string) {
     const req = requestBuilder.get().includeCredentials().noStore().build();
-    const res = await fetch(
-      Api.withEndpoint(`tracks/${trackId}/stream/token`),
-      req,
-    );
+    const res = await fetch(Api.withEndpoint(`tracks/${trackId}/stream/url`), req);
     return await Api.asApiResponse<{ streamUrl: string }>(res);
   }
 
@@ -39,12 +36,7 @@ export class TracksApi {
 
   /**Updates a track. */
   async update(id: string, payload: Record<string, any>) {
-    const req = requestBuilder
-      .body(payload)
-      .json()
-      .includeCredentials()
-      .put()
-      .build();
+    const req = requestBuilder.body(payload).json().includeCredentials().put().build();
     const res = await fetch(Api.withEndpoint(`tracks/${id}`), req);
     return await Api.asApiResponse<
       null,
@@ -75,55 +67,37 @@ export class TracksApi {
 
   /**Likes a track.*/
   async like(id: string) {
-    const req = requestBuilder
-      .post()
-      .body({ trackId: id })
-      .json()
-      .includeCredentials()
-      .build();
+    const req = requestBuilder.post().body({ trackId: id }).json().includeCredentials().build();
     const res = await fetch(Api.withEndpoint("tracks/like"), req);
-    return await Api.asApiResponse<
-      null,
-      typeof serviceError.post.duplicateLike
-    >(res);
+    return await Api.asApiResponse<null, typeof serviceError.post.duplicateLike>(res);
   }
 
   /**Unlikes a track. */
   async unlike(id: string) {
-    const req = requestBuilder
-      .delete()
-      .body({ trackId: id })
-      .json()
-      .includeCredentials()
-      .build();
+    const req = requestBuilder.delete().body({ trackId: id }).json().includeCredentials().build();
     const res = await fetch(Api.withEndpoint("tracks/like"), req);
     return await Api.asApiResponse<null>(res);
   }
 
   /**Reposts a track. */
   async repost(id: string) {
-    const req = requestBuilder
-      .post()
-      .body({ trackId: id })
-      .json()
-      .includeCredentials()
-      .build();
+    const req = requestBuilder.post().body({ trackId: id }).json().includeCredentials().build();
     const res = await fetch(Api.withEndpoint("tracks/repost"), req);
-    return await Api.asApiResponse<
-      null,
-      typeof serviceError.post.duplicateRepost
-    >(res);
+    return await Api.asApiResponse<null, typeof serviceError.post.duplicateRepost>(res);
   }
 
   /**Unreposts a track. */
   async unrepost(id: string) {
-    const req = requestBuilder
-      .delete()
-      .body({ trackId: id })
-      .json()
-      .includeCredentials()
-      .build();
+    const req = requestBuilder.delete().body({ trackId: id }).json().includeCredentials().build();
     const res = await fetch(Api.withEndpoint("tracks/repost"), req);
     return await Api.asApiResponse<null>(res);
+  }
+
+  /**Imports all tracks to Amphitune that a user has uploaded to Audius. */
+  async importFromAudius() {
+    const req = requestBuilder.patch().includeCredentials().build();
+    const url = new URL(Api.withEndpoint("tracks/audius/import"));
+    const res = await fetch(url, req);
+    return await Api.asApiResponse(res);
   }
 }

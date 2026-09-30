@@ -4,7 +4,7 @@ import { Button } from "../../../components/button";
 import { Pause, Play, Volume } from "lucide-react";
 import { useCallback, useState } from "react";
 import { useEventHandler } from "../../../hooks/use-event-handler";
-import { PostProvider } from "../../posts/providers/post-provider";
+import { TrackProvider } from "../../posts/providers/post-provider";
 import { RepostButton } from "../../posts/components/repost-button";
 import { LikeButton } from "../../posts/components/like-button";
 import { useAuthContext } from "../../auth/providers/auth-provider";
@@ -61,12 +61,12 @@ export function MiniPlayerWithInfo() {
           <small>{currentTrack?.author.username}</small>
         </div>
         {currentTrack ? (
-          <PostProvider trackId={currentTrack.id}>
+          <TrackProvider trackId={currentTrack.id}>
             <div className='flex items-center gap-4'>
               {authService.session?.user.id !== currentTrack.author.id ? <RepostButton /> : null}
               <LikeButton />
             </div>
-          </PostProvider>
+          </TrackProvider>
         ) : null}
       </div>
 

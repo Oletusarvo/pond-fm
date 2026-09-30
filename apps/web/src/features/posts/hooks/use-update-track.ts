@@ -1,6 +1,6 @@
 import { TPost, TTrackPublic } from "@pondfm/app-shared";
 import { useSubmit } from "../../../hooks/use-submit";
-import { usePostStore } from "./use-post";
+import { useTrackStore } from "./use-post";
 import { api } from "../../../utils/api/api";
 
 type UseUpdateTrackProps = Omit<Parameters<typeof useSubmit>[0], "fetchFn"> & {
@@ -8,7 +8,7 @@ type UseUpdateTrackProps = Omit<Parameters<typeof useSubmit>[0], "fetchFn"> & {
 };
 
 export function useUpdateTrack({ track, ...props }: UseUpdateTrackProps) {
-  const postStore = usePostStore();
+  const postStore = useTrackStore();
   const { submit, loading, status } = useSubmit({
     ...props,
     fetchFn: async (payload) => {
@@ -22,7 +22,7 @@ export function useUpdateTrack({ track, ...props }: UseUpdateTrackProps) {
 
       const res = await api.tracks.update(track.id, udata);
       if (res.success) {
-        postStore.updatePost(track.id, udata);
+        postStore.updateTrack(track.id, udata);
       }
       return res;
     },

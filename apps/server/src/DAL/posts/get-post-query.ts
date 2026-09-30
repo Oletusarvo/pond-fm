@@ -18,11 +18,7 @@ export function getPostQuery(ctx: DBContext, session?: TSession) {
     .join({ track: viewnames.tracks }, "track.id", "post.track_id")
     .join({ stats: "stats" }, "stats.track_id", "track.id")
     .join({ track_author: "author_json" }, "track_author.id", "track.author_id")
-    .join(
-      { track_genre: tablenames.genres },
-      "track_genre.id",
-      "track.genre_id",
-    )
+    .join({ track_genre: tablenames.genres }, "track_genre.id", "track.genre_id")
     .where({ "track.status": "active" });
 
   return query;

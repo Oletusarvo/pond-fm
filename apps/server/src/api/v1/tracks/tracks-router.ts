@@ -6,6 +6,7 @@ import { trackInteractionSchema } from "../../../schemas/track-interaction-schem
 import { createBodyParser, getRouter } from "@pondfm/server-utils";
 import { handlers } from "../../../container";
 import { getPlayCountStatsHandler } from "./handlers/get-track-stats-handler";
+import { importAudiusTracksHandler } from "../users/handlers/import-audius-tracks-handler";
 
 const router = getRouter();
 
@@ -20,7 +21,7 @@ router.get("/feed/main", checkAuth(false), handlers.tracks.feed.main);
  * @summary Returns a feed of tracks that have not hit their unique listeners threshold, sorted oldest first.
  * @tags Tracks
  */
-router.get("/feed/discover", checkAuth(false), handlers.tracks.feed.undiscovered);
+router.get("/undiscovered", checkAuth(false), handlers.tracks.feed.undiscovered);
 /**
  * GET /tracks/feed/discover
  * @summary Returns a feed of tracks from users the currently authenticated user is following.
@@ -99,28 +100,18 @@ router.delete(
  */
 router.post("/:trackId/play", verifyStreamToken, handlers.tracks.countPlay);
 /**
- * GET /tracks/:id/stream/token
- * @summary Returns a stream token for a track by id.
- * @tags Tracks
- */
-router.get("/:trackId/stream/token", handlers.tracks.stream.token);
-/**
  * GET /tracks/:id/stream
- * @summary Starts a stream of a track by id.
- * @deprecated This endpoint is no longer maintained; make requests to the streamUrl returned by /tracks/:id/stream/token instead.
+ * @summary Returns a url from which a track can be streamed. Also creates a stream session, and sets a stream cookie used in play counting, liking and reposting.
  */
-router.get("/:trackId/stream", streamTrackHandler);
-/**
- * PUT /tracks/:id
- * @summary Updates the data of a track by id.
- * @tags Tracks
- */
-router.put("/:trackId", checkAuth(), createBodyParser(updateTrackSchema), handlers.tracks.update);
+router.get("/:trackId/stream/url", checkAuth(false), handlers.tracks.stream);
+
 /**
  * DELETE /tracks/:id
  * @summary Deletes a track by id.
  * @tags Tracks
  */
 router.delete("/:trackId", checkAuth(), handlers.tracks.delete);
+
+router.patch("/audius/import", checkAuth(), importAudiusTracksHandler);
 
 export { router as tracksRouter };

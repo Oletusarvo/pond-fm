@@ -4,22 +4,23 @@ import { useEventHandler } from "../../../hooks/use-event-handler";
 import { useActionContext } from "../../../providers/action-provider";
 import { UploadTrackModal } from "../components/upload-track-modal";
 import { useAuthContext } from "../../auth/providers/auth-provider";
-import { usePost } from "../hooks/use-post";
+import { useTrack } from "../hooks/use-post";
 import { RepostModal } from "../components/repost-modal";
-import { TPost, TPostPublic } from "@pondfm/app-shared";
+import { TTrackPublic } from "@pondfm/app-shared";
+import { useAudiusTrack } from "../hooks/use-audius-track";
 
-const [PostContext, usePostContext] = setupContext<{
-  post: TPostPublic;
+const [TrackContext, useTrackContext] = setupContext<{
+  track: TTrackPublic;
   toggleRepost: (state: boolean) => void;
   toggleEdit: (state: boolean) => void;
-}>({ name: "PostContext" });
+}>({ name: "TrackContext" });
 
-type PostProviderProps = React.PropsWithChildren & {
+type TrackProviderProps = React.PropsWithChildren & {
   trackId: string;
 };
 
-export function PostProvider({ children, trackId: id }: PostProviderProps) {
-  const { post, updatePost } = usePost(id);
+export function TrackProvider({ children, trackId: id }: TrackProviderProps) {
+  const { track: track, updateTrack: updatePost } = useTrack(id);
   const [showRepostModal, setShowRepostModal] = useState(false);
   const authService = useAuthContext();
   const [showEditModal, setShowEditModal] = useState(false);
@@ -35,14 +36,14 @@ export function PostProvider({ children, trackId: id }: PostProviderProps) {
     type: "track-played",
     service: actionService,
     handler: (e: CustomEvent) => {
-      if (e.detail.id === post?.track.id) {
+      if (e.detail.id === track?.track.id) {
         updatePost({
-          ...post,
+          ...track,
           track: {
-            ...post?.track,
+            ...track?.track,
             stats: {
-              ...post?.track.stats,
-              play_count: Number(post?.track.stats.play_count + 1),
+              ...track?.track.stats,
+              play_count: Number(track?.track.stats.play_count + 1),
             },
           },
         });
@@ -50,16 +51,22 @@ export function PostProvider({ children, trackId: id }: PostProviderProps) {
     },
   });
 
-  if (!post) {
+  if (!track) {
     return null;
   }
 
   return (
-    <PostContext.Provider value={{ post, toggleRepost, toggleEdit }}>
+    <TrackContext.Provider
+      value={{
+        track: track,
+        toggleRepost,
+        toggleEdit,
+      }}
+    >
       {children}
       {showRepostModal ? <RepostModal /> : null}
-    </PostContext.Provider>
+    </TrackContext.Provider>
   );
 }
 
-export { usePostContext };
+export { useTrackContext as useTrackContext };

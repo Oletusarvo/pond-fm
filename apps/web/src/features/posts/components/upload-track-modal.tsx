@@ -1,9 +1,6 @@
 import { Form } from "../../../components/form";
-import {
-  ErrorMessage,
-  SuccessMessage,
-} from "../../../components/helper-message";
-import { Input } from "../../../components/input";
+import { ErrorMessage, SuccessMessage } from "../../../components/helper-message";
+import { Input, Textarea } from "../../../components/input";
 import { Modal } from "../../../components/modal";
 import React, { useRef, useState } from "react";
 import { useSubmit } from "../../../hooks/use-submit";
@@ -75,10 +72,7 @@ function UploadFileStep() {
 
   return (
     <form className='flex w-full items-center justify-center'>
-      <button
-        className='w-full h-full flex items-center justify-center'
-        onClick={selectFile}
-      >
+      <button className='w-full h-full flex items-center justify-center' onClick={selectFile}>
         <File />
       </button>
       <input
@@ -153,8 +147,7 @@ function ModalContent({ onClose }) {
     onSuccess: async () => {
       await queryClient.invalidateQueries({ queryKey: ["feed"] });
       const newStorageConsumed =
-        Number(authService.session?.user.subscription.storage_quota_consumed) +
-        fileSizeRef.current;
+        Number(authService.session?.user.subscription.storage_quota_consumed) + fileSizeRef.current;
       await authService.refreshSession({
         user: {
           subscription: {
@@ -171,13 +164,12 @@ function ModalContent({ onClose }) {
     },
   });
 
-  const { storage_quota_bytes, storage_quota_consumed } = authService.session
-    ?.user.subscription || {
+  const { storage_quota_bytes, storage_quota_consumed } = authService.session?.user
+    .subscription || {
     storage_quota_bytes: 0,
     storage_quota_consumed: 0,
   };
-  const storageQuotaConsumed =
-    (Number(storage_quota_consumed) / Number(storage_quota_bytes)) * 100;
+  const storageQuotaConsumed = (Number(storage_quota_consumed) / Number(storage_quota_bytes)) * 100;
   const loading = uploadLoading;
   const status = uploadStatus;
   const submit = uploadTrack;
@@ -187,8 +179,8 @@ function ModalContent({ onClose }) {
       <div className='flex flex-col w-full'>
         <h2 className='font-semibold text-lg'>Upload Your Track</h2>
         <p className='text-slate-500'>
-          We currently support mp3 and wav uploads. Free plans are recommended
-          to upload mp3 files to conserve their storage quota.
+          Upload your track to the Audius-network, and start getting heard on Amphitune. All audio
+          file-types are supported.
         </p>
       </div>
 
@@ -196,27 +188,19 @@ function ModalContent({ onClose }) {
         <ProgressBar progress={progress} status={progressStatus as any} />
         <div className='flex gap-4'>
           <small>Upload progress {progress.toFixed(2) || 0}%</small>
-          {progressStatus === "processing" ? (
-            <small>Processing...</small>
-          ) : null}
+          {progressStatus === "processing" ? <small>Processing...</small> : null}
         </div>
       </div>
 
-      <div className='flex flex-col w-full'>
-        <ProgressBar progress={storageQuotaConsumed} status={"uploading"} />
-        <small>Quota consumed {storageQuotaConsumed.toFixed(2)}%</small>
-      </div>
       <Form onSubmit={submit}>
         <Form.Group label='File'>
           <Input required type='file' name='file' />
         </Form.Group>
         <Form.Group label='Title'>
-          <Input
-            required
-            type='text'
-            name='title'
-            placeholder='Type a title for the track...'
-          />
+          <Input required type='text' name='title' placeholder='Type a title for the track...' />
+        </Form.Group>
+        <Form.Group label='Description'>
+          <Textarea name='description' placeholder='Type a description for your track...' />
         </Form.Group>
 
         <Form.Group label='Main Genre'>
@@ -249,8 +233,7 @@ function ModalContent({ onClose }) {
         </div>
         {status === "upload:quota-exceeded" ? (
           <ErrorMessage>
-            You have reached your upload quota. Please upgrade to pro to
-            continue uploading.
+            You have reached your upload quota. Please upgrade to pro to continue uploading.
           </ErrorMessage>
         ) : status === "error" ? (
           <ErrorMessage>Something went wrong!</ErrorMessage>

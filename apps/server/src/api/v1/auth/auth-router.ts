@@ -1,45 +1,31 @@
 import { checkAuth } from "../../middleware/check-auth";
 import { authorizeByCodeHandler } from "./handlers/authorize-by-code-handler";
-import { requestAuthorizationHandler } from "./handlers/request-authorization-handler";
+
 import { getSessionInfoHandler } from "./handlers/get-session-info-handler";
 import { logoutHandler } from "./handlers/logout-handler";
 import { emailPayloadSchema } from "../../../schemas/email-payload-schema";
 import { authorizeByCodeSchema } from "../../../schemas/authorize-by-code-schema";
 import { refreshSessionHandler } from "./handlers/refresh-session-handler";
 import { createBodyParser, getRouter } from "@pondfm/server-utils";
-import { signupHandler } from "./handlers/signup-handler";
-import { activateUserHandler } from "./handlers/verify-email-handler";
+
 import { signupSchema } from "../../../schemas/signup-schema";
 import { verifyEmailSchema } from "../../../schemas/verify-email-schema";
-import { verifyEmailResetHandler } from "./handlers/verify-email-reset-handler";
+
 import { verifyUserQuota } from "./middleware/verify-user-quota";
+import { authorizeByAudiusCodeHandler } from "./handlers/authorize-by-audius-code-handler";
+import { getAuthTokenHandler } from "./handlers/get-auth-token-handler";
 
 const router = getRouter();
 
-/**
- * POST /auth/request-authorization
- * @summary Sends a login magic link to a users email.
- * @tags Auth
- */
-router.post(
-  "/request-authorization",
-  createBodyParser(emailPayloadSchema),
-  requestAuthorizationHandler,
-);
+router.get("/audius/authorize", authorizeByAudiusCodeHandler);
+router.get("/token", getAuthTokenHandler);
+
 /**
  * POST /auth/authorize
  * @summary Authorizes access for a user by a code.
  * @tags Auth
  */
 router.post("/authorize", createBodyParser(authorizeByCodeSchema), authorizeByCodeHandler);
-router.post("/signup", verifyUserQuota, createBodyParser(signupSchema), signupHandler);
-router.post("/verify", verifyUserQuota, createBodyParser(verifyEmailSchema), activateUserHandler);
-router.post(
-  "/verify-email-update",
-  checkAuth(),
-  createBodyParser(verifyEmailSchema),
-  verifyEmailResetHandler,
-);
 /**
  * POST /auth/logout
  * @summary Logs a user out.

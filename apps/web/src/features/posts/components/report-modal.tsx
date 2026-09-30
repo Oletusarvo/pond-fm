@@ -1,6 +1,6 @@
 import { Info } from "lucide-react";
 import { Modal } from "../../../components/modal";
-import { usePostContext } from "../providers/post-provider";
+import { useTrackContext } from "../providers/post-provider";
 import { Form } from "../../../components/form";
 import { Input, Textarea } from "../../../components/input";
 import { Button } from "../../../components/button";
@@ -20,7 +20,7 @@ export function ReportModal() {
 }
 
 function ModalContent({ close }) {
-  const { post } = usePostContext();
+  const { track: post } = useTrackContext();
   const { submit, loading, status } = useSubmit({
     fetchFn: async (payload) => {
       console.log("Submitting...");

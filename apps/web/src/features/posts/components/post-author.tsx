@@ -1,22 +1,20 @@
 import { Repeat, Star } from "lucide-react";
-import { usePostContext } from "../providers/post-provider";
+import { useTrackContext } from "../providers/post-provider";
 import { Link } from "react-router-dom";
 import { ObjectEncoder } from "../../../utils/object-encoder";
 import { defaults } from "../../../utils/defaults";
 
 /**Renders a post author's username, or the post author followed by the tracks author in case of a repost. */
 export function PostAuthor() {
-  const { post } = usePostContext();
+  const { track: post } = useTrackContext();
   const isCanonicalAuthor = post?.is_canonical;
   const canonicalAuthorLink = (
-    <Link to={defaults.url.userTracks(post?.track.author.id)}>
-      {post?.track.author.username}
+    <Link to={defaults.url.userTracks(post?.canonical_author.id)}>
+      {post?.canonical_author.username}
     </Link>
   );
   const posterLink = (
-    <Link to={defaults.url.userTracks(post?.author.id)}>
-      {post?.author.username}
-    </Link>
+    <Link to={defaults.url.userTracks(post?.author.id)}>{post?.author.username}</Link>
   );
 
   return (
@@ -25,11 +23,7 @@ export function PostAuthor() {
         {isCanonicalAuthor ? (
           <>
             {canonicalAuthorLink}
-            <Star
-              size='12px'
-              color='transparent'
-              fill={"var(--color-yellow-500)"}
-            />
+            <Star size='12px' color='transparent' fill={"var(--color-yellow-500)"} />
           </>
         ) : (
           <>

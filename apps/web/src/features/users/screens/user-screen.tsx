@@ -31,7 +31,7 @@ export function UserScreen() {
           })
         }
       >
-        <div className='w-full flex h-pad sticky top-0 bg-white z-10'>
+        <div className='w-full flex sticky top-0 bg-white z-10'>
           <TabsProvider.Button index={"tracks"} icon={Music}>
             Tracks
           </TabsProvider.Button>

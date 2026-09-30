@@ -1,4 +1,4 @@
-import { ArrowUpCircle, Bell, Settings, User } from "lucide-react";
+import { ArrowDownCircle, ArrowUpCircle, Bell, Settings, User } from "lucide-react";
 import { Button } from "./button";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuthContext } from "../features/auth/providers/auth-provider";
@@ -14,6 +14,7 @@ import { GoProModal } from "../features/billing/components/go-pro-modal";
 import { SettingsModal } from "../features/auth/components/settings-modal";
 import { api } from "../utils/api/api";
 import { defaults } from "../utils/defaults";
+import { ImportTracksModal } from "../features/posts/components/impot-tracks-modal";
 
 export function MainHeader() {
   const { status: authStatus } = useAuthContext();
@@ -90,7 +91,7 @@ const AuthControls = React.memo(function ({
               <UploadButton />
             </ToggleProvider.Trigger>
             <ToggleProvider.Target>
-              <UploadTrackModal />
+              <ImportTracksModal />
             </ToggleProvider.Target>
           </ToggleProvider>
           <ToggleProvider>
@@ -191,7 +192,7 @@ function UserIcon() {
 }
 
 function UploadIcon() {
-  return <HeaderIcon icon={ArrowUpCircle} />;
+  return <HeaderIcon icon={ArrowDownCircle} />;
 }
 
 function HeaderIcon({ icon: Icon }: { icon: React.FC<any> }) {

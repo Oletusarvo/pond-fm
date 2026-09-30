@@ -1,33 +1,23 @@
-import { services } from "../../../../container";
 import { db } from "../../../../db-config";
 import { createNotification } from "../../../../DAL/notifications/create-notification";
 import { tablenames } from "../../../../tablenames";
 
 import { createHandler, tryCatch } from "@pondfm/server-utils";
-import { serviceError } from "../../../../utils/service-error";
 import { TAuthenticatedRequest } from "../../../../types/request";
 import { trackInteractionSchema } from "../../../../schemas/track-interaction-schema";
 import z from "zod";
 
 /**Records a repost by a user on a track by id. */
 export const repostTrackHandler = createHandler(
-  async (
-    req: TAuthenticatedRequest<z.infer<typeof trackInteractionSchema>>,
-    res,
-  ) => {
+  async (req: TAuthenticatedRequest<z.infer<typeof trackInteractionSchema>>, res) => {
     const session = req.session;
     const { trackId } = req.body;
-    const result = await services.posts.repostTrack(db, {
-      author: { id: session.user.id },
-      track: { id: trackId },
+
+    await db(tablenames.posts).insert({
+      track_id: trackId,
+      author_id: session.user.audius_user_id,
     });
 
-    if (
-      result.success === false &&
-      result.error === serviceError.post?.duplicateRepost
-    ) {
-      return res.status(409).json({ error: result.error });
-    }
     const notificationPromise = new Promise<void>(async (resolve, reject) => {
       const [result, err] = await tryCatch(async () => {
         const track = await db(tablenames.tracks)

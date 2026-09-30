@@ -1,5 +1,4 @@
 import { getRouter, createBodyParser } from "@pondfm/server-utils";
-import { updateUserSchema } from "../../../schemas/update-user-schema";
 
 import { checkAuth } from "../../middleware/check-auth";
 import { followUserHandler } from "./handlers/follow-user-handler";
@@ -15,12 +14,6 @@ import { getPlayCountStatsHandler } from "../tracks/handlers/get-track-stats-han
 
 const router = getRouter();
 
-/**
- * PUT /users/
- * @summary Updates the currently authenticated user.
- * @tags Users
- */
-router.put("/", checkAuth(), createBodyParser(updateUserSchema), updateUserHandler);
 router.get("/stats", checkAuth(), getPlayCountStatsHandler);
 /**
  * GET /users/notifications

@@ -6,8 +6,6 @@ import { authorizeByCodeSchema } from "../../../../schemas/authorize-by-code-sch
 import z from "zod";
 import { findValidTokenByCode } from "../../../../DAL/auth/find-token-by-code";
 import { findUserById } from "../../../../DAL/users/find-user-by-id";
-import { tablenames } from "../../../../tablenames";
-import { TUser } from "@pondfm/app-shared";
 
 const noAuthTokenErrorMessage = "Auth token not found";
 const noActiveUserErrorMessage = "User is not active";
@@ -23,7 +21,7 @@ export const authorizeByCodeHandler = createHandler(
       }
 
       const savedUser = await findUserById(trx, {
-        id: authToken.user_id,
+        audius_user_id: authToken.user_id,
       });
 
       if (savedUser.status !== "active") {

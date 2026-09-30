@@ -12,6 +12,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@audius/sdk": "^15.3.1",
     "@aws-sdk/client-s3": "^3.1106.0",
     "@aws-sdk/s3-request-presigner": "^3.1106.0",
     "@pondfm/app-shared": "1.0.0",

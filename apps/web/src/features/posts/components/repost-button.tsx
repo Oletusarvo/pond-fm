@@ -1,5 +1,5 @@
 import { Repeat } from "lucide-react";
-import { usePostContext } from "../providers/post-provider";
+import { useTrackContext } from "../providers/post-provider";
 import { CountButton } from "./count-button";
 import { useAuthContext } from "../../auth/providers/auth-provider";
 import { useReturnToTrack } from "../hooks/use-return-to-url";
@@ -9,27 +9,25 @@ import { useReturnToTrack } from "../hooks/use-return-to-url";
  * author of the post.
  */
 export function RepostButton() {
-  const { post, toggleRepost } = usePostContext();
+  const { track: post, toggleRepost } = useTrackContext();
   const { status, session } = useAuthContext();
   const color = "var(--color-blue-500)";
-  const stats = post?.track.stats;
   const onClick = useReturnToTrack({
-    id: post.track.id,
+    id: post.id,
     action: () => toggleRepost(true),
   });
 
   const disabled =
-    status === "authenticated" &&
-    (stats?.reposted_by_me || session?.user.id === post.track.author.id);
+    status === "authenticated" && (post?.reposted_by_me || session?.user.id === post.author.id);
 
   return (
     <CountButton
       color={"inherit"}
       disabled={disabled}
       icon={(props) => (
-        <Repeat {...props} color={stats?.reposted_by_me ? color : "var(--color-slate-500)"} />
+        <Repeat {...props} color={post?.reposted_by_me ? color : "var(--color-slate-500)"} />
       )}
-      value={stats?.repost_count}
+      value={post?.repost_count}
       onClick={onClick}
     />
   );

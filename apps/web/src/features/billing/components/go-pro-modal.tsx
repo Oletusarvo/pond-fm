@@ -13,13 +13,10 @@ type GoProModalProps = {
 
 const PRO_FEATURES = [
   `Your tracks appear in the undiscovered feed until they have accumulated ${defaults.plans.pro.unique_listener_threshold} unique listeners (up from ${defaults.plans.free.unique_listener_threshold})`,
-  `${defaults.plans.pro.storage} of storage (up from ${defaults.plans.free.storage})`,
   "No ads, ever",
 ] as const;
 
-export const GoProModal = React.memo(function GoProModal({
-  onUpgrade,
-}: GoProModalProps) {
+export const GoProModal = React.memo(function GoProModal({ onUpgrade }: GoProModalProps) {
   const { toggleState } = useToggleContext();
   const onClose = () => toggleState(false);
 
@@ -56,10 +53,7 @@ function ModalContent() {
 
       <ul className='flex flex-col gap-3'>
         {PRO_FEATURES.map((feature) => (
-          <li
-            key={feature}
-            className='flex items-center gap-2 text-sm text-slate-700'
-          >
+          <li key={feature} className='flex items-center gap-2 text-sm text-slate-700'>
             <Check size={16} className='shrink-0 text-black' />
             {feature}
           </li>
@@ -67,8 +61,8 @@ function ModalContent() {
       </ul>
 
       <p className='text-xs text-slate-400'>
-        Full refund if you cancel within 14 days. Cancel later and you'll keep
-        Pro until your plan expires.
+        Full refund if you cancel within 14 days. Cancel later and you'll keep Pro until your plan
+        expires.
       </p>
 
       <div className='flex flex-col gap-2'>
@@ -82,12 +76,7 @@ function ModalContent() {
         >
           Upgrade to Pro
         </LoaderButton>
-        <Button
-          onClick={onClose}
-          variant='ghost'
-          paddingEnabled
-          shape='rounded'
-        >
+        <Button onClick={onClose} variant='ghost' paddingEnabled shape='rounded'>
           Maybe later
         </Button>
       </div>

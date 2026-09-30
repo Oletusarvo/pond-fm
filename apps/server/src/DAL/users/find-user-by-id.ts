@@ -6,9 +6,13 @@ import { getUserQuery } from "./get-user-query";
 import { selectUser } from "./select/select-user";
 
 /**Returns a user by their email. */
-export async function findUserById(ctx: DBContext, config: { id: string }) {
+export async function findUserById(ctx: DBContext, config: { audius_user_id: string }) {
   const query = getUserQuery(ctx);
-  query.join({ subscription: viewnames.subscriptions }, "subscription.user_id", "users.id");
+  query.join(
+    { subscription: viewnames.subscriptions },
+    "subscription.user_id",
+    "users.audius_user_id",
+  );
 
   selectUser(query);
   query.select(
@@ -16,8 +20,6 @@ export async function findUserById(ctx: DBContext, config: { id: string }) {
       JSON_BUILD_OBJECT(
       'plan_id', subscription.plan_id, 
       'status', subscription.status,
-      'storage_quota_bytes', subscription.storage_quota_bytes, 
-      'storage_quota_consumed', subscription.storage_quota_consumed,
       'current_period_start', subscription.current_period_start,
       'current_period_end', subscription.current_period_end,
       'override_started_at', subscription.override_started_at,
@@ -26,5 +28,7 @@ export async function findUserById(ctx: DBContext, config: { id: string }) {
       ) AS subscription`),
   );
 
-  return (await query.where({ "users.id": config.id }).first()) as TUserRestricted;
+  return (await query
+    .where({ "users.audius_user_id": config.audius_user_id })
+    .first()) as TUserRestricted;
 }

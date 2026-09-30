@@ -3,10 +3,9 @@ import { db } from "../../../db-config";
 import { withStats } from "../with/with-stats";
 
 export function selectTrack(query: Knex.QueryBuilder) {
-  query
-    .select(
-      db.raw(
-        `
+  query.select(
+    db.raw(
+      `
         JSON_BUILD_OBJECT(
           'id', track.id, 
           'title', track.title, 
@@ -17,12 +16,11 @@ export function selectTrack(query: Knex.QueryBuilder) {
             WHERE 
             moods.track_id = track.id
           ),
-          'waveform', track.waveform,
-          'size', track.size_bytes,
+         
           'author', track_author.json,
           'stats', stats.json
         ) AS track
       `,
-      ),
-    );
+    ),
+  );
 }

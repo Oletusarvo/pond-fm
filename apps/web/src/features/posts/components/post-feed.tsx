@@ -1,4 +1,4 @@
-import { PostProvider } from "../providers/post-provider";
+import { TrackProvider } from "../providers/post-provider";
 import { Feed } from "../../../components/feed";
 import { Post } from "./post";
 import { PopulatePostStore } from "../providers/populates-post-store";
@@ -17,11 +17,11 @@ export function PostFeed() {
         renderComponent={({ item }) => {
           if (!item) return null;
           return (
-            <PostProvider trackId={item.track.id}>
+            <TrackProvider trackId={item.id}>
               <AdProvider.Injector adElement={adElement}>
                 <Post />
               </AdProvider.Injector>
-            </PostProvider>
+            </TrackProvider>
           );
         }}
         onEmptyComponent={() => {

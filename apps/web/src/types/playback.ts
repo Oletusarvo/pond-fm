@@ -1,11 +1,13 @@
-import { TPost, TTrackPublic } from "@pondfm/app-shared";
+import { TTrackPublic } from "@pondfm/app-shared";
 
 /**The type used to represent a track being played. */
 export type TPlayback = {
   /**At what time the track starts playing. */
   start_position?: number;
   /**The post publishing the track. */
-  post: Pick<TPost, "id">;
+  post: {
+    id: string;
+  };
   /**The track. */
   track: TTrackPublic;
   /**The statistics of the track. */

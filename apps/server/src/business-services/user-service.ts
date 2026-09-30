@@ -15,4 +15,5 @@ import { serviceError } from "../utils/service-error";
 
 export class UserService {
   constructor(private repo: UserRepository) {}
+  async createIfNotExists(ctx: DBContext, data: any) {}
 }

@@ -5,11 +5,12 @@ import { WindowResizeManager } from "../managers/window-resize-manager";
 import { MiniPlayerWithInfo } from "../features/audio/components/mini-player-with-info";
 import { AdProvider } from "../features/ads/providers/ad-provider";
 import { useAuthContext } from "../features/auth/providers/auth-provider";
+import { AdScript } from "../features/ads/components/ad-script";
 
 /**Renders the layout of the entire app. */
 export function MainLayout() {
   const { session } = useAuthContext();
-  const adsEnabled = () => {
+  const areAdsEnabled = () => {
     if (!session) return true;
     const subscription = session.user.subscription;
     if (subscription.plan_id === "free" || ["unpaid", "incomplete"].includes(subscription.status))
@@ -17,8 +18,11 @@ export function MainLayout() {
 
     return false;
   };
+
+  const adsEnabled = areAdsEnabled();
   return (
     <div className='flex flex-col w-full h-full grow-0'>
+      {adsEnabled ? <AdScript /> : null}
       <AdProvider interval={10} enabled={adsEnabled}>
         <MainHeader />
         <main className='flex flex-col flex-1 overflow-y-scroll'>

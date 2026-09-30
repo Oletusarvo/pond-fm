@@ -7,29 +7,25 @@ import { selectTrack } from "../../../../DAL/posts/select/select-track";
 import { applyCursor } from "../../../../DAL/posts/utils/apply-cursor";
 import { getCursor } from "../../../../utils/get-cursor";
 import { resolveQueryWithCursor } from "../../../../DAL/posts/utils/resolve-query-with-cursor";
-import { onlyCanonicalPosts } from "../../../../DAL/posts/utils/only-canonical-posts";
+import { onlyCanonicalTracks } from "../../../../DAL/tracks/filter/only-canonical-tracks";
 import { getUndistinctPostQuery } from "../../../../DAL/posts/get-undistinct-post-query";
 
-export const getAuthorLikedFeedHandler = createHandler(
-  async (req: TAuthenticatedRequest, res) => {
-    const query = getUndistinctPostQuery(db, req.session);
-    onlyCanonicalPosts(query);
-    query.whereIn(
-      "track.id",
-      db
-        .select("track_id")
-        .from(tablenames.likes)
-        .where({ user_id: req.params.authorId }),
-    );
-    selectPost(query);
-    selectTrack(query);
-    applyCursor(query, {
-      cursor: getCursor(req),
-      dir: "desc",
-      timestampColumn: "track.created_at",
-      idColumn: "track.id",
-    });
-    const tracks = await resolveQueryWithCursor(query, { pageSize: 10 });
-    return res.json(tracks);
-  },
-);
+/**Returns tracks liked by a specific user. */
+export const getAuthorLikedFeedHandler = createHandler(async (req: TAuthenticatedRequest, res) => {
+  const query = getUndistinctPostQuery(db, req.session);
+  onlyCanonicalTracks(query);
+  query.whereIn(
+    "track.id",
+    db.select("track_id").from(tablenames.likes).where({ user_id: req.params.authorId }),
+  );
+  selectPost(query);
+  selectTrack(query);
+  applyCursor(query, {
+    cursor: getCursor(req),
+    dir: "desc",
+    timestampColumn: "track.created_at",
+    idColumn: "track.id",
+  });
+  const tracks = await resolveQueryWithCursor(query, { pageSize: 10 });
+  return res.json(tracks);
+});

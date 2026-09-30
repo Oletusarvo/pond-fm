@@ -9,8 +9,7 @@ import {
 } from "../types/service-response";
 
 import { v4 } from "uuid";
-import { createCanonicalPost } from "../DAL/posts/create-canonical-post";
-import { createPost } from "../DAL/posts/create-post";
+
 import { createTrackLike } from "../DAL/posts/create-track-like";
 import { deleteTrackLike } from "../DAL/posts/delete-track-like";
 import { getPostQuery } from "../DAL/posts/get-post-query";
@@ -20,6 +19,7 @@ import { withTrack } from "../DAL/posts/with/with-track";
 import { TUpload } from "@pondfm/app-shared/dist/types/upload";
 import { playCountThresholdSeconds, TTrack } from "@pondfm/app-shared";
 import { createJWT, tryCatch } from "@pondfm/server-utils";
+import { audius, audiusSdk } from "../audius.config";
 
 /**Responsible for handling business-logic related to individual posts and tracks. */
 export class PostService {
@@ -28,30 +28,6 @@ export class PostService {
       postRepo: PostRepository;
     },
   ) {}
-
-  async createCanonicalTrack(
-    ctx: Knex.Transaction,
-    config: Parameters<typeof createCanonicalPost>[1],
-  ) {
-    //Related business logic...
-    const track = await this.repos.postRepo.createCanonicalTrack(ctx, config);
-    return { success: true, data: track } as ServiceSuccessResponse<any>;
-  }
-
-  async repostTrack(ctx: DBContext, config: Parameters<typeof createPost>[1]) {
-    //Related business logic.
-    const [result, err] = await tryCatch(
-      async () => await this.repos.postRepo.createPost(ctx, config),
-    );
-    if (err) {
-      if (err.message.toLowerCase().includes("duplicate")) {
-        return { success: false, error: serviceError.post?.duplicateRepost };
-      } else {
-        throw err;
-      }
-    }
-    return { success: true };
-  }
 
   async unrepostTrack(ctx: DBContext, config: { editor: { id: string }; track: { id: string } }) {
     //Prevent unreposting if the post isn't a repost, or if the editor isn't the one who reposted.
@@ -99,11 +75,12 @@ export class PostService {
   async createStreamToken(
     ctx: Knex.Transaction,
     options: {
-      track: Pick<TTrack, "key" | "duration" | "id">;
+      track: { duration: number; id: string };
       user: { session_id: string; id?: string };
     },
   ) {
     const { user, track } = options;
+
     const streamStarted = Date.now();
     //Stream start + duration of the track + a grace period of 10 seconds, in milliseconds.
     const expires = streamStarted + track.duration * 1000 + 10000;
@@ -130,24 +107,5 @@ export class PostService {
       stream_session_id: streamSession.id,
     });
     return { success: true, data: token } as ServiceSuccessResponse<string>;
-  }
-
-  async updateTrack(
-    ctx: Knex.Transaction,
-    config: {
-      editor: {
-        id: string;
-      };
-      track: Partial<TTrack>;
-    },
-  ) {
-    const track = await ctx(tablenames.tracks)
-      .where({ id: config.track.id })
-      .select("author_id")
-      .first();
-    if (track.author_id !== config.editor.id) {
-      return;
-    }
-    await this.repos.postRepo.updateTrack(ctx, { ...config.track });
   }
 }

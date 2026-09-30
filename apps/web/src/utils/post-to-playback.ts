@@ -1,13 +1,19 @@
-import { TPostPublic } from "@pondfm/app-shared";
+import { TTrackPublic } from "@pondfm/app-shared";
 import { TPlayback } from "../types/playback";
 
 /**Converts a post to a playback-object. */
-export function postToPlayback(post: TPostPublic): TPlayback {
+export function trackToPlayback(track: TTrackPublic): TPlayback {
   return {
     post: {
-      id: post.id,
+      id: track.post_id,
     },
-    track: post.track,
-    stats: post.track.stats,
+    track,
+    stats: {
+      liked_by_me: track.liked_by_me,
+      reposted_by_me: track.reposted_by_me,
+      play_count: track.play_count,
+      like_count: track.like_count,
+      repost_count: track.repost_count,
+    },
   };
 }

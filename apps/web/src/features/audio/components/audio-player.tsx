@@ -1,26 +1,20 @@
 import { useCallback, useState } from "react";
-import { postToPlayback } from "../../../utils/post-to-playback";
-import { usePostContext } from "../../posts/providers/post-provider";
+import { trackToPlayback } from "../../../utils/post-to-playback";
+import { useTrackContext } from "../../posts/providers/post-provider";
 import { PlayButton } from "../../posts/components/play-button";
 import { Waveform } from "../../posts/components/waveform";
 import { useEventHandler } from "../../../hooks/use-event-handler";
 import { usePlaybackContext } from "../providers/playback-provider";
+import { PlaybackTrack } from "../../posts/components/playback-track";
 
 export function AudioPlayer() {
-  const {
-    playbackState,
-    togglePlayback,
-    currentPlayback,
-    audioRef,
-    updateCurrentPlayback,
-  } = usePlaybackContext();
+  const { playbackState, togglePlayback, currentPlayback, audioRef, updateCurrentPlayback } =
+    usePlaybackContext();
   const playbackTrackId = currentPlayback?.track.id;
-  const { post } = usePostContext();
-  const postTrackId = post?.track.id;
+  const { track: post } = useTrackContext();
+  const postTrackId = post?.id;
   const [playbackPosition, setPlaybackPosition] = useState(() =>
-    currentPlayback?.track.id === post?.track.id
-      ? audioRef.current?.currentTime
-      : 0,
+    currentPlayback?.track.id === post?.id ? audioRef.current?.currentTime : 0,
   );
 
   const onWaveformClicked = (currentTime: number) => {
@@ -28,7 +22,7 @@ export function AudioPlayer() {
       audioRef.current.currentTime = currentTime;
     } else {
       updateCurrentPlayback({
-        ...postToPlayback(post),
+        ...trackToPlayback(post),
         start_position: currentTime,
       });
     }
@@ -38,7 +32,7 @@ export function AudioPlayer() {
     if (playbackTrackId === postTrackId) {
       togglePlayback();
     } else {
-      updateCurrentPlayback(postToPlayback(post));
+      updateCurrentPlayback(trackToPlayback(post));
     }
   };
 
@@ -61,12 +55,19 @@ export function AudioPlayer() {
   return (
     <div className='flex gap-2 w-full h-full items-center'>
       <PlayButton state={playbuttonState} onClick={onPlayButtonClicked} />
-      <Waveform
-        waveform={post?.track.waveform}
-        duration={post?.track.duration}
-        playbackPosition={playbackPosition}
-        onWaveformClicked={onWaveformClicked}
+      <PlaybackTrack
+        duration={post?.duration}
+        currentPosition={playbackPosition}
+        onClicked={onWaveformClicked}
       />
     </div>
   );
 }
+
+/*
+<Waveform
+  waveform={post?.track.waveform}
+  duration={post?.track.duration}
+  playbackPosition={playbackPosition}
+  onWaveformClicked={onWaveformClicked}
+/>;*/

@@ -385,9 +385,9 @@ function PlanSection() {
     return (
       <ul className='flex flex-col gap-1 text-sm text-slate-600'>
         <li>
-          {defaults.plans[plan].unique_listener_threshold} unique listeners on the discovery feed.
+          {defaults.plans[plan].unique_listener_threshold} unique listeners on the
+          undiscovered-feed.
         </li>
-        <li>{defaults.plans[plan].storage} of storage for your tracks.</li>
         <li>{plan === "pro" ? "No ads." : "Ads."}</li>
       </ul>
     );

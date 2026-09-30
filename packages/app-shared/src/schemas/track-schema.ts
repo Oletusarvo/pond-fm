@@ -3,38 +3,38 @@ import { authorSchema } from "./author-schema.js";
 import { uploadSchema } from "./upload-schema.js";
 import { idSchema } from "./defaults.js";
 
-export const trackSchema = z.object({
-  id: z.uuid(),
-  primary_audio_id: idSchema,
-  upload_folder_id: idSchema,
-  genre_id: z.int(),
-  play_count: z.number(),
-  unique_listener_count: z.number(),
-  title: z.string(),
-});
+export const trackStatusSchema = z.enum(["active", "deleted", "pending_review"]);
 
-const trackStatsSchema = trackSchema
-  .pick({ play_count: true, unique_listener_count: true })
-  .extend({
-    like_count: z.number(),
-    repost_count: z.number(),
-    reposted_by_me: z.boolean(),
-    liked_by_me: z.boolean(),
-  });
+export const trackSchema = z.object({
+  audius_track_id: z.string(),
+  author_id: z.string(),
+  title: z.string(),
+  description: z.string().optional(),
+  duration: z.number(),
+  play_count: z.number(),
+  like_count: z.number(),
+  repost_count: z.number(),
+  liked_by_me: z.boolean(),
+  reposted_by_me: z.boolean(),
+  unique_play_count: z.number(),
+  required_unique_listeners: z.number(),
+  status: trackStatusSchema,
+  deleted_at: z.date().optional(),
+  created_at: z.string(),
+  updated_at: z.string(),
+});
 
 export const trackPublicSchema = trackSchema
   .omit({
-    primary_audio_id: true,
-    upload_folder_id: true,
-    play_count: true,
-    unique_listener_count: true,
+    audius_track_id: true,
+    author_id: true,
   })
   .extend({
-    stats: trackStatsSchema,
+    id: z.string(),
     author: authorSchema,
-    duration: z.number(),
-    size: uploadSchema.shape.size_bytes,
-    waveform: z.array(z.number()),
-    moods: z.array(z.string()),
+    canonical_author: authorSchema,
     genre: z.string(),
+    moods: z.array(z.string()),
+    is_canonical: z.boolean(),
+    is_discovered: z.boolean(),
   });

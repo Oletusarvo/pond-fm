@@ -61,4 +61,11 @@ export class AuthApi {
     const res = await fetch(Api.withEndpoint("auth/verify-email-update"), req);
     return await Api.asApiResponse<null, typeof serviceError.auth.unauthorized>(res);
   }
+
+  audius = {
+    async login() {
+      const req = requestBuilder.get().includeCredentials().build();
+      await fetch(Api.withEndpoint("auth/audius/authorize"), req);
+    },
+  };
 }
