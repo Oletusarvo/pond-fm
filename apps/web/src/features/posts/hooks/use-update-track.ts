@@ -1,4 +1,4 @@
-import { TPost, TTrackPublic } from "@pondfm/app-shared";
+import { TTrackPublic } from "@pondfm/app-shared";
 import { useSubmit } from "../../../hooks/use-submit";
 import { useTrackStore } from "./use-post";
 import { api } from "../../../utils/api/api";
@@ -18,7 +18,7 @@ export function useUpdateTrack({ track, ...props }: UseUpdateTrackProps) {
           ...track,
           ...fdata,
         },
-      } as Partial<TPost>;
+      };
 
       const res = await api.tracks.update(track.id, udata);
       if (res.success) {

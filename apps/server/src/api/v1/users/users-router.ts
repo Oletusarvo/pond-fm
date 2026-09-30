@@ -8,7 +8,7 @@ import { getUserFollowing } from "./handlers/get-user-following";
 import { getUserHandler } from "./handlers/get-user-handler";
 import { markNotificationsAsSeenHandler } from "./handlers/mark-notifications-as-seen-handler";
 import { unfollowUserHandler } from "./handlers/unfollow-user-handler";
-import { updateUserHandler } from "./handlers/update-user-handler";
+
 import { deleteUserHandler } from "./handlers/delete-user-handler";
 import { getPlayCountStatsHandler } from "../tracks/handlers/get-track-stats-handler";
 

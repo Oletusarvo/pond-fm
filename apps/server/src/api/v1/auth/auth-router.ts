@@ -3,15 +3,10 @@ import { authorizeByCodeHandler } from "./handlers/authorize-by-code-handler";
 
 import { getSessionInfoHandler } from "./handlers/get-session-info-handler";
 import { logoutHandler } from "./handlers/logout-handler";
-import { emailPayloadSchema } from "../../../schemas/email-payload-schema";
 import { authorizeByCodeSchema } from "../../../schemas/authorize-by-code-schema";
 import { refreshSessionHandler } from "./handlers/refresh-session-handler";
 import { createBodyParser, getRouter } from "@pondfm/server-utils";
 
-import { signupSchema } from "../../../schemas/signup-schema";
-import { verifyEmailSchema } from "../../../schemas/verify-email-schema";
-
-import { verifyUserQuota } from "./middleware/verify-user-quota";
 import { authorizeByAudiusCodeHandler } from "./handlers/authorize-by-audius-code-handler";
 import { getAuthTokenHandler } from "./handlers/get-auth-token-handler";
 

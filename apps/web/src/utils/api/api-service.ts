@@ -1,4 +1,4 @@
-import { TPostPublic, TSession } from "@pondfm/app-shared";
+import { TSession } from "@pondfm/app-shared";
 import { joinStrings } from "../join-strings";
 import { requestBuilder } from "../request-builder";
 
@@ -10,92 +10,50 @@ export class ApiService {
   }
 
   /**Requests a login magic link. */
-  async requestAuthorization(credentials: {
-    email: string;
-    username?: string;
-  }) {
-    const req = requestBuilder
-      .post()
-      .body(credentials)
-      .json()
-      .includeCredentials()
-      .build();
+  async requestAuthorization(credentials: { email: string; username?: string }) {
+    const req = requestBuilder.post().body(credentials).json().includeCredentials().build();
     return await fetch(this.withEndpoint("auth/request-authorization"), req);
   }
 
   /**Authorizes a user using the auth code obtained after calling login. */
   async authorize(code: string) {
-    const req = requestBuilder
-      .post()
-      .body({ code })
-      .json()
-      .includeCredentials()
-      .build();
+    const req = requestBuilder.post().body({ code }).json().includeCredentials().build();
     return await fetch(this.withEndpoint("auth/authorize"), req);
   }
 
   /**Creates a new track. */
   async createTrack(payload: FormData) {
-    const req = requestBuilder
-      .post()
-      .formData(payload)
-      .includeCredentials()
-      .build();
+    const req = requestBuilder.post().formData(payload).includeCredentials().build();
     return await fetch(this.withEndpoint("tracks"), req);
   }
 
   /**Likes a track.*/
   async likeTrack(trackId: string) {
-    const req = requestBuilder
-      .post()
-      .body({ trackId })
-      .json()
-      .includeCredentials()
-      .build();
+    const req = requestBuilder.post().body({ trackId }).json().includeCredentials().build();
     return await fetch(this.withEndpoint("tracks/like"), req);
   }
 
   /**Unlikes a track. */
   async unlikeTrack(trackId: string) {
-    const req = requestBuilder
-      .delete()
-      .body({ trackId })
-      .json()
-      .includeCredentials()
-      .build();
+    const req = requestBuilder.delete().body({ trackId }).json().includeCredentials().build();
     return await fetch(this.withEndpoint("tracks/like"), req);
   }
 
   /**Reposts a track. */
   async repostTrack(trackId: string) {
-    const req = requestBuilder
-      .post()
-      .body({ trackId })
-      .json()
-      .includeCredentials()
-      .build();
+    const req = requestBuilder.post().body({ trackId }).json().includeCredentials().build();
     return await fetch(this.withEndpoint("tracks/repost"), req);
   }
 
   /**Unreposts a track. */
   async unrepostTrack(trackId: string) {
-    const req = requestBuilder
-      .delete()
-      .body({ trackId })
-      .json()
-      .includeCredentials()
-      .build();
+    const req = requestBuilder.delete().body({ trackId }).json().includeCredentials().build();
     return await fetch(this.withEndpoint("tracks/repost"), req);
   }
 
   /**Makes a donation to the platform. */
   async donate(payload: { amountInCents: number }) {
-    const req = requestBuilder
-      .post()
-      .body(payload)
-      .json()
-      .includeCredentials()
-      .build();
+    const req = requestBuilder.post().body(payload).json().includeCredentials().build();
     return await fetch(this.withEndpoint("payments/donate"), req);
   }
 
@@ -115,32 +73,17 @@ export class ApiService {
 
   /**Updates the authorized user's filter tags. */
   async updateUserTags(tags: string[]) {
-    const req = requestBuilder
-      .post()
-      .body({ tags })
-      .json()
-      .includeCredentials()
-      .build();
+    const req = requestBuilder.post().body({ tags }).json().includeCredentials().build();
     return await fetch(this.withEndpoint("users/tags"), req);
   }
 
   /**Updates the tags of a track. */
   async updateTrackTags(payload: { tags: string[]; trackId: string }) {
-    const req = requestBuilder
-      .post()
-      .body(payload)
-      .json()
-      .includeCredentials()
-      .build();
+    const req = requestBuilder.post().body(payload).json().includeCredentials().build();
     return await fetch(this.withEndpoint("tracks/tags"), req);
   }
 
-  private buildFeedUrl(
-    endpoint: string,
-    cursor?: string,
-    genres?: string[],
-    moods?: string[],
-  ) {
+  private buildFeedUrl(endpoint: string, cursor?: string, genres?: string[], moods?: string[]) {
     const url = new URL(this.withEndpoint(endpoint));
     if (cursor) {
       url.searchParams.set("cursor", cursor);
@@ -158,12 +101,7 @@ export class ApiService {
   /**Returns the discovery feed. */
   async getDiscoveryFeed(cursor?: string, genres?: string[], moods?: string[]) {
     const req = requestBuilder.get().includeCredentials().build();
-    const url = this.buildFeedUrl(
-      `tracks/feed/discover`,
-      cursor,
-      genres,
-      moods,
-    );
+    const url = this.buildFeedUrl(`tracks/feed/discover`, cursor, genres, moods);
     return await fetch(url, req);
   }
 
@@ -176,12 +114,7 @@ export class ApiService {
 
   async getFollowedFeed(cursor?: string, genres?: string[], moods?: string[]) {
     const req = requestBuilder.get().includeCredentials().build();
-    const url = this.buildFeedUrl(
-      `tracks/feed/followed`,
-      cursor,
-      genres,
-      moods,
-    );
+    const url = this.buildFeedUrl(`tracks/feed/followed`, cursor, genres, moods);
     return await fetch(url, req);
   }
 
@@ -215,10 +148,7 @@ export class ApiService {
 
   async requestStreamToken(trackId: string) {
     const req = requestBuilder.get().includeCredentials().build();
-    return await fetch(
-      this.withEndpoint(`tracks/${trackId}/stream/token`),
-      req,
-    );
+    return await fetch(this.withEndpoint(`tracks/${trackId}/stream/token`), req);
   }
 
   async getNotifications(cursor?: string) {
@@ -232,19 +162,11 @@ export class ApiService {
 
   async markNotificationsAsSeen() {
     const req = requestBuilder.put().json().includeCredentials().build();
-    return await fetch(
-      this.withEndpoint(`users/notifications/mark-as-seen`),
-      req,
-    );
+    return await fetch(this.withEndpoint(`users/notifications/mark-as-seen`), req);
   }
 
   async updateUser(payload: { username?: string }) {
-    const req = requestBuilder
-      .put()
-      .body(payload)
-      .json()
-      .includeCredentials()
-      .build();
+    const req = requestBuilder.put().body(payload).json().includeCredentials().build();
     return await fetch(this.withEndpoint("users/username"), req);
   }
 
@@ -264,12 +186,7 @@ export class ApiService {
   }
 
   async updateTrack(id: string, payload: Record<string, any>) {
-    const req = requestBuilder
-      .body(payload)
-      .json()
-      .includeCredentials()
-      .put()
-      .build();
+    const req = requestBuilder.body(payload).json().includeCredentials().put().build();
     return await fetch(this.withEndpoint(`tracks/${id}`), req);
   }
 
@@ -281,12 +198,7 @@ export class ApiService {
     moods: string[];
     genre: string;
   }) {
-    const req = requestBuilder
-      .body(payload)
-      .json()
-      .includeCredentials()
-      .post()
-      .build();
+    const req = requestBuilder.body(payload).json().includeCredentials().post().build();
     return await fetch(this.withEndpoint("upload/create"), req);
   }
 
@@ -329,19 +241,11 @@ export class ApiService {
 
   async completeUpload(code: string) {
     const req = requestBuilder.post().json().includeCredentials().build();
-    return await fetch(
-      this.withEndpoint(["upload/complete", code].join("/")),
-      req,
-    );
+    return await fetch(this.withEndpoint(["upload/complete", code].join("/")), req);
   }
 
   async refreshSession(newSession: Partial<TSession>) {
-    const req = requestBuilder
-      .post()
-      .json()
-      .body(newSession)
-      .includeCredentials()
-      .build();
+    const req = requestBuilder.post().json().body(newSession).includeCredentials().build();
     return await fetch(this.withEndpoint("auth/me/refresh"), req);
   }
 
@@ -386,10 +290,7 @@ export class ApiService {
   /**Starts the process to upgrade a users subscription to pro. */
   async upgradeSubscription() {
     const req = requestBuilder.patch().includeCredentials().build();
-    return await fetch(
-      this.withEndpoint("billing/subscriptions/checkout"),
-      req,
-    );
+    return await fetch(this.withEndpoint("billing/subscriptions/checkout"), req);
   }
 
   /**Cancels the users pro subscription. */
@@ -408,7 +309,5 @@ export class ApiService {
  * @deprecated Use the Api-class instance instead.
  */
 export const apiService = new ApiService(
-  import.meta.env.DEV
-    ? "http://localhost:3002/api/v1"
-    : "https://pond-fm-api.onrender.com/api/v1",
+  import.meta.env.DEV ? "http://localhost:3002/api/v1" : "https://pond-fm-api.onrender.com/api/v1",
 );

@@ -41,7 +41,7 @@ export function TippingProvider({ children, recipient }: TippingProviderProps) {
 
     try {
       const res = await api.users.tip({
-        recipientId: recipient.id,
+        recipientId: recipient.audius_user_id,
         amountInCents: amount * 100,
       });
       setStatus("success");
@@ -55,9 +55,7 @@ export function TippingProvider({ children, recipient }: TippingProviderProps) {
 
   const platformFeePercentage = 0.05;
   const platformFeeAmount =
-    typeof amount !== "undefined"
-      ? Math.round(amount * platformFeePercentage * 100) / 100
-      : 0;
+    typeof amount !== "undefined" ? Math.round(amount * platformFeePercentage * 100) / 100 : 0;
   const vat = Math.round(amount * 0.255 * 100) / 100;
   const totalTip = amount;
 
