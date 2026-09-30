@@ -46,7 +46,13 @@ export function AudioPlayer() {
     },
   });
 
-  const playbuttonState = playbackTrackId === postTrackId ? currentPlayback.status : "paused";
+  const playbuttonState =
+    playbackTrackId === postTrackId
+      ? currentPlayback.status !== "ready"
+        ? currentPlayback.status
+        : currentPlayback.state
+      : "paused";
+
   return (
     <div className='flex gap-2 w-full h-full items-center'>
       <PlayButton state={playbuttonState} onClick={onPlayButtonClicked} />

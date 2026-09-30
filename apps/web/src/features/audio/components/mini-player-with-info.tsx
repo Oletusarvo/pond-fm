@@ -81,7 +81,6 @@ export function MiniPlayerWithInfo() {
           playbackService.updatePlaybackState("paused");
           playbackService.updateCurrentPlayback(null);
         }}
-        onLoad={() => playbackService.updatePlaybackState("buffering")}
         onTimeUpdate={(e) => {
           //playbackService.updatePlaybackPosition(e.currentTarget.currentTime);
           scrobbleService.updateTimeListened();

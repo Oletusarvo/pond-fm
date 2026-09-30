@@ -10,7 +10,7 @@ export function useAudioPlayer() {
   const [playbackState, setPlaybackState] = useState<"playing" | "paused" | "buffering" | "error">(
     "paused",
   );
-  const playbackSrc = currentPlayback?.status === "playing" ? currentPlayback.streamUrl : null;
+  const playbackSrc = currentPlayback?.status === "ready" ? currentPlayback.streamUrl : null;
   const [playbackPosition, setPlaybackPosition] = useState(0);
   const audioRef = useRef<HTMLAudioElement>(null);
   const actionService = useActionContext();
@@ -26,6 +26,7 @@ export function useAudioPlayer() {
     setCurrentPlayback({
       ...playback,
       status: "buffering",
+      state: "paused",
     });
 
     //Request a stream token.
@@ -42,7 +43,7 @@ export function useAudioPlayer() {
           setCurrentPlayback((prev) => {
             return {
               ...prev,
-              status: "playing",
+              status: "ready",
               streamUrl: data.streamUrl,
             };
           });
@@ -57,9 +58,14 @@ export function useAudioPlayer() {
     }
   };
 
-  const updatePlaybackState = useCallback((newState: typeof playbackState) => {
-    setPlaybackState(newState);
-  }, []);
+  const updatePlaybackState = (newState: PlaybackReducerState["state"]) => {
+    setCurrentPlayback((prev) => {
+      return {
+        ...prev,
+        state: newState,
+      };
+    });
+  };
 
   const updatePlaybackPosition = (pos: number) => {
     //setPlaybackPosition(pos);
@@ -81,15 +87,15 @@ export function useAudioPlayer() {
     }
   };
 
-  const onPlay = useCallback(async () => {
+  const onPlay = async () => {
     if (!audioRef.current) return;
     await audioRef.current.play();
-  }, [audioRef.current]);
+  };
 
-  const onPause = useCallback(() => {
+  const onPause = () => {
     if (!audioRef.current) return;
     audioRef.current.pause();
-  }, [audioRef.current]);
+  };
 
   useEffect(() => {
     if (audioRef.current) {
@@ -99,7 +105,7 @@ export function useAudioPlayer() {
 
   //Automatically play tracks when they are selected. Must be done here; the hidden audio-tag must be rendered before play is hit.
   useEffect(() => {
-    if (currentPlayback?.status === "playing") {
+    if (currentPlayback?.status === "ready") {
       audioRef.current.currentTime = currentPlayback.start_position || 0;
       onPlay();
     }

@@ -5,24 +5,13 @@ import { Spinner } from "../../../components/spinner";
 import React from "react";
 
 type PlayButtonProps = Pick<React.ComponentProps<"button">, "onClick"> & {
-  state:
-    | ReturnType<typeof usePlaybackContext>["playbackState"]
-    | "buffering"
-    | "error";
+  state: ReturnType<typeof usePlaybackContext>["playbackState"] | "buffering" | "error";
   size?: "default" | "small";
 };
 
-export const PlayButton = React.memo(function PlayButton({
-  onClick,
-  state,
-  size = "default",
-}: PlayButtonProps) {
+export const PlayButton = function ({ onClick, state, size = "default" }: PlayButtonProps) {
   const className = useClassName(
-    state === "playing"
-      ? "bg-green-500"
-      : state === "error"
-        ? "bg-orange-500"
-        : "bg-primary",
+    state === "playing" ? "bg-green-500" : state === "error" ? "bg-orange-500" : "bg-primary",
     size === "small" ? "p-2" : "p-3",
     "flex rounded-full aspect-square items-center justify-center active:scale-95 cursor-pointer transform-all duration-100",
   );
@@ -38,4 +27,4 @@ export const PlayButton = React.memo(function PlayButton({
       )}
     </button>
   );
-});
+};
