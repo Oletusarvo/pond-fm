@@ -5,6 +5,7 @@ import { authorizeByAudiusSchema } from "../../../../schemas/authorize-by-audius
 import crypto from "crypto";
 import { db } from "../../../../db-config";
 import { tablenames } from "../../../../tablenames";
+import { REDIRECT_URI } from "../../../../audius.config";
 
 export const authorizeByAudiusCodeHandler = createHandler(async (req: TRequest, res) => {
   const verifier = crypto.randomBytes(32).toString("base64url");
@@ -29,6 +30,6 @@ export const authorizeByAudiusCodeHandler = createHandler(async (req: TRequest, 
       `&code_challenge_method=S256` +
       `&code_challenge=${challenge}` +
       `&state=${state}` +
-      `&redirect_uri=${encodeURIComponent("http://localhost:3002/api/v1/auth/token")}`,
+      `&redirect_uri=${encodeURIComponent(REDIRECT_URI)}`,
   );
 });

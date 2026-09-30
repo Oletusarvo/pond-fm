@@ -6,11 +6,7 @@ import { ReactNode } from "react";
 import { Network, Repeat, Rss, Sprout } from "lucide-react";
 import { PassProps } from "../components/pass-props";
 import { defaults } from "../utils/defaults";
-import { useClassName } from "../hooks/use-class-name";
 import { FaIconLink } from "../components/fa-icon-link";
-import { TabsProvider } from "../providers/tabs-provider";
-import { audiusSdk } from "../utils/audius.config";
-import { api } from "../utils/api/api";
 
 const appName = "Amphitune";
 /**Renders the home screen. */
@@ -23,7 +19,10 @@ export function HomeScreen() {
       toggleLogoutModal(true);
     } else if (status === "unauthenticated") {
       //await audiusSdk.oauth.login({ scope: "write" });
-      window.location.href = "http://localhost:3002/api/v1/auth/audius/authorize";
+      const url = import.meta.env.PROD
+        ? "https://pond-fm.onrender.com/api/v1/auth/audius/authorize"
+        : "http://localhost:3002/api/v1/auth/audius/authorize";
+      window.location.href = url;
     }
   };
 

@@ -10,19 +10,24 @@ export function useAudioPlayer() {
   const [playbackState, setPlaybackState] = useState<"playing" | "paused" | "buffering" | "error">(
     "paused",
   );
-  const playbackSrc = currentPlayback?.status === "ready" ? currentPlayback.streamUrl : null;
+  const playbackSrc = currentPlayback?.status === "playing" ? currentPlayback.streamUrl : null;
   const [playbackPosition, setPlaybackPosition] = useState(0);
   const audioRef = useRef<HTMLAudioElement>(null);
   const actionService = useActionContext();
 
   /**Updates the current playback if it is different. */
   const updateCurrentPlayback = async (playback: TPlayback | null) => {
+    //Pause playback
+    audioRef.current?.pause();
     if (!playback) {
       setCurrentPlayback(null);
       return;
     }
-    //Pause playback
-    audioRef.current?.pause();
+    setCurrentPlayback({
+      ...playback,
+      status: "buffering",
+    });
+
     //Request a stream token.
     if (currentPlayback?.track.id !== playback.track.id) {
       await api.tracks
@@ -34,18 +39,20 @@ export function useAudioPlayer() {
 
           const data = res.data;
 
-          setCurrentPlayback({
-            ...playback,
-            status: "ready",
-            streamUrl: data.streamUrl,
+          setCurrentPlayback((prev) => {
+            return {
+              ...prev,
+              status: "playing",
+              streamUrl: data.streamUrl,
+            };
           });
         })
         .catch((err) => {
           console.log("Fetching of stream token failed!", err.message);
-          setCurrentPlayback({
-            ...playback,
+          setCurrentPlayback((prev) => ({
+            ...prev,
             status: "error",
-          });
+          }));
         });
     }
   };
@@ -92,7 +99,7 @@ export function useAudioPlayer() {
 
   //Automatically play tracks when they are selected. Must be done here; the hidden audio-tag must be rendered before play is hit.
   useEffect(() => {
-    if (currentPlayback?.status === "ready") {
+    if (currentPlayback?.status === "playing") {
       audioRef.current.currentTime = currentPlayback.start_position || 0;
       onPlay();
     }

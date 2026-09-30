@@ -4,12 +4,14 @@ import { loadEnvVariable } from "@pondfm/server-utils";
 const API_KEY = loadEnvVariable("AUDIUS_API_KEY");
 const API_SECRET = loadEnvVariable("AUDIUS_API_SECRET");
 const API_TOKEN = loadEnvVariable("AUDIUS_API_TOKEN");
+export const REDIRECT_URI = loadEnvVariable("AUDIUS_REDIRECT_URI");
 
 export const audiusSdk = sdk({
   appName: "Amphitune",
   apiKey: API_KEY,
   apiSecret: API_SECRET,
   bearerToken: API_TOKEN,
+  redirectUri: REDIRECT_URI,
 });
 
 function withEndpoint(...args: string[]) {
