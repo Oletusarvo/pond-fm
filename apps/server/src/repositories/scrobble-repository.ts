@@ -1,15 +1,15 @@
-import { v4 } from 'uuid';
-import { tablenames } from '../tablenames';
-import { DBContext } from '../types/db-context';
-import { TrackAndUserId, TTrack } from '../types/track-type';
-import { PostRepository } from './post-repository';
+import { v4 } from "uuid";
+import { tablenames } from "../tablenames";
+import { DBContext } from "../types/db-context";
+import { TrackAndUserId, TTrack } from "../types/track-type";
+import { PostRepository } from "./post-repository";
 
 /**Responsible for scrobbling - updating unique listeners and counting plays. */
 export class ScrobbleRepository extends PostRepository {
   async getPlayCounts(trackId: string, ctx: DBContext) {
     const result = await ctx(tablenames.tracks)
-      .select('play_count as playCount', 'unique_play_count as uniquePlayCount')
-      .where({ id: trackId })
+      .select("play_count as playCount", "unique_play_count as uniquePlayCount")
+      .where({ audius_track_id: trackId })
       .first();
     return result;
   }
@@ -25,7 +25,7 @@ export class ScrobbleRepository extends PostRepository {
       .insert(listener)
       .onConflict()
       .ignore()
-      .returning('id');
+      .returning("id");
 
     return result.length > 0;
   }
@@ -33,18 +33,18 @@ export class ScrobbleRepository extends PostRepository {
   /**Increments the play count of a track. */
   async incrementPlayCount(trackId: string, ctx: DBContext) {
     const [result] = await ctx(tablenames.tracks)
-      .where({ id: trackId })
-      .increment('play_count')
-      .returning(['play_count AS playCount']);
+      .where({ audius_track_id: trackId })
+      .increment("play_count")
+      .returning(["play_count AS playCount"]);
     return result.playCount;
   }
 
   /**Increments the unique play count of a track. */
   async incrementUniquePlayCount(trackId: string, ctx: DBContext) {
     const [result] = await ctx(tablenames.tracks)
-      .where({ id: trackId })
-      .increment('unique_play_count')
-      .returning(['unique_play_count AS playCount']);
+      .where({ audius_track_id: trackId })
+      .increment("unique_play_count")
+      .returning(["unique_play_count AS playCount"]);
     return result.playCount;
   }
 }

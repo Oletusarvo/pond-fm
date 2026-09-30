@@ -29,7 +29,7 @@ export class TracksFeedApi {
   /**Returns the main feed. */
   async main(cursor?: string, genres?: string[], moods?: string[]) {
     const req = requestBuilder.get().includeCredentials().build();
-    const url = this.buildFeedUrl(`tracks/feed/main`, cursor, genres, moods);
+    const url = this.buildFeedUrl(`tracks/new`, cursor, genres, moods);
     const res = await fetch(url, req);
     return await Api.asApiResponse<TTrackPublic[]>(res);
   }

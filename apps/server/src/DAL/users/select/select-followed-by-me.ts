@@ -4,15 +4,12 @@ import { tablenames } from "../../../tablenames";
 import { TSession } from "@pondfm/app-shared";
 
 /**Selects the derived followed_by_me-column on the provided query.*/
-export function selectFollowedByMe(
-  query: Knex.QueryBuilder,
-  session?: TSession,
-) {
+export function selectFollowedByMe(query: Knex.QueryBuilder, session?: TSession) {
   if (session) {
     query.select(
       db.raw(
-        "EXISTS (SELECT 1 FROM ?? followers WHERE followee_id = users.id AND follower_id = ?) as followed_by_me",
-        [tablenames.followers, session.user.id],
+        "EXISTS (SELECT 1 FROM ?? followers WHERE followee_id = users.audius_user_id AND follower_id = ?) as followed_by_me",
+        [tablenames.followers, session.user.audius_user_id],
       ),
     );
   }

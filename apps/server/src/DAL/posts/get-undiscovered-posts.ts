@@ -1,4 +1,3 @@
-import { TPost, TPostPublic } from "@pondfm/app-shared";
 import { db } from "../../db-config";
 import { viewnames } from "../../tablenames";
 import { DBContext } from "../../types/db-context";
@@ -39,8 +38,5 @@ export async function getUndiscoveredPosts(ctx: DBContext, config: FeedQueryConf
   selectPost(query);
   selectTrack(query);
 
-  return (await resolveQueryWithCursor(query, { pageSize: 10 })) as {
-    cursor: string;
-    items: TPostPublic[];
-  };
+  return await resolveQueryWithCursor(query, { pageSize: 10 });
 }

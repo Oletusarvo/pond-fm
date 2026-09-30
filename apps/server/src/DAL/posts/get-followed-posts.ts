@@ -1,4 +1,4 @@
-import { TPost, TSession } from "@pondfm/app-shared";
+import { TSession } from "@pondfm/app-shared";
 import { db } from "../../db-config";
 import { tablenames } from "../../tablenames";
 import { TCursor } from "../../types/cursor";
@@ -46,8 +46,5 @@ export async function getFollowedPosts(
     timestampColumn: "post.created_at",
   });
   query.orderBy("post.created_at", "desc");
-  return (await resolveQueryWithCursor(query, { pageSize: 10 })) as {
-    cursor: string;
-    items: TPost[];
-  };
+  return await resolveQueryWithCursor(query, { pageSize: 10 });
 }

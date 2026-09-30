@@ -71,7 +71,11 @@ function Content() {
           <Tag value={post?.genre} size='small' selected={true} />
         </div>
       </div>
-      <AudioPlayer />
+      <div className='flex gap-2 w-full items-center'>
+        <img src={post?.artwork} className='w-16 h-16 rounded-lg' />
+        <AudioPlayer />
+      </div>
+
       <div className='flex justify-between w-full'>
         <StatsArea />
         <TagList tags={post?.moods} size={"small"} color='secondary' />

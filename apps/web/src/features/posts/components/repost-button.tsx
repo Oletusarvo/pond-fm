@@ -18,7 +18,8 @@ export function RepostButton() {
   });
 
   const disabled =
-    status === "authenticated" && (post?.reposted_by_me || session?.user.id === post.author.id);
+    status === "authenticated" &&
+    (post?.reposted_by_me || session?.user.audius_user_id === post.canonical_author.id);
 
   return (
     <CountButton

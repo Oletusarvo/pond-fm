@@ -20,7 +20,7 @@ export const getPlayCountStatsHandler = createHandler(async (req: TAuthenticated
     .from(db.raw(`(${sql})`))
     .select("*")
     .where({
-      author_id: session.user.id,
+      author_id: session.user.audius_user_id,
     });
 
   return res.json(tracks);

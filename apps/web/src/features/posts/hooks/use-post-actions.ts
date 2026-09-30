@@ -22,18 +22,14 @@ export function usePostActions({
   //const postStore = usePostStore();
   const countPlay = async () => {
     const initialPlayCount = post.play_count;
-    const newPlayCount = initialPlayCount + 1;
+    const newPlayCount = Number(initialPlayCount) + 1;
 
     await api.tracks
       .countPlay(post.id)
       .then((res) => {
         if (!res.success) return;
         updatePost({
-          track: {
-            stats: {
-              play_count: newPlayCount,
-            },
-          },
+          play_count: newPlayCount,
         });
       })
       .catch((err) => {
@@ -54,6 +50,7 @@ export function usePostActions({
     if (result.executed) {
       const res = result.value;
       if (!res.success) {
+        console.log(initialPost);
         updatePost(initialPost);
         onLikeRollback?.();
       }

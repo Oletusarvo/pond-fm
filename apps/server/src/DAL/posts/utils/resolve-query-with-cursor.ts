@@ -8,12 +8,9 @@ export async function resolveQueryWithCursor(
   },
 ) {
   const { pageSize } = config;
-  console.log("Limiting...");
+
   const data = await query.limit(pageSize + 1);
-  console.log("Running fb...");
   const fb = new FeedBuilder(pageSize);
-  console.log("Returning with cursor...");
   const cursor = fb.withCursor(data);
-  console.log("Returning cursor...", cursor);
   return cursor;
 }

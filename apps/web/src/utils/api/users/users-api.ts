@@ -84,4 +84,11 @@ export class UsersApi {
   async tip(payload: any) {
     throw new Error("Tipping not implemented!");
   }
+
+  async getTracks(userId: string) {
+    const url = new URL(Api.withEndpoint(`users/${userId}/tracks`));
+    const req = requestBuilder.get().includeCredentials().build();
+    const res = await fetch(url, req);
+    return await Api.asApiResponse(res);
+  }
 }

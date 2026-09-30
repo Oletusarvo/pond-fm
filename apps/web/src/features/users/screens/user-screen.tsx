@@ -44,24 +44,26 @@ export function UserScreen() {
         </div>
         <TabsProvider.Tab index={"tracks"}>
           <FeedProvider
-            queryFn={(cursor) => api.tracks.feed.byAuthor(userService.user.id, cursor)}
-            queryKey={["feed", "author", userService.user.id]}
+            queryFn={(cursor) => api.tracks.feed.byAuthor(userService.user.audius_user_id, cursor)}
+            queryKey={["feed", "author", userService.user.audius_user_id]}
           >
             <PostFeed />
           </FeedProvider>
         </TabsProvider.Tab>
         <TabsProvider.Tab index={"reposts"}>
           <FeedProvider
-            queryFn={(cursor) => api.tracks.feed.repostedBy(userService.user.id, cursor)}
-            queryKey={["feed", "reposted", userService.user.id]}
+            queryFn={(cursor) =>
+              api.tracks.feed.repostedBy(userService.user.audius_user_id, cursor)
+            }
+            queryKey={["feed", "reposted", userService.user.audius_user_id]}
           >
             <PostFeed />
           </FeedProvider>
         </TabsProvider.Tab>
         <TabsProvider.Tab index={"likes"}>
           <FeedProvider
-            queryFn={(cursor) => api.tracks.feed.likedBy(userService.user.id, cursor)}
-            queryKey={["feed", "liked", userService.user.id]}
+            queryFn={(cursor) => api.tracks.feed.likedBy(userService.user.audius_user_id, cursor)}
+            queryKey={["feed", "liked", userService.user.audius_user_id]}
           >
             <PostFeed />
           </FeedProvider>

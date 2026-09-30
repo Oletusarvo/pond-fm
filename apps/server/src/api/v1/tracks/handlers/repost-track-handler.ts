@@ -27,7 +27,7 @@ export const repostTrackHandler = createHandler(
         await createNotification(db, {
           notification: {
             recipient_id: track.author_id,
-            sender_id: session?.user.id,
+            sender_id: session?.user.audius_user_id,
             track_id: req.body.trackId,
             type: "repost",
           },

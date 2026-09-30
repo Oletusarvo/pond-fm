@@ -134,7 +134,7 @@ function UserProfileButton() {
       shape='circle'
       variant='ghost'
       color='white'
-      onClick={() => navigate(defaults.url.userTracks(session.user.id))}
+      onClick={() => navigate(defaults.url.userTracks(session.user.audius_user_id))}
     >
       <UserIcon />
     </Button>

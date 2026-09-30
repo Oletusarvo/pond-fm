@@ -4,6 +4,7 @@ import { getNotificationsByUserId } from "../../../../DAL/notifications/get-noti
 import { getCursor } from "../../../../utils/get-cursor";
 import { createHandler } from "@pondfm/server-utils";
 import { TAuthenticatedRequest } from "../../../../types/request";
+import { audius } from "../../../../audius.config";
 
 export const getNotificationsHandler = createHandler(async (req: TAuthenticatedRequest, res) => {
   const cursor = getCursor(req);
@@ -12,5 +13,41 @@ export const getNotificationsHandler = createHandler(async (req: TAuthenticatedR
     user: { audius_user_id: session.user.audius_user_id },
     cursor,
   });
-  return res.json(result);
+  const userIdSet = new Set<string>(
+    result.items
+      .map((n) => [n.recipient.audius_user_id, n.sender.audius_user_id])
+      .flatMap((n) => n),
+  );
+  const userData = await audius.users.get(Array.from(userIdSet));
+  const userMap = new Map<any, any>(userData.map((u) => [u.id, u]));
+  const trackIds = new Set<string>(result.items.map((n) => n.track.audius_track_id));
+  const trackData = await audius.tracks.get(Array.from(trackIds));
+
+  const trackMap = new Map(trackData.map((track) => [track.id, track]));
+
+  const recipientData = userMap.get(session.user.audius_user_id);
+
+  const notifications = result.items.map((item) => {
+    const track = trackMap.get(item.track.audius_track_id);
+    const senderData = userMap.get(item.sender.audius_user_id);
+    return {
+      ...item,
+      track: {
+        title: track.title,
+      },
+      sender: {
+        id: senderData.id,
+        username: senderData.name,
+      },
+      recipient: {
+        id: recipientData.id,
+        username: recipientData.name,
+      },
+    };
+  });
+
+  return res.json({
+    cursor: result.cursor,
+    items: notifications,
+  });
 });

@@ -9,8 +9,15 @@ export function selectRepostedByMe(query: Knex.QueryBuilder, session?: TSession)
   if (session) {
     query.select(
       db.raw(
-        "(EXISTS (SELECT 1 FROM ?? reposts WHERE reposts.author_id = ? AND track.is_canonical = TRUE AND reposts.audius_track_id = track.audius_track_id)) AS ??",
-        [viewnames.tracks, session.user.audius_user_id, columnName],
+        `(EXISTS 
+          (SELECT 1 FROM ?? reposts 
+            WHERE reposts.author_id = ?
+            AND 
+            reposts.track_id = track.audius_track_id
+            AND
+            track.author_id <> ?
+          )) AS ??`,
+        [tablenames.posts, session.user.audius_user_id, session.user.audius_user_id, columnName],
       ),
     );
   } else {

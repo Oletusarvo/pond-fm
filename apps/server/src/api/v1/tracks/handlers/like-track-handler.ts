@@ -11,26 +11,23 @@ import { trackInteractionSchema } from "../../../../schemas/track-interaction-sc
 
 /**Records a like on a track by id. */
 export const likeTrackHandler = createHandler(
-  async (
-    req: TAuthenticatedRequest<z.infer<typeof trackInteractionSchema>>,
-    res,
-  ) => {
+  async (req: TAuthenticatedRequest<z.infer<typeof trackInteractionSchema>>, res) => {
     const session = req.session;
     await createTrackLike(db, {
       trackId: req.body.trackId,
-      userId: session.user.id,
+      userId: session.user.audius_user_id,
     });
 
     const notificationPromise = new Promise<void>(async (resolve, reject) => {
       const [result, err] = await tryCatch(async () => {
         const track = await db(tablenames.tracks)
-          .where({ id: req.body.trackId })
+          .where({ audius_track_id: req.body.trackId })
           .select("author_id")
           .first();
         await createNotification(db, {
           notification: {
             recipient_id: track.author_id,
-            sender_id: session?.user.id,
+            sender_id: session?.user.audius_user_id,
             track_id: req.body.trackId,
             type: "like",
           },

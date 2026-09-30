@@ -2,12 +2,19 @@ import { getPublicUser } from "../../../../DAL/users/get-public-user";
 import { db } from "../../../../db-config";
 import { createHandler } from "@pondfm/server-utils";
 import { TAuthenticatedRequest } from "../../../../types/request";
+import { audius } from "../../../../audius.config";
 
 /**Returns the public data of a user. */
-export const getUserHandler = createHandler(
-  async (req: TAuthenticatedRequest, res) => {
-    const { userId } = req.params as { userId: string };
-    const user = await getPublicUser(db, { id: userId, session: req.session });
-    return res.json(user);
-  },
-);
+export const getUserHandler = createHandler(async (req: TAuthenticatedRequest, res) => {
+  const { userId } = req.params as { userId: string };
+  const user = await getPublicUser(db, { id: userId, session: req.session });
+  if (user) {
+    const [audiusUser] = await audius.users.get([user.audius_user_id]);
+    return res.json({
+      ...user,
+      username: audiusUser.name,
+      bio: audiusUser.bio,
+    });
+  }
+  return res.json(user);
+});

@@ -14,7 +14,7 @@ export function decodeCursor(encodedCursor?: string) {
 
 export function createCursor(data: any[], pageSize: number) {
   const cursorItem = data.length === pageSize + 1 ? data.at(-2) : null;
-  console.log("About to encode cursor...", cursorItem);
+
   return cursorItem
     ? encodeCursor({ id: cursorItem.post_id, timestamp: cursorItem.created_at })
     : null;

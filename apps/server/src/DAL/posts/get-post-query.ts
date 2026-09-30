@@ -1,15 +1,13 @@
-import { TPost, TSession } from "@pondfm/app-shared";
+import { TSession } from "@pondfm/app-shared";
 import { tablenames, viewnames } from "../../tablenames";
 import { DBContext } from "../../types/db-context";
-import { selectPost } from "./select/select-post";
-import { selectTrack } from "./select/select-track";
 
 import { withAuthor } from "./with/with-author";
 import { withMoods } from "./with/with-moods";
 import { withStats } from "./with/with-stats";
 
 export function getPostQuery(ctx: DBContext, session?: TSession) {
-  const query = ctx.queryBuilder<any, TPost>();
+  const query = ctx.queryBuilder();
   withAuthor(query);
   withMoods(query);
   withStats(query, session);

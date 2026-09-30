@@ -28,24 +28,26 @@ export function UserHeader() {
   const queryClient = useQueryClient();
   const onFollowButtonClicked = async () => {
     if (status === "unauthenticated") {
-      return navigate(`/login?return=/user/${user.id}&callback=/user/${user.id}`);
+      return navigate(
+        `/login?return=/user/${user.audius_user_id}&callback=/user/${user.audius_user_id}`,
+      );
     }
     const initialFollowed = followedByMe;
     const newFollowed = !initialFollowed;
 
     setFollowedByMe(newFollowed);
 
-    await cancelable.toggleFollow(user.id, initialFollowed).then(async (result) => {
+    await cancelable.toggleFollow(user.audius_user_id, initialFollowed).then(async (result) => {
       if (result.executed) {
         if (!result.value.success) {
           setFollowedByMe(initialFollowed);
         } else {
           await queryClient.invalidateQueries({
-            queryKey: ["user", user.id],
+            queryKey: ["user", user.audius_user_id],
           });
 
           await queryClient.invalidateQueries({
-            queryKey: ["followers", user.id],
+            queryKey: ["followers", user.audius_user_id],
           });
         }
       }
@@ -61,7 +63,7 @@ export function UserHeader() {
         <div className='flex sm:gap-8 xs:gap-2 md:items-center xs:items-start'>
           <div
             className='flex gap-2 items-center cursor-pointer'
-            onClick={() => navigate(defaults.url.userTracks(user.id))}
+            onClick={() => navigate(defaults.url.userTracks(user.audius_user_id))}
           >
             <div className='flex items-center justify-center w-8 h-8 rounded-full bg-primary text-white'>
               <User size='1rem' />
@@ -126,7 +128,9 @@ export function UserHeader() {
             </div>
           </div>
         </div>
-        {status === "authenticated" && session?.user.id === user.id ? <ChartSelector /> : null}
+        {status === "authenticated" && session?.user.audius_user_id === user.audius_user_id ? (
+          <ChartSelector />
+        ) : null}
       </div>
     </div>
   );
@@ -142,7 +146,7 @@ function ChartSelector() {
         ? "Plays last 30 days"
         : "Plays last 12 months";
   return (
-    <div className='flex flex-col gap-2 xs:h-[200px] lg:h-auto sm:w-full lg:w-[450px]'>
+    <div className='flex flex-col gap-2 xs:h-[200px] lg:h-[200px] sm:w-full lg:w-[450px]'>
       <div className='flex justify-between'>
         <h2 className='font-semibold text-sm'>{title}</h2>
         <select onChange={(e) => setInterval(e.target.value as typeof interval)}>

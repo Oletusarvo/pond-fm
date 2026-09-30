@@ -39,7 +39,13 @@ export type TUserRestricted = Omit<TUser, "subscription"> & {
 /**The user type displayed to the public. */
 export type TUserPublic = Pick<
   TUser,
-  "id" | "username" | "bio" | "follower_count" | "following_count" | "followed_by_me" | "urls"
+  | "audius_user_id"
+  | "username"
+  | "bio"
+  | "follower_count"
+  | "following_count"
+  | "followed_by_me"
+  | "urls"
 > & {
   subscription: TSubscriptionPublic;
 };

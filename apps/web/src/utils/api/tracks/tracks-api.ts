@@ -1,4 +1,4 @@
-import { serviceError, TPostPublic, TTrackPublic } from "@pondfm/app-shared";
+import { serviceError, TTrackPublic } from "@pondfm/app-shared";
 import { requestBuilder } from "../../request-builder";
 import { Api } from "../api";
 import { TracksCreateApi } from "./tracks-create-api";
@@ -21,7 +21,7 @@ export class TracksApi {
   async get(id: string) {
     const req = requestBuilder.get().includeCredentials().build();
     const res = await fetch(Api.withEndpoint("tracks", id), req);
-    return await Api.asApiResponse<TPostPublic>(res);
+    return await Api.asApiResponse<TTrackPublic>(res);
   }
 
   /**Deletes a track. */

@@ -15,7 +15,7 @@ const router = getRouter();
  * @summary Returns a feed of tracks sorted newest first.
  * @tags Tracks
  */
-router.get("/feed/main", checkAuth(false), handlers.tracks.feed.main);
+router.get("/new", checkAuth(false), handlers.tracks.feed.main);
 /**
  * GET /tracks/feed/discover
  * @summary Returns a feed of tracks that have not hit their unique listeners threshold, sorted oldest first.
@@ -27,7 +27,7 @@ router.get("/undiscovered", checkAuth(false), handlers.tracks.feed.undiscovered)
  * @summary Returns a feed of tracks from users the currently authenticated user is following.
  * @tags Tracks
  */
-router.get("/feed/followed", checkAuth(), handlers.tracks.feed.byFollowed);
+router.get("/followed", checkAuth(), handlers.tracks.feed.byFollowed);
 /**
  * GET /tracks/feed/search
  * @summary Returns a feed of tracks where the title or author username matches the q-search parameter.
