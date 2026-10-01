@@ -8,12 +8,12 @@ import { refreshSessionHandler } from "./handlers/refresh-session-handler";
 import { createBodyParser, getRouter } from "@pondfm/server-utils";
 
 import { authorizeByAudiusCodeHandler } from "./handlers/authorize-by-audius-code-handler";
-import { getAuthTokenHandler } from "./handlers/get-auth-token-handler";
+import { exchangeAudiusCodeForTokenHandler } from "./handlers/get-auth-token-handler";
 
 const router = getRouter();
 
 router.get("/audius/authorize", authorizeByAudiusCodeHandler);
-router.get("/audius/token", getAuthTokenHandler);
+router.get("/audius/token", exchangeAudiusCodeForTokenHandler);
 
 /**
  * POST /auth/authorize

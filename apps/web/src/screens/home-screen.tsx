@@ -76,7 +76,7 @@ export function HomeScreen() {
         <SectionHeading>What is {appName}?</SectionHeading>
 
         <p className='text-base 2xl:w-[70%]'>
-          {appName} is a thin discovery layer built on top of <strong>Audius</strong>, with a simple
+          {appName} is a discovery layer built on top of <strong>Audius</strong>, with a simple
           idea: your music should get a chance to be heard regardless of how popular you are. That's
           where our <strong>Undiscovered</strong> feed comes in. Any track with fewer than{" "}
           {defaults.plans.free.unique_listener_threshold} unique listeners (or{" "}
@@ -84,10 +84,6 @@ export function HomeScreen() {
           first, until it reaches it. Once your track crosses that threshold, you've genuinely been
           discovered. The <strong>New</strong> feed will display uploaded or reposted tracks in
           chronological order regardless of how many unique listeners they have accumulated.
-          <br />
-          <br />
-          None of the feeds on {appName} are driven by engagement based algorithms; in fact we don't
-          use algorithms of any kind. Everything is presented to you in chronological order.
           <br />
           <br />
         </p>

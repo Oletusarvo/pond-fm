@@ -13,6 +13,8 @@ import { useAction } from "../../../hooks/use-action";
 import { api } from "../../../utils/api/api";
 import { Spinner } from "../../../components/spinner";
 import { apiService } from "../../../utils/api/api-service";
+import { useQuery } from "@tanstack/react-query";
+import { useStatus } from "../../../hooks/use-status";
 
 const [LoginProvider, useLoginContext] = createProvider({
   contextName: "LoginContext",
@@ -80,10 +82,7 @@ function ModalContent() {
 }
 
 function CredentialsContent() {
-  const { close, updateStep } = useLoginContext();
-
-  const authService = useAuthContext();
-
+  const { close } = useLoginContext();
   const login = () => {
     const url = import.meta.env.PROD
       ? "https://pond-fm-api.onrender.com/api/v1/auth/audius/authorize"
@@ -129,31 +128,40 @@ function AuthorizeStep() {
 
   const navigate = useNavigate();
   const authService = useAuthContext();
-  const { action, loading, status } = useAction({
-    fn: async () => {
+  const { data, isLoading, refetch } = useQuery({
+    queryKey: ["token", code, state],
+    queryFn: async () => {
       return await authService.authorize(code, state);
-    },
-    onSuccess: async (res) => {
-      updateLoginSuccess(true);
-      navigate("/undiscovered");
     },
   });
 
+  const status = isLoading ? "loading" : data?.success === true ? "success" : "error";
+
   useEffect(() => {
-    action();
-  }, []);
+    if (isLoading) return;
+    if (status !== "success") return;
+    updateLoginSuccess(true);
+    navigate("/undiscovered");
+  }, [isLoading, data]);
 
   return (
     <div className='flex flex-col gap-4 items-center w-full'>
-      {status === "loading" ? (
-        <p className='text-center'>Signing in. Please wait...</p>
-      ) : status !== "success" ? (
-        <>
-          <p className='text-center'>Authorization failed! Please try again.</p>
-          <Button fullWidth shape='rounded' onClick={action}>
+      <p className='text-center'>
+        {status === "loading"
+          ? "Signing in. Please wait..."
+          : status !== "success"
+            ? "Authorization failed. Please try again."
+            : null}
+      </p>
+      {status !== "success" && status !== "loading" ? (
+        <div className='flex flex-col w-full gap-2'>
+          <Button fullWidth shape='rounded' onClick={async () => await refetch()}>
             Retry
           </Button>
-        </>
+          <Button fullWidth shape='rounded' variant='ghost' onClick={close}>
+            Cancel
+          </Button>
+        </div>
       ) : null}
     </div>
   );

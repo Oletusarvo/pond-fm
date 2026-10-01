@@ -109,4 +109,47 @@ export const audius = {
       },
     },
   },
+  auth: {
+    async getToken(code: string, verifier: string) {
+      const res = await fetch("https://api.audius.co/v1/oauth/token", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          grant_type: "authorization_code",
+          code,
+          code_verifier: verifier,
+          client_id: API_KEY,
+          redirect_uri: REDIRECT_URI,
+        }),
+      });
+      if (!res.ok) {
+        const text = await res.text();
+        console.log(res.statusText, text);
+        throw new Error("Failed to fetch audius token!");
+      }
+      const token = await res.json();
+      return token as {
+        access_token: string;
+      };
+    },
+    async me(access_token: string) {
+      const res = await fetch("https://api.audius.co/v1/me", {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${access_token}`,
+        },
+      });
+
+      if (!res.ok) {
+        const text = await res.text();
+        console.log(res.statusText, text);
+        throw new Error("Failed to exchange access token for user data!");
+      }
+
+      const { data: audiusUser } = await res.json();
+      return audiusUser;
+    },
+  },
 };
