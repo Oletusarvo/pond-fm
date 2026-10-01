@@ -5,7 +5,7 @@ import { findUserById } from "../../../../DAL/users/find-user-by-id";
 import { services } from "../../../../container";
 import { createNewUser } from "../../../../DAL/users/create-new-user";
 import { serverConfig } from "../../../../server-config";
-import { audius } from "../../../../audius.config";
+import { audius, REDIRECT_URI } from "../../../../audius.config";
 
 export const getAuthTokenHandler = createHandler(async (req, res) => {
   const { code, state } = req.query as { code: string; state: string };
@@ -26,7 +26,7 @@ export const getAuthTokenHandler = createHandler(async (req, res) => {
       code,
       code_verifier: loginSession.verifier,
       client_id: loadEnvVariable("AUDIUS_API_KEY"),
-      redirect_uri: "http://localhost:3002/api/v1/auth/token",
+      redirect_uri: REDIRECT_URI,
     }),
   });
   if (!tokenResponse.ok) {
