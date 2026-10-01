@@ -69,6 +69,6 @@ export const getAuthTokenHandler = createHandler(async (req, res) => {
     },
   );
   res.cookie(serverConfig.accessTokenName, session, serverConfig.sessionCookieSettings);
-
-  return res.redirect([process.env.FRONT_END_URL, "undiscovered"].join("/"));
+  const frontEndUrl = process.env.FRONT_END_URL || "http://localhost:5173";
+  return res.redirect([frontEndUrl, "undiscovered"].join("/"));
 });

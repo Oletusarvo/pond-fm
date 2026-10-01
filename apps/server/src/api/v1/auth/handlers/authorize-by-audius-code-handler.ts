@@ -30,6 +30,7 @@ export const authorizeByAudiusCodeHandler = createHandler(async (req: TRequest, 
       `&code_challenge_method=S256` +
       `&code_challenge=${challenge}` +
       `&state=${state}` +
-      `&redirect_uri=${encodeURIComponent(REDIRECT_URI)}`,
+      `&redirect_uri=${encodeURIComponent(REDIRECT_URI)}` +
+      `&response_mode=query`,
   );
 });
