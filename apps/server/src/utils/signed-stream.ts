@@ -30,7 +30,7 @@ async function createLocalSignedStreamUrl(trackId: string) {
 async function createCustomSignedStreamUrl(key: string) {
   const command = {
     key,
-    clientId: loadEnvVariable("LOCAL_UPLOAD_CLIENT_ID"),
+    clientId: loadEnvVariable("LOCAL_UPLOAD_CLIENT_ID", false),
   };
   const secretKey = loadEnvVariable("URL_SIGN_SECRET");
   const signature = signCommand(command, secretKey);
