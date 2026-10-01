@@ -13,7 +13,7 @@ import { getAuthTokenHandler } from "./handlers/get-auth-token-handler";
 const router = getRouter();
 
 router.get("/audius/authorize", authorizeByAudiusCodeHandler);
-router.get("/token", getAuthTokenHandler);
+router.get("/audius/token", getAuthTokenHandler);
 
 /**
  * POST /auth/authorize

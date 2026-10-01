@@ -42,8 +42,8 @@ export function useAuth() {
     return res;
   };
 
-  const authorize = async (code: string) => {
-    const res = await api.auth.authorize(code);
+  const authorize = async (code: string, state: string) => {
+    const res = await api.auth.audius.getToken(code, state);
     if (res.success) {
       await refetchSession();
     }

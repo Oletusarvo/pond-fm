@@ -8,7 +8,11 @@ import { useSubmit } from "../../../hooks/use-submit";
 import { ErrorMessage, SuccessMessage } from "../../../components/helper-message";
 import { createProvider } from "../../../utils/create-provider";
 import { Lock, LockOpen } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { useAction } from "../../../hooks/use-action";
+import { api } from "../../../utils/api/api";
+import { Spinner } from "../../../components/spinner";
+import { apiService } from "../../../utils/api/api-service";
 
 const [LoginProvider, useLoginContext] = createProvider({
   contextName: "LoginContext",
@@ -80,64 +84,39 @@ function CredentialsContent() {
 
   const authService = useAuthContext();
 
-  const { submit, status, loading } = useSubmit({
-    fetchFn: async (payload) => {
-      const credentials = Object.fromEntries(payload) as {
-        email: string;
-      };
+  const login = () => {
+    const url = import.meta.env.PROD
+      ? "https://pond-fm-api.onrender.com/api/v1/auth/audius/authorize"
+      : "http://localhost:3002/api/v1/auth/audius/authorize";
+    window.location.href = url;
+  };
 
-      return await authService.requestAuthorization(credentials);
-    },
-    onError: async (res) => {
-      return res.error as string;
-    },
-    onSuccess: () => {
-      updateStep("authorize");
-    },
-  });
   return (
     <>
-      <p>
-        We handle logins via magic-links at the moment. Please provide an email into which you'd
-        like us to send it.
+      <p className='text-center'>
+        Please continue by clicking the button below. You will be redirected to the Audius login
+        screen. Amphitune will never have access to your credentials.
         <br />
-        <Link to='/signup' className='text-primary'>
-          Don't have an account? Create one here.
+        <Link to='https://audius.co/signup/create-email' className='text-primary'>
+          Don't have an Audius account? Create one here.
         </Link>
       </p>
-      <Form onSubmit={submit}>
-        <Form.Group label='Email'>
-          <Input name='email' placeholder='Enter your email...' type='email' required />
-        </Form.Group>
 
-        <div className='flex flex-col gap-2 w-full items-center'>
-          <LoaderButton
-            disabled={loading || status === "success"}
-            loading={loading}
-            type='submit'
-            fullWidth
-            paddingEnabled
-            variant='contained'
-            shape='rounded'
-          >
-            Login
-          </LoaderButton>
-          <Button
-            disabled={status === "success" || loading}
-            type='button'
-            onClick={close}
-            fullWidth
-            paddingEnabled
-            variant='ghost'
-            shape='rounded'
-          >
-            Cancel
-          </Button>
-        </div>
-        {status === "auth:user-not-found" ? (
-          <ErrorMessage>A user by that email does not exist.</ErrorMessage>
-        ) : null}
-      </Form>
+      <div className='flex flex-col gap-2 w-full items-center'>
+        <Button onClick={login} fullWidth paddingEnabled variant='contained' shape='rounded'>
+          Login With Audius
+        </Button>
+        <Button
+          type='button'
+          onClick={close}
+          fullWidth
+          paddingEnabled
+          variant='ghost'
+          shape='rounded'
+        >
+          Cancel
+        </Button>
+      </div>
     </>
   );
 }
@@ -146,67 +125,36 @@ function AuthorizeStep() {
   const { close, updateLoginSuccess } = useLoginContext();
   const [params] = useSearchParams();
   const code = params.get("code");
+  const state = params.get("state");
 
   const navigate = useNavigate();
   const authService = useAuthContext();
-  const { submit, loading, status } = useSubmit({
-    fetchFn: async (payload) => {
-      const data = Object.fromEntries(payload) as { code: string };
-      return await authService.authorize(data.code);
+  const { action, loading, status } = useAction({
+    fn: async () => {
+      return await authService.authorize(code, state);
     },
-    onSuccess: () => {
+    onSuccess: async (res) => {
       updateLoginSuccess(true);
-      const callbackUrl = params.get("callback");
-      navigate(callbackUrl || "/undiscovered");
+      navigate("/undiscovered");
     },
   });
 
-  const buttonsDisabled = loading || status === "success";
+  useEffect(() => {
+    action();
+  }, []);
+
   return (
-    <>
-      <p>To sign in, please submit the code we sent you.</p>
-      <Form onSubmit={submit}>
-        <Form.Group label='Code'>
-          <Input
-            name='code'
-            type='text'
-            required
-            defaultValue={code}
-            placeholder='Please paste the code we sent you here...'
-          />
-        </Form.Group>
-        <div className='flex flex-col gap-2 w-full'>
-          <LoaderButton
-            loading={loading}
-            disabled={buttonsDisabled}
-            fullWidth
-            paddingEnabled
-            shape='rounded'
-            type='submit'
-          >
-            {status !== "error" ? "Submit" : "Try Again"}
-          </LoaderButton>
-          <Button
-            disabled={buttonsDisabled}
-            variant='ghost'
-            fullWidth
-            paddingEnabled
-            shape='rounded'
-            onClick={close}
-          >
-            Cancel
+    <div className='flex flex-col gap-4 items-center w-full'>
+      {status === "loading" ? (
+        <p className='text-center'>Signing in. Please wait...</p>
+      ) : status !== "success" ? (
+        <>
+          <p className='text-center'>Authorization failed! Please try again.</p>
+          <Button fullWidth shape='rounded' onClick={action}>
+            Retry
           </Button>
-        </div>
-      </Form>
-      {status === "success" ? (
-        <SuccessMessage>
-          Authorization succeeded! Please wait while we redirect you...
-        </SuccessMessage>
-      ) : status === "error" ? (
-        <ErrorMessage>Authorization failed!</ErrorMessage>
-      ) : status === "exception" ? (
-        <ErrorMessage>Something went wrong!</ErrorMessage>
+        </>
       ) : null}
-    </>
+    </div>
   );
 }

@@ -109,7 +109,7 @@ const AuthControls = React.memo(function ({
 
 function GoProButton() {
   const { session } = useAuthContext();
-  return session.user.subscription.plan_id !== "pro" ? (
+  return session?.user.subscription.plan_id !== "pro" ? (
     <ToggleProvider>
       <ToggleProvider.Trigger>
         <Button variant='text' color='inherit'>

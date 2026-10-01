@@ -63,9 +63,20 @@ export class AuthApi {
   }
 
   audius = {
-    async login() {
+    async authorize() {
       const req = requestBuilder.get().includeCredentials().build();
-      await fetch(Api.withEndpoint("auth/audius/authorize"), req);
+      const url = new URL(Api.withEndpoint("auth/audius/authorize"));
+
+      const res = await fetch(url, req);
+      return await Api.asApiResponse(res);
+    },
+    async getToken(code: string, state: string) {
+      const req = requestBuilder.get().includeCredentials().build();
+      const url = new URL(Api.withEndpoint("auth/audius/token"));
+      url.searchParams.set("code", code);
+      url.searchParams.set("state", state);
+      const res = await fetch(url, req);
+      return await Api.asApiResponse(res);
     },
   };
 }
