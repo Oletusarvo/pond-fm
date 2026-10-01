@@ -20,7 +20,7 @@ export function HomeScreen() {
     } else if (status === "unauthenticated") {
       //await audiusSdk.oauth.login({ scope: "write" });
       const url = import.meta.env.PROD
-        ? "https://pond-fm.onrender.com/api/v1/auth/audius/authorize"
+        ? "https://pond-fm-api.onrender.com/api/v1/auth/audius/authorize"
         : "http://localhost:3002/api/v1/auth/audius/authorize";
       window.location.href = url;
     }
