@@ -55,7 +55,6 @@ export function AudioPlayer() {
 
   return (
     <div className='flex gap-2 w-full h-full items-center'>
-      <PlayButton state={playbuttonState} onClick={onPlayButtonClicked} />
       <PlaybackTrack
         duration={post?.duration}
         currentPosition={playbackPosition}

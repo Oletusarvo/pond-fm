@@ -15,20 +15,29 @@ import { ReportModal } from "./report-modal";
 import { usePlaybackContext } from "../../audio/providers/playback-provider";
 import { useClassName } from "../../../hooks/use-class-name";
 import { Spinner } from "../../../components/spinner";
+import { trackToPlayback } from "../../../utils/post-to-playback";
 
 /**The main component responsible for rendering posts. Includes an AudioPlayer, stats and other information.
  * Must be a child of a PostProvider.
  */
 export function Post({ ref }: { ref?: React.RefObject<any> }) {
   const { track: post } = useTrackContext();
-  const { currentPlayback } = usePlaybackContext();
+  const { currentPlayback, togglePlayback, updateCurrentPlayback } = usePlaybackContext();
   const isPlaying = currentPlayback?.track.id === post?.id;
   const containerClassName = useClassName(
     "flex py-2 rounded-md w-full flex-col gap-1 items-start transition-colors duration-500",
     isPlaying ? "bg-primary/5" : "bg-white",
   );
+
+  const trackId = post?.id;
+  const playbackTrackId = currentPlayback?.track.id;
+  const onClick = () => {
+    if (playbackTrackId !== trackId) {
+      updateCurrentPlayback(trackToPlayback(post));
+    }
+  };
   return (
-    <div ref={ref} className={containerClassName}>
+    <div ref={ref} className={containerClassName} onClick={onClick}>
       <Content />
     </div>
   );
@@ -72,7 +81,7 @@ function Content() {
         </div>
       </div>
       <div className='flex gap-2 w-full items-center'>
-        <img src={post?.artwork} className='w-16 h-16 rounded-lg' />
+        <img src={post?.artwork} className='w-24 h-24 rounded-lg' />
         <AudioPlayer />
       </div>
 
