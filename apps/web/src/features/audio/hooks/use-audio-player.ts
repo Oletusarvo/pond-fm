@@ -58,10 +58,17 @@ export function useAudioPlayer() {
 
   const updatePlaybackState = (newState: PlaybackReducerState["state"]) => {
     setCurrentPlayback((prev) => {
-      return {
-        ...prev,
-        state: newState,
-      };
+      if (newState === "buffering") {
+        return {
+          ...prev,
+          status: newState,
+        };
+      } else {
+        return {
+          ...prev,
+          state: newState,
+        };
+      }
     });
   };
 

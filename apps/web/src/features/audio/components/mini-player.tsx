@@ -1,5 +1,5 @@
-import { usePlaybackContext } from '../providers/playback-provider';
-import { useScrobbleContext } from '../providers/scrobble-provider';
+import { usePlaybackContext } from "../providers/playback-provider";
+import { useScrobbleContext } from "../providers/scrobble-provider";
 
 export function MiniPlayer() {
   const playbackService = usePlaybackContext();
@@ -7,21 +7,21 @@ export function MiniPlayer() {
 
   return (
     <audio
-      onPlay={() => playbackService.updatePlaybackState('playing')}
+      onPlay={() => playbackService.updatePlaybackState("playing")}
       onPause={() => {
-        playbackService.updatePlaybackState('paused');
+        playbackService.updatePlaybackState("paused");
         scrobbleService.resetLastTimeUpdate();
       }}
       onEnded={() => {
-        playbackService.updatePlaybackState('paused');
+        playbackService.updatePlaybackState("paused");
       }}
-      onLoad={() => playbackService.updatePlaybackState('buffering')}
-      onTimeUpdate={e => {
+      onLoad={() => playbackService.updatePlaybackState("buffering")}
+      onTimeUpdate={(e) => {
         //playbackService.updatePlaybackPosition(e.currentTarget.currentTime);
         scrobbleService.updateTimeListened();
       }}
-      onLoadedMetadata={e => {
-        playbackService.updatePlaybackState('playing');
+      onLoadedMetadata={(e) => {
+        playbackService.updatePlaybackState("playing");
         scrobbleService.reset();
       }}
       ref={playbackService.audioRef}
