@@ -2,24 +2,14 @@ import { DBContext } from "../types/db-context";
 import { Knex } from "knex";
 import { PostRepository } from "../repositories/post-repository";
 import { serviceError } from "../utils/service-error";
-import {
-  ServiceErrorResponse,
-  ServiceResponse,
-  ServiceSuccessResponse,
-} from "../types/service-response";
+import { ServiceErrorResponse, ServiceSuccessResponse } from "../types/service-response";
 
-import { v4 } from "uuid";
-
-import { createTrackLike } from "../DAL/posts/create-track-like";
-import { deleteTrackLike } from "../DAL/posts/delete-track-like";
+import { createTrackLike } from "../DAL/tracks/create-track-like";
+import { deleteTrackLike } from "../DAL/tracks/delete-track-like";
 import { getPostQuery } from "../DAL/posts/get-post-query";
 import { tablenames } from "../tablenames";
-import { db } from "../db-config";
-import { withTrack } from "../DAL/posts/with/with-track";
-import { TUpload } from "@pondfm/app-shared/dist/types/upload";
-import { playCountThresholdSeconds, TTrack } from "@pondfm/app-shared";
-import { createJWT, tryCatch } from "@pondfm/server-utils";
-import { audius, audiusSdk } from "../audius.config";
+import { playCountThresholdSeconds } from "@pondfm/app-shared";
+import { createJWT } from "@pondfm/server-utils";
 
 /**Responsible for handling business-logic related to individual posts and tracks. */
 export class PostService {

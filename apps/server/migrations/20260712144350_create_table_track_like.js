@@ -17,6 +17,7 @@ exports.up = function (knex) {
       .inTable("auth.user_data")
       .onDelete("CASCADE")
       .onUpdate("CASCADE");
+    tbl.timestamp("created_at").defaultTo(knex.fn.now());
     tbl.primary(["track_id", "user_id"]);
   });
 };

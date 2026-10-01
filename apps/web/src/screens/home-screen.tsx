@@ -29,23 +29,27 @@ export function HomeScreen() {
   return (
     <>
       <section className='h-pad w-full flex flex-col items-center justify-center py-16 gap-4'>
-        <div className='flex flex-col xs:w-full md:w-[50%] items-center gap-2'>
+        <div className='flex flex-col xs:w-full md:w-[50%] items-center gap-8'>
           <div className='flex w-full justify-center'>
             <div className='w-32 h-32 flex items-center justify-center rounded-full bg-primary/10 overflow-hidden relative'>
               <img src='/assets/frog-1.png' className='w-24 h-24 z-10' loading='lazy' />
             </div>
           </div>
-          <div className='bg-linear-to-r from-blue-500 to-primary bg-clip-text'>
-            <h1 className='text-4xl font-bold text-transparent'>{appName}</h1>
+          <div className='flex flex-col items-center leading-2'>
+            <div className='bg-linear-to-r from-blue-500 to-primary bg-clip-text'>
+              <h1 className='text-4xl font-bold text-transparent'>{appName}</h1>
+            </div>
+            <small>Built on Audius</small>
           </div>
-
-          <span className='text-center text-base'>
-            A music sharing platform where all tracks get a fair shot at getting heard.
-          </span>
-          <div className='text-red-900 text-sm p-2 border border-red-500/20 bg-red-500/10 rounded-md text-center'>
-            The service has not been released yet. This page is a demo.
+          <div className='flex flex-col gap-1 items-center'>
+            <span className='text-center text-base'>
+              A music sharing platform where all tracks get a fair shot at getting heard.
+            </span>
+            <div className='text-red-900 text-sm p-2 border border-red-500/20 bg-red-500/10 rounded-md text-center'>
+              The service has not been released yet. This page is a demo.
+            </div>
           </div>
-          <div className='flex gap-2 mt-4'>
+          <div className='flex gap-2'>
             <Button
               onClick={heroButtonAction}
               paddingEnabled
@@ -69,9 +73,9 @@ export function HomeScreen() {
         <SectionHeading>What is {appName}?</SectionHeading>
 
         <p className='text-base 2xl:w-[70%]'>
-          {appName} is a music sharing platform built on top of <strong>Audius</strong>, with a
-          simple idea: your music should get a chance to be heard regardless of how popular you are.
-          That's where our <strong>Undiscovered</strong> feed comes in. Any track with fewer than{" "}
+          {appName} is a thin discovery layer built on top of <strong>Audius</strong>, with a simple
+          idea: your music should get a chance to be heard regardless of how popular you are. That's
+          where our <strong>Undiscovered</strong> feed comes in. Any track with fewer than{" "}
           {defaults.plans.free.unique_listener_threshold} unique listeners (or{" "}
           {defaults.plans.pro.unique_listener_threshold} for Pro accounts), stays there, oldest
           first, until it reaches it. Once your track crosses that threshold, you've genuinely been
@@ -117,50 +121,39 @@ export function HomeScreen() {
         <SectionHeading>Account Types</SectionHeading>
         <p className='mb-4 2xl:w-[70%]'>
           {appName} has two account tiers: Free and Pro. Pro users receive bigger unique listener
-          thresholds and storage quotas for building an audience and a catalogue, while supporting
-          the platform. Once you have an account, please test the platform out, and if you like it,
-          consider upgrading to Pro. The quotas and limits on each tier are preliminary; they may be
-          raised in the future depending how the {appName} experiment performs.
+          thresholds for building an audience, while supporting the platform. Once you have logged
+          in, please test the platform out, and if you like it, consider upgrading to Pro. The
+          quotas and limits on each tier are preliminary; they may be raised in the future depending
+          how the {appName} experiment performs.
         </p>
         <div className='grid xs:grid-cols-1 md:grid-cols-2 gap-4'>
           <PlanItem
             priceInSubunits={0}
             title='Free'
             listContent={[
-              `${defaults.plans.free.unique_listener_threshold} unique listeners on the Undiscovered feed.`,
-              `${defaults.plans.free.storage} of storage for your tracks.`,
+              `${defaults.plans.free.unique_listener_threshold} unique listeners per track on the Undiscovered feed.`,
               "Occasional ads among the feeds to help keep us afloat.",
             ]}
           >
-            A basic plan for your artistry. Provides enough free storage space to make a difference,
-            and a reasonable threshold for unique listeners for your tracks. We recommend free plans
-            to upload mp3 files to make the most of their quota. All new accounts start on this
-            plan.
+            A basic plan for your artistry. Provides a reasonable threshold for unique listeners for
+            your tracks to get heard. The feeds will include occasional ads to help us pay our
+            bills.
           </PlanItem>
           <PlanItem
             priceInSubunits={500}
             title='Pro'
             listContent={[
-              `${defaults.plans.pro.unique_listener_threshold} unique listeners on the Undiscovered feed.`,
-              `${defaults.plans.pro.storage} of storage for your tracks.`,
+              `${defaults.plans.pro.unique_listener_threshold} unique listeners per track on the Undiscovered feed.`,
               "No ads ever.",
             ]}
           >
-            For those who don't want to run out of space anytime soon, want to keep their tracks
-            around on the undiscovered-feed a little longer, and want to support the platform.
-            Upgrading to this plan can be done once you have logged in for the first time.
+            For those who hate seeing ads, want to keep their tracks around on the undiscovered-feed
+            a little longer, and want to support the platform. Upgrading to this plan can be done
+            once you have logged in for the first time.
           </PlanItem>
         </div>
       </section>
-      <section className='h-pad py-16 flex-1 flex flex-col bg-primary/10'>
-        <SectionHeading>Early Access</SectionHeading>
-        <p>
-          {appName} is just now getting started. We have implemented the bare minimum for the idea
-          to be viable and provide users its core value, thus the service does not support comments,
-          profile- or track images, yet. If the service turns out to work out, these will be added
-          later.
-        </p>
-      </section>
+
       <footer className='bg-gray-800 w-full flex flex-col gap-8 py-32 h-pad text-white xs:items-center md:justify-start md:items-start'>
         <div className='flex flex-col gap-8'>
           <div className='flex flex-col'>
@@ -217,7 +210,9 @@ export function HomeScreen() {
             &copy; Artwork - Hayley Jackson
           </Link>
         </div>
-        <img src='/assets/audius-logo-black.webp' width='150px' className='invert' />
+        <Link to='https://audius.co/' target='_blank'>
+          <img src='/assets/audius-logo-black.webp' width='130px' className='invert' />
+        </Link>
       </footer>
     </>
   );

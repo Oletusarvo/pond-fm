@@ -9,17 +9,29 @@ import { getCursor } from "../../../../utils/get-cursor";
 import { applyCursor } from "../../../../DAL/posts/utils/apply-cursor";
 import { resolveQueryWithCursor } from "../../../../DAL/posts/utils/resolve-query-with-cursor";
 import { getDistinctPostQuery } from "../../../../DAL/posts/get-distinct-post-query";
+import { getTrackQuery } from "../../../../DAL/tracks/get-track-query";
+import { includeAudiusTrackData } from "../../../../utils/get-feed-handler";
 
 export const getSearchFeedHandler = createHandler(async (req: TAuthenticatedRequest, res) => {
   const q = req.query.q as string;
+  const session = req.session;
+  const cursor = getCursor(req);
 
   if (q) {
     const params = q.split(" ");
-    const session = req.session;
-    const query = getDistinctPostQuery(db, session);
-    onlyCanonicalTracks(query);
-    selectTrack(query);
-    selectPost(query);
+    const query = getTrackQuery(db, { session });
+    const result = await includeAudiusTrackData(async () => {
+      const query = getTrackQuery(db, { session });
+      onlyCanonicalTracks(query);
+      applyCursor(query, {
+        dir: "desc",
+        idColumn: "post_id",
+        timestampColumn: "created_at",
+        cursor,
+      });
+      return await resolveQueryWithCursor(query, { pageSize: 10 });
+    });
+
     params.forEach((param) => {
       query.where(function () {
         const str = `%${param}%`;
@@ -27,7 +39,6 @@ export const getSearchFeedHandler = createHandler(async (req: TAuthenticatedRequ
       });
     });
 
-    const cursor = getCursor(req);
     applyCursor(query, {
       cursor,
       timestampColumn: "track.created_at",

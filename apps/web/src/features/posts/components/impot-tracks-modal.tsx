@@ -1,29 +1,107 @@
+import { Link } from "react-router-dom";
 import { Button, LoaderButton } from "../../../components/button";
 import { Modal } from "../../../components/modal";
 import { useAction } from "../../../hooks/use-action";
 import { useToggleContext } from "../../../providers/toggle-provider";
 import { api } from "../../../utils/api/api";
+import { ReactNode } from "react";
+import { ExternalLink } from "lucide-react";
+import { useInvalidateFeeds } from "../hooks/use-invalidate-feed";
+import { Spinner } from "../../../components/spinner";
+import { debounce } from "../../../utils/debounce";
+import React from "react";
 
 export function ImportTracksModal() {
   const { toggleState } = useToggleContext();
   const onClose = () => toggleState(false);
+
+  return (
+    <Modal title='Import Tracks' onClose={onClose}>
+      <Content onClose={onClose} />
+    </Modal>
+  );
+}
+
+function Content({ onClose }) {
+  const invalidateFeeds = useInvalidateFeeds();
   const { action, status, loading } = useAction({
-    fn: async () => {
+    fn: debounce(async () => {
       return await api.tracks.importFromAudius();
-    },
-    onSuccess: () => {
-      onClose();
+    }, 700),
+    onSuccess: async () => {
+      await invalidateFeeds();
+      setTimeout(() => onClose(), 1200);
     },
     onError: (res) => {
       console.log(res.error);
     },
   });
 
+  const upload = () => {
+    window.open("https://audius.co/upload", "_blank");
+  };
   return (
-    <Modal title='Import Audius Tracks' onClose={onClose}>
-      <LoaderButton fullWidth loading={loading} disabled={loading} onClick={action}>
-        Import Your Audius Tracks
-      </LoaderButton>
-    </Modal>
+    <div className='flex flex-col gap-2 w-full'>
+      <div className='mb-8 w-full'>
+        <h2 className='text-xl font-semibold'>Import Tracks</h2>
+        <p>Import your entire catalogue from Audius to Amphitune, or upload to Audius. </p>
+      </div>
+      <MethodButton
+        disabled={loading || status === "success"}
+        onClick={action}
+        title='Import All Tracks'
+        description={
+          <div className='flex flex-col items-start gap-1'>
+            <span>Import your entire catalogue from Audius to Amphitune.</span>
+            {loading ? (
+              <div className='p-2 rounded-md bg-primary/10 border border-primary/20 flex items-center gap-2'>
+                <Spinner /> <span>Importing tracks. Please wait...</span>
+              </div>
+            ) : status === "success" ? (
+              <div className='p-2 rounded-md bg-primary/10 border border-primary/20 flex items-center gap-2'>
+                <span>Import successful!.</span>
+              </div>
+            ) : status === "error" ? (
+              <div className='p-2 rounded-md bg-red-500/10 border border-red-500/20 flex items-center gap-2'>
+                <Spinner /> <span>Track import failed!</span>
+              </div>
+            ) : null}
+          </div>
+        }
+      />
+
+      <MethodButton
+        disabled={loading || status === "success"}
+        onClick={upload}
+        title={
+          <div className='flex items-center gap-1'>
+            <span>Upload Track</span> <ExternalLink size='1rem' />
+          </div>
+        }
+        description={
+          <span>
+            Upload a new track. You will be taken to the Audius upload-form. Amphitune does
+            currently not automatically synchronize your catalogue; you'll need to manually
+            re-import it on this form after you're done.
+          </span>
+        }
+      />
+    </div>
+  );
+}
+
+function MethodButton({
+  title,
+  description,
+  ...props
+}: Omit<React.ComponentProps<"button">, "title"> & { title: ReactNode; description: ReactNode }) {
+  return (
+    <button
+      {...props}
+      className='rounded-md border border-primary text-primary w-full p-4 cursor-pointer text-start'
+    >
+      <h3 className='font-semibold'>{title}</h3>
+      {React.isValidElement(description) ? description : <p>{description}</p>}
+    </button>
   );
 }

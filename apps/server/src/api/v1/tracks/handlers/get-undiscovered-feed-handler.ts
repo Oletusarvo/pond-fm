@@ -6,7 +6,7 @@ import { getCursor } from "../../../../utils/get-cursor";
 import { createHandler } from "@pondfm/server-utils";
 import { TAuthenticatedRequest } from "../../../../types/request";
 import { getUndiscoveredTracks } from "../../../../DAL/tracks/get-undiscovered-tracks";
-import { getFeedHandler } from "../../../../utils/get-feed-handler";
+import { includeAudiusTrackData } from "../../../../utils/get-feed-handler";
 
 /**Returns the main track feed. */
 export const getUndiscoveredTracksHandler = createHandler(
@@ -17,7 +17,7 @@ export const getUndiscoveredTracksHandler = createHandler(
       moods?: string[] | string;
     };
     const session = req.session || null;
-    const json = await getFeedHandler(
+    const json = await includeAudiusTrackData(
       async () =>
         await getUndiscoveredTracks(db, {
           session,

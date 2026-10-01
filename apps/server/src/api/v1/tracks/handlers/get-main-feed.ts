@@ -6,7 +6,7 @@ import { asArray } from "../../../../utils/as-array";
 import { getCursor } from "../../../../utils/get-cursor";
 import { createHandler } from "@pondfm/server-utils";
 import { TAuthenticatedRequest } from "../../../../types/request";
-import { getFeedHandler } from "../../../../utils/get-feed-handler";
+import { includeAudiusTrackData } from "../../../../utils/get-feed-handler";
 import { getNewTracks } from "../../../../DAL/tracks/get-new-tracks";
 
 /**Returns a feed of tracks sorted by newest first. */
@@ -17,7 +17,7 @@ export const getMainFeedHandler = createHandler(async (req: TAuthenticatedReques
     moods?: string[];
   };
   const session = req.session;
-  const result = await getFeedHandler(
+  const result = await includeAudiusTrackData(
     async () =>
       await getNewTracks(db, {
         session,

@@ -1,7 +1,7 @@
 import {} from "../../../../container";
 import { db } from "../../../../db-config";
 import { createNotification } from "../../../../DAL/notifications/create-notification";
-import { createTrackLike } from "../../../../DAL/posts/create-track-like";
+import { createTrackLike } from "../../../../DAL/tracks/create-track-like";
 import { tablenames } from "../../../../tablenames";
 
 import { createHandler, tryCatch } from "@pondfm/server-utils";

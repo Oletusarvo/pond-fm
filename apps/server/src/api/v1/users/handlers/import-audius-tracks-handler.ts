@@ -27,15 +27,19 @@ export const importAudiusTracksHandler = createHandler(async (req: TAuthenticate
       });
       const insertedTracks = await trx(tablenames.tracks)
         .insert(tracksToInsert)
+        .onConflict()
+        .ignore()
         .returning("audius_track_id");
-      await trx(tablenames.posts).insert(
-        insertedTracks.map((track) => {
-          return {
-            track_id: track.audius_track_id,
-            author_id: session.user.audius_user_id,
-          };
-        }),
-      );
+      if (insertedTracks.length > 0) {
+        await trx(tablenames.posts).insert(
+          insertedTracks.map((track) => {
+            return {
+              track_id: track.audius_track_id,
+              author_id: session.user.audius_user_id,
+            };
+          }),
+        );
+      }
     }
   });
   return res.end();

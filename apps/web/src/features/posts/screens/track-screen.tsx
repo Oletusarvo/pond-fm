@@ -34,7 +34,7 @@ export function TrackScreen() {
   }
 
   return (
-    <UserProvider id={data.track.author.id}>
+    <UserProvider id={data.author.id}>
       <Content trackId={trackId} />
     </UserProvider>
   );

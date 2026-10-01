@@ -9,7 +9,7 @@ import { getCursor } from "../../../../utils/get-cursor";
 import { resolveQueryWithCursor } from "../../../../DAL/posts/utils/resolve-query-with-cursor";
 import { onlyCanonicalTracks } from "../../../../DAL/tracks/filter/only-canonical-tracks";
 import { getUndistinctPostQuery } from "../../../../DAL/posts/get-undistinct-post-query";
-import { getFeedHandler } from "../../../../utils/get-feed-handler";
+import { includeAudiusTrackData } from "../../../../utils/get-feed-handler";
 import { getAuthorLikedTracks } from "../../../../DAL/tracks/get-author-liked-tracks";
 
 /**Returns tracks liked by a specific user. */
@@ -17,7 +17,7 @@ export const getAuthorLikedFeedHandler = createHandler(async (req: TAuthenticate
   const cursor = getCursor(req);
   const authorId = req.params.authorId as string;
   const session = req.session;
-  const json = await getFeedHandler(
+  const json = await includeAudiusTrackData(
     async () =>
       await getAuthorLikedTracks(db, {
         cursor,

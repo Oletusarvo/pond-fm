@@ -42,9 +42,6 @@ export function MainHeader() {
               Followed
             </ResponsiveLink>
           ) : null}
-          <ResponsiveLink to='/search' className='font-semibold'>
-            Search
-          </ResponsiveLink>
         </nav>
       </div>
 
@@ -192,7 +189,7 @@ function UserIcon() {
 }
 
 function UploadIcon() {
-  return <HeaderIcon icon={ArrowDownCircle} />;
+  return <HeaderIcon icon={ArrowUpCircle} />;
 }
 
 function HeaderIcon({ icon: Icon }: { icon: React.FC<any> }) {

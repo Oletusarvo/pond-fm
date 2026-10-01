@@ -1,6 +1,6 @@
 import { audius } from "../audius.config";
 
-export async function getFeedHandler(
+export async function includeAudiusTrackData(
   feedFn: () => Promise<{
     items: any[];
     cursor: string;
@@ -51,6 +51,8 @@ function mergeTracks(track, audiusTrack, author) {
     liked_by_me,
     is_canonical,
     created_at,
+    genre,
+    moods,
   } = track;
   let mergedTrack: Record<string, any> = {
     id,
@@ -66,6 +68,8 @@ function mergeTracks(track, audiusTrack, author) {
     liked_by_me,
     is_canonical,
     created_at,
+    genre,
+    moods,
     canonical_author: {
       id: user.id,
       username: user.name,

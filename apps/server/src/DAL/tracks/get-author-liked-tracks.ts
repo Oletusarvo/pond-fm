@@ -14,7 +14,7 @@ export async function getAuthorLikedTracks(
     .join({ likes: tablenames.likes }, "likes.track_id", "track.audius_track_id")
     .where({ "likes.user_id": config.author_id });
   applyCursor(query, {
-    dir: "desc",
+    dir: "asc",
     timestampColumn: "likes.created_at",
     idColumn: "post_id",
     cursor: config.cursor,

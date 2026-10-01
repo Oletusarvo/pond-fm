@@ -19,9 +19,17 @@ module.exports = function constructTrackView(knex, view) {
             "subscription.unique_listeners_threshold AS count",
           );
       })
+      .with("moods", (qb) => {
+        qb.select("track_id", knex.raw("JSON_AGG(type.label) AS moods"))
+          .from({ data: "post.mood_data" })
+          .join({ type: "post.mood_type" }, "type.id", "data.mood_id")
+          .groupBy("track_id");
+      })
       .from({ post: "post.post_data" })
       .join({ track: "post.track_data" }, "track.audius_track_id", "post.track_id")
       .join({ rup: "required_unique_plays" }, "rup.track_id", "track.audius_track_id")
+      .join({ genre: "post.genre_type" }, "genre.id", "track.genre_id")
+      .leftJoin({ moods: "moods" }, "moods.track_id", "track.audius_track_id")
       .select(
         "post.id AS post_id",
         "track.audius_track_id",
@@ -31,8 +39,9 @@ module.exports = function constructTrackView(knex, view) {
         "post.created_at",
         "track.updated_at",
         "track.play_count",
-        "track.genre_id",
         "track.unique_play_count",
+        "genre.label as genre",
+        "moods.moods",
         knex.raw(
           "(SELECT COUNT(*) FROM ?? AS likes WHERE likes.track_id = track.audius_track_id) AS like_count",
           ["post.track_like_data"],

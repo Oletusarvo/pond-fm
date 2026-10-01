@@ -128,9 +128,6 @@ export function UserHeader() {
             </div>
           </div>
         </div>
-        {status === "authenticated" && session?.user.audius_user_id === user.audius_user_id ? (
-          <ChartSelector />
-        ) : null}
       </div>
     </div>
   );

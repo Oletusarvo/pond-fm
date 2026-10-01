@@ -15,7 +15,7 @@ export function useAudioPlayer() {
   const audioRef = useRef<HTMLAudioElement>(null);
   const actionService = useActionContext();
 
-  /**Updates the current playback if it is different. */
+  /**Updates the current playback. */
   const updateCurrentPlayback = async (playback: TPlayback | null) => {
     //Pause playback
     audioRef.current?.pause();
@@ -30,32 +30,30 @@ export function useAudioPlayer() {
     });
 
     //Request a stream token.
-    if (currentPlayback?.track.id !== playback.track.id) {
-      await api.tracks
-        .requestStreamUrl(playback.track.id)
-        .then(async (res) => {
-          if (!res.success) {
-            throw new Error("Failed to start stream!");
-          }
+    await api.tracks
+      .requestStreamUrl(playback.track.id)
+      .then(async (res) => {
+        if (!res.success) {
+          throw new Error("Failed to start stream!");
+        }
 
-          const data = res.data;
+        const data = res.data;
 
-          setCurrentPlayback((prev) => {
-            return {
-              ...prev,
-              status: "ready",
-              streamUrl: data.streamUrl,
-            };
-          });
-        })
-        .catch((err) => {
-          console.log("Fetching of stream token failed!", err.message);
-          setCurrentPlayback((prev) => ({
-            ...prev,
-            status: "error",
-          }));
+        setCurrentPlayback({
+          ...playback,
+          status: "ready",
+          state: "paused",
+          streamUrl: data.streamUrl,
         });
-    }
+      })
+      .catch((err) => {
+        console.log("Fetching of stream token failed!", err.message);
+        setCurrentPlayback({
+          ...playback,
+          state: "paused",
+          status: "error",
+        });
+      });
   };
 
   const updatePlaybackState = (newState: PlaybackReducerState["state"]) => {

@@ -1,4 +1,3 @@
-import { ChevronDown, ChevronUp } from "lucide-react";
 import { usePlaybackTrack } from "../../audio/hooks/use-playback-track";
 
 type PlaybackTrackProps = {

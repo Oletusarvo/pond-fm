@@ -13,6 +13,7 @@ export const getNotificationsHandler = createHandler(async (req: TAuthenticatedR
     user: { audius_user_id: session.user.audius_user_id },
     cursor,
   });
+  if (result.items.length == 0) return res.status(204).json([]);
   const userIdSet = new Set<string>(
     result.items
       .map((n) => [n.recipient.audius_user_id, n.sender.audius_user_id])
