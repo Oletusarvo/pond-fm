@@ -21,10 +21,13 @@ export async function createNewUser(
     .merge()
     .returning("audius_user_id");
 
-  await ctx(tablenames.subscriptions).insert({
-    plan_id: "free",
-    user_id: user.audius_user_id,
-  });
+  await ctx(tablenames.subscriptions)
+    .insert({
+      plan_id: "free",
+      user_id: user.audius_user_id,
+    })
+    .onConflict()
+    .ignore();
 
   return (await findUserById(ctx, { audius_user_id: user.audius_user_id })) as Pick<
     TUser,
