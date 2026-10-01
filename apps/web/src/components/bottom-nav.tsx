@@ -21,9 +21,6 @@ export function BottomNav() {
           <Network size='1.2rem' />
         </NavButton>
       ) : null}
-      <NavButton to='/search' title='Search'>
-        <Search size='1.2rem' />
-      </NavButton>
     </footer>
   );
 }
