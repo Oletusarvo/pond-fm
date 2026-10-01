@@ -6,6 +6,7 @@ import { services } from "../../../../container";
 import { createNewUser } from "../../../../DAL/users/create-new-user";
 import { serverConfig } from "../../../../server-config";
 import { audius, REDIRECT_URI } from "../../../../audius.config";
+import { getDomainUrl } from "../../../../utils/get-domain-url";
 
 export const getAuthTokenHandler = createHandler(async (req, res) => {
   const { code, state } = req.query as { code: string; state: string };
@@ -68,5 +69,6 @@ export const getAuthTokenHandler = createHandler(async (req, res) => {
     },
   );
   res.cookie(serverConfig.accessTokenName, session, serverConfig.sessionCookieSettings);
-  return res.redirect("http://localhost:5173/undiscovered");
+
+  return res.redirect([process.env.FRONT_END_URL, "undiscovered"].join("/"));
 });
