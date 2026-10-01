@@ -48,41 +48,40 @@ function Content() {
   const { track: post } = useTrackContext();
   return (
     <>
-      <div className='flex justify-between w-full items-start'>
-        <div className='flex flex-col leading-none items-start'>
-          <PostAuthor />
-          <div className='flex items-center gap-2'>
-            <Title />
-            <ToggleProvider>
-              <ToggleProvider.Trigger>
-                <SettingsButton />
-              </ToggleProvider.Trigger>
-              <ToggleProvider.Target>
-                <UpdateTrackModal track={post.track} />
-              </ToggleProvider.Target>
-            </ToggleProvider>
-          </div>
-          {session?.user.id !== post.author.id ? (
-            <ToggleProvider>
-              <ToggleProvider.Trigger>
-                <Button variant='text' color='danger'>
-                  <span className='text-xs text-red-700'>Report</span>
-                </Button>
-              </ToggleProvider.Trigger>
-              <ToggleProvider.Target>
-                <ReportModal />
-              </ToggleProvider.Target>
-            </ToggleProvider>
-          ) : null}
-        </div>
-        <div className='flex flex-col items-end gap-1'>
-          <UploadTime />
-          <Tag value={post?.genre} size='small' selected={true} />
-        </div>
-      </div>
-      <div className='flex gap-2 w-full items-center'>
+      <div className='flex gap-1 w-full'>
         <img src={post?.artwork} className='w-24 h-24 rounded-lg' />
-        <AudioPlayer />
+        <div className='flex justify-between w-full items-start'>
+          <div className='flex flex-col leading-none items-start'>
+            <PostAuthor />
+            <div className='flex items-center gap-2'>
+              <Title />
+              <ToggleProvider>
+                <ToggleProvider.Trigger>
+                  <SettingsButton />
+                </ToggleProvider.Trigger>
+                <ToggleProvider.Target>
+                  <UpdateTrackModal track={post.track} />
+                </ToggleProvider.Target>
+              </ToggleProvider>
+            </div>
+            {session?.user.id !== post.author.id ? (
+              <ToggleProvider>
+                <ToggleProvider.Trigger>
+                  <Button variant='text' color='danger'>
+                    <span className='text-xs text-red-700'>Report</span>
+                  </Button>
+                </ToggleProvider.Trigger>
+                <ToggleProvider.Target>
+                  <ReportModal />
+                </ToggleProvider.Target>
+              </ToggleProvider>
+            ) : null}
+          </div>
+          <div className='flex flex-col items-end gap-1'>
+            <UploadTime />
+            <Tag value={post?.genre} size='small' selected={true} />
+          </div>
+        </div>
       </div>
 
       <div className='flex justify-between w-full'>
@@ -92,3 +91,7 @@ function Content() {
     </>
   );
 }
+
+<div className='flex gap-2 w-full items-center'>
+  <AudioPlayer />
+</div>;
