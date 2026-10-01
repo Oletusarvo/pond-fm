@@ -51,7 +51,7 @@ function Content() {
       <div className='flex gap-1 w-full'>
         <img src={post?.artwork} className='w-24 h-24 rounded-lg' />
         <div className='flex justify-between w-full items-start'>
-          <div className='flex flex-col leading-none items-start'>
+          <div className='flex flex-col leading-none items-start h-full'>
             <PostAuthor />
             <div className='flex items-center gap-2'>
               <Title />
@@ -76,6 +76,9 @@ function Content() {
                 </ToggleProvider.Target>
               </ToggleProvider>
             ) : null}
+            <div className='mt-auto'>
+              <StatsArea />
+            </div>
           </div>
           <div className='flex flex-col items-end gap-1'>
             <UploadTime />
@@ -85,7 +88,6 @@ function Content() {
       </div>
 
       <div className='flex justify-between w-full'>
-        <StatsArea />
         <TagList tags={post?.moods} size={"small"} color='secondary' />
       </div>
     </>
