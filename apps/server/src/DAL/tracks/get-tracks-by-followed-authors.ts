@@ -1,3 +1,4 @@
+import { db } from "../../db-config";
 import { tablenames } from "../../tablenames";
 import { DBContext } from "../../types/db-context";
 import { FeedQueryConfig } from "../posts/types/feed-config";
@@ -9,12 +10,13 @@ export async function getTracksByFollowedAuthors(ctx: DBContext, config: FeedQue
   const query = getTrackQuery(ctx, config);
   query
     .join({ followed: tablenames.followers }, "followed.followee_id", "track.author_id")
-    .where({ "followed.follower_id": config.session.user.id });
+    .where({ "followed.follower_id": config.session.user.id })
+    .orderBy(db.raw("created_at, post_id"), "desc");
 
   applyCursor(query, {
     dir: "desc",
     idColumn: "post_id",
-    timestampColumn: "track.created_at",
+    timestampColumn: "created_at",
     cursor: config.cursor,
   });
 

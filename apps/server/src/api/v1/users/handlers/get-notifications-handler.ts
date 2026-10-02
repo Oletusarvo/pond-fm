@@ -9,10 +9,12 @@ import { audius } from "../../../../audius.config";
 export const getNotificationsHandler = createHandler(async (req: TAuthenticatedRequest, res) => {
   const cursor = getCursor(req);
   const session = req.session;
+
   const result = await getNotificationsByUserId(db, {
     user: { id: session.user.id },
     cursor,
   });
+
   if (result.items.length == 0)
     return res.status(204).json({
       cursor: null,
@@ -23,7 +25,9 @@ export const getNotificationsHandler = createHandler(async (req: TAuthenticatedR
   );
   const userData = await audius.users.get(Array.from(userIdSet));
   const userMap = new Map<any, any>(userData.map((u) => [u.id, u]));
-  const trackIds = new Set<string>(result.items.map((n) => n.track.id));
+  const trackNotifications = result.items.filter((n) => !!n.track);
+
+  const trackIds = new Set<string>(trackNotifications.map((n) => n.track.id));
   const trackData = await audius.tracks.get(Array.from(trackIds));
 
   const trackMap = new Map(trackData.map((track) => [track.id, track]));
@@ -31,13 +35,15 @@ export const getNotificationsHandler = createHandler(async (req: TAuthenticatedR
   const recipientData = userMap.get(session.user.id);
 
   const notifications = result.items.map((item) => {
-    const track = trackMap.get(item.track.id);
+    const track = item.track ? trackMap.get(item.track.id) : null;
     const senderData = userMap.get(item.sender.id);
     return {
       ...item,
-      track: {
-        title: track.title,
-      },
+      track: track
+        ? {
+            title: track.title,
+          }
+        : null,
       sender: {
         id: senderData.id,
         username: senderData.name,

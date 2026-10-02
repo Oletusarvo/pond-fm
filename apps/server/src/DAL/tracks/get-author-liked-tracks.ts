@@ -1,3 +1,4 @@
+import { db } from "../../db-config";
 import { tablenames } from "../../tablenames";
 import { DBContext } from "../../types/db-context";
 import { FeedQueryConfig } from "../posts/types/feed-config";
@@ -12,7 +13,8 @@ export async function getAuthorLikedTracks(
   const query = getTrackQuery(ctx, config);
   query
     .join({ likes: tablenames.likes }, "likes.track_id", "track.id")
-    .where({ "likes.user_id": config.author_id });
+    .where({ "likes.user_id": config.author_id })
+    .orderBy(db.raw("likes.created_at, post_id"), "desc");
   applyCursor(query, {
     dir: "asc",
     timestampColumn: "likes.created_at",

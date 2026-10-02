@@ -13,7 +13,7 @@ export async function getFollowedBy(
     //Join users matching ids of users being followed (followee_id)
     .join({ user: tablenames.users }, "user.id", "followers.followee_id")
     .where({ follower_id: config.byUserId })
-    .select("user.id", "user.username");
+    .select("user.id");
   applyCursor(query, {
     cursor: config.cursor,
     dir: "desc",

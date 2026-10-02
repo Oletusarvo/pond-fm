@@ -1,3 +1,4 @@
+import { db } from "../../db-config";
 import { DBContext } from "../../types/db-context";
 import { FeedQueryConfig } from "../posts/types/feed-config";
 import { applyCursor } from "../posts/utils/apply-cursor";
@@ -9,7 +10,9 @@ export async function getAuthorRepostedTracks(
   config: FeedQueryConfig & { author_id: string },
 ) {
   const query = getTrackQuery(ctx, config);
-  query.where({ is_canonical: false, author_id: config.author_id });
+  query
+    .where({ is_canonical: false, author_id: config.author_id })
+    .orderBy(db.raw("created_at, post_id"), "desc");
   applyCursor(query, {
     dir: "desc",
     timestampColumn: "created_at",

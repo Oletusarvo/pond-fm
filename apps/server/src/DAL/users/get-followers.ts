@@ -13,7 +13,7 @@ export async function getFollowersOf(
   const query = ctx({ followers: tablenames.followers })
     .join({ user: tablenames.users }, "user.id", "followers.follower_id")
     .where({ followee_id: config.ofUserId })
-    .select("user.id", "user.username");
+    .select("user.id");
   applyCursor(query, {
     cursor: config.cursor,
     dir: "desc",

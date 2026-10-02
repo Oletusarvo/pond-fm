@@ -38,19 +38,25 @@ type FeedScreenProps = {
 export function PostFeedScreen({ title, description, queryFn, queryKey, icon }: FeedScreenProps) {
   const [queryGenres, setQueryGenres] = useState(() => {
     const queryGenres = localStorage.getItem("genres");
-    try {
-      return JSON.parse(queryGenres);
-    } catch {
-      return [];
+    if (queryGenres) {
+      try {
+        return JSON.parse(queryGenres);
+      } catch {
+        return [];
+      }
     }
+    return [];
   });
   const [queryMoods, setQueryMoods] = useState(() => {
     const queryMoods = localStorage.getItem("moods");
-    try {
-      return JSON.parse(queryMoods);
-    } catch {
-      return [];
+    if (queryMoods) {
+      try {
+        return JSON.parse(queryMoods);
+      } catch {
+        return [];
+      }
     }
+    return [];
   });
 
   const queryKeyMemoed = useMemo(() => {
