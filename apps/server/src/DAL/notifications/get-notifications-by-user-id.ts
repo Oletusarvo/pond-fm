@@ -10,11 +10,12 @@ export async function getNotificationsByUserId(
   ctx: DBContext,
   config: { user: { id: string }; cursor?: TCursor },
 ) {
+  console.log("user id while fetching notes", config.user.id);
   const query = getNotificationQuery(ctx);
   query.from({ notifications: tablenames.notifications });
   query.where({ "notifications.recipient_id": config.user.id });
   query.orderBy("notifications.created_at", "desc");
-  query.limit(10 + 1);
+
   applyCursor(query, {
     dir: "desc",
     timestampColumn: "notifications.created_at",
