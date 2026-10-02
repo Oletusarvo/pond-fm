@@ -69,7 +69,7 @@ function Content() {
               </div>
               {currentPlayback?.track.id === post?.id ? (
                 ["playing"].includes(currentPlayback.state) ? (
-                  <div className='text-sm font-semibold text-primary flex gap-1 items-center'>
+                  <div className='text-sm font-semibold text-primary flex gap-1 items-center animate-pulse'>
                     <AudioLines size='1rem' />
                     Now playing
                   </div>

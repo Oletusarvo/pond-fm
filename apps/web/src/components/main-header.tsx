@@ -168,7 +168,11 @@ function NotificationsButton(props) {
       <div className='relative'>
         <NotificationsIcon />
         {hasUnseen ? (
-          <div className='bg-red-500 p-1 aspect-square w-2 h-2 rounded-full absolute z-10 right-0 bottom-1 text-red text-center'></div>
+          <>
+            <div className='bg-red-500 animate-ping p-1 aspect-square w-2 h-2 rounded-full absolute z-10 right-0 bottom-1 text-red text-center'></div>
+
+            <div className='bg-red-500 p-1 aspect-square w-2 h-2 rounded-full absolute z-10 right-0 bottom-1 text-red text-center'></div>
+          </>
         ) : null}
       </div>
     </Button>
