@@ -36,7 +36,7 @@ export class TracksFeedApi {
 
   async byFollowed(cursor?: string, genres?: string[], moods?: string[]) {
     const req = requestBuilder.get().includeCredentials().build();
-    const url = this.buildFeedUrl(`tracks/feed/followed`, cursor, genres, moods);
+    const url = this.buildFeedUrl(`tracks/followed`, cursor, genres, moods);
     const res = await fetch(url, req);
     return await Api.asApiResponse<TTrackPublic[]>(res);
   }

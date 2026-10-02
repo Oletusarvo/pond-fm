@@ -7,7 +7,7 @@ import { getTrackQuery } from "./get-track-query";
 
 export async function getNewTracks(ctx: DBContext, config: FeedQueryConfig) {
   const query = getTrackQuery(ctx, config);
-  query.orderBy(db.raw("created_at, post_id"), "desc");
+  query.orderByRaw("created_at DESC, post_id DESC");
   applyCursor(query, {
     dir: "desc",
     timestampColumn: "created_at",

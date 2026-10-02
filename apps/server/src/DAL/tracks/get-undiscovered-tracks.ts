@@ -9,7 +9,7 @@ export async function getUndiscoveredTracks(ctx: DBContext, config: FeedQueryCon
   const query = getTrackQuery(ctx, config);
   query
     .where({ is_canonical: true, is_discovered: false })
-    .orderBy(db.raw("created_at, post_id"), "asc");
+    .orderByRaw("created_at ASC, post_id ASC");
 
   applyCursor(query, {
     dir: "asc",

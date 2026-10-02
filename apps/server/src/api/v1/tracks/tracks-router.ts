@@ -8,6 +8,7 @@ import { handlers } from "../../../container";
 import { getPlayCountStatsHandler } from "./handlers/get-track-stats-handler";
 import { importAudiusTracksHandler } from "../users/handlers/import-audius-tracks-handler";
 import { updateTrackHandler } from "./handlers/update-track-handler";
+import { getFollowedFeedHandler } from "./handlers/get-followed-feed";
 
 const router = getRouter();
 
@@ -28,7 +29,7 @@ router.get("/undiscovered", checkAuth(false), handlers.tracks.feed.undiscovered)
  * @summary Returns a feed of tracks from users the currently authenticated user is following.
  * @tags Tracks
  */
-router.get("/followed", checkAuth(), handlers.tracks.feed.byFollowed);
+router.get("/followed", checkAuth(), getFollowedFeedHandler);
 /**
  * GET /tracks/feed/search
  * @summary Returns a feed of tracks where the title or author username matches the q-search parameter.

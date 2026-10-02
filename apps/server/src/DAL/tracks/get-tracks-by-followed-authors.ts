@@ -11,7 +11,7 @@ export async function getTracksByFollowedAuthors(ctx: DBContext, config: FeedQue
   query
     .join({ followed: tablenames.followers }, "followed.followee_id", "track.author_id")
     .where({ "followed.follower_id": config.session.user.id })
-    .orderBy(db.raw("created_at, post_id"), "desc");
+    .orderByRaw("created_at DESC, post_id DESC");
 
   applyCursor(query, {
     dir: "desc",
