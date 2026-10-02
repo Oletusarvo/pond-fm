@@ -1,12 +1,12 @@
 {
-  "name": "Pond.fm",
-  "short_name": "Pond.fm",
-  "description": "A music sharing platform optimized for discovery",
+  "name": "Amphitune",
+  "short_name": "Amphitune",
+  "description": "A music sharing platform optimized for discovery.",
   "start_url": "/",
   "scope": "/",
   "display": "standalone",
   "background_color": "#ffffff",
-  "theme_color": "#00A63E",
+  "theme_color": "#00a63e",
   "orientation": "portrait-primary",
   "icons": [
     {
