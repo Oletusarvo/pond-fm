@@ -6,14 +6,10 @@ const tablename = "payment_data";
 exports.up = function (knex) {
   return knex.schema.createTable(tablename, (tbl) => {
     tbl.uuid("id").primary().defaultTo(knex.fn.uuid());
-    tbl
-      .string("user_id")
-      .references("audius_user_id")
-      .inTable("auth.user_data")
-      .onDelete("SET NULL");
+    tbl.string("user_id").references("id").inTable("auth.user_data").onDelete("SET NULL");
     tbl
       .string("recipient_id")
-      .references("audius_user_id")
+      .references("id")
       .inTable("auth.user_data")
       .comment("The receiving user when the payment is a tip.");
     tbl.string("currency").notNullable();

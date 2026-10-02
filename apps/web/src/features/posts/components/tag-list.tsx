@@ -21,7 +21,7 @@ export function TagList({
   size,
 }: TagListProps) {
   return (
-    <div className='flex items-center gap-2 max-w-full shrink-0 no-scrollbar'>
+    <div className='flex items-center gap-1 max-w-full shrink-0 no-scrollbar'>
       {tags?.map((tag) => {
         return (
           <Tag

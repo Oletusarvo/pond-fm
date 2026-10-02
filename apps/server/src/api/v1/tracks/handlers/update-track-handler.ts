@@ -16,9 +16,9 @@ export const updateTrackHandler = createHandler(
       if (moods) {
         await trx(tablenames.trackMoods)
           .where({
-            track_id: db.select("audius_track_id").from({ tracks: tablenames.tracks }).where({
-              audius_track_id: trackId,
-              author_id: session.user.audius_user_id,
+            track_id: db.select("id").from({ tracks: tablenames.tracks }).where({
+              id: trackId,
+              author_id: session.user.id,
             }),
           })
           .del();
@@ -35,7 +35,7 @@ export const updateTrackHandler = createHandler(
 
       if (genre) {
         await trx(tablenames.tracks)
-          .where({ audius_track_id: trackId, author_id: session.user.audius_user_id })
+          .where({ id: trackId, author_id: session.user.id })
           .update({
             genre_id: getLookupQuery(tablenames.genres, genre),
           });

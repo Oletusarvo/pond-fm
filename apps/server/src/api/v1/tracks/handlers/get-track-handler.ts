@@ -20,7 +20,7 @@ export const getTrackHandler = createHandler(async (req: TAuthenticatedRequest, 
     });
 
     onlyCanonicalTracks(query);
-    query.where({ "track.audius_track_id": req.params.trackId as string }).first();
+    query.where({ "track.id": req.params.trackId as string }).first();
     const tracks = await query;
     return {
       items: [tracks],

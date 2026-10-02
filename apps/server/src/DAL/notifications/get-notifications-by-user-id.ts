@@ -8,11 +8,11 @@ import { selectNotification } from "./select/select-notification";
 
 export async function getNotificationsByUserId(
   ctx: DBContext,
-  config: { user: { audius_user_id: string }; cursor?: TCursor },
+  config: { user: { id: string }; cursor?: TCursor },
 ) {
   const query = getNotificationQuery(ctx);
   query.from({ notifications: tablenames.notifications });
-  query.where({ "notifications.recipient_id": config.user.audius_user_id });
+  query.where({ "notifications.recipient_id": config.user.id });
   query.orderBy("notifications.created_at", "desc");
   query.limit(10 + 1);
   applyCursor(query, {

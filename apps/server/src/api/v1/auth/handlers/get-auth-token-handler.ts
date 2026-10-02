@@ -1,7 +1,7 @@
 import { createHandler, createJWT, loadEnvVariable } from "@pondfm/server-utils";
 import { db } from "../../../../db-config";
 import { tablenames } from "../../../../tablenames";
-import { createNewUser } from "../../../../DAL/users/create-new-user";
+import { createUserIfNotExists } from "../../../../DAL/users/create-new-user";
 import { serverConfig } from "../../../../server-config";
 import { audius, REDIRECT_URI } from "../../../../audius.config";
 
@@ -23,9 +23,9 @@ export const exchangeAudiusCodeForTokenHandler = createHandler(async (req, res) 
 
   const user = await db.transaction(async (trx) => {
     await trx(tablenames.loginSessions).where({ id: loginSession.id }).update({ is_used: true });
-    return await createNewUser(trx, {
+    return await createUserIfNotExists(trx, {
       user: {
-        audius_user_id: audiusUser.id,
+        id: audiusUser.id,
       },
     });
   });

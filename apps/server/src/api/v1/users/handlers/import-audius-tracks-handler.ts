@@ -7,7 +7,7 @@ import { getLookupQuery } from "../../../../DAL/util/get-lookup-query";
 
 export const importAudiusTracksHandler = createHandler(async (req: TAuthenticatedRequest, res) => {
   const session = req.session;
-  const userId = session.user.audius_user_id;
+  const userId = session.user.id;
   const count = await audius.users.tracks.count(userId);
 
   if (count == 0) return res.status(204).end();
@@ -18,10 +18,10 @@ export const importAudiusTracksHandler = createHandler(async (req: TAuthenticate
       const tracks = await audius.users.tracks.get(userId, page, pageSize);
       const tracksToInsert = tracks.map((track) => {
         return {
-          audius_track_id: track.id,
+          id: track.id,
           status: "active",
           genre_id: getLookupQuery(tablenames.genres, track.genre.toLowerCase()),
-          author_id: session.user.audius_user_id,
+          author_id: session.user.id,
           created_at: track.created_at,
         };
       });
@@ -29,13 +29,13 @@ export const importAudiusTracksHandler = createHandler(async (req: TAuthenticate
         .insert(tracksToInsert)
         .onConflict()
         .ignore()
-        .returning("audius_track_id");
+        .returning("id");
       if (insertedTracks.length > 0) {
         await trx(tablenames.posts).insert(
           insertedTracks.map((track) => {
             return {
-              track_id: track.audius_track_id,
-              author_id: session.user.audius_user_id,
+              track_id: track.id,
+              author_id: session.user.id,
             };
           }),
         );

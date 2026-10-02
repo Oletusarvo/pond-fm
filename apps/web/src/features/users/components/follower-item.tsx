@@ -15,7 +15,7 @@ export function FollowerItem({ user }: FollowerItemProps) {
   const navigate = useNavigate();
   const onClick = () => {
     toggleModal(false);
-    navigate(defaults.url.userTracks(user.audius_user_id));
+    navigate(defaults.url.userTracks(user.id));
   };
 
   return (

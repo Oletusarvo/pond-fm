@@ -15,7 +15,7 @@ export const repostTrackHandler = createHandler(
 
     await db(tablenames.posts).insert({
       track_id: trackId,
-      author_id: session.user.audius_user_id,
+      author_id: session.user.id,
     });
 
     const notificationPromise = new Promise<void>(async (resolve, reject) => {
@@ -27,7 +27,7 @@ export const repostTrackHandler = createHandler(
         await createNotification(db, {
           notification: {
             recipient_id: track.author_id,
-            sender_id: session?.user.audius_user_id,
+            sender_id: session?.user.id,
             track_id: req.body.trackId,
             type: "repost",
           },

@@ -130,7 +130,7 @@ function UserProfileButton() {
       shape='circle'
       variant='ghost'
       color='white'
-      onClick={() => navigate(defaults.url.userTracks(session.user.audius_user_id))}
+      onClick={() => navigate(defaults.url.userTracks(session.user.id))}
     >
       <UserIcon />
     </Button>
@@ -156,13 +156,13 @@ function NotificationsButton(props) {
       color='white'
       variant='ghost'
       shape='circle'
-      onClick={async () => {
+      onClick={async (e) => {
         await authService.refreshSession({
           user: {
             unseen_notification_count: 0,
           },
         });
-        props.onClick();
+        props.onClick(e);
       }}
     >
       <div className='relative'>

@@ -41,7 +41,7 @@ export function TippingProvider({ children, recipient }: TippingProviderProps) {
 
     try {
       const res = await api.users.tip({
-        recipientId: recipient.audius_user_id,
+        recipientId: recipient.id,
         amountInCents: amount * 100,
       });
       setStatus("success");

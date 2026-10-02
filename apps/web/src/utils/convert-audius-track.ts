@@ -8,7 +8,7 @@ export function convertAudiusTrack(audiusTrack: any): TTrackPublic {
     genre: audiusTrack.genre,
     mood: audiusTrack.mood,
     author: {
-      audius_user_id: audiusTrack.owner,
+      id: audiusTrack.owner,
     },
     stats: {
       play_count: audiusTrack.play_count,

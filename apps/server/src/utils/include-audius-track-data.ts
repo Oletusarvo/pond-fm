@@ -16,7 +16,7 @@ export async function includeAudiusTrackData(
 
 async function processTracks(data: any) {
   //Get track ids.
-  const trackIds = data.items.map((track) => track.audius_track_id);
+  const trackIds = data.items.map((track) => track.id);
   //Fetch other information from audius.
   const audiusTracks = await audius.tracks.get(trackIds);
   const audiusTrackMap = new Map(audiusTracks.map((t) => [t.id, t]));
@@ -29,7 +29,7 @@ async function processTracks(data: any) {
 
   //Merge audius info with local tracks.
   const tracks = data.items.map((track) =>
-    mergeTracks(track, audiusTrackMap.get(track.audius_track_id), authorMap.get(track.author_id)),
+    mergeTracks(track, audiusTrackMap.get(track.id), authorMap.get(track.author_id)),
   );
 
   const json = {

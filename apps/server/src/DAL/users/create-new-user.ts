@@ -6,10 +6,10 @@ import { getLookupQuery } from "../util/get-lookup-query";
 import { Knex } from "knex";
 import { findUserById } from "./find-user-by-id";
 
-/**Creates a new user. */
-export async function createNewUser(
+/**Creates a new user if it doesn't exist. Returns the new user, or the existing one. */
+export async function createUserIfNotExists(
   ctx: Knex.Transaction,
-  config: { user: Partial<TUser> & Pick<TUser, "audius_user_id"> },
+  config: { user: Partial<TUser> & Pick<TUser, "id"> },
 ) {
   const [user] = await ctx(tablenames.users)
     .insert({
@@ -17,20 +17,17 @@ export async function createNewUser(
       terms_accepted_at: new Date(),
       status: "active",
     })
-    .onConflict(["audius_user_id"])
+    .onConflict(["id"])
     .merge()
-    .returning("audius_user_id");
+    .returning("id");
 
   await ctx(tablenames.subscriptions)
     .insert({
       plan_id: "free",
-      user_id: user.audius_user_id,
+      user_id: user.id,
     })
     .onConflict()
     .ignore();
 
-  return (await findUserById(ctx, { audius_user_id: user.audius_user_id })) as Pick<
-    TUser,
-    "audius_user_id"
-  >;
+  return (await findUserById(ctx, { id: user.id })) as Pick<TUser, "id">;
 }

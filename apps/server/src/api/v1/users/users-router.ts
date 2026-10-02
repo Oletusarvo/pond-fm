@@ -11,6 +11,7 @@ import { unfollowUserHandler } from "./handlers/unfollow-user-handler";
 
 import { deleteUserHandler } from "./handlers/delete-user-handler";
 import { getPlayCountStatsHandler } from "../tracks/handlers/get-track-stats-handler";
+import { updateUserHandler } from "./handlers/update-user-handler";
 
 const router = getRouter();
 
@@ -58,6 +59,7 @@ router.get("/following/:userId", getUserFollowing);
  * @tags Users
  */
 router.get("/:userId", checkAuth(false), getUserHandler);
+router.put("/", checkAuth(), updateUserHandler);
 router.delete("/", checkAuth(), deleteUserHandler);
 
 export { router as usersRouter };

@@ -117,29 +117,21 @@ function DetailsSection() {
   const { submit, status, loading } = useSubmit({
     fetchFn: async (payload) => {
       const data = Object.fromEntries(payload) as typeof details;
-      const { url1, url2, url3, email, ...rest } = data as any;
+      const { url1, url2, url3 } = data as any;
       const urls = [url1, url2, url3].filter((url) => url);
       const res = await api.users.update({
-        ...rest,
-        //Only set the email if it is different from the initial value.
-        email: email !== session?.user.email ? email : null,
         urls,
       });
+
       //Refresh the user screen data.
       queryClient.setQueryData(["user", user?.id], (oldData: TUserPublic) => {
         if (!oldData) return oldData;
         return {
-          /*
-          ...oldData,
-          username: data.username,
-          bio: data.bio,*/
           urls,
         };
       });
       await refreshSession({
         user: {
-          username: data.username,
-          bio: data.bio,
           urls,
         },
       });

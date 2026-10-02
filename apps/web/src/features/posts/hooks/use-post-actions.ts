@@ -42,6 +42,7 @@ export function usePostActions({
     const initialLikeCount = Number(post?.like_count);
     const initialPost = { ...post };
     updatePost({
+      moods: post.moods,
       like_count: initialIsLiked ? initialLikeCount - 1 : initialLikeCount + 1,
       liked_by_me: !initialIsLiked,
     });
@@ -50,7 +51,6 @@ export function usePostActions({
     if (result.executed) {
       const res = result.value;
       if (!res.success) {
-        console.log(initialPost);
         updatePost(initialPost);
         onLikeRollback?.();
       }

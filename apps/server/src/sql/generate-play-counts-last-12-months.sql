@@ -18,7 +18,7 @@ CROSS JOIN months m
 LEFT JOIN post.track_view tv
     ON tv.author_id = a.author_id
 LEFT JOIN post.play_data pd
-    ON pd.track_id = tv.audius_track_id
+    ON pd.track_id = tv.id
     AND pd.play_counted_at >= m.play_month
     AND pd.play_counted_at < m.play_month + INTERVAL '1 month'
 GROUP BY

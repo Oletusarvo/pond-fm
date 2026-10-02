@@ -6,12 +6,12 @@ import { getUserQuery } from "./get-user-query";
 import { selectUser } from "./select/select-user";
 
 /**Returns a user by their email. */
-export async function findUserById(ctx: DBContext, config: { audius_user_id: string }) {
+export async function findUserById(ctx: DBContext, config: { id: string }) {
   const query = getUserQuery(ctx);
   query.join(
     { subscription: viewnames.subscriptions },
     "subscription.user_id",
-    "users.audius_user_id",
+    "users.id",
   );
 
   selectUser(query);
@@ -29,6 +29,6 @@ export async function findUserById(ctx: DBContext, config: { audius_user_id: str
   );
 
   return (await query
-    .where({ "users.audius_user_id": config.audius_user_id })
+    .where({ "users.id": config.id })
     .first()) as TUserRestricted;
 }

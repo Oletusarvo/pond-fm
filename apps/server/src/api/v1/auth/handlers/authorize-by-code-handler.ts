@@ -21,7 +21,7 @@ export const authorizeByCodeHandler = createHandler(
       }
 
       const savedUser = await findUserById(trx, {
-        audius_user_id: authToken.user_id,
+        id: authToken.user_id,
       });
 
       if (savedUser.status !== "active") {

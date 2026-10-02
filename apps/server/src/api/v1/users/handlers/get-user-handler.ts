@@ -9,7 +9,7 @@ export const getUserHandler = createHandler(async (req: TAuthenticatedRequest, r
   const { userId } = req.params as { userId: string };
   const user = await getPublicUser(db, { id: userId, session: req.session });
   if (user) {
-    const [audiusUser] = await audius.users.get([user.audius_user_id]);
+    const [audiusUser] = await audius.users.get([user.id]);
     return res.json({
       ...user,
       username: audiusUser.name,

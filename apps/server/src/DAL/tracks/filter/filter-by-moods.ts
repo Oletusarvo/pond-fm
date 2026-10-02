@@ -7,7 +7,7 @@ export function filterByMoods(query: Knex.QueryBuilder, moods?: string[]) {
     this.select(1)
       .from({ moods: tablenames.trackMoods })
       .join({ type: tablenames.moods }, "type.id", "moods.mood_id")
-      .whereRaw("moods.track_id = track.audius_track_id")
+      .whereRaw("moods.track_id = track.id")
       .whereIn("type.label", moods);
   });
 }

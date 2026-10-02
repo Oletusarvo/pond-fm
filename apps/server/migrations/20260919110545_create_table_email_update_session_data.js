@@ -11,7 +11,7 @@ exports.up = function (knex) {
       .string("user_id")
       .unique()
       .notNullable()
-      .references("audius_user_id")
+      .references("id")
       .inTable("auth.user_data")
       .onDelete("CASCADE")
       .onUpdate("CASCADE");

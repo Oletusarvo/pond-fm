@@ -11,12 +11,12 @@ export async function getPublicUser(ctx: DBContext, config: { id: string; sessio
   query.join(
     { subscription: viewnames.subscriptions },
     "subscription.user_id",
-    "users.audius_user_id",
+    "users.id",
   );
   selectUser(query);
   selectFollowedByMe(query, config.session);
   query.select("users.following_count");
   query.select("users.follower_count");
   query.select("subscription.plan_id as subcription");
-  return (await query.where({ "users.audius_user_id": config.id }).first()) as TUserPublic;
+  return (await query.where({ "users.id": config.id }).first()) as TUserPublic;
 }

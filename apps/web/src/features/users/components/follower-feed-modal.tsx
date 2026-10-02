@@ -15,8 +15,8 @@ export function FollowerFeedModal() {
     <FeedModal
       title={`Followers of ${userService.user.username}`}
       onClose={() => toggleModal(false)}
-      queryKey={["followers", userService.user?.audius_user_id]}
-      queryFn={(cursor) => api.users.getFollowers(userService.user?.audius_user_id, cursor)}
+      queryKey={["followers", userService.user?.id]}
+      queryFn={(cursor) => api.users.getFollowers(userService.user?.id, cursor)}
     >
       <Feed
         renderComponent={({ item }) => <FollowerItem user={item} />}

@@ -9,7 +9,7 @@ export async function getTracksByFollowedAuthors(ctx: DBContext, config: FeedQue
   const query = getTrackQuery(ctx, config);
   query
     .join({ followed: tablenames.followers }, "followed.followee_id", "track.author_id")
-    .where({ "followed.follower_id": config.session.user.audius_user_id });
+    .where({ "followed.follower_id": config.session.user.id });
 
   applyCursor(query, {
     dir: "desc",

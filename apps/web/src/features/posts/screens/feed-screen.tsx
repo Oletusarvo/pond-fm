@@ -1,10 +1,4 @@
-import React, {
-  ReactNode,
-  SetStateAction,
-  useMemo,
-  useState,
-  useTransition,
-} from "react";
+import React, { ReactNode, SetStateAction, useMemo, useState, useTransition } from "react";
 import { Separator } from "../../../components/separator";
 import { PostFeed } from "../components/post-feed";
 import { PostFeedScreenContainer } from "../components/post-feed-screen-container";
@@ -41,22 +35,26 @@ type FeedScreenProps = {
 };
 
 /**Renders a feed screen. */
-export function PostFeedScreen({
-  title,
-  description,
-  queryFn,
-  queryKey,
-  icon,
-}: FeedScreenProps) {
-  const [queryGenres, setQueryGenres] = useState([]);
-  const [queryMoods, setQueryMoods] = useState([]);
+export function PostFeedScreen({ title, description, queryFn, queryKey, icon }: FeedScreenProps) {
+  const [queryGenres, setQueryGenres] = useState(() => {
+    const queryGenres = localStorage.getItem("genres");
+    try {
+      return JSON.parse(queryGenres);
+    } catch {
+      return [];
+    }
+  });
+  const [queryMoods, setQueryMoods] = useState(() => {
+    const queryMoods = localStorage.getItem("moods");
+    try {
+      return JSON.parse(queryMoods);
+    } catch {
+      return [];
+    }
+  });
 
   const queryKeyMemoed = useMemo(() => {
-    return [
-      ...queryKey,
-      ...queryGenres.sort().join(";"),
-      ...queryMoods.sort().join(";"),
-    ];
+    return [...queryKey, ...queryGenres.sort().join(";"), ...queryMoods.sort().join(";")];
   }, [queryGenres, queryMoods, queryKey]);
 
   return (
@@ -99,14 +97,8 @@ function FeedSection({ queryFn, queryKey }) {
 
 function GenreSelectorSection() {
   const [transition, startTransition] = useTransition();
-  const { value: selectedGenres, setState: setGenres } = useLocalStorageState(
-    ["genres"],
-    [],
-  );
-  const { value: selectedMoods, setState: setMoods } = useLocalStorageState(
-    ["moods"],
-    [],
-  );
+  const { value: selectedGenres, setState: setGenres } = useLocalStorageState(["genres"], []);
+  const { value: selectedMoods, setState: setMoods } = useLocalStorageState(["moods"], []);
   const { setQueryGenres, setQueryMoods } = useQuerySetterContext();
   const queryDelay = 700;
   const updateQueryGenres = debounce(

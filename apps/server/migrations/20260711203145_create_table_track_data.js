@@ -8,11 +8,11 @@ exports.up = function (knex) {
     .withSchema("post")
     .raw("CREATE TYPE post.track_status AS ENUM ('active', 'deleted', 'pending_review')")
     .createTable(tablename, (tbl) => {
-      tbl.string("audius_track_id").primary();
+      tbl.string("id").primary().comment("The audius track id.");
       tbl
         .string("author_id")
         .notNullable()
-        .references("audius_user_id")
+        .references("id")
         .inTable("auth.user_data")
         .onUpdate("CASCADE")
         .onDelete("CASCADE");

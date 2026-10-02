@@ -6,7 +6,7 @@ import { idSchema } from "./defaults.js";
 export const trackStatusSchema = z.enum(["active", "deleted", "pending_review"]);
 
 export const trackSchema = z.object({
-  audius_track_id: z.string(),
+  id: z.string(),
   author_id: z.string(),
   title: z.string(),
   description: z.string().optional(),
@@ -26,7 +26,7 @@ export const trackSchema = z.object({
 
 export const trackPublicSchema = trackSchema
   .omit({
-    audius_track_id: true,
+    id: true,
     author_id: true,
   })
   .extend({

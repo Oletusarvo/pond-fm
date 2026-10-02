@@ -11,7 +11,7 @@ export async function getAuthorLikedTracks(
 ) {
   const query = getTrackQuery(ctx, config);
   query
-    .join({ likes: tablenames.likes }, "likes.track_id", "track.audius_track_id")
+    .join({ likes: tablenames.likes }, "likes.track_id", "track.id")
     .where({ "likes.user_id": config.author_id });
   applyCursor(query, {
     dir: "asc",

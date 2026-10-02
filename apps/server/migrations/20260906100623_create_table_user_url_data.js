@@ -9,7 +9,7 @@ exports.up = function (knex) {
     tbl
       .string("user_id")
       .notNullable()
-      .references("audius_user_id")
+      .references("id")
       .inTable("auth.user_data")
       .onDelete("CASCADE")
       .onUpdate("CASCADE");

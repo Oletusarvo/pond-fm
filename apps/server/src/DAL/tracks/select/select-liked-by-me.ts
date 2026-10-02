@@ -9,8 +9,8 @@ export function selectLikedByMe(query: Knex.QueryBuilder, session?: TSession) {
   if (session) {
     query.select(
       db.raw(
-        "(EXISTS (SELECT 1 FROM ?? AS likes WHERE likes.user_id = ? AND likes.track_id = track.audius_track_id)) AS ??",
-        [tablenames.likes, session.user.audius_user_id, columnName],
+        "(EXISTS (SELECT 1 FROM ?? AS likes WHERE likes.user_id = ? AND likes.track_id = track.id)) AS ??",
+        [tablenames.likes, session.user.id, columnName],
       ),
     );
   } else {

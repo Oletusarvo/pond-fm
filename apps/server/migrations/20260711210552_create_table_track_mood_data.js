@@ -8,7 +8,7 @@ exports.up = function (knex) {
     tbl
       .string("track_id")
       .notNullable()
-      .references("audius_track_id")
+      .references("id")
       .inTable("post.track_data")
       .onDelete("CASCADE")
       .onUpdate("CASCADE");

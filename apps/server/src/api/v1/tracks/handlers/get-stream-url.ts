@@ -10,13 +10,10 @@ import { serverConfig } from "../../../../server-config";
 export const getStreamUrlHandler = createHandler(async (req: TAuthenticatedRequest, res) => {
   const { trackId } = req.params;
 
-  const track = await db(viewnames.tracks)
-    .where({ audius_track_id: trackId })
-    .select("audius_track_id")
-    .first();
+  const track = await db(viewnames.tracks).where({ id: trackId }).select("id").first();
 
   const audiusTrack = await audiusSdk.tracks.getTrack({
-    trackId: track.audius_track_id,
+    trackId: track.id,
   });
 
   const token = await db.transaction(
@@ -29,10 +26,7 @@ export const getStreamUrlHandler = createHandler(async (req: TAuthenticatedReque
 
   res.cookie(serverConfig.streamTokenName, token.data, serverConfig.streamCookieSettings);
   const session = req.session;
-  const streamUrl = await audius.tracks.stream.getUrl(
-    track.audius_track_id,
-    session?.user.audius_user_id,
-  );
+  const streamUrl = await audius.tracks.stream.getUrl(track.id, session?.user.id);
   return res.json({
     streamUrl,
   });

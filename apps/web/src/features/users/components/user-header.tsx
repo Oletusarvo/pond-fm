@@ -3,7 +3,7 @@ import { Button } from "../../../components/button";
 import { cancelable } from "../../../utils/debounced";
 import { useQueryClient } from "@tanstack/react-query";
 import { useUserContext } from "../../users/providers/user-proivder";
-import { Music, User, UserMinus, UserPlus } from "lucide-react";
+import { User, UserMinus, UserPlus } from "lucide-react";
 import { ToggleProvider } from "../../../providers/toggle-provider";
 import { FollowingFeedModal } from "./following-feed-modal";
 import { FollowerFeedModal } from "./follower-feed-modal";
@@ -11,10 +11,8 @@ import { FaBrandIconLink } from "../../../components/fa-brand-icon-link";
 import { useNavigate } from "react-router-dom";
 import { defaults } from "../../../utils/defaults";
 import { useAuthContext } from "../../auth/providers/auth-provider";
-import { useAuthenticatedAction } from "../../posts/hooks/use-return-to-url";
 import { usePlayData } from "../../charting/hooks/use-play-data-";
 import { PlaysPerDayChart, PlaysPerMonthChart } from "../../charting/components/play-count-chart";
-import { usePlayCount } from "../../audio/hooks/use-play-count";
 
 /**Renders the header at the top of a user's profile screen. */
 export function UserHeader() {
@@ -29,7 +27,7 @@ export function UserHeader() {
   const onFollowButtonClicked = async () => {
     if (status === "unauthenticated") {
       return navigate(
-        `/login?return=/user/${user.audius_user_id}&callback=/user/${user.audius_user_id}`,
+        `/login?return=/user/${user.id}&callback=/user/${user.id}`,
       );
     }
     const initialFollowed = followedByMe;
@@ -37,17 +35,17 @@ export function UserHeader() {
 
     setFollowedByMe(newFollowed);
 
-    await cancelable.toggleFollow(user.audius_user_id, initialFollowed).then(async (result) => {
+    await cancelable.toggleFollow(user.id, initialFollowed).then(async (result) => {
       if (result.executed) {
         if (!result.value.success) {
           setFollowedByMe(initialFollowed);
         } else {
           await queryClient.invalidateQueries({
-            queryKey: ["user", user.audius_user_id],
+            queryKey: ["user", user.id],
           });
 
           await queryClient.invalidateQueries({
-            queryKey: ["followers", user.audius_user_id],
+            queryKey: ["followers", user.id],
           });
         }
       }
@@ -63,7 +61,7 @@ export function UserHeader() {
         <div className='flex sm:gap-8 xs:gap-2 md:items-center xs:items-start'>
           <div
             className='flex gap-2 items-center cursor-pointer'
-            onClick={() => navigate(defaults.url.userTracks(user.audius_user_id))}
+            onClick={() => navigate(defaults.url.userTracks(user.id))}
           >
             <div className='flex items-center justify-center w-8 h-8 rounded-full bg-primary text-white'>
               <User size='1rem' />

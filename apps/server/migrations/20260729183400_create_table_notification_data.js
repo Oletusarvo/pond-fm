@@ -13,19 +13,11 @@ exports.up = function (knex) {
       tbl
         .string("recipient_id")
         .notNullable()
-        .references("audius_user_id")
+        .references("id")
         .inTable("auth.user_data")
         .onDelete("CASCADE");
-      tbl
-        .string("sender_id")
-        .references("audius_user_id")
-        .inTable("auth.user_data")
-        .onDelete("CASCADE");
-      tbl
-        .string("track_id")
-        .references("audius_track_id")
-        .inTable("post.track_data")
-        .onDelete("CASCADE");
+      tbl.string("sender_id").references("id").inTable("auth.user_data").onDelete("CASCADE");
+      tbl.string("track_id").references("id").inTable("post.track_data").onDelete("CASCADE");
       tbl.specificType("type", "notification_type").notNullable();
       tbl.timestamp("created_at").defaultTo(knex.fn.now());
       tbl.timestamp("seen_at");

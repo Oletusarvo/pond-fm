@@ -10,7 +10,7 @@ exports.up = function (knex) {
       "CREATE TYPE auth.user_status AS ENUM ('pending_verification', 'pending_review', 'active', 'suspended', 'deleted')",
     )
     .createTable(tablename, (tbl) => {
-      tbl.string("audius_user_id").primary();
+      tbl.string("id").primary().comment("The audius user id.");
       tbl
         .specificType("status", "auth.user_status")
         .notNullable()

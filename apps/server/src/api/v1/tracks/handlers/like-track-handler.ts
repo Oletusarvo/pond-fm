@@ -15,19 +15,19 @@ export const likeTrackHandler = createHandler(
     const session = req.session;
     await createTrackLike(db, {
       trackId: req.body.trackId,
-      userId: session.user.audius_user_id,
+      userId: session.user.id,
     });
 
     const notificationPromise = new Promise<void>(async (resolve, reject) => {
       const [result, err] = await tryCatch(async () => {
         const track = await db(tablenames.tracks)
-          .where({ audius_track_id: req.body.trackId })
+          .where({ id: req.body.trackId })
           .select("author_id")
           .first();
         await createNotification(db, {
           notification: {
             recipient_id: track.author_id,
-            sender_id: session?.user.audius_user_id,
+            sender_id: session?.user.id,
             track_id: req.body.trackId,
             type: "like",
           },

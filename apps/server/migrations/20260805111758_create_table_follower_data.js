@@ -7,13 +7,13 @@ exports.up = function (knex) {
   return knex.schema.createTable(tablename, (tbl) => {
     tbl
       .string("follower_id")
-      .references("audius_user_id")
+      .references("id")
       .inTable("auth.user_data")
       .onUpdate("CASCADE")
       .onDelete("CASCADE");
     tbl
       .string("followee_id")
-      .references("audius_user_id")
+      .references("id")
       .inTable("auth.user_data")
       .onUpdate("CASCADE")
       .onDelete("CASCADE");

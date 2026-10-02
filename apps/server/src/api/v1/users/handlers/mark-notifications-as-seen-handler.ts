@@ -9,7 +9,7 @@ export const markNotificationsAsSeenHandler = createHandler(
     const session = req.session;
     const promise = db.transaction(async (trx) => {
       await markNotificationAs(trx, {
-        user: { audius_user_id: session.user.audius_user_id },
+        user: { id: session.user.id },
         notification: { seen: true },
       });
     });

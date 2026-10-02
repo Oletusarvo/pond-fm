@@ -9,7 +9,7 @@ export class ScrobbleRepository extends PostRepository {
   async getPlayCounts(trackId: string, ctx: DBContext) {
     const result = await ctx(tablenames.tracks)
       .select("play_count as playCount", "unique_play_count as uniquePlayCount")
-      .where({ audius_track_id: trackId })
+      .where({ id: trackId })
       .first();
     return result;
   }
@@ -33,7 +33,7 @@ export class ScrobbleRepository extends PostRepository {
   /**Increments the play count of a track. */
   async incrementPlayCount(trackId: string, ctx: DBContext) {
     const [result] = await ctx(tablenames.tracks)
-      .where({ audius_track_id: trackId })
+      .where({ id: trackId })
       .increment("play_count")
       .returning(["play_count AS playCount"]);
     return result.playCount;
@@ -42,7 +42,7 @@ export class ScrobbleRepository extends PostRepository {
   /**Increments the unique play count of a track. */
   async incrementUniquePlayCount(trackId: string, ctx: DBContext) {
     const [result] = await ctx(tablenames.tracks)
-      .where({ audius_track_id: trackId })
+      .where({ id: trackId })
       .increment("unique_play_count")
       .returning(["unique_play_count AS playCount"]);
     return result.playCount;

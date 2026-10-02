@@ -8,7 +8,7 @@ exports.up = function (knex) {
     tbl.uuid("id").primary().defaultTo(knex.fn.uuid());
     tbl
       .string("user_id")
-      .references("audius_user_id")
+      .references("id")
       .inTable("auth.user_data")
       .onDelete("CASCADE")
       .onUpdate("CASCADE");
@@ -16,7 +16,7 @@ exports.up = function (knex) {
     tbl
       .string("track_id")
       .notNullable()
-      .references("audius_track_id")
+      .references("id")
       .inTable("post.track_data")
       .onDelete("CASCADE")
       .onUpdate("CASCADE");
