@@ -6,5 +6,5 @@ export function UploadTime() {
   const text = formatDistanceToNow(new Date(post?.created_at || 0), {
     addSuffix: true,
   });
-  return <span className='text-xs text-slate-500'>{text}</span>;
+  return <span className='text-xs text-slate-500 text-nowrap'>{text}</span>;
 }

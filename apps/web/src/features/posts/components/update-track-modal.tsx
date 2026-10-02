@@ -11,6 +11,8 @@ import { usePlaybackContext } from "../../audio/providers/playback-provider";
 import { useUpdateTrack } from "../hooks/use-update-track";
 import { ConfirmAction } from "../../../components/confirm-action";
 import { TTrack, TTrackPublic } from "@pondfm/app-shared";
+import { useStopPropagation } from "../../../hooks/use-stop-propagation";
+import { stopPropagation } from "../../../utils/stop-propagation";
 
 const [UpdateTrackProvider, useUpdateTrackContext] = createProvider({
   contextName: "UpdateTrackContext",
@@ -40,7 +42,7 @@ function ModalContent() {
 
   const { submit, loading: updateLoading } = useUpdateTrack({
     track: {
-      ...track,
+      id: track?.id,
       moods,
       genre,
     },
@@ -61,15 +63,10 @@ function ModalContent() {
 
   return (
     <Form onSubmit={submit}>
-      <Form.Group label='Title'>
-        <Input
-          required
-          type='text'
-          name='title'
-          placeholder='Type a title for the track...'
-          defaultValue={track?.title}
-        />
-      </Form.Group>
+      <div className='flex gap-2'>
+        <img src={track?.artwork} loading='lazy' className='w-16 h-16 rounded-md' />
+        <h2 className='text-xl font-semibold'>Updating {track?.title}</h2>
+      </div>
       <Form.Group label='Main Genre'>
         <GenreSelector
           onChange={(genre) => {
@@ -88,6 +85,7 @@ function ModalContent() {
       </Form.Group>
       <div className='flex flex-col w-full gap-2'>
         <LoaderButton
+          onClick={stopPropagation()}
           type='submit'
           variant='contained'
           loading={updateLoading}
@@ -120,8 +118,8 @@ function ModalContent() {
           }}
         >
           <p>
-            You are about to delete this track. Deleted tracks cannot be
-            recovered. Are you absolutely sure?
+            You are about to delete this track. Deleted tracks cannot be recovered. Are you
+            absolutely sure?
           </p>
         </ConfirmAction>
       </div>

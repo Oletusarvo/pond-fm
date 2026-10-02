@@ -9,12 +9,17 @@ export function PostAuthor() {
   const { track: post } = useTrackContext();
   const isCanonicalAuthor = post?.is_canonical;
   const canonicalAuthorLink = (
-    <Link to={defaults.url.userTracks(post?.canonical_author.id)}>
+    <Link
+      to={defaults.url.userTracks(post?.canonical_author.id)}
+      onClick={(e) => e.stopPropagation()}
+    >
       {post?.canonical_author.username}
     </Link>
   );
   const posterLink = (
-    <Link to={defaults.url.userTracks(post?.author.id)}>{post?.author.username}</Link>
+    <Link to={defaults.url.userTracks(post?.author.id)} onClick={(e) => e.stopPropagation()}>
+      {post?.author.username}
+    </Link>
   );
 
   return (

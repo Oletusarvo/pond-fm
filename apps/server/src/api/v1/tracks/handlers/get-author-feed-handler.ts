@@ -3,7 +3,7 @@ import { getAuthorPosts } from "../../../../DAL/posts/get-author-posts";
 import { createHandler } from "@pondfm/server-utils";
 import { getCursor } from "../../../../utils/get-cursor";
 import { TAuthenticatedRequest } from "../../../../types/request";
-import { includeAudiusTrackData } from "../../../../utils/get-feed-handler";
+import { includeAudiusTrackData } from "../../../../utils/include-audius-track-data";
 import { getAuthorTracks } from "../../../../DAL/tracks/get-author-tracks";
 
 /**Returns a feed of tracks posted by a specific user. */

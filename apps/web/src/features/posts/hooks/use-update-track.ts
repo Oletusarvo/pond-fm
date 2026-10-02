@@ -12,12 +12,8 @@ export function useUpdateTrack({ track, ...props }: UseUpdateTrackProps) {
   const { submit, loading, status } = useSubmit({
     ...props,
     fetchFn: async (payload) => {
-      const fdata = Object.fromEntries(payload) as { title: string };
       const udata = {
-        track: {
-          ...track,
-          ...fdata,
-        },
+        ...track,
       };
 
       const res = await api.tracks.update(track.id, udata);

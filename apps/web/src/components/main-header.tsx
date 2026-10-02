@@ -14,7 +14,7 @@ import { GoProModal } from "../features/billing/components/go-pro-modal";
 import { SettingsModal } from "../features/auth/components/settings-modal";
 import { api } from "../utils/api/api";
 import { defaults } from "../utils/defaults";
-import { ImportTracksModal } from "../features/posts/components/impot-tracks-modal";
+import { ImportTracksModal } from "../features/posts/components/import-tracks-modal";
 
 export function MainHeader() {
   const { status: authStatus } = useAuthContext();
@@ -64,7 +64,6 @@ const AuthControls = React.memo(function ({
     <div className='flex gap-4 items-center text-sm'>
       {authStatus === "authenticated" ? (
         <>
-          <GoProButton />
           <UserProfileButton />
           <FeedProvider
             queryKey={["notifications"]}

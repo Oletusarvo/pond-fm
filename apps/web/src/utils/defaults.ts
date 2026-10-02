@@ -1,6 +1,7 @@
 interface IPlan {
   storage: string;
   unique_listener_threshold: number;
+  price: number;
 }
 
 interface IDefaults {
@@ -13,10 +14,12 @@ interface IDefaults {
 export const defaults: IDefaults = {
   plans: {
     free: {
+      price: 0,
       unique_listener_threshold: 50,
       storage: "150mb",
     },
     pro: {
+      price: 200,
       unique_listener_threshold: 200,
       storage: "5gb",
     },

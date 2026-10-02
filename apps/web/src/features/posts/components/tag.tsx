@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useClassName } from "../../../hooks/use-class-name";
+import { useStopPropagation } from "../../../hooks/use-stop-propagation";
 
 type TagProps = {
   value: string;
@@ -9,10 +10,7 @@ type TagProps = {
   size?: "default" | "small";
 };
 
-const colorMap: Record<
-  TagProps["color"],
-  Record<"selected" | "unselected", string>
-> = {
+const colorMap: Record<TagProps["color"], Record<"selected" | "unselected", string>> = {
   primary: {
     selected: "bg-primary/20 text-green-900 border-transparent",
     unselected: "boder-primary text-primary",
@@ -23,13 +21,7 @@ const colorMap: Record<
   },
 };
 
-export function Tag({
-  value,
-  onSelected,
-  selected,
-  color = "primary",
-  size,
-}: TagProps) {
+export function Tag({ value, onSelected, selected, color = "primary", size }: TagProps) {
   const colorConfig = colorMap[color];
   const className = useClassName(
     "rounded-[100px] font-semibold text-center shrink-0 border select-none",
@@ -38,8 +30,10 @@ export function Tag({
     selected ? colorConfig.selected : colorConfig.unselected,
   );
 
+  const onClick = useStopPropagation((e) => onSelected?.(value));
+
   return (
-    <div onClick={() => onSelected?.(value)} className={className}>
+    <div onClick={onClick} className={className}>
       {value}
     </div>
   );

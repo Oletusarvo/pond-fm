@@ -5,7 +5,7 @@ import { asArray } from "../../../../utils/as-array";
 import { createHandler } from "@pondfm/server-utils";
 import { getCursor } from "../../../../utils/get-cursor";
 import { TAuthenticatedRequest } from "../../../../types/request";
-import { includeAudiusTrackData } from "../../../../utils/get-feed-handler";
+import { includeAudiusTrackData } from "../../../../utils/include-audius-track-data";
 import { getTracksByFollowedAuthors } from "../../../../DAL/tracks/get-tracks-by-followed-authors";
 
 /**Returns tracks posted by users the currently authenticated user is following */

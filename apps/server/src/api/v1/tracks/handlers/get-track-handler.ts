@@ -8,7 +8,7 @@ import { TAuthenticatedRequest } from "../../../../types/request";
 import { onlyCanonicalTracks } from "../../../../DAL/tracks/filter/only-canonical-tracks";
 import { getTrackQuery } from "../../../../DAL/tracks/get-track-query";
 import { resolveQueryWithCursor } from "../../../../DAL/posts/utils/resolve-query-with-cursor";
-import { includeAudiusTrackData } from "../../../../utils/get-feed-handler";
+import { includeAudiusTrackData } from "../../../../utils/include-audius-track-data";
 
 /**Returns a track by its id. */
 export const getTrackHandler = createHandler(async (req: TAuthenticatedRequest, res) => {

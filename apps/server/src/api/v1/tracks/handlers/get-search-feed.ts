@@ -10,7 +10,7 @@ import { applyCursor } from "../../../../DAL/posts/utils/apply-cursor";
 import { resolveQueryWithCursor } from "../../../../DAL/posts/utils/resolve-query-with-cursor";
 import { getDistinctPostQuery } from "../../../../DAL/posts/get-distinct-post-query";
 import { getTrackQuery } from "../../../../DAL/tracks/get-track-query";
-import { includeAudiusTrackData } from "../../../../utils/get-feed-handler";
+import { includeAudiusTrackData } from "../../../../utils/include-audius-track-data";
 
 export const getSearchFeedHandler = createHandler(async (req: TAuthenticatedRequest, res) => {
   const q = req.query.q as string;

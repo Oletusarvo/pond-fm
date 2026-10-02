@@ -7,6 +7,7 @@ import { createBodyParser, getRouter } from "@pondfm/server-utils";
 import { handlers } from "../../../container";
 import { getPlayCountStatsHandler } from "./handlers/get-track-stats-handler";
 import { importAudiusTracksHandler } from "../users/handlers/import-audius-tracks-handler";
+import { updateTrackHandler } from "./handlers/update-track-handler";
 
 const router = getRouter();
 
@@ -57,7 +58,7 @@ router.get("/feed/:authorId/liked", checkAuth(false), handlers.tracks.feed.liked
  * @summary Returns a specific track by id.
  * @tags Tracks
  */
-router.get("/:trackId", checkAuth(false), handlers.tracks.get);
+
 /**
  * POST /tracks/like
  * @summary Adds a like by the currently authenticated user on a track by id.
@@ -111,6 +112,8 @@ router.get("/:trackId/stream/url", checkAuth(false), handlers.tracks.stream);
  * @tags Tracks
  */
 router.delete("/:trackId", checkAuth(), handlers.tracks.delete);
+router.get("/:trackId", checkAuth(false), handlers.tracks.get);
+router.put("/:trackId", checkAuth(), updateTrackHandler);
 
 router.patch("/audius/import", checkAuth(), importAudiusTracksHandler);
 

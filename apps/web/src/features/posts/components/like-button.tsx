@@ -28,7 +28,10 @@ export function LikeButton() {
         />
       )}
       value={post?.like_count}
-      onClick={onClick}
+      onClick={(e) => {
+        e.stopPropagation();
+        onClick();
+      }}
     />
   );
 }

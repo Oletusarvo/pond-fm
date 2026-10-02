@@ -29,7 +29,10 @@ export function RepostButton() {
         <Repeat {...props} color={post?.reposted_by_me ? color : "var(--color-slate-500)"} />
       )}
       value={post?.repost_count}
-      onClick={onClick}
+      onClick={(e) => {
+        e.stopPropagation();
+        onClick();
+      }}
     />
   );
 }

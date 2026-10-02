@@ -25,7 +25,7 @@ export function Post({ ref }: { ref?: React.RefObject<any> }) {
   const { currentPlayback, togglePlayback, updateCurrentPlayback } = usePlaybackContext();
   const isPlaying = currentPlayback?.track.id === post?.id;
   const containerClassName = useClassName(
-    "flex py-2 rounded-md w-full flex-col gap-1 items-start transition-colors duration-500",
+    "flex py-2 rounded-md w-full flex-col gap-1 items-start transition-colors duration-500 grow-0",
     isPlaying ? "bg-primary/5" : "bg-white",
   );
 
@@ -48,8 +48,8 @@ function Content() {
   const { track: post } = useTrackContext();
   return (
     <>
-      <div className='flex gap-1 w-full'>
-        <img src={post?.artwork} className='w-24 h-24 rounded-lg' />
+      <div className='flex gap-1 flex-1 w-full'>
+        <img src={post?.artwork} className='xs:w-24 xs:h-24 lg:w-32 lg:h-32 rounded-lg' />
         <div className='flex justify-between w-full items-start'>
           <div className='flex flex-col leading-none items-start h-full'>
             <PostAuthor />
@@ -60,7 +60,7 @@ function Content() {
                   <SettingsButton />
                 </ToggleProvider.Trigger>
                 <ToggleProvider.Target>
-                  <UpdateTrackModal track={post.track} />
+                  <UpdateTrackModal track={post} />
                 </ToggleProvider.Target>
               </ToggleProvider>
             </div>
@@ -76,7 +76,9 @@ function Content() {
                 </ToggleProvider.Target>
               </ToggleProvider>
             ) : null}
-            <div className='mt-auto'>
+
+            <div className='mt-auto flex flex-col w-full'>
+              <TagList tags={post?.moods} size={"small"} color='secondary' />
               <StatsArea />
             </div>
           </div>
@@ -87,9 +89,7 @@ function Content() {
         </div>
       </div>
 
-      <div className='flex justify-between w-full'>
-        <TagList tags={post?.moods} size={"small"} color='secondary' />
-      </div>
+      <div className='flex justify-between w-full'></div>
     </>
   );
 }

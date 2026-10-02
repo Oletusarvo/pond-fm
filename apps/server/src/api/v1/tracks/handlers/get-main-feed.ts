@@ -6,7 +6,7 @@ import { asArray } from "../../../../utils/as-array";
 import { getCursor } from "../../../../utils/get-cursor";
 import { createHandler } from "@pondfm/server-utils";
 import { TAuthenticatedRequest } from "../../../../types/request";
-import { includeAudiusTrackData } from "../../../../utils/get-feed-handler";
+import { includeAudiusTrackData } from "../../../../utils/include-audius-track-data";
 import { getNewTracks } from "../../../../DAL/tracks/get-new-tracks";
 
 /**Returns a feed of tracks sorted by newest first. */

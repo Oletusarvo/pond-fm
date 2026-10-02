@@ -116,42 +116,6 @@ export function HomeScreen() {
           </FeatureItem>
         </div>
       </section>
-      <section className='h-pad py-16 flex-1 flex flex-col bg-primary/10'>
-        <SectionHeading>Account Types</SectionHeading>
-        <p className='mb-4 2xl:w-[70%]'>
-          {appName} has two account tiers: Free and Pro. Pro users receive bigger unique listener
-          thresholds for building an audience, while supporting the platform. Once you have logged
-          in, please test the platform out, and if you like it, consider upgrading to Pro. The
-          quotas and limits on each tier are preliminary; they may be raised in the future depending
-          how the {appName} experiment performs.
-        </p>
-        <div className='grid xs:grid-cols-1 md:grid-cols-2 gap-4'>
-          <PlanItem
-            priceInSubunits={0}
-            title='Free'
-            listContent={[
-              `${defaults.plans.free.unique_listener_threshold} unique listeners per track on the Undiscovered feed.`,
-              "Occasional ads among the feeds to help keep us afloat.",
-            ]}
-          >
-            A basic plan for your artistry. Provides a reasonable threshold for unique listeners for
-            your tracks to get heard. The feeds will include occasional ads to help us pay our
-            bills.
-          </PlanItem>
-          <PlanItem
-            priceInSubunits={500}
-            title='Pro'
-            listContent={[
-              `${defaults.plans.pro.unique_listener_threshold} unique listeners per track on the Undiscovered feed.`,
-              "No ads ever.",
-            ]}
-          >
-            For those who hate seeing ads, want to keep their tracks around on the undiscovered-feed
-            a little longer, and want to support the platform. Upgrading to this plan can be done
-            once you have logged in for the first time.
-          </PlanItem>
-        </div>
-      </section>
 
       <footer className='bg-gray-800 w-full flex flex-col gap-8 py-32 h-pad text-white xs:items-center md:justify-start md:items-start'>
         <div className='flex flex-col gap-8'>
@@ -274,4 +238,44 @@ function PlanItem({
 
 function ResponsiveParagraph({ children }: React.ComponentProps<"p">) {
   return <p className='xs:w-full sm:max-w-[70%] md:max-w-full xl:max-w-[70%]'>{children}</p>;
+}
+
+function PlanTypesSection() {
+  return (
+    <section className='h-pad py-16 flex-1 flex flex-col bg-primary/10'>
+      <SectionHeading>Account Types</SectionHeading>
+      <p className='mb-4 2xl:w-[70%]'>
+        {appName} has two account tiers: Free and Pro. Pro users receive bigger unique listener
+        thresholds for building an audience, while supporting the platform. Once you have logged in,
+        please test the platform out, and if you like it, consider upgrading to Pro. The quotas and
+        limits on each tier are preliminary; they may be raised in the future depending how the{" "}
+        {appName} experiment performs.
+      </p>
+      <div className='grid xs:grid-cols-1 md:grid-cols-2 gap-4'>
+        <PlanItem
+          priceInSubunits={0}
+          title='Free'
+          listContent={[
+            `${defaults.plans.free.unique_listener_threshold} unique listeners per track on the Undiscovered feed.`,
+            "Occasional ads among the feeds to help keep us afloat.",
+          ]}
+        >
+          A basic plan for your artistry. Provides a reasonable threshold for unique listeners for
+          your tracks to get heard. The feeds will include occasional ads to help us pay our bills.
+        </PlanItem>
+        <PlanItem
+          priceInSubunits={defaults.plans.pro.price}
+          title='Pro'
+          listContent={[
+            `${defaults.plans.pro.unique_listener_threshold} unique listeners per track on the Undiscovered feed.`,
+            "No ads ever.",
+          ]}
+        >
+          For those who hate seeing ads, want to keep their tracks around on the undiscovered-feed a
+          little longer, and want to support the platform. Upgrading to this plan can be done once
+          you have logged in for the first time.
+        </PlanItem>
+      </div>
+    </section>
+  );
 }

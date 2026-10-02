@@ -6,7 +6,7 @@ import { getCursor } from "../../../../utils/get-cursor";
 import { createHandler } from "@pondfm/server-utils";
 import { TAuthenticatedRequest } from "../../../../types/request";
 import { getUndiscoveredTracks } from "../../../../DAL/tracks/get-undiscovered-tracks";
-import { includeAudiusTrackData } from "../../../../utils/get-feed-handler";
+import { includeAudiusTrackData } from "../../../../utils/include-audius-track-data";
 
 /**Returns the main track feed. */
 export const getUndiscoveredTracksHandler = createHandler(

@@ -2,7 +2,7 @@ import { createHandler } from "@pondfm/server-utils";
 import { TAuthenticatedRequest } from "../../../../types/request";
 import { db } from "../../../../db-config";
 import { getCursor } from "../../../../utils/get-cursor";
-import { includeAudiusTrackData } from "../../../../utils/get-feed-handler";
+import { includeAudiusTrackData } from "../../../../utils/include-audius-track-data";
 import { getAuthorRepostedTracks } from "../../../../DAL/tracks/get-author-reposted-tracks";
 
 /**Returns tracks reposted by a user. */

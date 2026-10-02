@@ -129,9 +129,10 @@ function DetailsSection() {
       queryClient.setQueryData(["user", user?.id], (oldData: TUserPublic) => {
         if (!oldData) return oldData;
         return {
+          /*
           ...oldData,
           username: data.username,
-          bio: data.bio,
+          bio: data.bio,*/
           urls,
         };
       });
@@ -171,37 +172,6 @@ function DetailsSection() {
     <section className='flex flex-col w-full gap-2'>
       <SectionLabel>Profile</SectionLabel>
       <form className='flex flex-col gap-2 w-full items-end' onSubmit={submit}>
-        <Form.Group label='Email'>
-          <Input
-            type='email'
-            name='email'
-            defaultValue={user?.email}
-            required
-            placeholder='Update your email...'
-            onChange={updateDetails}
-          />
-          <small className='ml-1 text-gray-500'>
-            Updated emails must be verified before they take effect.
-          </small>
-        </Form.Group>
-        <Form.Group label='Username'>
-          <Input
-            name='username'
-            defaultValue={user?.username}
-            maxLength={30}
-            placeholder='Choose a username'
-            onChange={updateDetails}
-          />
-        </Form.Group>
-        <Form.Group label='Bio'>
-          <textarea
-            className='w-full resize-none text-sm text-slate-500 outline-none border-slate-200 border rounded-md px-4 py-2 min-h-24 '
-            placeholder='Type your bio...'
-            name='bio'
-            onChange={updateDetails}
-            defaultValue={user.bio}
-          />
-        </Form.Group>
         <Form.Group label='Link 1'>
           <Input
             onChange={(e) => updateUrls(e.target.value)}

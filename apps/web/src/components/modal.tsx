@@ -3,6 +3,8 @@ import { Button } from "./button";
 import { useClassName } from "../hooks/use-class-name";
 import React from "react";
 import { useDetectClickOutside } from "../hooks/use-detect-click-outside";
+import { useStopPropagation } from "../hooks/use-stop-propagation";
+import { stopPropagation } from "../utils/stop-propagation";
 
 type ModalProps = React.PropsWithChildren & {
   onClose?: () => void;
@@ -31,8 +33,9 @@ export const Modal = React.memo(function Modal({
   }
 
   const Body = React.memo(function Body() {
+    const onClick = useStopPropagation(() => onClose?.());
     const { ref } = useDetectClickOutside({
-      onClickOutside: () => onClose?.(),
+      onClickOutside: onClick,
     });
     const className = useClassName(
       "bg-white p-4 flex flex-col max-h-full animate-fade-in animate-grow-in min-h-32",
@@ -40,10 +43,10 @@ export const Modal = React.memo(function Modal({
       fullHeight ? "h-full" : "h-auto",
     );
     return (
-      <div className={className} ref={ref as React.Ref<HTMLDivElement>}>
+      <div className={className} ref={ref as React.Ref<HTMLDivElement>} onClick={stopPropagation()}>
         <div className='flex items-center w-full justify-between pb-4'>
           <h3 className='font-semibold text-slate-500'>{title}</h3>
-          <Button hidden={!onClose} paddingEnabled onClick={onClose} variant='ghost' shape='circle'>
+          <Button hidden={!onClose} paddingEnabled onClick={onClick} variant='ghost' shape='circle'>
             <X />
           </Button>
         </div>
