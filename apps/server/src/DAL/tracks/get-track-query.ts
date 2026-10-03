@@ -10,7 +10,6 @@ import { applyCursor } from "../posts/utils/apply-cursor";
 
 export function getTrackQuery(ctx: DBContext, config: FeedQueryConfig) {
   const query = ctx.queryBuilder();
-  query.from({ track: viewnames.tracks });
   query.select("track.*");
   selectLikedByMe(query, config.session);
   selectRepostedByMe(query, config.session);
