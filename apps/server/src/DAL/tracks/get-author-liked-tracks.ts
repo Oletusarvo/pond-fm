@@ -14,7 +14,7 @@ export async function getAuthorLikedTracks(
   query
     .join({ likes: tablenames.likes }, "likes.track_id", "track.id")
     .where({ "likes.user_id": config.author_id })
-    .orderBy(db.raw("likes.created_at, post_id"), "desc");
+    .orderByRaw("likes.created_at DESC, post_id DESC");
   applyCursor(query, {
     dir: "asc",
     timestampColumn: "likes.created_at",

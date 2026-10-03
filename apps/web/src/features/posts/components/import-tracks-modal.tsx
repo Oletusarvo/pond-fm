@@ -33,7 +33,9 @@ function Content({ onClose }) {
       setTimeout(() => onClose(), 1200);
     },
     onError: (res) => {
-      console.log(res.error);
+      if (res.status === 429) {
+        return "rate-limited";
+      }
     },
   });
 
@@ -61,8 +63,14 @@ function Content({ onClose }) {
               <div className='p-2 rounded-md bg-primary/10 border border-primary/20 flex items-center gap-2'>
                 <span>Import successful!.</span>
               </div>
+            ) : status === "rate-limited" ? (
+              <div className='p-2 rounded-md bg-red-500/10 border border-red-500/20 text-red-500 flex items-center gap-2'>
+                <span>
+                  Whoa there! You have been rate limited. Please try again in a few moments.
+                </span>
+              </div>
             ) : status === "error" ? (
-              <div className='p-2 rounded-md bg-red-500/10 border border-red-500/20 flex items-center gap-2'>
+              <div className='p-2 rounded-md bg-red-500/10 border border-red-500/20 text-red-500 flex items-center gap-2'>
                 <Spinner /> <span>Track import failed!</span>
               </div>
             ) : null}

@@ -9,6 +9,8 @@ import { getPlayCountStatsHandler } from "./handlers/get-track-stats-handler";
 import { importAudiusTracksHandler } from "../users/handlers/import-audius-tracks-handler";
 import { updateTrackHandler } from "./handlers/update-track-handler";
 import { getFollowedFeedHandler } from "./handlers/get-followed-feed";
+import rateLimit from "express-rate-limit";
+import { TAuthenticatedRequest } from "../../../types/request";
 
 const router = getRouter();
 
@@ -65,7 +67,15 @@ router.get("/feed/:authorId/liked", checkAuth(false), handlers.tracks.feed.liked
  * @summary Adds a like by the currently authenticated user on a track by id.
  * @tags Tracks
  */
-router.post("/like", checkAuth(), handlers.tracks.like);
+router.post(
+  "/like",
+  rateLimit({
+    limit: 4,
+    windowMs: 1000 * 60,
+  }),
+  checkAuth(),
+  handlers.tracks.like,
+);
 /**
  * DELETE /tracks/like
  * @summary Deletes a like by the currently authenticated user on a track by id.
@@ -100,12 +110,28 @@ router.delete(
  * @summary Increments the play count of a track by id. Requests will only be processed if a valid stream token is present.
  * @tags Tracks
  */
-router.post("/:trackId/play", verifyStreamToken, handlers.tracks.countPlay);
+router.post(
+  "/:trackId/play",
+  rateLimit({
+    limit: 4,
+    windowMs: 1000 * 60,
+  }),
+  verifyStreamToken,
+  handlers.tracks.countPlay,
+);
 /**
  * GET /tracks/:id/stream
  * @summary Returns a url from which a track can be streamed. Also creates a stream session, and sets a stream cookie used in play counting, liking and reposting.
  */
-router.get("/:trackId/stream/url", checkAuth(false), handlers.tracks.stream);
+router.get(
+  "/:trackId/stream/url",
+  rateLimit({
+    limit: 20,
+    windowMs: 1000 * 60,
+  }),
+  checkAuth(false),
+  handlers.tracks.stream,
+);
 
 /**
  * DELETE /tracks/:id
@@ -116,6 +142,14 @@ router.delete("/:trackId", checkAuth(), handlers.tracks.delete);
 router.get("/:trackId", checkAuth(false), handlers.tracks.get);
 router.put("/:trackId", checkAuth(), updateTrackHandler);
 
-router.patch("/audius/import", checkAuth(), importAudiusTracksHandler);
+router.patch(
+  "/audius/import",
+  rateLimit({
+    limit: 1,
+    windowMs: 1000 * 60,
+  }),
+  checkAuth(),
+  importAudiusTracksHandler,
+);
 
 export { router as tracksRouter };

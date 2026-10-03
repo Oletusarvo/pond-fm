@@ -64,11 +64,11 @@ async function runCleanup() {
     console.log("Failed to delete expired pending users.", err.stack);
   });
 
-  //Delete users that have been deleted, and have been in that state for one day.
+  //Delete users that have been deleted, and have been in that state for 30 days.
   await retry(async () => {
     await db(tablenames.users)
       .where({ status: "deleted" } as TUser)
-      .andWhereRaw("CURRENT_TIMESTAMP - deleted_at >= INTERVAL '24h'")
+      .andWhereRaw("CURRENT_TIMESTAMP - deleted_at >= INTERVAL '30 days'")
       .del();
   });
 
@@ -86,19 +86,19 @@ async function runCleanup() {
     },
   );
 
-  //Delete expired email update tokens.
-  await retry(
-    async () =>
-      await db(tablenames.emailUpdateSessions).whereRaw("CURRENT_TIMESTAMP >= expires_at").del(),
-    {
-      delay: 1000,
-    },
-  );
-
   //Delete expired login tokens.
   await retry(
     async () =>
       await db(tablenames.loginSessions).whereRaw("expires_at <= CURRENT_TIMESTAMP").del(),
+    { delay: 1000 },
+  );
+
+  //Delete plays that are over 90 days old.
+  await retry(
+    async () =>
+      await db(tablenames.playData)
+        .whereRaw("CURRENT_TIMESTAMP - play_counted_at > INTERVAL '90 days'")
+        .del(),
     { delay: 1000 },
   );
 }
