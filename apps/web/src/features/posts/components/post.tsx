@@ -95,14 +95,14 @@ function Content() {
   };
   return (
     <>
-      <div className='flex gap-1 flex-1 w-full overflow-hidden'>
+      <div className='flex gap-1 flex-1 w-full overflow-hidden items-center'>
         <img src={post?.artwork} className='xs:w-24 xs:h-24 lg:w-32 lg:h-32 rounded-lg' />
         <ContentBody>
           <ContentRow>
             <PostAuthor />
             <UploadTime />
           </ContentRow>
-          <ContentRow>
+          <ContentRow className='mb-2'>
             <Title />
             <EditButton />
           </ContentRow>
