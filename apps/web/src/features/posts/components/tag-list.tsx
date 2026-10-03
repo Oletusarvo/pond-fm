@@ -3,6 +3,7 @@ import { useClassName } from "../../../hooks/use-class-name";
 import { useTrackContext } from "../providers/post-provider";
 import { genreMap } from "../../../utils/genre-map";
 import { Tag } from "./tag";
+import { HorizontalScrollable } from "../../../components/horizontal-scrollable";
 
 type TagListProps = {
   tags: string[];
@@ -21,7 +22,7 @@ export function TagList({
   size,
 }: TagListProps) {
   return (
-    <div className='flex items-center gap-1 max-w-full shrink-0 no-scrollbar'>
+    <>
       {tags?.map((tag) => {
         return (
           <Tag
@@ -34,6 +35,6 @@ export function TagList({
           />
         );
       })}
-    </div>
+    </>
   );
 }

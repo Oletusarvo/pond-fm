@@ -5,12 +5,15 @@ import { useAction } from "../../../hooks/use-action";
 import { useToggleContext } from "../../../providers/toggle-provider";
 import { api } from "../../../utils/api/api";
 import { ReactNode } from "react";
-import { ExternalLink } from "lucide-react";
+import { ArrowDownCircle, ArrowUpCircle, ExternalLink } from "lucide-react";
 import { useInvalidateFeeds } from "../hooks/use-invalidate-feed";
 import { Spinner } from "../../../components/spinner";
 import { debounce } from "../../../utils/debounce";
 import React from "react";
+import { ErrorMessage, HelperMessage, SuccessMessage } from "../../../components/helper-message";
+import { PassProps } from "../../../components/pass-props";
 
+/**Renders the modal for importing or uploading tracks. */
 export function ImportTracksModal() {
   const { toggleState } = useToggleContext();
   const onClose = () => toggleState(false);
@@ -49,6 +52,7 @@ function Content({ onClose }) {
         <p>Import your entire catalogue from Audius to Amphitune, or upload to Audius. </p>
       </div>
       <MethodButton
+        icon={<ArrowDownCircle />}
         disabled={loading || status === "success"}
         onClick={action}
         title='Import All Tracks'
@@ -56,29 +60,32 @@ function Content({ onClose }) {
           <div className='flex flex-col items-start gap-1'>
             <span>Import your entire catalogue from Audius to Amphitune.</span>
             {loading ? (
-              <div className='p-2 rounded-md bg-primary/10 border border-primary/20 flex items-center gap-2'>
-                <Spinner /> <span>Importing tracks. Please wait...</span>
-              </div>
+              <HelperMessage>
+                <div className='flex gap-2 items-center'>
+                  <Spinner /> <span>Importing tracks. Please wait...</span>
+                </div>
+              </HelperMessage>
             ) : status === "success" ? (
-              <div className='p-2 rounded-md bg-primary/10 border border-primary/20 flex items-center gap-2'>
+              <SuccessMessage>
                 <span>Import successful!.</span>
-              </div>
+              </SuccessMessage>
             ) : status === "rate-limited" ? (
-              <div className='p-2 rounded-md bg-red-500/10 border border-red-500/20 text-red-500 flex items-center gap-2'>
+              <ErrorMessage>
                 <span>
                   Whoa there! You have been rate limited. Please try again in a few moments.
                 </span>
-              </div>
+              </ErrorMessage>
             ) : status === "error" ? (
-              <div className='p-2 rounded-md bg-red-500/10 border border-red-500/20 text-red-500 flex items-center gap-2'>
+              <ErrorMessage>
                 <Spinner /> <span>Track import failed!</span>
-              </div>
+              </ErrorMessage>
             ) : null}
           </div>
         }
       />
 
       <MethodButton
+        icon={<ArrowUpCircle />}
         disabled={loading || status === "success"}
         onClick={upload}
         title={
@@ -101,15 +108,25 @@ function Content({ onClose }) {
 function MethodButton({
   title,
   description,
+  icon,
   ...props
-}: Omit<React.ComponentProps<"button">, "title"> & { title: ReactNode; description: ReactNode }) {
+}: Omit<React.ComponentProps<"button">, "title"> & {
+  title: ReactNode;
+  description: ReactNode;
+  icon?: ReactNode;
+}) {
   return (
     <button
       {...props}
-      className='rounded-md border border-primary text-primary w-full p-4 cursor-pointer text-start'
+      className='rounded-md border border-primary text-primary w-full p-4 cursor-pointer text-start flex gap-4 items-center'
     >
-      <h3 className='font-semibold'>{title}</h3>
-      {React.isValidElement(description) ? description : <p>{description}</p>}
+      <div className='flex items-center justify-center h-full'>
+        <PassProps size='1.5rem'>{icon}</PassProps>
+      </div>
+      <div className='flex flex-col'>
+        <h3 className='font-semibold'>{title}</h3>
+        {React.isValidElement(description) ? description : <p>{description}</p>}
+      </div>
     </button>
   );
 }

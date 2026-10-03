@@ -6,6 +6,7 @@ import { applyCursor } from "../posts/utils/apply-cursor";
 import { resolveQueryWithCursor } from "../posts/utils/resolve-query-with-cursor";
 import { getTrackQuery } from "./get-track-query";
 
+/**Gets all tracks liked by a specific user. */
 export async function getAuthorLikedTracks(
   ctx: DBContext,
   config: FeedQueryConfig & { author_id: string },

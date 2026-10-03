@@ -1,15 +1,15 @@
-import { Check, TriangleAlert, X } from "lucide-react";
+import { Check, Info, TriangleAlert, X } from "lucide-react";
 import { useClassName } from "../hooks/use-class-name";
 import { IconContainer } from "./icon";
 
 type HelperMessageProps = React.PropsWithChildren & {
-  type: "success" | "error" | "warning";
+  type?: "success" | "error" | "warning";
   fullWidth?: boolean;
 };
 
 export function HelperMessage({ children, type, fullWidth }: HelperMessageProps) {
   const Icon =
-    type === "success" ? Check : type === "error" ? X : type === "warning" ? TriangleAlert : null;
+    type === "success" ? Check : type === "error" ? X : type === "warning" ? TriangleAlert : Info;
   const containerClassName = useClassName(
     "flex items-center py-2 px-4 gap-4 border rounded-md text-sm",
     fullWidth ? "w-full" : "",

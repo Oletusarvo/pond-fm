@@ -70,9 +70,6 @@ export function SettingsModal({
           <TabsProvider.Tab index='profile'>
             <DetailsSection />
           </TabsProvider.Tab>
-          <TabsProvider.Tab index='plan'>
-            <PlanSection />
-          </TabsProvider.Tab>
         </TabsProvider>
       </div>
     </Modal>

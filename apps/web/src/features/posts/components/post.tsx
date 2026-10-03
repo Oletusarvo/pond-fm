@@ -17,13 +17,15 @@ import { useClassName } from "../../../hooks/use-class-name";
 import { Spinner } from "../../../components/spinner";
 import { trackToPlayback } from "../../../utils/post-to-playback";
 import { AudioLines, Columns, TriangleAlert } from "lucide-react";
+import { HorizontalScrollable } from "../../../components/horizontal-scrollable";
 
 /**The main component responsible for rendering posts. Includes an AudioPlayer, stats and other information.
  * Must be a child of a PostProvider.
  */
 export function Post({ ref }: { ref?: React.RefObject<any> }) {
   const { track: post } = useTrackContext();
-  const { currentPlayback, togglePlayback, updateCurrentPlayback } = usePlaybackContext();
+  const { currentPlayback, togglePlayback, updateCurrentPlayback, updatePlaybackState } =
+    usePlaybackContext();
   const isPlaying = currentPlayback?.track.id === post?.id;
   const containerClassName = useClassName(
     "flex py-2 rounded-md w-full flex-col gap-1 items-start transition-colors duration-500 grow-0",
@@ -33,7 +35,7 @@ export function Post({ ref }: { ref?: React.RefObject<any> }) {
   const trackId = post?.id;
   const playbackTrackId = currentPlayback?.track.id;
   const onClick = () => {
-    if (playbackTrackId !== trackId) {
+    if (playbackTrackId !== trackId || currentPlayback?.status === "error") {
       updateCurrentPlayback(trackToPlayback(post));
     }
   };
@@ -48,55 +50,78 @@ function Content() {
   const { session } = useAuthContext();
   const { track: post } = useTrackContext();
   const { currentPlayback } = usePlaybackContext();
+
+  const ContentBody = ({ children }: React.PropsWithChildren) => {
+    return <div className='flex flex-col w-full'>{children}</div>;
+  };
+
+  const ContentRow = ({ children, className }: React.ComponentProps<"div">) => {
+    const combinedClassName = useClassName("flex w-full justify-between", className);
+    return <div className={combinedClassName}>{children}</div>;
+  };
+
+  const EditButton = () => {
+    return (
+      <ToggleProvider>
+        <ToggleProvider.Trigger>
+          <SettingsButton />
+        </ToggleProvider.Trigger>
+        <ToggleProvider.Target>
+          <UpdateTrackModal track={post} />
+        </ToggleProvider.Target>
+      </ToggleProvider>
+    );
+  };
+
+  const PlaybackStatus = () => {
+    return currentPlayback?.track.id === post?.id ? (
+      ["playing"].includes(currentPlayback.state) ? (
+        <div className='text-xs font-semibold text-primary flex gap-1 items-center animate-pulse'>
+          <AudioLines size='1rem' />
+          Now playing
+        </div>
+      ) : currentPlayback.status === "buffering" ? (
+        <div className='text-xs font-semibold text-primary flex gap-1 items-center'>
+          <Spinner size='1rem' />
+          Buffering
+        </div>
+      ) : currentPlayback.status === "error" ? (
+        <div className='text-xs font-semibold text-red-500 flex gap-1 items-center'>
+          <TriangleAlert size='1rem' />
+          Error
+        </div>
+      ) : null
+    ) : null;
+  };
   return (
     <>
       <div className='flex gap-1 flex-1 w-full overflow-hidden'>
         <img src={post?.artwork} className='xs:w-24 xs:h-24 lg:w-32 lg:h-32 rounded-lg' />
-        <div className='flex flex-col w-full gap-2'>
-          <div className='flex w-full justify-between'>
-            <div className='flex flex-col'>
-              <PostAuthor />
-              <div className='flex gap-2'>
-                <Title />
-                <ToggleProvider>
-                  <ToggleProvider.Trigger>
-                    <SettingsButton />
-                  </ToggleProvider.Trigger>
-                  <ToggleProvider.Target>
-                    <UpdateTrackModal track={post} />
-                  </ToggleProvider.Target>
-                </ToggleProvider>
-              </div>
-              {currentPlayback?.track.id === post?.id ? (
-                ["playing"].includes(currentPlayback.state) ? (
-                  <div className='text-sm font-semibold text-primary flex gap-1 items-center animate-pulse'>
-                    <AudioLines size='1rem' />
-                    Now playing
-                  </div>
-                ) : currentPlayback.status === "buffering" ? (
-                  <div className='text-sm font-semibold text-primary flex gap-1 items-center'>
-                    <Spinner size='1rem' />
-                    Buffering
-                  </div>
-                ) : currentPlayback.status === "error" ? (
-                  <div className='text-sm font-semibold text-red-500 flex gap-1 items-center'>
-                    <TriangleAlert size='1rem' />
-                    Error
-                  </div>
-                ) : null
-              ) : null}
-            </div>
+        <ContentBody>
+          <ContentRow>
+            <PostAuthor />
             <UploadTime />
-          </div>
-          <div className='flex w-full flex-col mt-auto items-start'>
-            <div className='flex gap-1 overflow-x-scroll'>
-              <Tag value={post?.genre} size='small' selected={true} />
-              <TagList tags={post?.moods} size={"small"} color='secondary' />
-            </div>
+          </ContentRow>
+          <ContentRow>
+            <Title />
+            <EditButton />
+          </ContentRow>
 
-            <StatsArea />
-          </div>
-        </div>
+          <ContentRow className='mt-auto'>
+            <div className='flex w-full flex-col items-start'>
+              <div className='flex flex-col gap-1 items-start'>
+                <Tag value={post?.genre} size='small' selected={true} />
+                <HorizontalScrollable>
+                  <TagList tags={post?.moods} size={"small"} color='secondary' />
+                </HorizontalScrollable>
+              </div>
+              <div className='flex w-full justify-between items-center'>
+                <StatsArea />
+                <PlaybackStatus />
+              </div>
+            </div>
+          </ContentRow>
+        </ContentBody>
       </div>
     </>
   );

@@ -68,20 +68,24 @@ function ModalContent() {
         <h2 className='text-xl font-semibold'>Updating {track?.title}</h2>
       </div>
       <Form.Group label='Main Genre'>
-        <GenreSelector
-          onChange={(genre) => {
-            setGenre(genre);
-          }}
-          defaultSelected={track?.genre}
-        />
+        <div className='gap-1 flex w-full flex-wrap'>
+          <GenreSelector
+            onChange={(genre) => {
+              setGenre(genre);
+            }}
+            defaultSelected={track?.genre}
+          />
+        </div>
       </Form.Group>
       <Form.Group label='Style (Max 3)'>
-        <MoodSelector
-          onChange={(moods) => {
-            setMoods(moods);
-          }}
-          defaultSelected={track?.moods}
-        />
+        <div className='flex gap-1 w-full flex-wrap'>
+          <MoodSelector
+            onChange={(moods) => {
+              setMoods(moods);
+            }}
+            defaultSelected={track?.moods}
+          />
+        </div>
       </Form.Group>
       <div className='flex flex-col w-full gap-2'>
         <LoaderButton

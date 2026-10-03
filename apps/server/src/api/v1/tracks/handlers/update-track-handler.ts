@@ -11,7 +11,7 @@ export const updateTrackHandler = createHandler(
     const { trackId } = req.params;
     const { moods, genre } = req.body;
     const session = req.session;
-    console.log(moods, genre);
+
     await db.transaction(async (trx) => {
       if (moods) {
         await trx(tablenames.trackMoods)
