@@ -23,7 +23,7 @@ export function NotificationsModal() {
 function ModalContent() {
   const queryClient = useQueryClient();
   const { data } = useFeedContext();
-  const hasUnseen = data?.some((item) => item.seen_at == null);
+  const hasUnseen = data?.some((item) => item?.seen_at == null);
 
   useEffect(() => {
     if (hasUnseen) {
@@ -91,7 +91,7 @@ function Notification({ notification }) {
             <strong className='text-primary'>{notification.track?.title}</strong>
           ) : null}
 
-          {notification.seen_at === null ? (
+          {notification?.seen_at === null ? (
             <div className='rounded-md px-1 border-primary/20 bg-primary/10 text-primary text-xs'>
               New
             </div>
