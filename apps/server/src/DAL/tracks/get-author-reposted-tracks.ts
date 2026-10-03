@@ -19,5 +19,5 @@ export async function getAuthorRepostedTracks(
     idColumn: "post_id",
     cursor: config.cursor,
   });
-  return await resolveQueryWithCursor(query, { pageSize: 10 });
+  return await resolveQueryWithCursor(query, { pageSize: 10, idColumn: "post_id" });
 }

@@ -38,5 +38,5 @@ export async function getUndiscoveredPosts(ctx: DBContext, config: FeedQueryConf
   selectPost(query);
   selectTrack(query);
 
-  return await resolveQueryWithCursor(query, { pageSize: 10 });
+  return await resolveQueryWithCursor(query, { pageSize: 10, idColumn: "post_id" });
 }

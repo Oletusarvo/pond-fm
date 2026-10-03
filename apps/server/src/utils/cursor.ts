@@ -12,10 +12,10 @@ export function decodeCursor(encodedCursor?: string) {
     : null;
 }
 
-export function createCursor(data: any[], pageSize: number) {
+export function createCursor(data: any[], pageSize: number, idColumn: string = "id") {
   const cursorItem = data.length === pageSize + 1 ? data.at(-2) : null;
 
   return cursorItem
-    ? encodeCursor({ id: cursorItem.post_id, timestamp: cursorItem.created_at })
+    ? encodeCursor({ id: cursorItem[idColumn], timestamp: cursorItem.created_at })
     : null;
 }

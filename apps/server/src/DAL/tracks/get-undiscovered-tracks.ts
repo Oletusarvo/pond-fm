@@ -20,5 +20,5 @@ export async function getUndiscoveredTracks(ctx: DBContext, config: FeedQueryCon
     cursor: config.cursor,
   });
 
-  return await resolveQueryWithCursor(query, { pageSize: 10 });
+  return await resolveQueryWithCursor(query, { pageSize: 10, idColumn: "post_id" });
 }

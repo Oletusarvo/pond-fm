@@ -39,7 +39,7 @@ function ModalContent() {
       };
     }
   }, [hasUnseen]);
-
+  console.log(data);
   return (
     <Feed
       renderComponent={({ item }) => <Notification notification={item} />}

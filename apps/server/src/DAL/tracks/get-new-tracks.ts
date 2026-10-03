@@ -16,5 +16,5 @@ export async function getNewTracks(ctx: DBContext, config: FeedQueryConfig) {
     idColumn: "post_id",
     cursor: config.cursor,
   });
-  return await resolveQueryWithCursor(query, { pageSize: 10 });
+  return await resolveQueryWithCursor(query, { pageSize: 10, idColumn: "post_id" });
 }

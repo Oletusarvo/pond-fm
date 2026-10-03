@@ -14,5 +14,5 @@ export async function getAuthorTracks(
   query
     .where({ is_canonical: true, canonical_author_id: config.canonical_author_id })
     .orderByRaw("created_at DESC, post_id DESC");
-  return await resolveQueryWithCursor(query, { pageSize: 10 });
+  return await resolveQueryWithCursor(query, { pageSize: 10, idColumn: "post_id" });
 }

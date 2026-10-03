@@ -5,12 +5,13 @@ export async function resolveQueryWithCursor(
   query: Knex.QueryBuilder,
   config: {
     pageSize: number;
+    idColumn?: string;
   },
 ) {
-  const { pageSize } = config;
+  const { pageSize, idColumn } = config;
 
   const data = await query.limit(pageSize + 1);
-  const fb = new FeedBuilder(pageSize);
+  const fb = new FeedBuilder(pageSize, idColumn);
   const cursor = fb.withCursor(data);
   return cursor;
 }
