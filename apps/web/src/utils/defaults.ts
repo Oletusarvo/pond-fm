@@ -15,12 +15,12 @@ export const defaults: IDefaults = {
   plans: {
     free: {
       price: 0,
-      unique_listener_threshold: 50,
+      unique_listener_threshold: 100,
       storage: "150mb",
     },
     pro: {
       price: 200,
-      unique_listener_threshold: 200,
+      unique_listener_threshold: 1000,
       storage: "5gb",
     },
   },

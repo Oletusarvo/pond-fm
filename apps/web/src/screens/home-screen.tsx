@@ -79,8 +79,7 @@ export function HomeScreen() {
           {appName} is a discovery layer built on top of <strong>Audius</strong>, with a simple
           idea: your music should get a chance to be heard regardless of how popular you are. That's
           where our <strong>Undiscovered</strong> feed comes in. Any track with fewer than{" "}
-          {defaults.plans.free.unique_listener_threshold} unique listeners (or{" "}
-          {defaults.plans.pro.unique_listener_threshold} for Pro accounts), stays there, oldest
+          {defaults.plans.free.unique_listener_threshold} unique listeners, stays there, oldest
           first, until it reaches it. Once your track crosses that threshold, you've genuinely been
           discovered. The <strong>New</strong> feed will display uploaded or reposted tracks in
           chronological order regardless of how many unique listeners they have accumulated.
@@ -166,23 +165,23 @@ export function HomeScreen() {
               Report Copyright Infringement
             </Link>
           </div>
-        </div>
-        <div className='flex flex-col gap-2'>
-          <div className='mt-auto text-sm italic'>&copy; oletusarvo 2026</div>
-          <Link className='text-sm italic' to='mailto:designsbyhayleyjackson@gmail.com'>
-            &copy; Artwork - Hayley Jackson
+          <div className='flex flex-col gap-2'>
+            <div className='mt-auto text-sm italic'>&copy; oletusarvo 2026</div>
+            <Link className='text-sm italic' to='mailto:designsbyhayleyjackson@gmail.com'>
+              &copy; Artwork - Hayley Jackson
+            </Link>
+          </div>
+          <Link to='https://audius.co/' target='_blank'>
+            <img src='/assets/audius-logo-black.webp' width='130px' className='invert' />
           </Link>
         </div>
-        <Link to='https://audius.co/' target='_blank'>
-          <img src='/assets/audius-logo-black.webp' width='130px' className='invert' />
-        </Link>
       </footer>
     </>
   );
 }
 
 function SectionHeading({ children }: Omit<React.ComponentProps<"h2">, "className">) {
-  return <h2 className='text-xl font-semibold mb-4'>{children}</h2>;
+  return <h2 className='text-2xl font-semibold mb-4'>{children}</h2>;
 }
 
 function FeatureItem({
