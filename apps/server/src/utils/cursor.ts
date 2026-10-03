@@ -1,7 +1,6 @@
 import { TCursor } from "../types/cursor";
 
 export function encodeCursor(cursor: TCursor) {
-  console.log("Encoding cursor...");
   return Buffer.from(JSON.stringify(cursor)).toString("base64url");
 }
 

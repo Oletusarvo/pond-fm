@@ -65,7 +65,6 @@ export function SettingsModal({
         <TabsProvider initialTab={"profile"}>
           <div className='flex w-full'>
             <TabsProvider.Button index='profile'>Profile</TabsProvider.Button>
-            <TabsProvider.Button index='plan'>Subscription</TabsProvider.Button>
           </div>
           <TabsProvider.Tab index='profile'>
             <DetailsSection />
