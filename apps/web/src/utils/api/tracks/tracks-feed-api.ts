@@ -20,7 +20,7 @@ export class TracksFeedApi {
 
   /**Returns the discovery feed. */
   async undiscovered(cursor?: string, genres?: string[], moods?: string[]) {
-    const req = requestBuilder.get().includeCredentials().build();
+    const req = requestBuilder.get().includeCredentials().noStore().build();
     const url = this.buildFeedUrl(`tracks/undiscovered`, cursor, genres, moods);
     const res = await fetch(url, req);
     return await Api.asApiResponse<TTrackPublic[]>(res);
@@ -28,7 +28,7 @@ export class TracksFeedApi {
 
   /**Returns the main feed. */
   async main(cursor?: string, genres?: string[], moods?: string[]) {
-    const req = requestBuilder.get().includeCredentials().build();
+    const req = requestBuilder.get().includeCredentials().noStore().build();
     const url = this.buildFeedUrl(`tracks/new`, cursor, genres, moods);
     const res = await fetch(url, req);
     return await Api.asApiResponse<TTrackPublic[]>(res);

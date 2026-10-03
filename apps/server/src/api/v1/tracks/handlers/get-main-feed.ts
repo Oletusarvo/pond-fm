@@ -16,7 +16,7 @@ export const getMainFeedHandler = createHandler(async (req: TAuthenticatedReques
     genres?: string[];
     moods?: string[];
   };
-  const session = req.session;
+  const session = req.session || null;
   const result = await includeAudiusTrackData(
     async () =>
       await getNewTracks(db, {
@@ -26,5 +26,6 @@ export const getMainFeedHandler = createHandler(async (req: TAuthenticatedReques
         moods: asArray(moods),
       }),
   );
+
   return res.json(result);
 });

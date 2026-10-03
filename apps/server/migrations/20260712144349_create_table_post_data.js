@@ -25,7 +25,8 @@ exports.up = function (knex) {
         .onDelete("CASCADE")
         .onUpdate("CASCADE");
 
-      tbl.timestamps(true, true);
+      tbl.timestamp("created_at", { precision: 3 });
+      tbl.timestamp("updated_at", { precision: 3 });
       tbl.unique(["author_id", "track_id"]);
     });
 };

@@ -15,6 +15,12 @@ export function applyCursor(
     const { dir, timestampColumn, idColumn } = config;
     const comparator = dir === "asc" ? ">=" : "<=";
 
-    query.where(timestampColumn, comparator, cursor.timestamp).whereNot({ [idColumn]: cursor.id });
+    query.where(timestampColumn, comparator, cursor.timestamp).whereNot(idColumn, cursor.id);
+  }
+}
+
+export function applyCursorRaw(query: Knex.QueryBuilder, cursor: TCursor, raw: string) {
+  if (cursor) {
+    query.whereRaw(raw, [cursor.timestamp, cursor.id]);
   }
 }
