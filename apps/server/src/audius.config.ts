@@ -54,6 +54,8 @@ export const audius = {
         const res = await fetch(url, req);
 
         if (!res.ok) {
+          const text = await res.text();
+          console.log(res.statusText, text);
           throw new Error("Fetching of stream url failed!");
         }
 
@@ -81,10 +83,7 @@ export const audius = {
       /**Counts the number of tracks uploaded by a user by id. */
       async count(userId: string) {
         const url = new URL(withEndpoint("users", userId, "tracks/count"));
-        console.log("Audius URL:", url.toString());
         const req = authorizedRequest();
-        console.log("Audius request:", req);
-
         const res = await fetch(url, req);
         if (!res.ok) {
           throw new Error("Fetching of user track count failed!");

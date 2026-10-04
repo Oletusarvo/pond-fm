@@ -8,8 +8,8 @@ exports.up = function (knex) {
     .withSchema("post")
     .dropViewIfExists("track_view")
     .alterTable("post_data", (tbl) => {
-      tbl.timestamp("created_at", { precision: 3 }).alter();
-      tbl.timestamp("updated_at", { precision: 3 }).alter();
+      tbl.timestamp("created_at", { precision: 3 }).defaultTo(knex.fn.now()).alter();
+      tbl.timestamp("updated_at", { precision: 3 }).defaultTo(knex.fn.now()).alter();
     })
     .createView("track_view", (view) => constructTrackView(knex, view));
 };
