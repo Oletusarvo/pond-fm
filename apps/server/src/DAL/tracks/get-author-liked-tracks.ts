@@ -22,5 +22,9 @@ export async function getAuthorLikedTracks(
     .orderByRaw("? DESC, post_id DESC", [timestampColumn]);
   applyTrackCursor(query, config.cursor, { dir: "desc", timestampColumn });
 
-  return await resolveQueryWithCursor(query, { pageSize: 10, idColumn: "post_id" });
+  return await resolveQueryWithCursor(query, {
+    pageSize: 10,
+    idColumn: "post_id",
+    timestampColumn,
+  });
 }

@@ -7,12 +7,13 @@ export async function resolveQueryWithCursor(
   config: {
     pageSize: number;
     idColumn?: string;
+    timestampColumn?: string;
   },
 ) {
-  const { pageSize, idColumn } = config;
+  const { pageSize, idColumn, timestampColumn } = config;
 
   const data = await query.limit(pageSize + 1);
-  const fb = new FeedBuilder(pageSize, idColumn);
+  const fb = new FeedBuilder(pageSize, idColumn, timestampColumn);
   const cursor = fb.withCursor(data);
   return cursor;
 }

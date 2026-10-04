@@ -4,6 +4,7 @@ export class FeedBuilder {
   constructor(
     private pageSize: number,
     private idColumn: string = "id",
+    private timestampColumn: string = "created_at",
   ) {}
   /**Omits the last item of the provided array if there are more items than the defined page size of the repository. */
   pruneData(data: any[]) {
@@ -14,7 +15,7 @@ export class FeedBuilder {
   withCursor(data: any[]) {
     return {
       items: this.pruneData(data),
-      cursor: createCursor(data, this.pageSize, this.idColumn),
+      cursor: createCursor(data, this.pageSize, this.idColumn, this.timestampColumn),
     };
   }
 }

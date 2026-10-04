@@ -19,5 +19,9 @@ export async function getTracksByFollowedAuthors(ctx: DBContext, config: FeedQue
 
   applyTrackCursor(query, config.cursor, { dir: "desc", timestampColumn });
 
-  return await resolveQueryWithCursor(query, { pageSize: 10, idColumn: "post_id" });
+  return await resolveQueryWithCursor(query, {
+    pageSize: 10,
+    idColumn: "post_id",
+    timestampColumn,
+  });
 }
