@@ -1,27 +1,43 @@
 import { db } from "../../db-config";
-import { tablenames } from "../../tablenames";
+import { tablenames, viewnames } from "../../tablenames";
 import { DBContext } from "../../types/db-context";
 import { FeedQueryConfig } from "../posts/types/feed-config";
 import { applyCursor, applyTrackCursor } from "../posts/utils/apply-cursor";
 import { resolveQueryWithCursor } from "../posts/utils/resolve-query-with-cursor";
+import { filterByGenres } from "./filter/filter-by-genres";
+import { filterByMoods } from "./filter/filter-by-moods";
 import { fromDistinctTrack } from "./from/from-distinct-track";
 import { fromUndistinctTrack } from "./from/from-undistinct-track";
 import { getTrackQuery } from "./get-track-query";
+import { selectLikedByMe } from "./select/select-liked-by-me";
+import { selectRepostedByMe } from "./select/select-reposted-by-me";
+import { withDistinctTrack } from "./with/with-distinct-track";
 
 export async function getTracksByFollowedAuthors(ctx: DBContext, config: FeedQueryConfig) {
-  const query = getTrackQuery(ctx, config);
-  fromDistinctTrack(query);
-  const timestampColumn = "track.created_at";
-  query
-    .join({ followed: tablenames.followers }, "followed.followee_id", "track.author_id")
-    .where({ "followed.follower_id": config.session.user.id })
-    .orderByRaw("? DESC, post_id DESC", [timestampColumn]);
+  const query = ctx.queryBuilder();
+  const session = config.session;
 
-  applyTrackCursor(query, config.cursor, { dir: "desc", timestampColumn });
+  withDistinctTrack(query);
+
+  query
+    .with("followed_track", (qb) => {
+      qb.select("t.*")
+        .from({ t: "distinct_track" })
+        .join({ f: tablenames.followers }, "f.followee_id", "t.author_id")
+        .where({ "f.follower_id": config.session?.user.id });
+    })
+    .from({ track: "followed_track" })
+    .select("track.*")
+    .orderByRaw("created_at DESC, post_id DESC");
+
+  selectRepostedByMe(query, session);
+  selectLikedByMe(query, session);
+  filterByGenres(query, config.genres);
+  filterByMoods(query, config.moods);
+  applyTrackCursor(query, config.cursor, { dir: "desc" });
 
   return await resolveQueryWithCursor(query, {
     pageSize: 10,
     idColumn: "post_id",
-    timestampColumn,
   });
 }

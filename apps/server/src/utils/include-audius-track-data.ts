@@ -24,6 +24,7 @@ async function processTracks(data: any) {
   const authorIdSet = new Set<string>(
     data.items.map((t) => [t.author_id, t.canonical_author_id]).flatMap((arr) => arr),
   );
+
   const authorData = await audius.users.get(Array.from(authorIdSet));
   const authorMap = new Map(authorData.map((a) => [a.id, a]));
 

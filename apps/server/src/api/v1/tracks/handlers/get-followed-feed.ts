@@ -22,5 +22,6 @@ export const getFollowedFeedHandler = createHandler(async (req: TAuthenticatedRe
   const result = await includeAudiusTrackData(
     async () => await getTracksByFollowedAuthors(db, config),
   );
+
   return res.json(result);
 });

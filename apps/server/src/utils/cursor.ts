@@ -18,8 +18,9 @@ export function createCursor(
   timestampColumn: string = "created_at",
 ) {
   const cursorItem = data.length === pageSize + 1 ? data.at(-2) : null;
-
+  const timestampParts = timestampColumn.split(".");
+  const extractedTimestampColumn = timestampParts.at(-1);
   return cursorItem
-    ? encodeCursor({ id: cursorItem[idColumn], timestamp: cursorItem[timestampColumn] })
+    ? encodeCursor({ id: cursorItem[idColumn], timestamp: cursorItem[extractedTimestampColumn] })
     : null;
 }

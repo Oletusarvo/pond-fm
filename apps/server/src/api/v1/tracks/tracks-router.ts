@@ -27,7 +27,7 @@ router.get("/new", checkAuth(false), handlers.tracks.feed.main);
  */
 router.get("/undiscovered", checkAuth(false), handlers.tracks.feed.undiscovered);
 /**
- * GET /tracks/feed/discover
+ * GET /tracks/followed
  * @summary Returns a feed of tracks from users the currently authenticated user is following.
  * @tags Tracks
  */

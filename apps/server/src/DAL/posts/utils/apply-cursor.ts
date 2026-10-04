@@ -31,6 +31,7 @@ export function applyTrackCursor(
   if (cursor) {
     const { dir, timestampColumn = "created_at", idColumn = "post_id" } = options;
     const comparator = dir === "desc" ? "<" : ">";
+
     query.where(timestampColumn, comparator, cursor.timestamp).orWhere(function () {
       this.where(timestampColumn, "=", cursor.timestamp).andWhere(idColumn, comparator, cursor.id);
     });
