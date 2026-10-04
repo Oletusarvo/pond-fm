@@ -19,8 +19,20 @@ export function applyCursor(
   }
 }
 
-export function applyCursorRaw(query: Knex.QueryBuilder, cursor: TCursor, raw: string) {
+export function applyTrackCursor(
+  query: Knex.QueryBuilder,
+  cursor: TCursor,
+  options: {
+    dir: "desc" | "asc";
+    idColumn?: string;
+    timestampColumn?: string;
+  },
+) {
   if (cursor) {
-    query.whereRaw(raw, [cursor.timestamp, cursor.id]);
+    const { dir, timestampColumn = "created_at", idColumn = "post_id" } = options;
+    const comparator = dir === "desc" ? "<" : ">";
+    query.where(timestampColumn, comparator, cursor.timestamp).orWhere(function () {
+      this.where(timestampColumn, "=", cursor.timestamp).andWhere(idColumn, comparator, cursor.id);
+    });
   }
 }

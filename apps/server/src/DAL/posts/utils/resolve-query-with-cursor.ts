@@ -1,6 +1,7 @@
 import { Knex } from "knex";
 import { FeedBuilder } from "../../../utils/feed-builder";
 
+/**Awaits the provided query and returns an object containing the found items and a cursor pointing to the id and timestamp of the last item. */
 export async function resolveQueryWithCursor(
   query: Knex.QueryBuilder,
   config: {
