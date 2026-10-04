@@ -12,10 +12,7 @@ import { withDistinctTrack } from "./with/with-distinct-track";
 export async function getNewTracks(ctx: DBContext, config: FeedQueryConfig) {
   const query = getTrackQuery(ctx, config);
   withDistinctTrack(query);
-  query
-    .from({ track: "distinct_track" })
-    .select("track.*")
-    .orderByRaw("created_at DESC, post_id DESC");
+  query.from({ track: "distinct_track" }).orderByRaw("created_at DESC, post_id DESC");
 
   const cursor = config.cursor;
   applyTrackCursor(query, cursor, { dir: "desc" });
