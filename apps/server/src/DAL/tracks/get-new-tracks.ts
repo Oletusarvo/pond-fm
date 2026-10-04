@@ -7,13 +7,17 @@ import { resolveQueryWithCursor } from "../posts/utils/resolve-query-with-cursor
 import { fromDistinctTrack } from "./from/from-distinct-track";
 
 import { getTrackQuery } from "./get-track-query";
+import { withDistinctTrack } from "./with/with-distinct-track";
 
 export async function getNewTracks(ctx: DBContext, config: FeedQueryConfig) {
   const query = getTrackQuery(ctx, config);
-  fromDistinctTrack(query);
-  const cursor = config.cursor;
+  withDistinctTrack(query);
+  query
+    .from({ track: "distinct_track" })
+    .select("track.*")
+    .orderByRaw("created_at DESC, post_id DESC");
 
-  query.orderByRaw("created_at DESC, post_id DESC");
+  const cursor = config.cursor;
   applyTrackCursor(query, cursor, { dir: "desc" });
   return await resolveQueryWithCursor(query, { pageSize: 10, idColumn: "post_id" });
 }
