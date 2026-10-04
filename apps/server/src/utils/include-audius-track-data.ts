@@ -1,4 +1,6 @@
 import { audius } from "../audius.config";
+import { db } from "../db-config";
+import { tablenames } from "../tablenames";
 
 export async function includeAudiusTrackData(
   feedFn: () => Promise<{
@@ -28,10 +30,26 @@ async function processTracks(data: any) {
   const authorData = await audius.users.get(Array.from(authorIdSet));
   const authorMap = new Map(authorData.map((a) => [a.id, a]));
 
+  let tracks = [];
+  let deletedTracks = [];
   //Merge audius info with local tracks.
-  const tracks = data.items.map((track) =>
-    mergeTracks(track, audiusTrackMap.get(track.id), authorMap.get(track.author_id)),
-  );
+  for (const track of data.items) {
+    const audiusTrack = audiusTrackMap.get(track.id);
+    //If a track has been deleted on audius, skip it.
+    if (!audiusTrack) {
+      //Mark the track as deleted
+      deletedTracks.push(track.id);
+    }
+    const audiusAuthor = authorMap.get(track.author_id);
+    tracks.push(mergeTracks(track, audiusTrack, audiusAuthor));
+  }
+
+  if (deletedTracks.length > 0) {
+    db(tablenames.tracks)
+      .whereIn("id", deletedTracks)
+      .update({ status: "deleted" })
+      .catch((err) => console.log("Failed to delete tracks!", err.message));
+  }
 
   const json = {
     cursor: data.cursor,

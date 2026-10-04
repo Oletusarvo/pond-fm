@@ -35,7 +35,7 @@ export function HomeScreen() {
         <div className='flex flex-col xs:w-full md:w-[50%] items-center gap-8'>
           <div className='flex w-full justify-center'>
             <div className='w-32 h-32 flex items-center justify-center rounded-full bg-primary/10 overflow-hidden relative'>
-              <img src='/assets/frog-1.png' className='w-24 h-24 z-10' loading='lazy' />
+              <img src='/assets/frog-2.png' className='w-24 h-24 z-10' loading='lazy' />
             </div>
           </div>
           <div className='flex flex-col items-center leading-2'>
