@@ -13,7 +13,7 @@ export function selectRepostedByMe(query: Knex.QueryBuilder, session?: TSession)
           (SELECT 1 FROM ?? reposts 
             WHERE reposts.author_id = ?
             AND 
-            reposts.track_id = track.id
+            reposts.id = track.id
             AND
             track.is_canonical = FALSE
           )) AS ??`,
