@@ -38,6 +38,8 @@ export const audius = {
       const req = authorizedRequest();
       const res = await fetch(url, req);
       if (!res.ok) {
+        const text = await res.text();
+        console.log(res.statusText, text);
         throw new Error("Failed to fetch audius tracks!");
       }
       const tracks = await res.json();
@@ -47,7 +49,7 @@ export const audius = {
       /**Fetches a url from which a track can be streamed. */
       async getUrl(audiusTrackId: string, audiusUserId?: string) {
         const url = new URL(withEndpoint("tracks", audiusTrackId, "stream"));
-        url.searchParams.set("user_id", audiusUserId);
+
         url.searchParams.set("api_key", API_KEY);
         url.searchParams.set("no_redirect", "true");
         const req = authorizedRequest();
@@ -74,6 +76,8 @@ export const audius = {
       const req = authorizedRequest();
       const res = await fetch(url, req);
       if (!res.ok) {
+        const text = await res.text();
+        console.log(res.statusText, text);
         throw new Error("Failed to fetch users");
       }
       const users = await res.json();
@@ -86,6 +90,8 @@ export const audius = {
         const req = authorizedRequest();
         const res = await fetch(url, req);
         if (!res.ok) {
+          const text = await res.text();
+          console.log(res.statusText, text);
           throw new Error("Fetching of user track count failed!");
         }
         const count = await res.json();
@@ -101,6 +107,8 @@ export const audius = {
         const res = await fetch(url, req);
 
         if (!res.ok) {
+          const text = await res.text();
+          console.log(res.statusText, text);
           throw new Error("Failed to fetch user tracks from audius!");
         }
         const tracks = await res.json();

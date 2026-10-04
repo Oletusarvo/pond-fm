@@ -26,7 +26,7 @@ export const getStreamUrlHandler = createHandler(async (req: TAuthenticatedReque
 
   res.cookie(serverConfig.streamTokenName, token.data, serverConfig.streamCookieSettings);
   const session = req.session;
-  const streamUrl = await audius.tracks.stream.getUrl(track.id, session?.user.id);
+  const streamUrl = await audius.tracks.stream.getUrl(track.id);
   return res.json({
     streamUrl,
   });
