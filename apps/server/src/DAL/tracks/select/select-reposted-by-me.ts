@@ -15,7 +15,7 @@ export function selectRepostedByMe(query: Knex.QueryBuilder, session?: TSession)
             AND 
             reposts.id = track.id
             AND
-            track.is_canonical = FALSE
+            reposts.is_canonical = FALSE
           )) AS ??`,
         [viewnames.tracks, session.user.id, columnName],
       ),
