@@ -13,10 +13,14 @@ export function useAudioPlayer() {
   const playbackSrc = currentPlayback?.status === "ready" ? currentPlayback.streamUrl : null;
   const [playbackPosition, setPlaybackPosition] = useState(0);
   const audioRef = useRef<HTMLAudioElement>(null);
+  const streamSignal = useRef<AbortController>(null);
+
   const actionService = useActionContext();
 
   /**Updates the current playback. */
   const updateCurrentPlayback = async (playback: TPlayback | null) => {
+    streamSignal.current?.abort();
+    streamSignal.current = new AbortController();
     //Pause playback
     audioRef.current?.pause();
     if (!playback) {
@@ -31,9 +35,15 @@ export function useAudioPlayer() {
 
     //Request a stream token.
     await api.tracks
-      .requestStreamUrl(playback.track.id)
+      .requestStreamUrl(playback.track.id, streamSignal.current.signal)
       .then(async (res) => {
-        if (!res.success) {
+        if (res.success === false) {
+          const status = res.status === 429 ? "rate-limited" : "error";
+          setCurrentPlayback({
+            ...playback,
+            status,
+            state: "paused",
+          });
           throw new Error("Failed to start stream!");
         }
 

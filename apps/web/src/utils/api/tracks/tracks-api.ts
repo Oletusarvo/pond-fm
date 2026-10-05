@@ -11,8 +11,8 @@ export class TracksApi {
   create = new TracksCreateApi();
 
   /**Requests a stream token. */
-  async requestStreamUrl(trackId: string) {
-    const req = requestBuilder.get().includeCredentials().noStore().build();
+  async requestStreamUrl(trackId: string, signal?: AbortController["signal"]) {
+    const req = requestBuilder.get().includeCredentials().noStore().signal(signal).build();
     const res = await fetch(Api.withEndpoint(`tracks/${trackId}/stream/url`), req);
     return await Api.asApiResponse<{ streamUrl: string }>(res);
   }

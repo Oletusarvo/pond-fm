@@ -106,6 +106,13 @@ class RequestBuilder {
     };
     return this;
   }
+  signal(signal: AbortController["signal"]) {
+    this.query = {
+      ...this.query,
+      signal,
+    };
+    return this;
+  }
 }
 
 /**Utility-object for constructing http requests. */

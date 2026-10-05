@@ -24,6 +24,7 @@ import { VerifyScreen } from "./features/auth/screens/verify-screen";
 import { VerifyEmailUpdateScreen } from "./features/auth/screens/verify-email-update-screen";
 import { AdProvider } from "./features/ads/providers/ad-provider";
 import { HomeLayout2 } from "./layouts/home-layout-2";
+import { Toaster } from "react-hot-toast";
 
 function App() {
   return (
@@ -83,6 +84,7 @@ function App() {
           </ActionProvider>
         </AdProvider>
       </AuthProvider>
+      <Toaster position='bottom-center' />
     </QueryClientProvider>
   );
 }

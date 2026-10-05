@@ -13,7 +13,7 @@ export const verifyStreamToken = createMiddleware(async (req, res, next) => {
   const tokenData = verifyJWT(streamToken) as any;
   const now = Date.now();
   if (now >= tokenData.expires) {
-    return res.status(401).end();
+    return res.status(403).end();
   }
   (req as WithStreamToken<TRequest>).streamToken = tokenData;
   next();

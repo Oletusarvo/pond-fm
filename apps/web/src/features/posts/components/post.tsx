@@ -85,6 +85,11 @@ function Content() {
           <Spinner size='1rem' />
           Buffering
         </div>
+      ) : currentPlayback.status === "rate-limited" ? (
+        <div className='text-xs font-semibold text-red-500 flex gap-1 items-center'>
+          <TriangleAlert size='1rem' />
+          Please slow down! Try again in a minute.
+        </div>
       ) : currentPlayback.status === "error" ? (
         <div className='text-xs font-semibold text-red-500 flex gap-1 items-center'>
           <TriangleAlert size='1rem' />
@@ -93,6 +98,7 @@ function Content() {
       ) : null
     ) : null;
   };
+
   return (
     <>
       <div className='flex gap-1 flex-1 w-full overflow-hidden items-center'>
@@ -126,7 +132,3 @@ function Content() {
     </>
   );
 }
-
-<div className='flex gap-2 w-full items-center'>
-  <AudioPlayer />
-</div>;

@@ -1,16 +1,16 @@
 import { createHandler } from "@pondfm/server-utils";
-import { TAuthenticatedRequest } from "../../../../types/request";
-import { getUndistinctPostQuery } from "../../../../DAL/posts/get-undistinct-post-query";
-import { db } from "../../../../db-config";
-import { onlyCanonicalTracks } from "../../../../DAL/tracks/filter/only-canonical-tracks";
-import { selectTrack } from "../../../../DAL/posts/select/select-track";
-import { selectPost } from "../../../../DAL/posts/select/select-post";
-import { getCursor } from "../../../../utils/get-cursor";
-import { applyCursor } from "../../../../DAL/posts/utils/apply-cursor";
-import { resolveQueryWithCursor } from "../../../../DAL/posts/utils/resolve-query-with-cursor";
-import { getDistinctPostQuery } from "../../../../DAL/posts/get-distinct-post-query";
-import { getTrackQuery } from "../../../../DAL/tracks/get-track-query";
-import { includeAudiusTrackData } from "../../../../utils/include-audius-track-data";
+import { TAuthenticatedRequest } from "../../../../../types/request";
+import { getUndistinctPostQuery } from "../../../../../DAL/posts/get-undistinct-post-query";
+import { db } from "../../../../../db-config";
+import { onlyCanonicalTracks } from "../../../../../DAL/tracks/filter/only-canonical-tracks";
+import { selectTrack } from "../../../../../DAL/posts/select/select-track";
+import { selectPost } from "../../../../../DAL/posts/select/select-post";
+import { getCursor } from "../../../../../utils/get-cursor";
+import { applyCursor } from "../../../../../DAL/posts/utils/apply-cursor";
+import { resolveQueryWithCursor } from "../../../../../DAL/posts/utils/resolve-query-with-cursor";
+import { getDistinctPostQuery } from "../../../../../DAL/posts/get-distinct-post-query";
+import { getTrackQuery } from "../../../../../DAL/tracks/get-track-query";
+import { includeAudiusTrackData } from "../../../../../utils/include-audius-track-data";
 
 export const getSearchFeedHandler = createHandler(async (req: TAuthenticatedRequest, res) => {
   const q = req.query.q as string;

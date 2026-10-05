@@ -1,19 +1,19 @@
-import { getUndiscoveredTracksHandler } from "../api/v1/tracks/handlers/get-undiscovered-feed-handler";
-import { getMainFeedHandler } from "../api/v1/tracks/handlers/get-main-feed";
-import { getAuthorFeed } from "../api/v1/tracks/handlers/get-author-feed-handler";
-import { getFollowedFeedHandler } from "../api/v1/tracks/handlers/get-followed-feed";
+import { getUndiscoveredTracksHandler } from "../api/v1/tracks/handlers/feed/get-undiscovered-feed-handler";
+import { getMainFeedHandler } from "../api/v1/tracks/handlers/feed/get-main-feed";
+import { getAuthorFeed } from "../api/v1/tracks/handlers/feed/get-author-feed-handler";
+import { getFollowedFeedHandler } from "../api/v1/tracks/handlers/feed/get-followed-feed";
 
 import { getTrackHandler } from "../api/v1/tracks/handlers/get-track-handler";
 
 import { deleteTrackHandler } from "../api/v1/tracks/handlers/delete-track-handler";
-import { getAuthorRepostedFeedHandler } from "../api/v1/tracks/handlers/get-author-reposted-feed-handler";
-import { getAuthorLikedFeedHandler } from "../api/v1/tracks/handlers/get-author-liked-feed-handler";
+import { getAuthorRepostedFeedHandler } from "../api/v1/tracks/handlers/feed/get-author-reposted-feed-handler";
+import { getAuthorLikedFeedHandler } from "../api/v1/tracks/handlers/feed/get-author-liked-feed-handler";
 import { likeTrackHandler } from "../api/v1/tracks/handlers/like-track-handler";
 import { unlikeTrackHandler } from "../api/v1/tracks/handlers/unlike-track-handler";
 import { repostTrackHandler } from "../api/v1/tracks/handlers/repost-track-handler";
 import { unrepostTrackHandler } from "../api/v1/tracks/handlers/unrepost-track-handler";
 import { countPlayHandler } from "../api/v1/tracks/handlers/count-play-handler";
-import { getSearchFeedHandler } from "../api/v1/tracks/handlers/get-search-feed";
+import { getSearchFeedHandler } from "../api/v1/tracks/handlers/feed/get-search-feed";
 import { getStreamUrlHandler } from "../api/v1/tracks/handlers/get-stream-url";
 
 export class TrackHandlerService {

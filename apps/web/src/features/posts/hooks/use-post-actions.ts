@@ -1,3 +1,4 @@
+import toast from "react-hot-toast";
 import { api } from "../../../utils/api/api";
 import { cancelable } from "../../../utils/debounced";
 import { useTrack, useTrackStore } from "./use-post";
@@ -53,6 +54,12 @@ export function usePostActions({
       if (!res.success) {
         updatePost(initialPost);
         onLikeRollback?.();
+        const status = res.status;
+        if ([401].includes(status)) {
+          toast.error("You have to listen to a track before you like it!");
+        } else if (status === 403) {
+          toast.error("You have not listened for long enough to like, yet!");
+        }
       }
     }
   };
@@ -75,6 +82,12 @@ export function usePostActions({
       if (!result.value.success) {
         updatePost(initialPost);
         onRepostRollback?.();
+        const status = result.value.status;
+        if ([401].includes(status)) {
+          toast.error("You have to listen to a track before you repost it!");
+        } else if (status === 403) {
+          toast.error("You have not listened for long enough to repost, yet!");
+        }
       }
     }
   };

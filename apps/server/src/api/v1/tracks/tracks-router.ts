@@ -8,7 +8,7 @@ import { handlers } from "../../../container";
 import { getPlayCountStatsHandler } from "./handlers/get-track-stats-handler";
 import { importAudiusTracksHandler } from "../users/handlers/import-audius-tracks-handler";
 import { updateTrackHandler } from "./handlers/update-track-handler";
-import { getFollowedFeedHandler } from "./handlers/get-followed-feed";
+import { getFollowedFeedHandler } from "./handlers/feed/get-followed-feed";
 import rateLimit from "express-rate-limit";
 import { TAuthenticatedRequest } from "../../../types/request";
 

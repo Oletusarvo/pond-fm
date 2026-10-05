@@ -61,7 +61,6 @@ export const countPlayHandler = createHandler(
       );
     });
 
-    res.clearCookie(serverConfig.streamTokenName, serverConfig.streamCookieSettings);
     return res.end();
   },
 );
