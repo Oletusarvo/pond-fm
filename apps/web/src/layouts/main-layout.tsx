@@ -6,6 +6,7 @@ import { MiniPlayerWithInfo } from "../features/audio/components/mini-player-wit
 import { AdProvider } from "../features/ads/providers/ad-provider";
 import { useAuthContext } from "../features/auth/providers/auth-provider";
 import { AdScript } from "../features/ads/components/ad-script";
+import { CancelableTrackMethodsProvider } from "../providers/cancelable-function-provider";
 
 /**Renders the layout of the entire app. */
 export function MainLayout() {
@@ -28,7 +29,10 @@ export function MainLayout() {
         <main className='flex flex-col flex-1 overflow-y-scroll'>
           <Outlet />
         </main>
-        <MiniPlayerWithInfo />
+        <CancelableTrackMethodsProvider>
+          <MiniPlayerWithInfo />
+        </CancelableTrackMethodsProvider>
+
         <BottomNav />
         <WindowResizeManager />
       </AdProvider>

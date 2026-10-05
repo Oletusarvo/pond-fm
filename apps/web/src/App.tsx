@@ -25,15 +25,16 @@ import { VerifyEmailUpdateScreen } from "./features/auth/screens/verify-email-up
 import { AdProvider } from "./features/ads/providers/ad-provider";
 import { HomeLayout2 } from "./layouts/home-layout-2";
 import { Toaster } from "react-hot-toast";
+import { CancelableTrackMethodsProvider } from "./providers/cancelable-function-provider";
 
 function App() {
   return (
-    <QueryClientProvider client={new QueryClient()}>
-      <AuthProvider>
-        <AdProvider interval={2}>
-          <ActionProvider>
-            <PlaybackProvider>
-              <ScrobbleProvider>
+    <CancelableTrackMethodsProvider>
+      <QueryClientProvider client={new QueryClient()}>
+        <AuthProvider>
+          <AdProvider interval={2}>
+            <ActionProvider>
+              <PlaybackProvider>
                 <div className='flex flex-col w-full h-full'>
                   <BrowserRouter>
                     <SettingsProvider>
@@ -79,13 +80,14 @@ function App() {
                     </SettingsProvider>
                   </BrowserRouter>
                 </div>
-              </ScrobbleProvider>
-            </PlaybackProvider>
-          </ActionProvider>
-        </AdProvider>
-      </AuthProvider>
-      <Toaster position='bottom-center' />
-    </QueryClientProvider>
+              </PlaybackProvider>
+            </ActionProvider>
+          </AdProvider>
+        </AuthProvider>
+
+        <Toaster position='bottom-center' />
+      </QueryClientProvider>
+    </CancelableTrackMethodsProvider>
   );
 }
 

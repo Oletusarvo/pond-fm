@@ -1,7 +1,8 @@
 import toast from "react-hot-toast";
 import { api } from "../../../utils/api/api";
-import { cancelable } from "../../../utils/debounced";
 import { useTrack, useTrackStore } from "./use-post";
+import { useCancelableTrackMethodsContext } from "../../../providers/cancelable-function-provider";
+import { useInvalidateFeeds } from "./use-invalidate-feed";
 
 type UsePostActionsProps = {
   trackId: string;
@@ -18,9 +19,9 @@ export function usePostActions({
   onRepost,
   onRepostRollback,
 }: UsePostActionsProps) {
-  //const postStore = usePostStore();
   const { track: post, updateTrack: updatePost } = useTrack(id);
-  //const postStore = usePostStore();
+  const cancelable = useCancelableTrackMethodsContext();
+  const invalidateFeeds = useInvalidateFeeds();
   const countPlay = async () => {
     const initialPlayCount = post.play_count;
     const newPlayCount = Number(initialPlayCount) + 1;
@@ -48,7 +49,7 @@ export function usePostActions({
       liked_by_me: !initialIsLiked,
     });
     onLikeToggled?.();
-    const result = await cancelable.toggleTrackLike(id, initialIsLiked);
+    const result = await cancelable.toggleLike(id, initialIsLiked);
     if (result.executed) {
       const res = result.value;
       if (!res.success) {
@@ -60,6 +61,8 @@ export function usePostActions({
         } else if (status === 403) {
           toast.error("You have not listened for long enough to like, yet!");
         }
+      } else {
+        invalidateFeeds();
       }
     }
   };
@@ -88,6 +91,8 @@ export function usePostActions({
         } else if (status === 403) {
           toast.error("You have not listened for long enough to repost, yet!");
         }
+      } else {
+        invalidateFeeds();
       }
     }
   };

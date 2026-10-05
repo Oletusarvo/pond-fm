@@ -11,6 +11,7 @@ import { updateTrackHandler } from "./handlers/update-track-handler";
 import { getFollowedFeedHandler } from "./handlers/feed/get-followed-feed";
 import rateLimit from "express-rate-limit";
 import { TAuthenticatedRequest } from "../../../types/request";
+import { requireUsedStreamToken } from "./middleware/require-used-stream-token";
 
 const router = getRouter();
 
@@ -73,6 +74,7 @@ router.post(
     limit: 4,
     windowMs: 1000 * 60,
   }),
+  requireUsedStreamToken,
   checkAuth(),
   handlers.tracks.like,
 );
@@ -89,6 +91,7 @@ router.delete("/like", checkAuth(), handlers.tracks.unlike);
  */
 router.post(
   "/repost",
+  requireUsedStreamToken,
   checkAuth(),
   createBodyParser(trackInteractionSchema),
   handlers.tracks.repost,

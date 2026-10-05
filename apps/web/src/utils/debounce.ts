@@ -20,7 +20,7 @@ export function debounce<TArgs extends any[], TRet>(
   };
 }
 
-type TCancelPrevious<TRet> =
+export type TCancelPrevious<TRet> =
   | {
       executed: true;
       value: TRet;

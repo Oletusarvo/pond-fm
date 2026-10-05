@@ -2,12 +2,10 @@ import { useState } from "react";
 import { setupContext } from "../../../utils/setup-context";
 import { useEventHandler } from "../../../hooks/use-event-handler";
 import { useActionContext } from "../../../providers/action-provider";
-import { UploadTrackModal } from "../components/upload-track-modal";
 import { useAuthContext } from "../../auth/providers/auth-provider";
 import { useTrack } from "../hooks/use-post";
 import { RepostModal } from "../components/repost-modal";
 import { TTrackPublic } from "@pondfm/app-shared";
-import { useAudiusTrack } from "../hooks/use-audius-track";
 
 const [TrackContext, useTrackContext] = setupContext<{
   track: TTrackPublic;

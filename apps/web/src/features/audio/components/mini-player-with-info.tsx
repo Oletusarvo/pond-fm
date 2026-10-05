@@ -9,6 +9,8 @@ import { RepostButton } from "../../posts/components/repost-button";
 import { LikeButton } from "../../posts/components/like-button";
 import { useAuthContext } from "../../auth/providers/auth-provider";
 import { createProvider } from "../../../utils/create-provider";
+import { usePostActions } from "../../posts/hooks/use-post-actions";
+import { useScrobble } from "../hooks/use-scrobble";
 
 const [PlaybackPositionProvider, usePlaybackPositionContext] = createProvider({
   contextName: "PlaybackPositionContext",
@@ -50,9 +52,17 @@ const [PlaybackPositionProvider, usePlaybackPositionContext] = createProvider({
 
 export function MiniPlayerWithInfo() {
   const playbackService = usePlaybackContext();
-  const scrobbleService = useScrobbleContext();
-  const authService = useAuthContext();
   const currentTrack = playbackService.currentPlayback?.track;
+  const postActions = usePostActions({ trackId: currentTrack?.id });
+
+  const duration = currentTrack?.duration || 1;
+  const scrobbleService = useScrobble({
+    duration,
+    threshold: 15 / duration,
+    onPlayTimeReached: () => postActions.countPlay(),
+  });
+  const authService = useAuthContext();
+
   return (
     <div className='flex flex-col w-full bg-slate-900 text-white h-pad py-2'>
       <div className='flex w-full justify-between items-center py-2'>

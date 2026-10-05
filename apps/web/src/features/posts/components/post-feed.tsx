@@ -4,6 +4,8 @@ import { Post } from "./post";
 import { PopulatePostStore } from "../providers/populates-post-store";
 import { AdProvider } from "../../ads/providers/ad-provider";
 import { Ad } from "../../ads/components/ad-container";
+import { CancelableTrackMethodsProvider } from "../../../providers/cancelable-function-provider";
+import { TrackActionProvider } from "../providers/track-action-provider";
 
 const adElement = import.meta.env.PROD ? <Ad /> : null;
 
@@ -17,11 +19,13 @@ export function PostFeed() {
         renderComponent={({ item }) => {
           if (!item) return null;
           return (
-            <TrackProvider trackId={item.id}>
-              <AdProvider.Injector adElement={adElement}>
-                <Post />
-              </AdProvider.Injector>
-            </TrackProvider>
+            <CancelableTrackMethodsProvider>
+              <TrackProvider trackId={item.id}>
+                <AdProvider.Injector adElement={adElement}>
+                  <Post />
+                </AdProvider.Injector>
+              </TrackProvider>
+            </CancelableTrackMethodsProvider>
           );
         }}
         onEmptyComponent={() => {

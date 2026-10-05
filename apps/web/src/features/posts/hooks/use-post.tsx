@@ -2,6 +2,7 @@ import { useQueryClient } from "@tanstack/react-query";
 import { create } from "zustand";
 import { useTransition } from "react";
 import { TTrackPublic } from "@pondfm/app-shared";
+import { useInvalidateFeeds } from "./use-invalidate-feed";
 
 type TrackType = Partial<TTrackPublic>;
 
@@ -65,13 +66,12 @@ export const useTrackStore = create<TrackState>((set, get) => ({
 }));
 
 export function useTrack(trackId: string) {
-  const queryClient = useQueryClient();
   const postStore = useTrackStore();
   const track = postStore.getTrack(trackId);
   const [tansition, startTransition] = useTransition();
-
-  const updateTrack = (newState: TrackType) => {
-    postStore.updateTrack(trackId, newState);
+  const invalidateFeeds = useInvalidateFeeds();
+  /*
+  const syncFeedQueries = (newState: TrackType) => {
     startTransition(() => {
       queryClient.setQueriesData({ queryKey: ["feed"] }, (oldData: any) => {
         if (!oldData) return oldData;
@@ -95,6 +95,10 @@ export function useTrack(trackId: string) {
         };
       });
     });
+  };
+  */
+  const updateTrack = (newState: TrackType) => {
+    postStore.updateTrack(trackId, newState);
   };
   return {
     track: track,

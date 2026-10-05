@@ -26,7 +26,11 @@ export function useAuthenticatedAction({
       }
       navigate(`/login?${searchParams.toString()}`);
     } else {
-      await action();
+      try {
+        action();
+      } catch (error) {
+        console.log(error.message);
+      }
     }
   };
   return handler;
