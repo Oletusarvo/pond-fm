@@ -1,5 +1,5 @@
 import React, { startTransition, useState } from "react";
-import { Check, Crown, Delete, Waves } from "lucide-react";
+import { Check, Crown, Delete, ExternalLink, Waves } from "lucide-react";
 import { Modal } from "../../../components/modal";
 import { useClassName } from "../../../hooks/use-class-name";
 import { Button, LoaderButton } from "../../../components/button";
@@ -14,7 +14,7 @@ import { api } from "../../../utils/api/api";
 import { TUser, TUserPublic, TUserRestricted } from "@pondfm/app-shared";
 import { useSubmit } from "../../../hooks/use-submit";
 import { Form } from "../../../components/form";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useQueryClient } from "@tanstack/react-query";
 import { defaults } from "../../../utils/defaults";
 import { TabsProvider } from "../../../providers/tabs-provider";
@@ -160,6 +160,16 @@ function DetailsSection() {
     <section className='flex flex-col w-full gap-2'>
       <SectionLabel>Profile</SectionLabel>
       <form className='flex flex-col gap-2 w-full items-end' onSubmit={submit}>
+        <div className='w-full'>
+          <Link
+            to={"https://audius.co/" + session.user.handle}
+            className='text-primary flex gap-2 items-center'
+            target='_blank'
+          >
+            <ExternalLink size='1rem' /> <span>Edit profile on Audius</span>
+          </Link>
+        </div>
+
         <Form.Group label='Link 1'>
           <Input
             onChange={(e) => updateUrls(e.target.value)}

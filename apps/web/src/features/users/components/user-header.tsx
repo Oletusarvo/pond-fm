@@ -26,9 +26,7 @@ export function UserHeader() {
   const queryClient = useQueryClient();
   const onFollowButtonClicked = async () => {
     if (status === "unauthenticated") {
-      return navigate(
-        `/login?return=/user/${user.id}&callback=/user/${user.id}`,
-      );
+      return navigate(`/login?return=/user/${user.id}&callback=/user/${user.id}`);
     }
     const initialFollowed = followedByMe;
     const newFollowed = !initialFollowed;
@@ -55,28 +53,34 @@ export function UserHeader() {
   const FollowButtonIcon = followedByMe ? UserMinus : UserPlus;
   const urls = user.urls;
   return (
-    <div className='flex flex-col w-full py-2 gap-4 items-start'>
+    <div className='flex flex-col w-full py-2 gap-4 items-start relative'>
       {/**Header portion */}
       <div className='w-full leading-none flex flex-row justify-between xs:items-start'>
-        <div className='flex sm:gap-8 xs:gap-2 md:items-center xs:items-start'>
+        <div className='flex sm:gap-8 xs:gap-2 md:items-center xs:items-start w-full'>
           <div
-            className='flex gap-2 items-center cursor-pointer'
+            className='flex gap-2 items-center cursor-pointer w-full'
             onClick={() => navigate(defaults.url.userTracks(user.id))}
           >
-            <div className='flex items-center justify-center w-8 h-8 rounded-full bg-primary text-white'>
-              <User size='1rem' />
+            <div className='shrink-0 flex items-center justify-center md:w-24 md:h-24 xs:w-16 xs:h-16 rounded-full bg-primary text-white overflow-hidden'>
+              {user.profile_picture ? (
+                <img src={user.profile_picture} loading='lazy' />
+              ) : (
+                <User size='1rem' />
+              )}
             </div>
-            <h2 className='text-sm font-semibold text-primary'>{user.username}</h2>
+            <div className='flex w-full items-center justify-between'>
+              <h2 className='text-sm font-semibold text-primary'>{user.username}</h2>
+              <Button
+                color={followedByMe ? "danger" : "primary"}
+                variant='text'
+                onClick={onFollowButtonClicked}
+                icon={FollowButtonIcon}
+              >
+                <span className='text-sm'>{followedByMe ? "Unfollow" : "Follow"}</span>
+              </Button>
+            </div>
           </div>
         </div>
-        <Button
-          color={followedByMe ? "danger" : "primary"}
-          variant='text'
-          onClick={onFollowButtonClicked}
-          icon={FollowButtonIcon}
-        >
-          <span className='text-sm'>{followedByMe ? "Unfollow" : "Follow"}</span>
-        </Button>
       </div>
       <div className='flex xs:flex-col md:flex-row w-full lg:justify-between gap-2'>
         <div className='flex flex-col flex-1 gap-4'>

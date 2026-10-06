@@ -10,10 +10,12 @@ export const getUserHandler = createHandler(async (req: TAuthenticatedRequest, r
   const user = await getPublicUser(db, { id: userId, session: req.session });
   if (user) {
     const [audiusUser] = await audius.users.get([user.id]);
+    console.log(audiusUser);
     return res.json({
       ...user,
       username: audiusUser.name,
       bio: audiusUser.bio,
+      profile_picture: audiusUser.profile_picture["480x480"],
     });
   }
   return res.json(user);

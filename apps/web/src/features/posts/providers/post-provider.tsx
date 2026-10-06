@@ -10,7 +10,6 @@ import { TTrackPublic } from "@pondfm/app-shared";
 const [TrackContext, useTrackContext] = setupContext<{
   track: TTrackPublic;
   toggleRepost: (state: boolean) => void;
-  toggleEdit: (state: boolean) => void;
 }>({ name: "TrackContext" });
 
 type TrackProviderProps = React.PropsWithChildren & {
@@ -18,36 +17,12 @@ type TrackProviderProps = React.PropsWithChildren & {
 };
 
 export function TrackProvider({ children, trackId: id }: TrackProviderProps) {
-  const { track: track, updateTrack: updatePost } = useTrack(id);
+  const { track: track } = useTrack(id);
   const [showRepostModal, setShowRepostModal] = useState(false);
-  const authService = useAuthContext();
-  const [showEditModal, setShowEditModal] = useState(false);
-  const actionService = useActionContext();
 
   const toggleRepost = (state: boolean) => {
     setShowRepostModal(state);
   };
-
-  const toggleEdit = (state: boolean) => setShowEditModal(state);
-
-  useEventHandler({
-    type: "track-played",
-    service: actionService,
-    handler: (e: CustomEvent) => {
-      if (e.detail.id === track?.track.id) {
-        updatePost({
-          ...track,
-          track: {
-            ...track?.track,
-            stats: {
-              ...track?.track.stats,
-              play_count: Number(track?.track.stats.play_count + 1),
-            },
-          },
-        });
-      }
-    },
-  });
 
   if (!track) {
     return null;
@@ -58,7 +33,6 @@ export function TrackProvider({ children, trackId: id }: TrackProviderProps) {
       value={{
         track: track,
         toggleRepost,
-        toggleEdit,
       }}
     >
       {children}

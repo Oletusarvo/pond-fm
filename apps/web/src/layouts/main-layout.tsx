@@ -7,6 +7,7 @@ import { AdProvider } from "../features/ads/providers/ad-provider";
 import { useAuthContext } from "../features/auth/providers/auth-provider";
 import { AdScript } from "../features/ads/components/ad-script";
 import { CancelableTrackMethodsProvider } from "../providers/cancelable-function-provider";
+import { useScrollToTop } from "../hooks/use-scroll-to-top";
 
 /**Renders the layout of the entire app. */
 export function MainLayout() {
@@ -19,14 +20,14 @@ export function MainLayout() {
 
     return false;
   };
-
+  const ref = useScrollToTop();
   const adsEnabled = areAdsEnabled();
   return (
     <div className='flex flex-col w-full h-full grow-0'>
       {adsEnabled ? <AdScript /> : null}
       <AdProvider interval={10} enabled={adsEnabled}>
         <MainHeader />
-        <main className='flex flex-col flex-1 overflow-y-scroll'>
+        <main className='flex flex-col flex-1 overflow-y-scroll' ref={ref}>
           <Outlet />
         </main>
         <CancelableTrackMethodsProvider>

@@ -31,7 +31,13 @@ export const exchangeAudiusCodeForTokenHandler = createHandler(async (req, res) 
   });
 
   const session = createJWT(
-    { user },
+    {
+      user: {
+        ...user,
+        username: audiusUser.name,
+        handle: audiusUser.handle,
+      },
+    },
     {
       expiresIn: "90d",
     },

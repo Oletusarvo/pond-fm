@@ -33,58 +33,50 @@ function App() {
       <QueryClientProvider client={new QueryClient()}>
         <AuthProvider>
           <AdProvider interval={2}>
-            <ActionProvider>
-              <PlaybackProvider>
-                <div className='flex flex-col w-full h-full'>
-                  <BrowserRouter>
-                    <SettingsProvider>
-                      <Routes>
-                        <Route path='/' element={<MainLayout />}>
-                          <Route path='/billing/success' element={<BillingSuccessScreen />} />
-                          <Route
-                            path='/billing/cancel/success'
-                            element={<SubscriptionCancelSuccess />}
-                          />
-                          <Route path='/' element={<HomeLayout />}>
-                            <Route path='login' element={<LoginScreen />} />
-                            <Route path='signup' element={<RegisterScreen />} />
+            <PlaybackProvider>
+              <div className='flex flex-col w-full h-full'>
+                <BrowserRouter>
+                  <Routes>
+                    <Route path='/' element={<MainLayout />}>
+                      <Route path='/billing/success' element={<BillingSuccessScreen />} />
+                      <Route
+                        path='/billing/cancel/success'
+                        element={<SubscriptionCancelSuccess />}
+                      />
+                      <Route path='/' element={<HomeLayout />}>
+                        <Route path='login' element={<LoginScreen />} />
+                        <Route path='signup' element={<RegisterScreen />} />
 
-                            <Route path='verify' element={<VerifyScreen />} />
-                            <Route
-                              path='verify-email-update'
-                              element={<VerifyEmailUpdateScreen />}
-                            />
-                          </Route>
-                          <Route
-                            path=''
-                            element={
-                              <div className='flex w-full flex-col h-pad'>
-                                <Outlet />
-                              </div>
-                            }
-                          >
-                            <Route path='undiscovered' element={<UndiscoveredFeedScreen />} />
-                            <Route path='new' element={<MainScreenFeed />} />
-                            <Route path='followed' element={<FollowedFeedScreen />} />
-                            <Route path='user/:id' element={<UserScreenWrapper />} />
+                        <Route path='verify' element={<VerifyScreen />} />
+                        <Route path='verify-email-update' element={<VerifyEmailUpdateScreen />} />
+                      </Route>
+                      <Route
+                        path=''
+                        element={
+                          <div className='flex w-full flex-col h-pad'>
+                            <Outlet />
+                          </div>
+                        }
+                      >
+                        <Route path='undiscovered' element={<UndiscoveredFeedScreen />} />
+                        <Route path='new' element={<MainScreenFeed />} />
+                        <Route path='followed' element={<FollowedFeedScreen />} />
+                        <Route path='user/:id' element={<UserScreenWrapper />} />
 
-                            <Route path='search' element={<SearchFeedScreen />} />
+                        <Route path='search' element={<SearchFeedScreen />} />
 
-                            <Route path='upload' element={<UploadTrackScreen />} />
-                            <Route path='login' element={<LoginScreen />} />
+                        <Route path='upload' element={<UploadTrackScreen />} />
+                        <Route path='login' element={<LoginScreen />} />
 
-                            <Route path='track/:trackId' element={<TrackScreen />} />
-                          </Route>
-                        </Route>
-                      </Routes>
-                    </SettingsProvider>
-                  </BrowserRouter>
-                </div>
-              </PlaybackProvider>
-            </ActionProvider>
+                        <Route path='track/:trackId' element={<TrackScreen />} />
+                      </Route>
+                    </Route>
+                  </Routes>
+                </BrowserRouter>
+              </div>
+            </PlaybackProvider>
           </AdProvider>
         </AuthProvider>
-
         <Toaster position='bottom-center' />
       </QueryClientProvider>
     </CancelableTrackMethodsProvider>

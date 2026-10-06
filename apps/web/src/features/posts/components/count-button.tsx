@@ -18,7 +18,7 @@ export function CountButton({
       value >= thousand ? value / thousand : value >= million ? value / million : value;
     const roundedCount = Math.round(rawCount * 100) / 100;
     const postFix = value >= thousand ? "k" : value >= million ? "m" : "";
-    return `${roundedCount.toLocaleString("fi")}${postFix}`;
+    return `${roundedCount.toLocaleString("en")}${postFix}`;
   }, [value]);
 
   return (

@@ -9,6 +9,7 @@ import { api } from "../../../utils/api/api";
 import { TabsProvider } from "../../../providers/tabs-provider";
 import { useParams, useSearchParams } from "react-router-dom";
 import { Heart, Music, Repeat } from "lucide-react";
+import { useScrollToTop } from "../../../hooks/use-scroll-to-top";
 
 export function UserScreen() {
   const userService = useUserContext();
@@ -52,9 +53,7 @@ export function UserScreen() {
         </TabsProvider.Tab>
         <TabsProvider.Tab index={"reposts"}>
           <FeedProvider
-            queryFn={(cursor) =>
-              api.tracks.feed.repostedBy(userService.user.id, cursor)
-            }
+            queryFn={(cursor) => api.tracks.feed.repostedBy(userService.user.id, cursor)}
             queryKey={["feed", "reposted", userService.user.id]}
           >
             <PostFeed />

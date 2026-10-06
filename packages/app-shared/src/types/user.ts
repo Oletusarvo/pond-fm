@@ -19,6 +19,7 @@ export type TUser = {
   id: string;
   email: string;
   username: string;
+  handle: string;
   bio?: string;
   unseen_notification_count: number;
   follower_count: number;
@@ -26,6 +27,7 @@ export type TUser = {
   followed_by_me: boolean;
   status: TUserStatus;
   subscription: TSubscription;
+  profile_picture: string;
   urls: string[];
 };
 
@@ -37,7 +39,15 @@ export type TUserRestricted = Omit<TUser, "subscription"> & {
 /**The user type displayed to the public. */
 export type TUserPublic = Pick<
   TUser,
-  "id" | "username" | "bio" | "follower_count" | "following_count" | "followed_by_me" | "urls"
+  | "id"
+  | "profile_picture"
+  | "username"
+  | "handle"
+  | "bio"
+  | "follower_count"
+  | "following_count"
+  | "followed_by_me"
+  | "urls"
 > & {
   subscription: TSubscriptionPublic;
 };

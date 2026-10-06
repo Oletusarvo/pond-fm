@@ -15,8 +15,6 @@ export function useAudioPlayer() {
   const audioRef = useRef<HTMLAudioElement>(null);
   const streamSignal = useRef<AbortController>(null);
 
-  const actionService = useActionContext();
-
   /**Updates the current playback. */
   const updateCurrentPlayback = async (playback: TPlayback | null) => {
     streamSignal.current?.abort();
@@ -125,7 +123,7 @@ export function useAudioPlayer() {
       onPlay();
     }
   }, [currentPlayback?.track.id, currentPlayback?.status]);
-
+  /*
   useEventHandler({
     service: actionService,
     type: "like-toggled",
@@ -142,7 +140,7 @@ export function useAudioPlayer() {
       });
     },
   });
-
+*/
   useEventHandler({
     service: audioRef.current,
     type: "error",
