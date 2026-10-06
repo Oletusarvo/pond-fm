@@ -9,6 +9,7 @@ import { UseInfiniteFeedProps } from "../../../hooks/use-infinite-feed";
 import { useLocalStorageState } from "../../../hooks/use-local-storage";
 import { setupContext } from "../../../utils/setup-context";
 import { debounce } from "../../../utils/debounce";
+import { useScrollToTop } from "../../../hooks/use-scroll-to-top";
 
 /**Context for the genre and mood query values, to stop the GenreSelector from re-rendering and lagging when they are updated. */
 const [QueryValuesContext, useQueryValuesContext] = setupContext<{
@@ -62,6 +63,8 @@ export function PostFeedScreen({ title, description, queryFn, queryKey, icon }: 
   const queryKeyMemoed = useMemo(() => {
     return [...queryKey, ...queryGenres.sort().join(";"), ...queryMoods.sort().join(";")];
   }, [queryGenres, queryMoods, queryKey]);
+
+  useScrollToTop();
 
   return (
     <PostFeedScreenContainer>

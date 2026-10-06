@@ -20,10 +20,10 @@ export function MainHeader() {
   const { status: authStatus } = useAuthContext();
 
   return (
-    <header className='bg-primary text-white py-2 h-pad w-full flex items-center justify-between'>
+    <header className='bg-primary text-white py-3 h-pad w-full flex items-center justify-between'>
       <div className='flex items-center gap-2 text-sm'>
         <Link to='/'>
-          <h2 className='font-semibold cursive'>
+          <h2 className='font-bold cursive'>
             <span>Amphitune</span>
             <small className='ml-1'>Beta</small>
           </h2>

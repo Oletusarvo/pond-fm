@@ -14,7 +14,7 @@ import { useScrollToTop } from "../../../hooks/use-scroll-to-top";
 export function UserScreen() {
   const userService = useUserContext();
   const [searchParams, setSearchParams] = useSearchParams();
-
+  useScrollToTop();
   const initialTab = searchParams.get("tab");
   if (userService.isPending) {
     return <Spinner />;

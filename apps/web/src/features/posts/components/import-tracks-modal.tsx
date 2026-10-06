@@ -120,9 +120,6 @@ function MethodButton({
       {...props}
       className='rounded-md border border-primary text-primary w-full p-4 cursor-pointer text-start flex gap-4 items-center'
     >
-      <div className='flex items-center justify-center h-full'>
-        <PassProps size='1.5rem'>{icon}</PassProps>
-      </div>
       <div className='flex flex-col'>
         <h3 className='font-semibold'>{title}</h3>
         {React.isValidElement(description) ? description : <p>{description}</p>}

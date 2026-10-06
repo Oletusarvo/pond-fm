@@ -160,9 +160,6 @@ export function HomeScreen() {
             <Link to='/legal/privacy-policy.pdf' className='font-semibold' target='_blank'>
               Privacy Policy
             </Link>
-            <Link to='' className='font-semibold' target='_blank'>
-              Report Copyright Infringement
-            </Link>
           </div>
           <div className='flex flex-col gap-2'>
             <div className='mt-auto text-sm italic'>&copy; oletusarvo 2026</div>

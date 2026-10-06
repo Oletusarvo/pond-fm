@@ -1,16 +1,17 @@
 import { useEffect, useRef } from "react";
+import { useMainLayoutContext } from "../layouts/main-layout";
 
 export function useScrollToTop() {
-  const ref = useRef(null);
+  const { refElement } = useMainLayoutContext();
   useEffect(() => {
-    if (!ref.current) return;
-    if (ref.current.scrollY > 0) {
-      console.log("Scrolling to top...");
-      ref.current.scrollTo({
+    if (!refElement) return;
+
+    if (refElement.scrollTop > 0) {
+      refElement.scrollTo({
         top: 0,
-        behavior: "instant",
+        behavior: "smooth",
       });
     }
   });
-  return ref;
+  return refElement;
 }

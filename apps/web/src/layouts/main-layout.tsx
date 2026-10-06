@@ -8,7 +8,15 @@ import { useAuthContext } from "../features/auth/providers/auth-provider";
 import { AdScript } from "../features/ads/components/ad-script";
 import { CancelableTrackMethodsProvider } from "../providers/cancelable-function-provider";
 import { useScrollToTop } from "../hooks/use-scroll-to-top";
+import { createProvider } from "../utils/create-provider";
+import { useRef } from "react";
 
+export const [MainLayoutProvider, useMainLayoutContext] = createProvider({
+  contextName: "MainLayoutContext",
+  hook: ({ refElement }: { refElement: HTMLDivElement }) => {
+    return { refElement };
+  },
+});
 /**Renders the layout of the entire app. */
 export function MainLayout() {
   const { session } = useAuthContext();
@@ -20,16 +28,19 @@ export function MainLayout() {
 
     return false;
   };
-  const ref = useScrollToTop();
+  const ref = useRef(null);
   const adsEnabled = areAdsEnabled();
   return (
     <div className='flex flex-col w-full h-full grow-0'>
       {adsEnabled ? <AdScript /> : null}
       <AdProvider interval={10} enabled={adsEnabled}>
         <MainHeader />
-        <main className='flex flex-col flex-1 overflow-y-scroll' ref={ref}>
-          <Outlet />
-        </main>
+        <MainLayoutProvider refElement={ref.current}>
+          <main className='flex flex-col flex-1 overflow-y-scroll' ref={ref}>
+            <Outlet />
+          </main>
+        </MainLayoutProvider>
+
         <CancelableTrackMethodsProvider>
           <MiniPlayerWithInfo />
         </CancelableTrackMethodsProvider>
