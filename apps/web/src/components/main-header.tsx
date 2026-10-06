@@ -30,7 +30,7 @@ export function MainHeader() {
             <small className='ml-1'>Beta</small>
           </h2>
         </Link>
-        |{" "}
+
         <nav className='md:flex items-center gap-4 xs:hidden'>
           <ResponsiveLink to='/undiscovered' className='font-semibold'>
             Undiscovered

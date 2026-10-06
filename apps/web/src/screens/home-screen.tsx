@@ -41,11 +41,11 @@ export function HomeScreen() {
               <img src='/assets/frog-2.png' className='w-24 h-24 z-10' loading='lazy' />
             </div>
           </div>
-          <div className='flex flex-col items-center leading-2'>
-            <div className='bg-linear-to-r from-blue-500 to-primary bg-clip-text'>
+          <div className='flex flex-col items-center leading-4'>
+            <div className='bg-linear-to-r from-blue-500 to-primary bg-clip-text mb-2'>
               <h1 className='text-4xl font-bold text-transparent'>{appName}</h1>
             </div>
-            <span className='text-center text-lg font-semibold'>
+            <span className='text-center text-lg font-semibold leading-5'>
               A music sharing platform where all tracks get a fair shot at getting heard.
             </span>
           </div>
