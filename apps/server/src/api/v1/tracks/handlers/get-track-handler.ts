@@ -9,6 +9,7 @@ import { onlyCanonicalTracks } from "../../../../DAL/tracks/filter/only-canonica
 import { getTrackQuery } from "../../../../DAL/tracks/get-track-query";
 import { resolveQueryWithCursor } from "../../../../DAL/posts/utils/resolve-query-with-cursor";
 import { includeAudiusTrackData } from "../../../../utils/include-audius-track-data";
+import { viewnames } from "../../../../tablenames";
 
 /**Returns a track by its id. */
 export const getTrackHandler = createHandler(async (req: TAuthenticatedRequest, res) => {
@@ -20,6 +21,8 @@ export const getTrackHandler = createHandler(async (req: TAuthenticatedRequest, 
     });
 
     onlyCanonicalTracks(query);
+    query.from({ track: viewnames.tracks });
+    query.select("track.*");
     query.where({ "track.id": req.params.trackId as string }).first();
     const tracks = await query;
     return {

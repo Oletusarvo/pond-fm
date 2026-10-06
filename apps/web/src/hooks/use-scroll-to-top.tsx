@@ -11,6 +11,6 @@ export function useScrollToTop() {
         behavior: "instant",
       });
     }
-  }, []);
+  });
   return ref;
 }
