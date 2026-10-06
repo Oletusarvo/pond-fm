@@ -24,7 +24,7 @@ export function MainHeader() {
       <div className='flex items-center gap-2 text-sm'>
         <Link to='/'>
           <h2 className='font-semibold cursive'>
-            🐸<span>Amphitune</span>
+            <span>Amphitune</span>
             <small className='ml-1'>Beta</small>
           </h2>
         </Link>

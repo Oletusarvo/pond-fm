@@ -42,12 +42,11 @@ export function HomeScreen() {
             <div className='bg-linear-to-r from-blue-500 to-primary bg-clip-text'>
               <h1 className='text-4xl font-bold text-transparent'>{appName}</h1>
             </div>
-            <small>Built on Audius</small>
-          </div>
-          <div className='flex flex-col gap-1 items-center'>
-            <span className='text-center text-base'>
+            <span className='text-center text-xl font-semibold'>
               A music sharing platform where all tracks get a fair shot at getting heard.
             </span>
+          </div>
+          <div className='flex flex-col gap-1 items-center'>
             <div className='text-red-900 text-sm p-2 border border-red-500/20 bg-red-500/10 rounded-md text-center'>
               The service has not been released yet. This page is a demo.
             </div>
