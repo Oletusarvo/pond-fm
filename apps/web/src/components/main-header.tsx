@@ -15,6 +15,7 @@ import { SettingsModal } from "../features/auth/components/settings-modal";
 import { api } from "../utils/api/api";
 import { defaults } from "../utils/defaults";
 import { ImportTracksModal } from "../features/posts/components/import-tracks-modal";
+import { AppIcon } from "./app-icon";
 
 export function MainHeader() {
   const { status: authStatus } = useAuthContext();
@@ -22,7 +23,8 @@ export function MainHeader() {
   return (
     <header className='bg-primary text-white py-3 h-pad w-full flex items-center justify-between'>
       <div className='flex items-center gap-2 text-sm'>
-        <Link to='/'>
+        <Link to='/' className='flex gap-1 items-center'>
+          <AppIcon />
           <h2 className='font-bold cursive'>
             <span>Amphitune</span>
             <small className='ml-1'>Beta</small>
