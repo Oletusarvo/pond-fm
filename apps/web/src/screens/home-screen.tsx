@@ -7,6 +7,8 @@ import { Network, Repeat, Rss, Sprout } from "lucide-react";
 import { PassProps } from "../components/pass-props";
 import { defaults } from "../utils/defaults";
 import { FaIconLink } from "../components/fa-icon-link";
+import { useScrollToTop } from "../hooks/use-scroll-to-top";
+import { ErrorMessage, WarningMessage } from "../components/helper-message";
 
 const appName = "Amphitune";
 /**Renders the home screen. */
@@ -29,6 +31,7 @@ export function HomeScreen() {
     }
   };
 
+  useScrollToTop();
   return (
     <>
       <section
@@ -43,16 +46,17 @@ export function HomeScreen() {
           </div>
           <div className='flex flex-col items-center leading-4'>
             <div className='bg-linear-to-r from-blue-500 to-primary bg-clip-text mb-2'>
-              <h1 className='text-4xl font-bold text-transparent'>{appName}</h1>
+              <h1 className='text-4xl font-bold text-transparent text-center'>{appName}</h1>
             </div>
-            <p className='text-center text-lg font-semibold leading-5'>
+            <p className='text-center text-xl font-semibold leading-5'>
               A music sharing platform where all tracks get a fair shot at getting heard.
             </p>
           </div>
           <div className='flex flex-col gap-1 items-center'>
-            <div className='text-red-900 text-sm p-2 border border-red-500/20 bg-red-500/10 rounded-md text-center'>
-              The service has not been released yet. This page is a demo.
-            </div>
+            <WarningMessage>
+              The service has not been released yet. This page, the terms of service and privacy
+              policy, are demos.
+            </WarningMessage>
           </div>
           <div className='flex gap-2'>
             <Button
@@ -74,7 +78,7 @@ export function HomeScreen() {
         </div>
       </section>
 
-      <section className='h-pad py-16 flex-1 xs:block lg:flex gap-4 w-full'>
+      <section className='h-pad py-16 flex-1 xs:block lg:flex gap-4 w-full items-center'>
         <article className='flex flex-col items-start w-full'>
           <SectionHeading>What is {appName}?</SectionHeading>
 
@@ -94,7 +98,11 @@ export function HomeScreen() {
           </Button>
         </article>
 
-        <img src='/assets/synth-frawg.webp' id='home-synth-frog' className='xs:hidden lg:block' />
+        <img
+          src='/assets/synth-frawg.webp'
+          id='home-synth-frog'
+          className='xs:hidden lg:block lg:h-64 xl:h-72 2xl:h-auto aspect-auto shrink-0'
+        />
       </section>
       <section className='h-pad py-16 flex-1'>
         <SectionHeading>Features</SectionHeading>

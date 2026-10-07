@@ -10,8 +10,8 @@ type PostFeedHeaderProps = React.PropsWithChildren & {
 /**Renders the header for post feeds. */
 export function PostFeedHeader({ children, title, description, icon }: PostFeedHeaderProps) {
   return (
-    <div className='py-2 w-full'>
-      <div className='flex flex-col pb-2'>
+    <div className='py-2 w-full' id='track-feed-header'>
+      <div className='flex flex-col pb-2' id='track-feed-heading-area'>
         <div className='flex gap-1 items-baseline'>
           {icon ? (
             <PassProps size='1rem' color='var(--color-primary)'>

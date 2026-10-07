@@ -5,6 +5,7 @@ import { LoadingFiller } from "./loading-filler";
 import { useFeedContext } from "../providers/feed-provider";
 import { Sentinel } from "./sentinel";
 import { useAuthContext } from "../features/auth/providers/auth-provider";
+import { Spinner } from "./spinner";
 
 type FeedScreenProps = {
   keyExtractor?: (item: any) => string;
@@ -17,13 +18,13 @@ export function Feed({
   keyExtractor,
   onEmptyComponent: OnEmptyComponent,
 }: FeedScreenProps) {
-  const { data, isPending, isError, error, fetchNextPage } = useFeedContext();
+  const { data, isLoading, isFetching, isError, hasNextPage, error, fetchNextPage } =
+    useFeedContext();
 
-  if (isPending) {
+  if (isLoading) {
     return <LoadingFiller />;
   } else if (isError) {
     console.log(error);
-
     return (
       <div className='flex w-full flex-col justify-center items-center flex-1 h-full'>
         <span className='text-red-900'>Failed to load feed!</span>
@@ -54,6 +55,19 @@ export function Feed({
         );
       })}
       <Sentinel onVisible={() => fetchNextPage()} />
+      {isFetching ? (
+        <EndOfFeedIndicatorContainer>
+          <Spinner />
+        </EndOfFeedIndicatorContainer>
+      ) : !hasNextPage ? (
+        <EndOfFeedIndicatorContainer>
+          <p className='text-primary font-semibold w-full text-center'>No more items.</p>
+        </EndOfFeedIndicatorContainer>
+      ) : null}
     </ul>
   );
+}
+
+function EndOfFeedIndicatorContainer({ children }: React.ComponentProps<"div">) {
+  return <div className='flex w-full justify-center py-4'>{children}</div>;
 }
