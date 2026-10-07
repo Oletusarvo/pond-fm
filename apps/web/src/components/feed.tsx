@@ -44,7 +44,7 @@ export function Feed({
   }
 
   return (
-    <div className='flex flex-col w-full flex-1 overflow-y-scroll max-h-full'>
+    <ul className='flex flex-col w-full flex-1 overflow-y-scroll max-h-full'>
       {data.map((item, i) => {
         return (
           <React.Fragment key={keyExtractor?.(item)}>
@@ -54,6 +54,6 @@ export function Feed({
         );
       })}
       <Sentinel onVisible={() => fetchNextPage()} />
-    </div>
+    </ul>
   );
 }

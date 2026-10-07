@@ -64,7 +64,7 @@ export function MiniPlayerWithInfo() {
   const authService = useAuthContext();
 
   return (
-    <div className='flex flex-col w-full bg-slate-900 text-white h-pad py-2'>
+    <div className='flex flex-col w-full bg-slate-900 text-white h-pad py-2' id='main-audio-player'>
       <div className='flex w-full justify-between items-center py-2'>
         <div className='flex flex-col gap-0 leading-3'>
           <h3 className='text-green-100 font-semibold text-sm'>{currentTrack?.title}</h3>

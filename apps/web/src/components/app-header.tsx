@@ -17,17 +17,17 @@ import { defaults } from "../utils/defaults";
 import { ImportTracksModal } from "../features/posts/components/import-tracks-modal";
 import { AppIcon } from "./app-icon";
 
-export function MainHeader() {
+/**Renders the main app header.*/
+export function AppHeader() {
   const { status: authStatus } = useAuthContext();
 
   return (
     <header className='bg-primary text-white py-3 h-pad w-full flex items-center justify-between'>
-      <div className='flex items-center gap-2 text-sm'>
+      <div className='flex items-center gap-4 text-sm'>
         <Link to='/' className='flex gap-1 items-center'>
           <AppIcon />
           <h2 className='font-bold cursive'>
             <span>Amphitune</span>
-            <small className='ml-1'>Beta</small>
           </h2>
         </Link>
 

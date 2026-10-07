@@ -160,13 +160,14 @@ function DetailsSection() {
     <section className='flex flex-col w-full gap-2'>
       <SectionLabel>Profile</SectionLabel>
       <form className='flex flex-col gap-2 w-full items-end' onSubmit={submit}>
-        <div className='w-full'>
+        <div className='w-full flex items-start' id='link-aligner'>
           <Link
             to={"https://audius.co/" + session.user.handle}
             className='text-primary flex gap-2 items-center'
             target='_blank'
           >
-            <ExternalLink size='1rem' /> <span>Edit profile on Audius</span>
+            <span>Edit profile on Audius</span>
+            <ExternalLink size='1rem' />
           </Link>
         </div>
 

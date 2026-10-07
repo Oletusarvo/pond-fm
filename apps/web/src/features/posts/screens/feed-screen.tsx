@@ -67,7 +67,7 @@ export function PostFeedScreen({ title, description, queryFn, queryKey, icon }: 
   useScrollToTop();
 
   return (
-    <PostFeedScreenContainer>
+    <>
       <PostFeedHeader icon={icon} title={title} description={description}>
         <QuerySetterContext.Provider
           value={{
@@ -88,7 +88,7 @@ export function PostFeedScreen({ title, description, queryFn, queryKey, icon }: 
       >
         <FeedSection queryFn={queryFn} queryKey={queryKeyMemoed} />
       </QueryValuesContext.Provider>
-    </PostFeedScreenContainer>
+    </>
   );
 }
 

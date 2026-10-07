@@ -1,11 +1,10 @@
-import { Heart, House, Network, Rss, Search, Sprout } from "lucide-react";
+import { Network, Rss, Sprout } from "lucide-react";
 import { Button } from "./button";
-import { useLocation, useNavigate } from "react-router-dom";
 import { ResponsiveLink } from "./responsive-link";
 import { useAuthContext } from "../features/auth/providers/auth-provider";
 
-export function BottomNav() {
-  const navigate = useNavigate();
+/**Renders the bottom navigation bar. */
+export function AppBottomBar() {
   const authService = useAuthContext();
 
   return (

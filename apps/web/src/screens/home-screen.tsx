@@ -45,9 +45,9 @@ export function HomeScreen() {
             <div className='bg-linear-to-r from-blue-500 to-primary bg-clip-text mb-2'>
               <h1 className='text-4xl font-bold text-transparent'>{appName}</h1>
             </div>
-            <span className='text-center text-lg font-semibold leading-5'>
+            <p className='text-center text-lg font-semibold leading-5'>
               A music sharing platform where all tracks get a fair shot at getting heard.
-            </span>
+            </p>
           </div>
           <div className='flex flex-col gap-1 items-center'>
             <div className='text-red-900 text-sm p-2 border border-red-500/20 bg-red-500/10 rounded-md text-center'>
@@ -97,13 +97,13 @@ export function HomeScreen() {
         <div className='w-full grid md:grid-cols-2 xs:grid-cols-1 gap-4'>
           <FeatureItem title='A Fair Shot At Being Discovered' icon={<Sprout />}>
             {appName} implements the <strong>Undiscovered</strong> feed, where all uploaded tracks
-            stay until they have accumulated the unique listeners defined by their subscription.
-            Tracks on this feed are sorted in chronological order, oldest first, so new uploads
-            won't bury older ones.
+            stay until they have accumulated {defaults.plans.free.unique_listener_threshold}{" "}
+            listeners. Tracks on this feed are sorted in chronological order, oldest first, so new
+            uploads won't bury older ones.
           </FeatureItem>
           <FeatureItem title='No Algorithmic Curation' icon={<Rss />}>
             The <strong>New</strong> feed will display tracks and reposts in simple chronological
-            order, newest first. {appName} does not, and will not implement algorithmic curation.
+            order, newest first. {appName} does not implement algorithmic curation.
           </FeatureItem>
           <FeatureItem title='Stay In The Loop' icon={<Network />}>
             The <strong>Followed</strong> feed will display tracks uploaded by the users you follow,
@@ -113,7 +113,7 @@ export function HomeScreen() {
             Heard a great track you think deserves to be heard by others? Tap the repost button to
             bump the track back to the top of the <strong>New</strong> feed. Reposts on {appName}{" "}
             are a commitment and cannot be undone. Reposts on Amphitune will not trigger a repost on
-            Audius.
+            Audius at this time.
           </FeatureItem>
         </div>
       </section>

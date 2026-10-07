@@ -40,9 +40,9 @@ export function Post({ ref }: { ref?: React.RefObject<any> }) {
     }
   };
   return (
-    <div ref={ref} className={containerClassName} onClick={onClick}>
+    <li ref={ref} className={containerClassName} onClick={onClick}>
       <Content />
-    </div>
+    </li>
   );
 }
 
@@ -100,35 +100,33 @@ function Content() {
   };
 
   return (
-    <>
-      <div className='flex gap-1 flex-1 w-full overflow-hidden items-center'>
-        <img src={post?.artwork} className='xs:w-24 xs:h-24 lg:w-32 lg:h-32 rounded-lg' />
-        <ContentBody>
-          <ContentRow>
-            <PostAuthor />
-            <UploadTime />
-          </ContentRow>
-          <ContentRow className='mb-2'>
-            <Title />
-            <EditButton />
-          </ContentRow>
+    <article className='flex gap-1 flex-1 w-full overflow-hidden items-center'>
+      <img src={post?.artwork} className='xs:w-24 xs:h-24 lg:w-32 lg:h-32 rounded-lg' />
+      <ContentBody>
+        <ContentRow>
+          <PostAuthor />
+          <UploadTime />
+        </ContentRow>
+        <ContentRow className='mb-2'>
+          <Title />
+          <EditButton />
+        </ContentRow>
 
-          <ContentRow className='mt-auto'>
-            <div className='flex w-full flex-col items-start'>
-              <div className='flex flex-col gap-1 items-start'>
-                <Tag value={post?.genre} size='small' selected={true} />
-                <HorizontalScrollable>
-                  <TagList tags={post?.moods} size={"small"} color='secondary' />
-                </HorizontalScrollable>
-              </div>
-              <div className='flex w-full justify-between items-center'>
-                <StatsArea />
-                <PlaybackStatus />
-              </div>
+        <ContentRow className='mt-auto'>
+          <div className='flex w-full flex-col items-start'>
+            <div className='flex flex-col gap-1 items-start'>
+              <Tag value={post?.genre} size='small' selected={true} />
+              <HorizontalScrollable>
+                <TagList tags={post?.moods} size={"small"} color='secondary' />
+              </HorizontalScrollable>
             </div>
-          </ContentRow>
-        </ContentBody>
-      </div>
-    </>
+            <div className='flex w-full justify-between items-center'>
+              <StatsArea />
+              <PlaybackStatus />
+            </div>
+          </div>
+        </ContentRow>
+      </ContentBody>
+    </article>
   );
 }

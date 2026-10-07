@@ -11,7 +11,7 @@ import { useParams, useSearchParams } from "react-router-dom";
 import { Heart, Music, Repeat } from "lucide-react";
 import { useScrollToTop } from "../../../hooks/use-scroll-to-top";
 
-export function UserScreen() {
+export function UserScreenContent() {
   const userService = useUserContext();
   const [searchParams, setSearchParams] = useSearchParams();
   useScrollToTop();
@@ -21,7 +21,7 @@ export function UserScreen() {
   }
 
   return (
-    <div className='flex flex-col w-full'>
+    <>
       <UserHeader />
       <Separator />
       <TabsProvider
@@ -68,7 +68,7 @@ export function UserScreen() {
           </FeedProvider>
         </TabsProvider.Tab>
       </TabsProvider>
-    </div>
+    </>
   );
 }
 
@@ -76,7 +76,7 @@ export function UserScreenWrapper() {
   const { id } = useParams();
   return (
     <UserProvider id={id}>
-      <UserScreen />
+      <UserScreenContent />
     </UserProvider>
   );
 }

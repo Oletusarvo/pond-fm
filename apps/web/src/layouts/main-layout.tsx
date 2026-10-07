@@ -1,6 +1,6 @@
 import { Outlet } from "react-router-dom";
-import { BottomNav } from "../components/bottom-nav";
-import { MainHeader } from "../components/main-header";
+import { AppBottomBar } from "../components/app-bottom-nav";
+import { AppHeader } from "../components/app-header";
 import { WindowResizeManager } from "../managers/window-resize-manager";
 import { MiniPlayerWithInfo } from "../features/audio/components/mini-player-with-info";
 import { AdProvider } from "../features/ads/providers/ad-provider";
@@ -31,10 +31,10 @@ export function MainLayout() {
   const ref = useRef(null);
   const adsEnabled = areAdsEnabled();
   return (
-    <div className='flex flex-col w-full h-full grow-0'>
+    <>
       {adsEnabled ? <AdScript /> : null}
       <AdProvider interval={10} enabled={adsEnabled}>
-        <MainHeader />
+        <AppHeader />
         <MainLayoutProvider refElement={ref.current}>
           <main className='flex flex-col flex-1 overflow-y-scroll' ref={ref}>
             <Outlet />
@@ -45,9 +45,9 @@ export function MainLayout() {
           <MiniPlayerWithInfo />
         </CancelableTrackMethodsProvider>
 
-        <BottomNav />
+        <AppBottomBar />
         <WindowResizeManager />
       </AdProvider>
-    </div>
+    </>
   );
 }

@@ -9,7 +9,7 @@ import { HomeLayout } from "./layouts/home-layout";
 import { AuthorizationScreen } from "./features/auth/screens/authorization-screen";
 import { UploadTrackScreen } from "./features/posts/screens/upload-track-screen";
 import { MainScreenFeed } from "./features/posts/screens/main-feed-screen";
-import { UserScreen, UserScreenWrapper } from "./features/users/screens/user-screen";
+import { UserScreenContent, UserScreenWrapper } from "./features/users/screens/user-screen";
 import { ScrobbleProvider } from "./features/audio/providers/scrobble-provider";
 import { SettingsProvider } from "./features/auth/providers/settings-provider";
 import { ActionProvider } from "./providers/action-provider";
@@ -23,7 +23,7 @@ import { RegisterScreen } from "./features/auth/screens/signup-screen";
 import { VerifyScreen } from "./features/auth/screens/verify-screen";
 import { VerifyEmailUpdateScreen } from "./features/auth/screens/verify-email-update-screen";
 import { AdProvider } from "./features/ads/providers/ad-provider";
-import { HomeLayout2 } from "./layouts/home-layout-2";
+
 import { Toaster } from "react-hot-toast";
 import { CancelableTrackMethodsProvider } from "./providers/cancelable-function-provider";
 
@@ -34,46 +34,44 @@ function App() {
         <AuthProvider>
           <AdProvider interval={2}>
             <PlaybackProvider>
-              <div className='flex flex-col w-full h-full'>
-                <BrowserRouter>
-                  <Routes>
-                    <Route path='/' element={<MainLayout />}>
-                      <Route path='/billing/success' element={<BillingSuccessScreen />} />
-                      <Route
-                        path='/billing/cancel/success'
-                        element={<SubscriptionCancelSuccess />}
-                      />
-                      <Route path='/' element={<HomeLayout />}>
-                        <Route path='login' element={<LoginScreen />} />
-                        <Route path='signup' element={<RegisterScreen />} />
+              <BrowserRouter>
+                <Routes>
+                  <Route path='/' element={<MainLayout />}>
+                    <Route path='/billing/success' element={<BillingSuccessScreen />} />
+                    <Route path='/billing/cancel/success' element={<SubscriptionCancelSuccess />} />
+                    <Route path='/' element={<HomeLayout />}>
+                      <Route path='login' element={<LoginScreen />} />
+                      <Route path='signup' element={<RegisterScreen />} />
 
-                        <Route path='verify' element={<VerifyScreen />} />
-                        <Route path='verify-email-update' element={<VerifyEmailUpdateScreen />} />
-                      </Route>
-                      <Route
-                        path=''
-                        element={
-                          <div className='flex w-full flex-col h-pad'>
-                            <Outlet />
-                          </div>
-                        }
-                      >
-                        <Route path='undiscovered' element={<UndiscoveredFeedScreen />} />
-                        <Route path='new' element={<MainScreenFeed />} />
-                        <Route path='followed' element={<FollowedFeedScreen />} />
-                        <Route path='user/:id' element={<UserScreenWrapper />} />
-
-                        <Route path='search' element={<SearchFeedScreen />} />
-
-                        <Route path='upload' element={<UploadTrackScreen />} />
-                        <Route path='login' element={<LoginScreen />} />
-
-                        <Route path='track/:trackId' element={<TrackScreen />} />
-                      </Route>
+                      <Route path='verify' element={<VerifyScreen />} />
+                      <Route path='verify-email-update' element={<VerifyEmailUpdateScreen />} />
                     </Route>
-                  </Routes>
-                </BrowserRouter>
-              </div>
+                    <Route
+                      path=''
+                      element={
+                        <div
+                          className='flex w-full flex-col h-pad'
+                          id='horizontal-padding-provider'
+                        >
+                          <Outlet />
+                        </div>
+                      }
+                    >
+                      <Route path='undiscovered' element={<UndiscoveredFeedScreen />} />
+                      <Route path='new' element={<MainScreenFeed />} />
+                      <Route path='followed' element={<FollowedFeedScreen />} />
+                      <Route path='user/:id' element={<UserScreenWrapper />} />
+
+                      <Route path='search' element={<SearchFeedScreen />} />
+
+                      <Route path='upload' element={<UploadTrackScreen />} />
+                      <Route path='login' element={<LoginScreen />} />
+
+                      <Route path='track/:trackId' element={<TrackScreen />} />
+                    </Route>
+                  </Route>
+                </Routes>
+              </BrowserRouter>
             </PlaybackProvider>
           </AdProvider>
         </AuthProvider>
