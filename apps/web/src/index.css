@@ -44,6 +44,24 @@
   color: black;
 }
 
+@keyframes HoverAnimation {
+  0% {
+    transform: translateY(0);
+  }
+
+  50% {
+    transform: translateY(5px);
+  }
+
+  100% {
+    transform: translateY(0);
+  }
+}
+
+#home-synth-frog {
+  animation: HoverAnimation 2s ease-in-out infinite;
+}
+
 @media screen and (max-width: 500px) {
   #root {
     font-size: var(--text-base);

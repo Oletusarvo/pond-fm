@@ -38,7 +38,7 @@ export function HomeScreen() {
         <div className='flex flex-col xs:w-full md:w-[50%] items-center gap-8 z-10'>
           <div className='flex w-full justify-center'>
             <div className='w-32 h-32 flex items-center justify-center rounded-full bg-primary/10 overflow-hidden relative'>
-              <img src='/assets/frog-2.png' className='w-24 h-24 z-10' loading='lazy' />
+              <img src='/assets/frog-2.webp' className='w-24 h-24 z-10' loading='lazy' />
             </div>
           </div>
           <div className='flex flex-col items-center leading-4'>
@@ -74,23 +74,27 @@ export function HomeScreen() {
         </div>
       </section>
 
-      <section className='h-pad py-16 flex-1'>
-        <SectionHeading>What is {appName}?</SectionHeading>
+      <section className='h-pad py-16 flex-1 xs:block lg:flex gap-4 w-full'>
+        <article className='flex flex-col items-start w-full'>
+          <SectionHeading>What is {appName}?</SectionHeading>
 
-        <p className='text-base 2xl:w-[70%]'>
-          {appName} is a discovery layer built on top of <strong>Audius</strong>, with a simple
-          idea: your music should get a chance to be heard regardless of how popular you are. That's
-          where our <strong>Undiscovered</strong> feed comes in. Any track with fewer than{" "}
-          {defaults.plans.free.unique_listener_threshold} unique listeners, stays there, oldest
-          first, until it reaches it. Once your track crosses that threshold, you've genuinely been
-          discovered. The <strong>New</strong> feed will display uploaded or reposted tracks in
-          chronological order regardless of how many unique listeners they have accumulated.
-          <br />
-          <br />
-        </p>
-        <Button shape='rounded' paddingEnabled onClick={() => navigate("/undiscovered")}>
-          Explore Undiscovered Tracks
-        </Button>
+          <p className='text-base'>
+            {appName} is a discovery layer built on top of <strong>Audius</strong>, with a simple
+            idea: your music should get a chance to be heard regardless of how popular you are.
+            That's where our <strong>Undiscovered</strong> feed comes in. Any track with fewer than{" "}
+            {defaults.plans.free.unique_listener_threshold} unique listeners, stays there, oldest
+            first, until it reaches it. Once your track crosses that threshold, you've genuinely
+            been discovered. The <strong>New</strong> feed will display uploaded or reposted tracks
+            in chronological order regardless of how many unique listeners they have accumulated.
+            <br />
+            <br />
+          </p>
+          <Button shape='rounded' paddingEnabled onClick={() => navigate("/undiscovered")}>
+            Explore Undiscovered Tracks
+          </Button>
+        </article>
+
+        <img src='/assets/synth-frawg.webp' id='home-synth-frog' className='xs:hidden lg:block' />
       </section>
       <section className='h-pad py-16 flex-1'>
         <SectionHeading>Features</SectionHeading>

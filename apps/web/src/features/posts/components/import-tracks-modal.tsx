@@ -47,10 +47,14 @@ function Content({ onClose }) {
   };
   return (
     <div className='flex flex-col gap-2 w-full'>
-      <div className='mb-8 w-full'>
+      <div className='flex w-full flex-col items-center mb-8'>
+        <img src='/assets/synth-frawg.webp' className='w-42' />
         <h2 className='text-xl font-semibold'>Import Tracks</h2>
-        <p>Import your entire catalogue from Audius to Amphitune, or upload to Audius. </p>
+        <p className='text-center'>
+          Import your entire catalogue from Audius to Amphitune, or upload to Audius.{" "}
+        </p>
       </div>
+
       <MethodButton
         icon={<ArrowDownCircle />}
         disabled={loading || status === "success"}

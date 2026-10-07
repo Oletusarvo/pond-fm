@@ -8,6 +8,7 @@ import { createHandler, tryCatch } from "@pondfm/server-utils";
 import { TAuthenticatedRequest, WithStreamToken } from "../../../../types/request";
 import z from "zod";
 import { trackInteractionSchema } from "../../../../schemas/track-interaction-schema";
+import { audius } from "../../../../audius.config";
 
 /**Records a like on a track by id. */
 export const likeTrackHandler = createHandler(
@@ -16,12 +17,15 @@ export const likeTrackHandler = createHandler(
     res,
   ) => {
     const session = req.session;
-
     const trackId = req.body.trackId as string;
 
     await createTrackLike(db, {
       trackId,
       userId: session.user.id,
+    });
+
+    audius.tracks.like(trackId, session.user.id).catch((err) => {
+      console.log("Failed to like track on Audius!", err.message);
     });
 
     const notificationPromise = new Promise<void>(async (resolve, reject) => {

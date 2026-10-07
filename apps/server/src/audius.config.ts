@@ -65,6 +65,28 @@ export const audius = {
         return json.data;
       },
     },
+    async like(trackId: string, userId: string) {
+      const url = new URL(withEndpoint("tracks", trackId, "favorites"));
+      url.searchParams.set("user_id", userId);
+      const req = authorizedRequest({ method: "POST" });
+      const res = await fetch(url, req);
+      if (!res.ok) {
+        const text = await res.text();
+        console.log(res.statusText, text);
+        throw new Error("Failed to like track! " + trackId);
+      }
+    },
+    async unlike(trackId: string, userId: string) {
+      const url = new URL(withEndpoint("tracks", trackId, "favorites"));
+      url.searchParams.set("user_id", userId);
+      const req = authorizedRequest({ method: "DELETE" });
+      const res = await fetch(url, req);
+      if (!res.ok) {
+        const text = await res.text();
+        console.log(res.statusText, text);
+        throw new Error("Failed to unlike a track! " + trackId);
+      }
+    },
   },
   /**Contains methods related to users. */
   users: {
