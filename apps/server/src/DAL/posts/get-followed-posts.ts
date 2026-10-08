@@ -12,7 +12,7 @@ import { applyCursor } from "./utils/apply-cursor";
 import { filterByGenres } from "../tracks/filter/filter-by-genres";
 import { filterByMoods } from "../tracks/filter/filter-by-moods";
 import { onlyCanonicalTracks } from "../tracks/filter/only-canonical-tracks";
-import { onlyReadyUploads } from "../tracks/filter/only-ready-tracks";
+import { onlyReadyTracks } from "../tracks/filter/only-ready-tracks";
 import { resolveQueryWithCursor } from "./utils/resolve-query-with-cursor";
 
 export async function getFollowedPosts(
@@ -27,7 +27,7 @@ export async function getFollowedPosts(
   const query = getUndistinctPostQuery(ctx, config.session);
   fromUndistinctPost(query);
   onlyCanonicalTracks(query);
-  onlyReadyUploads(query);
+  onlyReadyTracks(query);
   filterByMoods(query, config.moods);
   filterByGenres(query, config.genres);
   query.whereIn(

@@ -32,48 +32,43 @@ function App() {
     <CancelableTrackMethodsProvider>
       <QueryClientProvider client={new QueryClient()}>
         <AuthProvider>
-          <AdProvider interval={2}>
-            <PlaybackProvider>
-              <BrowserRouter>
-                <Routes>
-                  <Route path='/' element={<MainLayout />}>
-                    <Route path='/billing/success' element={<BillingSuccessScreen />} />
-                    <Route path='/billing/cancel/success' element={<SubscriptionCancelSuccess />} />
-                    <Route path='/' element={<HomeLayout />}>
-                      <Route path='login' element={<LoginScreen />} />
-                      <Route path='signup' element={<RegisterScreen />} />
+          <PlaybackProvider>
+            <BrowserRouter>
+              <Routes>
+                <Route path='/' element={<MainLayout />}>
+                  <Route path='/billing/success' element={<BillingSuccessScreen />} />
+                  <Route path='/billing/cancel/success' element={<SubscriptionCancelSuccess />} />
+                  <Route path='/' element={<HomeLayout />}>
+                    <Route path='login' element={<LoginScreen />} />
+                    <Route path='signup' element={<RegisterScreen />} />
 
-                      <Route path='verify' element={<VerifyScreen />} />
-                      <Route path='verify-email-update' element={<VerifyEmailUpdateScreen />} />
-                    </Route>
-                    <Route
-                      path=''
-                      element={
-                        <div
-                          className='flex w-full flex-col h-pad'
-                          id='horizontal-padding-provider'
-                        >
-                          <Outlet />
-                        </div>
-                      }
-                    >
-                      <Route path='undiscovered' element={<UndiscoveredFeedScreen />} />
-                      <Route path='new' element={<MainScreenFeed />} />
-                      <Route path='followed' element={<FollowedFeedScreen />} />
-                      <Route path='user/:id' element={<UserScreenWrapper />} />
-
-                      <Route path='search' element={<SearchFeedScreen />} />
-
-                      <Route path='upload' element={<UploadTrackScreen />} />
-                      <Route path='login' element={<LoginScreen />} />
-
-                      <Route path='track/:trackId' element={<TrackScreen />} />
-                    </Route>
+                    <Route path='verify' element={<VerifyScreen />} />
+                    <Route path='verify-email-update' element={<VerifyEmailUpdateScreen />} />
                   </Route>
-                </Routes>
-              </BrowserRouter>
-            </PlaybackProvider>
-          </AdProvider>
+                  <Route
+                    path=''
+                    element={
+                      <div className='flex w-full flex-col h-pad' id='horizontal-padding-provider'>
+                        <Outlet />
+                      </div>
+                    }
+                  >
+                    <Route path='undiscovered' element={<UndiscoveredFeedScreen />} />
+                    <Route path='new' element={<MainScreenFeed />} />
+                    <Route path='followed' element={<FollowedFeedScreen />} />
+                    <Route path='user/:id' element={<UserScreenWrapper />} />
+
+                    <Route path='search' element={<SearchFeedScreen />} />
+
+                    <Route path='upload' element={<UploadTrackScreen />} />
+                    <Route path='login' element={<LoginScreen />} />
+
+                    <Route path='track/:trackId' element={<TrackScreen />} />
+                  </Route>
+                </Route>
+              </Routes>
+            </BrowserRouter>
+          </PlaybackProvider>
         </AuthProvider>
         <Toaster position='bottom-center' />
       </QueryClientProvider>

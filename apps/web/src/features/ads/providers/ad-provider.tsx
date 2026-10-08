@@ -1,8 +1,5 @@
-import React, { ReactElement, ReactNode, useEffect, useRef, useState } from "react";
+import React, { ReactNode, useRef, useState } from "react";
 import { createProvider } from "../../../utils/create-provider";
-import { Ad } from "../components/ad-container";
-import { Sentinel } from "../../../components/sentinel";
-import { useInView } from "react-intersection-observer";
 import { useSentinel } from "../../../hooks/use-sentinel";
 import { PassProps } from "../../../components/pass-props";
 
@@ -40,8 +37,8 @@ export const [AdProvider, useAdContext] = createProvider({
           if (hasCounted.current) return;
 
           hasCounted.current = true;
-          itemsSeen.current++;
-          if (itemsSeen.current % target === interval) {
+          ++itemsSeen.current;
+          if (itemsSeen.current % interval === 0) {
             setRenderAd(true);
           }
         };

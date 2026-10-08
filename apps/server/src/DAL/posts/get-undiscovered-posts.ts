@@ -9,13 +9,13 @@ import { applyCursor } from "./utils/apply-cursor";
 import { filterByGenres } from "../tracks/filter/filter-by-genres";
 import { filterByMoods } from "../tracks/filter/filter-by-moods";
 import { onlyCanonicalTracks } from "../tracks/filter/only-canonical-tracks";
-import { onlyReadyUploads } from "../tracks/filter/only-ready-tracks";
+import { onlyReadyTracks } from "../tracks/filter/only-ready-tracks";
 import { resolveQueryWithCursor } from "./utils/resolve-query-with-cursor";
 
 export async function getUndiscoveredPosts(ctx: DBContext, config: FeedQueryConfig) {
   const query = getUndistinctPostQuery(ctx, config.session);
   onlyCanonicalTracks(query);
-  onlyReadyUploads(query);
+  onlyReadyTracks(query);
   filterByGenres(query, config.genres);
   filterByMoods(query, config.moods);
   query

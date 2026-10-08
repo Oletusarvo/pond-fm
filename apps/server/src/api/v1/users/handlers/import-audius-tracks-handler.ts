@@ -19,7 +19,7 @@ export const importAudiusTracksHandler = createHandler(async (req: TAuthenticate
       const tracksToInsert = tracks.map((track) => {
         return {
           id: track.id,
-          status: "active",
+          status: "pending_import",
           genre_id: getLookupQuery(tablenames.genres, track.genre.toLowerCase()),
           author_id: session.user.id,
           created_at: track.created_at,

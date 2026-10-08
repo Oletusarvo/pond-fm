@@ -1,6 +1,6 @@
 import { DBContext } from "../types/db-context";
 import { Knex } from "knex";
-import { PostRepository } from "../repositories/post-repository";
+
 import { serviceError } from "../utils/service-error";
 import { ServiceErrorResponse, ServiceSuccessResponse } from "../types/service-response";
 
@@ -10,6 +10,7 @@ import { getPostQuery } from "../DAL/posts/get-post-query";
 import { tablenames } from "../tablenames";
 import { playCountThresholdSeconds } from "@pondfm/app-shared";
 import { createJWT } from "@pondfm/server-utils";
+import { PostRepository } from "../repositories/post-repository";
 
 /**Responsible for handling business-logic related to individual posts and tracks. */
 export class PostService {

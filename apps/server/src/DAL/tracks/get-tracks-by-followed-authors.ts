@@ -5,6 +5,7 @@ import { applyTrackCursor } from "../posts/utils/apply-cursor";
 import { resolveQueryWithCursor } from "../posts/utils/resolve-query-with-cursor";
 import { filterByGenres } from "./filter/filter-by-genres";
 import { filterByMoods } from "./filter/filter-by-moods";
+import { onlyReadyTracks } from "./filter/only-ready-tracks";
 import { selectLikedByMe } from "./select/select-liked-by-me";
 import { selectRepostedByMe } from "./select/select-reposted-by-me";
 import { withDistinctTrack } from "./with/with-distinct-track";
@@ -12,7 +13,7 @@ import { withDistinctTrack } from "./with/with-distinct-track";
 export async function getTracksByFollowedAuthors(ctx: DBContext, config: FeedQueryConfig) {
   const query = ctx.queryBuilder();
   const session = config.session;
-
+  onlyReadyTracks(query);
   withDistinctTrack(query);
 
   query

@@ -2,10 +2,9 @@ import { v4 } from "uuid";
 import { tablenames } from "../tablenames";
 import { DBContext } from "../types/db-context";
 import { TrackAndUserId, TTrack } from "../types/track-type";
-import { PostRepository } from "./post-repository";
 
 /**Responsible for scrobbling - updating unique listeners and counting plays. */
-export class ScrobbleRepository extends PostRepository {
+export class ScrobbleRepository {
   async getPlayCounts(trackId: string, ctx: DBContext) {
     const result = await ctx(tablenames.tracks)
       .select("play_count as playCount", "unique_play_count as uniquePlayCount")

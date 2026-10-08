@@ -13,7 +13,7 @@ import { unlikeTrackHandler } from "../api/v1/tracks/handlers/unlike-track-handl
 import { repostTrackHandler } from "../api/v1/tracks/handlers/repost-track-handler";
 import { unrepostTrackHandler } from "../api/v1/tracks/handlers/unrepost-track-handler";
 import { countPlayHandler } from "../api/v1/tracks/handlers/count-play-handler";
-import { getSearchFeedHandler } from "../api/v1/tracks/handlers/feed/get-search-feed";
+
 import { getStreamUrlHandler } from "../api/v1/tracks/handlers/get-stream-url";
 
 export class TrackHandlerService {
@@ -24,7 +24,6 @@ export class TrackHandlerService {
     byFollowed: getFollowedFeedHandler.bind(this) as typeof getFollowedFeedHandler,
     repostedBy: getAuthorRepostedFeedHandler.bind(this) as typeof getAuthorRepostedFeedHandler,
     likedBy: getAuthorLikedFeedHandler.bind(this) as typeof getAuthorLikedFeedHandler,
-    search: getSearchFeedHandler.bind(this) as typeof getSearchFeedHandler,
   };
 
   stream = getStreamUrlHandler;
