@@ -3,7 +3,7 @@ import { useParams } from "react-router-dom";
 import { Spinner } from "../../../components/spinner";
 import { TrackProvider } from "../providers/post-provider";
 import { useEffect, useState } from "react";
-import { useTrackStore } from "../hooks/use-post";
+import { useTrackStore } from "../hooks/use-track";
 import { Post } from "../components/post";
 import { api } from "../../../utils/api/api";
 import { UserProvider, useUserContext } from "../../users/providers/user-proivder";

@@ -1,7 +1,7 @@
 import React from "react";
 import { FeedProvider, useFeedContext } from "../../../providers/feed-provider";
 import { useUpdateStore } from "../hooks/use-update-store";
-import { useTrackStore } from "../hooks/use-post";
+import { useTrackStore } from "../hooks/use-track";
 
 export function PopulatePostStore({ children }) {
   const postStore = useTrackStore();

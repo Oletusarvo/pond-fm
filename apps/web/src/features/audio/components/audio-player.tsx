@@ -1,15 +1,12 @@
-import { useCallback, useState } from "react";
+import { useState } from "react";
 import { trackToPlayback } from "../../../utils/post-to-playback";
 import { useTrackContext } from "../../posts/providers/post-provider";
-import { PlayButton } from "../../posts/components/play-button";
-import { Waveform } from "../../posts/components/waveform";
 import { useEventHandler } from "../../../hooks/use-event-handler";
 import { usePlaybackContext } from "../providers/playback-provider";
 import { PlaybackTrack } from "../../posts/components/playback-track";
 
 export function AudioPlayer() {
-  const { playbackState, togglePlayback, currentPlayback, audioRef, updateCurrentPlayback } =
-    usePlaybackContext();
+  const { togglePlayback, currentPlayback, audioRef, updateCurrentPlayback } = usePlaybackContext();
   const playbackTrackId = currentPlayback?.track.id;
   const { track: post } = useTrackContext();
   const postTrackId = post?.id;
@@ -46,12 +43,7 @@ export function AudioPlayer() {
     },
   });
 
-  const playbuttonState =
-    playbackTrackId === postTrackId
-      ? currentPlayback.status !== "ready"
-        ? currentPlayback.status
-        : currentPlayback.state
-      : "paused";
+  const playbuttonState = playbackTrackId === postTrackId ? currentPlayback.state : "paused";
 
   return (
     <div className='flex gap-2 w-full h-full items-center'>

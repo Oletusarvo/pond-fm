@@ -4,6 +4,6 @@ import { createHandler } from "@pondfm/server-utils";
 
 /**Returns all moods. */
 export const getMoodsHandler = createHandler(async (req, res) => {
-  const moods = await db(tablenames.moods).pluck("label");
+  const moods = await db(tablenames.moods).orderBy("label", "asc").pluck("label");
   return res.json(moods);
 });

@@ -1,6 +1,6 @@
 import toast from "react-hot-toast";
 import { api } from "../../../utils/api/api";
-import { useTrack, useTrackStore } from "./use-post";
+import { useTrack, useTrackStore } from "./use-track";
 import { useCancelableTrackMethodsContext } from "../../../providers/cancelable-function-provider";
 import { useInvalidateFeeds } from "./use-invalidate-feed";
 

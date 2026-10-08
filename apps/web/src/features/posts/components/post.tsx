@@ -35,7 +35,7 @@ export function Post({ ref }: { ref?: React.RefObject<any> }) {
   const trackId = post?.id;
   const playbackTrackId = currentPlayback?.track.id;
   const onClick = () => {
-    if (playbackTrackId !== trackId || currentPlayback?.status === "error") {
+    if (playbackTrackId !== trackId || currentPlayback?.state === "error") {
       updateCurrentPlayback(trackToPlayback(post));
     }
   };
@@ -80,17 +80,17 @@ function Content() {
           <AudioLines size='1rem' />
           Now playing
         </div>
-      ) : currentPlayback.status === "buffering" ? (
+      ) : currentPlayback.state === "buffering" ? (
         <div className='text-xs font-semibold text-primary flex gap-1 items-center'>
           <Spinner size='1rem' />
           Buffering
         </div>
-      ) : currentPlayback.status === "rate-limited" ? (
+      ) : currentPlayback.state === "rate-limited" ? (
         <div className='text-xs font-semibold text-red-500 flex gap-1 items-center'>
           <TriangleAlert size='1rem' />
           Please slow down! Try again in a minute.
         </div>
-      ) : currentPlayback.status === "error" ? (
+      ) : currentPlayback.state === "error" ? (
         <div className='text-xs font-semibold text-red-500 flex gap-1 items-center'>
           <TriangleAlert size='1rem' />
           Error

@@ -1,34 +1,29 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { TPlayback } from "../../../types/playback";
 import { useEventHandler } from "../../../hooks/use-event-handler";
-import { useActionContext } from "../../../providers/action-provider";
 import { PlaybackReducerState } from "../reducers/playback-reducer";
 import { api } from "../../../utils/api/api";
+import { usePlaylistStore } from "./use-playlist-store";
 
 export function useAudioPlayer() {
   const [currentPlayback, setCurrentPlayback] = useState<PlaybackReducerState | null>(null);
-  const [playbackState, setPlaybackState] = useState<"playing" | "paused" | "buffering" | "error">(
-    "paused",
-  );
-  const playbackSrc = currentPlayback?.status === "ready" ? currentPlayback.streamUrl : null;
-  const [playbackPosition, setPlaybackPosition] = useState(0);
+  const playbackSrc = currentPlayback?.state === "ready" ? currentPlayback.streamUrl : null;
   const audioRef = useRef<HTMLAudioElement>(null);
   const streamSignal = useRef<AbortController>(null);
-
+  const updateCurrentIndex = usePlaylistStore((state) => state.updateCurrentIndex);
   /**Updates the current playback. */
   const updateCurrentPlayback = async (playback: TPlayback | null) => {
     streamSignal.current?.abort();
     streamSignal.current = new AbortController();
-    //Pause playback
     audioRef.current?.pause();
+
     if (!playback) {
       setCurrentPlayback(null);
       return;
     }
     setCurrentPlayback({
       ...playback,
-      status: "buffering",
-      state: "paused",
+      state: "buffering",
     });
 
     //Request a stream token.
@@ -36,11 +31,10 @@ export function useAudioPlayer() {
       .requestStreamUrl(playback.track.id, streamSignal.current.signal)
       .then(async (res) => {
         if (res.success === false) {
-          const status = res.status === 429 ? "rate-limited" : "error";
+          const state = res.status === 429 ? "rate-limited" : "error";
           setCurrentPlayback({
             ...playback,
-            status,
-            state: "paused",
+            state,
           });
           throw new Error("Failed to start stream!");
         }
@@ -49,44 +43,39 @@ export function useAudioPlayer() {
 
         setCurrentPlayback({
           ...playback,
-          status: "ready",
-          state: "paused",
+          state: "ready",
           streamUrl: data.streamUrl,
         });
+        updateCurrentIndex(playback);
       })
       .catch((err) => {
         console.log("Fetching of stream token failed!", err.message);
         setCurrentPlayback({
           ...playback,
-          state: "paused",
-          status: "error",
+          state: "error",
         });
       });
   };
 
   const updatePlaybackState = (newState: PlaybackReducerState["state"]) => {
     setCurrentPlayback((prev) => {
-      if (newState === "buffering") {
-        return {
-          ...prev,
-          status: newState,
-        };
-      } else {
-        return {
-          ...prev,
-          state: newState,
-        };
-      }
+      return {
+        ...prev,
+        state: newState,
+      };
     });
   };
 
   const updatePlaybackPosition = (pos: number) => {
-    //setPlaybackPosition(pos);
     audioRef.current.currentTime = pos;
   };
 
   const stopPlayback = () => {
     audioRef.current?.pause();
+    setCurrentPlayback({
+      ...currentPlayback,
+      state: "paused",
+    });
   };
 
   /**Toggles the state of the current playback. */
@@ -110,6 +99,7 @@ export function useAudioPlayer() {
     audioRef.current.pause();
   };
 
+  //Set the initial volume of the audio-tag.
   useEffect(() => {
     if (audioRef.current) {
       audioRef.current.volume = 0.25;
@@ -118,49 +108,30 @@ export function useAudioPlayer() {
 
   //Automatically play tracks when they are selected. Must be done here; the hidden audio-tag must be rendered before play is hit.
   useEffect(() => {
-    if (currentPlayback?.status === "ready") {
+    if (currentPlayback?.state === "ready") {
       audioRef.current.currentTime = currentPlayback.start_position || 0;
       onPlay();
     }
-  }, [currentPlayback?.track.id, currentPlayback?.status]);
-  /*
-  useEventHandler({
-    service: actionService,
-    type: "like-toggled",
-    handler: (e: CustomEvent) => {
-      if (e.detail.id !== currentPlayback?.track.id) return;
-      setCurrentPlayback((prev) => {
-        return {
-          ...prev,
-          stats: {
-            ...prev.stats,
-            liked_by_me: e.detail.state,
-          },
-        };
-      });
-    },
-  });
-*/
+  }, [currentPlayback?.track.id, currentPlayback?.state]);
+
   useEventHandler({
     service: audioRef.current,
     type: "error",
     handler: (e: any) => {
       setCurrentPlayback({
         ...currentPlayback,
-        status: "error",
+        state: "error",
       });
     },
   });
 
   return {
     currentPlayback,
-    playbackState,
     togglePlayback,
     updateCurrentPlayback,
     updatePlaybackState,
     updatePlaybackPosition,
     stopPlayback,
-    playbackPosition,
     audioRef,
     playbackSrc,
   };

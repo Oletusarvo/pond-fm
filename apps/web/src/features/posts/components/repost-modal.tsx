@@ -1,6 +1,6 @@
 import { Repeat } from "lucide-react";
 import { Modal } from "../../../components/modal";
-import { useTrackStore } from "../hooks/use-post";
+import { useTrackStore } from "../hooks/use-track";
 import { useTrackContext } from "../providers/post-provider";
 import { Button } from "../../../components/button";
 import { usePostActions } from "../hooks/use-post-actions";

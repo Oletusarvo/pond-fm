@@ -3,7 +3,7 @@ import { setupContext } from "../../../utils/setup-context";
 import { useEventHandler } from "../../../hooks/use-event-handler";
 import { useActionContext } from "../../../providers/action-provider";
 import { useAuthContext } from "../../auth/providers/auth-provider";
-import { useTrack } from "../hooks/use-post";
+import { useTrack } from "../hooks/use-track";
 import { RepostModal } from "../components/repost-modal";
 import { TTrackPublic } from "@pondfm/app-shared";
 

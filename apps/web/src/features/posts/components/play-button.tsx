@@ -5,7 +5,7 @@ import { Spinner } from "../../../components/spinner";
 import React from "react";
 
 type PlayButtonProps = Pick<React.ComponentProps<"button">, "onClick"> & {
-  state: ReturnType<typeof usePlaybackContext>["playbackState"] | "buffering" | "error";
+  state: ReturnType<typeof usePlaybackContext>["currentPlayback"]["state"];
   size?: "default" | "small";
 };
 
