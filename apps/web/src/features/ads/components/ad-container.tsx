@@ -7,8 +7,8 @@ export function Ad(props) {
   const containerRef = useRef<HTMLDivElement>(null);
   return (
     <div {...props} className='flex flex-col w-full'>
-      <AdScript />
       <div ref={containerRef} id={AD_CONTAINER_ID} />
+      <AdScript />
     </div>
   );
 }
