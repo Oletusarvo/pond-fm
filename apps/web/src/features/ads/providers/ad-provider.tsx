@@ -9,7 +9,7 @@ type AdProviderProps = {
 };
 
 type AdInjectorProps = React.PropsWithChildren & {
-  adElement?: ReactNode;
+  adElement?: React.FC<any>;
 };
 
 export const [AdProvider, useAdContext] = createProvider({
@@ -28,7 +28,7 @@ export const [AdProvider, useAdContext] = createProvider({
   extend: (hook) => {
     return {
       /**Injects an Ad after its children when the number of injectors seen hits the interval defined in the AdProvider. */
-      Injector: function ({ children, adElement }: AdInjectorProps) {
+      Injector: function ({ children, adElement: AdElement }: AdInjectorProps) {
         const { itemsSeen, enabled, interval, target } = hook();
         const [renderAd, setRenderAd] = useState(false);
         const shouldHide = useRef(false);
@@ -62,16 +62,14 @@ export const [AdProvider, useAdContext] = createProvider({
         const hasCounted = useRef(false);
 
         const shouldRenderAd = enabled && renderAd;
-        const renderedAdElement = (
-          <PassProps ref={adRef}>{adElement || <DefaultAdElement />}</PassProps>
-        );
+        const RenderedAdElement = AdElement || DefaultAdElement;
 
         const itemElement = <PassProps ref={itemRef}>{children}</PassProps>;
 
         return (
           <>
             {itemElement}
-            {shouldRenderAd ? renderedAdElement : null}
+            {shouldRenderAd ? <RenderedAdElement ref={adRef} /> : null}
           </>
         );
       },

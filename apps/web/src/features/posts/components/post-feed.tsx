@@ -7,7 +7,7 @@ import { Ad } from "../../ads/components/ad-container";
 import { CancelableTrackMethodsProvider } from "../../../providers/cancelable-function-provider";
 import { TrackActionProvider } from "../providers/track-action-provider";
 
-const adElement = import.meta.env.PROD ? <Ad /> : null;
+const adElement = import.meta.env.PROD ? Ad : null;
 
 /**Renders feeds using the Post-component as the renderComponent. Each Post is wrapped inside a PostProvider.
  * This component must be placed within a FeedProvider, and will populate the post store with the fetched items. */
