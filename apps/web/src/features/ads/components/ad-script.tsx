@@ -9,7 +9,7 @@ export function AdScript() {
   useEffect(() => {
     setTimeout(() => {
       setEnabled(true);
-    }, 25000);
+    }, 3000);
   }, [setEnabled]);
   return enabled ? <script async={true} data-cfasync='false' src={AD_SCRIPT_SRC}></script> : null;
 }
