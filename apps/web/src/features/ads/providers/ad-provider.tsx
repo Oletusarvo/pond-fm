@@ -38,7 +38,9 @@ export const [AdProvider, useAdContext] = createProvider({
 
           hasCounted.current = true;
           ++itemsSeen.current;
+          console.log("Items seen:", itemsSeen.current, "Ad interval:", interval);
           if (itemsSeen.current % interval === 0) {
+            console.log("Rendering ad.");
             setRenderAd(true);
           }
         };
