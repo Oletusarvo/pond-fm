@@ -44,19 +44,7 @@ export default function BaseBannerAd({
 }
 
 export function BannerAd() {
-  const [isMobile, setIsMobile] = useState<boolean | null>(null);
-
-  useEffect(() => {
-    const media = window.matchMedia("(max-width: 767px)");
-    const update = () => setIsMobile(media.matches);
-
-    update();
-    media.addEventListener("change", update);
-    return () => media.removeEventListener("change", update);
-  }, []);
-
-  console.log(isMobile);
-  return isMobile ? (
+  return (
     <BaseBannerAd
       scriptUrl='https://www.highrevenueformat.com/c578292fe9f7ca275651caa326bf7853/invoke.js'
       atOptions={{
@@ -64,17 +52,6 @@ export function BannerAd() {
         format: "iframe",
         height: 50,
         width: 320,
-        params: {},
-      }}
-    />
-  ) : (
-    <BaseBannerAd
-      scriptUrl='https://www.highrevenueformat.com/b6c7f4f0194bb6a0d64a27813b499262/invoke.js'
-      atOptions={{
-        key: "b6c7f4f0194bb6a0d64a27813b499262",
-        format: "iframe",
-        height: 90,
-        width: 728,
         params: {},
       }}
     />
