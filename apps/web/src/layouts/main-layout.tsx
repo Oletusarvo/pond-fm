@@ -29,7 +29,7 @@ export function MainLayout() {
     return false;
   };
   const ref = useRef(null);
-  const adsEnabled = areAdsEnabled();
+  const adsEnabled = false;
   return (
     <>
       {adsEnabled ? <AdScript /> : null}
