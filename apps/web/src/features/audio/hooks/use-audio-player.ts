@@ -21,6 +21,7 @@ export function useAudioPlayer() {
       setCurrentPlayback(null);
       return;
     }
+
     setCurrentPlayback({
       ...playback,
       state: "buffering",
@@ -46,7 +47,6 @@ export function useAudioPlayer() {
           state: "ready",
           streamUrl: data.streamUrl,
         });
-        updateCurrentIndex(playback);
       })
       .catch((err) => {
         console.log("Fetching of stream token failed!", err.message);
@@ -111,6 +111,7 @@ export function useAudioPlayer() {
     if (currentPlayback?.state === "ready") {
       audioRef.current.currentTime = currentPlayback.start_position || 0;
       onPlay();
+      updateCurrentIndex(currentPlayback);
     }
   }, [currentPlayback?.track.id, currentPlayback?.state]);
 

@@ -1,15 +1,8 @@
 import { useCallback } from "react";
 import { api } from "../utils/api/api";
-import { TApiErrorResponse, TApiSuccessResponse } from "../utils/api/types";
 import { createProvider } from "../utils/create-provider";
-import { cancelPrevious, TCancelPrevious } from "../utils/debounce";
+import { cancelPrevious } from "../utils/debounce";
 
-type Fn = <
-  TArgs extends any[],
-  TRet = Promise<TCancelPrevious<TApiSuccessResponse<unknown> | TApiErrorResponse<unknown>>>,
->(
-  ...args: TArgs
-) => TRet;
 export const [CancelableTrackMethodsProvider, useCancelableTrackMethodsContext] = createProvider({
   contextName: "CancelableTrackMethodsContext",
   hook: <TArgs extends any[], TRet>() => {

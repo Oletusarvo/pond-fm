@@ -55,11 +55,3 @@ export function AudioPlayer() {
     </div>
   );
 }
-
-/*
-<Waveform
-  waveform={post?.track.waveform}
-  duration={post?.track.duration}
-  playbackPosition={playbackPosition}
-  onWaveformClicked={onWaveformClicked}
-/>;*/

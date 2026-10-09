@@ -18,6 +18,7 @@ import { Spinner } from "../../../components/spinner";
 import { trackToPlayback } from "../../../utils/post-to-playback";
 import { AudioLines, Columns, TriangleAlert } from "lucide-react";
 import { HorizontalScrollable } from "../../../components/horizontal-scrollable";
+import { TrackImage } from "./track-image";
 
 /**The main component responsible for rendering posts. Includes an AudioPlayer, stats and other information.
  * Must be a child of a PostProvider.
@@ -101,7 +102,11 @@ function Content() {
 
   return (
     <article className='flex gap-1 flex-1 w-full overflow-hidden items-center'>
-      <img src={post?.artwork} className='xs:w-24 xs:h-24 lg:w-32 lg:h-32 rounded-lg' />
+      <TrackImage
+        src={post?.artwork}
+        className='xs:w-24 xs:h-24 lg:w-32 lg:h-32 rounded-lg'
+        mirrors={post.artwork_mirrors}
+      />
       <ContentBody>
         <ContentRow>
           <PostAuthor />

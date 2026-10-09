@@ -60,7 +60,7 @@ async function processTracks(data: any) {
 }
 
 function mergeTracks(track, audiusTrack, author) {
-  const { id, user, title, description, duration, artwork } = audiusTrack;
+  const { id, user, title, description, duration, artwork, permalink } = audiusTrack;
   const {
     play_count,
     unique_play_count,
@@ -79,6 +79,7 @@ function mergeTracks(track, audiusTrack, author) {
     description,
     duration,
     artwork: artwork["480x480"],
+    artwork_mirrors: artwork.mirrors,
     play_count,
     unique_play_count,
     like_count,
@@ -89,13 +90,16 @@ function mergeTracks(track, audiusTrack, author) {
     created_at,
     genre,
     moods,
+    permalink,
     canonical_author: {
       id: user.id,
       username: user.name,
+      handle: user.handle,
     },
     author: {
       id: author.id,
       username: author.name,
+      handle: user.handle,
     },
   };
 

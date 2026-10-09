@@ -13,6 +13,8 @@ import { ConfirmAction } from "../../../components/confirm-action";
 import { TTrack, TTrackPublic } from "@pondfm/app-shared";
 import { useStopPropagation } from "../../../hooks/use-stop-propagation";
 import { stopPropagation } from "../../../utils/stop-propagation";
+import { Link } from "react-router-dom";
+import { ExternalLink } from "lucide-react";
 
 const [UpdateTrackProvider, useUpdateTrackContext] = createProvider({
   contextName: "UpdateTrackContext",
@@ -65,7 +67,17 @@ function ModalContent() {
     <Form onSubmit={submit}>
       <div className='flex gap-2'>
         <img src={track?.artwork} loading='lazy' className='w-16 h-16 rounded-md' />
-        <h2 className='text-xl font-semibold'>Updating {track?.title}</h2>
+        <div className='flex flex-col'>
+          <h2 className='text-xl font-semibold'>Updating {track?.title}</h2>
+          <Link
+            to={`https://audius.co${track.permalink}/edit`}
+            className='flex gap-1 items-center text-primary'
+            target='_blank'
+          >
+            <span>Edit on Audius</span>
+            <ExternalLink size='1rem' />
+          </Link>
+        </div>
       </div>
       <Form.Group label='Main Genre'>
         <div className='gap-1 flex w-full flex-wrap'>

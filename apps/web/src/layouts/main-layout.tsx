@@ -6,7 +6,7 @@ import { MiniPlayerWithInfo } from "../features/audio/components/mini-player-wit
 import { AdProvider } from "../features/ads/providers/ad-provider";
 import { useAuthContext } from "../features/auth/providers/auth-provider";
 import { AdScript } from "../features/ads/components/ad-script";
-import { CancelableTrackMethodsProvider } from "../providers/cancelable-function-provider";
+import { CancelableTrackMethodsProvider } from "../providers/cancelable-track-methods-provider";
 import { useScrollToTop } from "../hooks/use-scroll-to-top";
 import { createProvider } from "../utils/create-provider";
 import { useRef } from "react";

@@ -19,7 +19,7 @@ import { VerifyScreen } from "./features/auth/screens/verify-screen";
 import { VerifyEmailUpdateScreen } from "./features/auth/screens/verify-email-update-screen";
 
 import { Toaster } from "react-hot-toast";
-import { CancelableTrackMethodsProvider } from "./providers/cancelable-function-provider";
+import { CancelableTrackMethodsProvider } from "./providers/cancelable-track-methods-provider";
 
 function App() {
   return (
