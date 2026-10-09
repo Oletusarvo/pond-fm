@@ -29,6 +29,7 @@ export const tablenames = {
   emailUpdateSessions: "auth.email_reset_session_data",
   streamSessions: "post.stream_session_data",
   loginSessions: "auth.login_session_data",
+  bandwidthData: "bandwidth_data",
 } as const;
 
 export const viewnames = {

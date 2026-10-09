@@ -32,21 +32,21 @@ export function MainLayout() {
   const adsEnabled = areAdsEnabled();
   return (
     <>
-      <AdProvider interval={10} enabled={adsEnabled}>
-        <AppHeader />
-        <MainLayoutProvider refElement={ref.current}>
-          <main className='flex flex-col flex-1 overflow-y-scroll' ref={ref}>
+      <AppHeader />
+      <MainLayoutProvider refElement={ref.current}>
+        <main className='flex flex-col flex-1 overflow-y-scroll' ref={ref}>
+          <AdProvider interval={10} enabled={adsEnabled}>
             <Outlet />
-          </main>
-        </MainLayoutProvider>
+          </AdProvider>
+        </main>
+      </MainLayoutProvider>
 
-        <CancelableTrackMethodsProvider>
-          <MiniPlayerWithInfo />
-        </CancelableTrackMethodsProvider>
+      <CancelableTrackMethodsProvider>
+        <MiniPlayerWithInfo />
+      </CancelableTrackMethodsProvider>
 
-        <AppBottomBar />
-        <WindowResizeManager />
-      </AdProvider>
+      <AppBottomBar />
+      <WindowResizeManager />
     </>
   );
 }

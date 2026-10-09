@@ -12,6 +12,7 @@ import { verifyStripeSignature } from "./api/v1/billing/middleware/verify-stripe
 import { fileDeleter } from "./features/file-deleter/file-deleter";
 import { TUser } from "@pondfm/app-shared";
 import { TUploadFolder } from "@pondfm/app-shared/dist/types/upload-folder";
+import { bandwidthCounter } from "./api/middleware/count-bandwidth";
 
 require("dotenv").config();
 const app = express();
@@ -39,6 +40,7 @@ app.post(
 );
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
+app.use(bandwidthCounter);
 app.use("/api", apiRouter);
 
 const server = http.createServer(app);
