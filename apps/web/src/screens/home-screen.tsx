@@ -73,7 +73,9 @@ export function HomeScreen() {
 
       <section className='h-pad py-16 flex-1 xs:block lg:flex gap-4 w-full items-center'>
         <article className='flex flex-col items-start w-full'>
-          <SectionHeading>What is {appName}?</SectionHeading>
+          <SectionHeading>
+            What is <span className='text-primary'>{appName}?</span>
+          </SectionHeading>
 
           <p className='text-base'>
             {appName} is a discovery layer built on top of <strong>Audius</strong>, with a simple

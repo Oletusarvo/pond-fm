@@ -48,15 +48,14 @@ export function BannerAd() {
 
   useEffect(() => {
     const media = window.matchMedia("(max-width: 767px)");
-
     const update = () => setIsMobile(media.matches);
 
     update();
     media.addEventListener("change", update);
-
     return () => media.removeEventListener("change", update);
   }, []);
 
+  console.log(isMobile);
   return isMobile ? (
     <BaseBannerAd
       scriptUrl='https://www.highrevenueformat.com/c578292fe9f7ca275651caa326bf7853/invoke.js'
