@@ -34,7 +34,7 @@ export function HomeScreen() {
         <div className='flex flex-col xs:w-full md:w-[50%] items-center gap-8 z-10'>
           <div className='flex w-full justify-center'>
             <div className='w-32 h-32 flex items-center justify-center rounded-full bg-primary/10 overflow-hidden relative'>
-              <img src='/assets/frog-2.webp' className='w-24 h-24 z-10' loading='lazy' />
+              <img src='/assets/frog-2.webp' className='w-24 h-24 z-10' />
             </div>
           </div>
           <div className='flex flex-col items-center leading-4'>
@@ -170,7 +170,9 @@ export function HomeScreen() {
             </Link>
           </div>
           <div className='flex flex-col gap-2'>
-            <div className='mt-auto text-sm italic'>&copy; oletusarvo 2026</div>
+            <Link className='mt-auto text-sm italic' to='mailto:oletusarvo.music@gmail.com'>
+              &copy; App/Site - oletusarvo
+            </Link>
             <Link className='text-sm italic' to='mailto:designsbyhayleyjackson@gmail.com'>
               &copy; Artwork - Hayley Jackson
             </Link>
