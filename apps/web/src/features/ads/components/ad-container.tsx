@@ -10,7 +10,13 @@ export function Ad(props: React.ComponentProps<"div">) {
 const AD_KEY = "b6c7f4f0194bb6a0d64a27813b499262";
 const SCRIPT_URL = `https://www.highrevenueformat.com/${AD_KEY}/invoke.js`;
 
-export default function AdsterraBanner() {
+export default function BaseBannerAd({
+  atOptions,
+  scriptUrl,
+}: {
+  atOptions: Record<string, any>;
+  scriptUrl: string;
+}) {
   const adRef = useRef(null);
 
   useEffect(() => {
@@ -18,17 +24,11 @@ export default function AdsterraBanner() {
     if (!container) return;
 
     // Configure the Adsterra banner
-    (window as any).atOptions = {
-      key: AD_KEY,
-      format: "iframe",
-      height: 90,
-      width: 728,
-      params: {},
-    };
+    (window as any).atOptions = atOptions;
 
     // Load the ad script inside this component
     const script = document.createElement("script");
-    script.src = SCRIPT_URL;
+    script.src = scriptUrl;
     script.async = true;
 
     container.appendChild(script);
@@ -41,15 +41,45 @@ export default function AdsterraBanner() {
   return (
     <div
       ref={adRef}
-      className='w-full overflow-hidden'
       style={{
         width: "100%",
-        minHeight: "90px",
+        minHeight: atOptions.height,
         display: "flex",
         justifyContent: "center",
         alignItems: "center",
         overflow: "hidden",
       }}
     />
+  );
+}
+
+export function BannerAd() {
+  return (
+    <>
+      <div className='xs:block md:hidden'>
+        <BaseBannerAd
+          scriptUrl='https://www.highrevenueformat.com/c578292fe9f7ca275651caa326bf7853/invoke.js'
+          atOptions={{
+            key: "c578292fe9f7ca275651caa326bf7853",
+            format: "iframe",
+            height: 50,
+            width: 320,
+            params: {},
+          }}
+        />
+      </div>
+      <div className='xs:hidden md:block'>
+        <BaseBannerAd
+          scriptUrl='https://www.highrevenueformat.com/b6c7f4f0194bb6a0d64a27813b499262/invoke.js'
+          atOptions={{
+            key: "b6c7f4f0194bb6a0d64a27813b499262",
+            format: "iframe",
+            height: 90,
+            width: 728,
+            params: {},
+          }}
+        />
+      </div>
+    </>
   );
 }

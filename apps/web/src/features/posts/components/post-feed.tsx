@@ -3,11 +3,11 @@ import { Feed } from "../../../components/feed";
 import { Post } from "./post";
 import { PopulateTrackStore } from "../providers/populates-post-store";
 import { AdProvider } from "../../ads/providers/ad-provider";
-import AdsterraBanner from "../../ads/components/ad-container";
+import { BannerAd } from "../../ads/components/ad-container";
 import { CancelableTrackMethodsProvider } from "../../../providers/cancelable-track-methods-provider";
 import { PopulatesPlaylistStore } from "../providers/populates-playlist-store";
 
-const adElement = import.meta.env.PROD ? <AdsterraBanner /> : null;
+const adElement = import.meta.env.PROD ? <BannerAd /> : null;
 
 /**Renders feeds using the Post-component as the renderComponent. Each Post is wrapped inside a PostProvider.
  * This component must be placed within a FeedProvider, and will populate the post store with the fetched items. */
