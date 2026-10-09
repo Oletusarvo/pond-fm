@@ -3,9 +3,5 @@ const AD_SCRIPT_SRC =
 
 /**Renders the Adsterra native banner ad script. */
 export function AdScript() {
-  return (
-    <>
-      <script async={true} data-cfasync='false' src={AD_SCRIPT_SRC}></script>
-    </>
-  );
+  return <script async={true} data-cfasync='false' src={AD_SCRIPT_SRC}></script>;
 }
