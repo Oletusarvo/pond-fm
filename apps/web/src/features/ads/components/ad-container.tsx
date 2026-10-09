@@ -7,7 +7,6 @@ export function Ad(props: React.ComponentProps<"div">) {
   return (
     <div {...props} className='flex flex-col w-full min-h-2'>
       <div id={AD_CONTAINER_ID} />
-      <AdScript />
     </div>
   );
 }
