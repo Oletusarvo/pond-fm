@@ -21,7 +21,7 @@ export function TrackImage({ src, mirrors, ...props }: TrackImageProps) {
       console.log("No working mirror available! Mirrors tried: " + mirrorIndex.current);
       return;
     }
-
+    console.log("Image failed to load; trying another mirror...");
     const newSrc = new URL(`${mirror}${pathname}`);
     setCurrentSrc(newSrc);
   };
@@ -31,7 +31,7 @@ export function TrackImage({ src, mirrors, ...props }: TrackImageProps) {
     "relative aspect-square flex items-center shrink-0 justify-center bg-slate-200",
   );
 
-  const imgClassName = useClassName(props.className, "absolute");
+  const imgClassName = useClassName(props.className, "absolute animate-fade-in");
   return (
     <div className={containerClassName}>
       {loading ? (
