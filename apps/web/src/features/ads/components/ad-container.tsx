@@ -1,14 +1,4 @@
-import { AdScript } from "./ad-script";
-import React, { useEffect, useRef } from "react";
-
-const AD_CONTAINER_ID = "container-57d1ae3dbb6350d1a44008dd920f4ebe";
-
-export function Ad(props: React.ComponentProps<"div">) {
-  return <div {...props} id={AD_CONTAINER_ID} className='flex flex-col w-full min-h-2' />;
-}
-
-const AD_KEY = "b6c7f4f0194bb6a0d64a27813b499262";
-const SCRIPT_URL = `https://www.highrevenueformat.com/${AD_KEY}/invoke.js`;
+import { useEffect, useRef } from "react";
 
 export default function BaseBannerAd({
   atOptions,
@@ -56,30 +46,16 @@ export default function BaseBannerAd({
 export function BannerAd() {
   return (
     <>
-      <div className='xs:block md:hidden'>
-        <BaseBannerAd
-          scriptUrl='https://www.highrevenueformat.com/c578292fe9f7ca275651caa326bf7853/invoke.js'
-          atOptions={{
-            key: "c578292fe9f7ca275651caa326bf7853",
-            format: "iframe",
-            height: 50,
-            width: 320,
-            params: {},
-          }}
-        />
-      </div>
-      <div className='xs:hidden md:block'>
-        <BaseBannerAd
-          scriptUrl='https://www.highrevenueformat.com/b6c7f4f0194bb6a0d64a27813b499262/invoke.js'
-          atOptions={{
-            key: "b6c7f4f0194bb6a0d64a27813b499262",
-            format: "iframe",
-            height: 90,
-            width: 728,
-            params: {},
-          }}
-        />
-      </div>
+      <BaseBannerAd
+        scriptUrl='https://www.highrevenueformat.com/c578292fe9f7ca275651caa326bf7853/invoke.js'
+        atOptions={{
+          key: "c578292fe9f7ca275651caa326bf7853",
+          format: "iframe",
+          height: 50,
+          width: 320,
+          params: {},
+        }}
+      />
     </>
   );
 }
