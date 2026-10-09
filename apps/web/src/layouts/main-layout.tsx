@@ -32,7 +32,6 @@ export function MainLayout() {
   const adsEnabled = areAdsEnabled();
   return (
     <>
-      <AdScript />
       <AdProvider interval={10} enabled={adsEnabled}>
         <AppHeader />
         <MainLayoutProvider refElement={ref.current}>
