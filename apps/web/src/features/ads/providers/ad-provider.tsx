@@ -29,9 +29,8 @@ export const [AdProvider, useAdContext] = createProvider({
     return {
       /**Injects an Ad after its children when the number of injectors seen hits the interval defined in the AdProvider. */
       Injector: function ({ children, adElement }: AdInjectorProps) {
-        const { itemsSeen, enabled, interval, target } = hook();
+        const { itemsSeen, enabled, interval } = hook();
         const [renderAd, setRenderAd] = useState(false);
-        const shouldHide = useRef(false);
         const onVisible = () => {
           //Count items seen only once.
           if (hasCounted.current) return;
@@ -49,25 +48,12 @@ export const [AdProvider, useAdContext] = createProvider({
           onVisible,
         });
 
-        const { ref: adRef } = useSentinel({
-          threshold: 0,
-          onVisible: () => (shouldHide.current = true),
-          onInvisible: () => {
-            if (!shouldHide.current) return;
-            setRenderAd(false);
-          },
-        });
-
         const hasCounted = useRef(false);
 
         const shouldRenderAd = enabled && renderAd;
 
         const itemElement = <PassProps ref={itemRef}>{children}</PassProps>;
-        const adToRender = adElement ? (
-          <PassProps ref={adRef}>{adElement}</PassProps>
-        ) : (
-          <DefaultAdElement ref={adRef} />
-        );
+        const adToRender = adElement ? <PassProps>{adElement}</PassProps> : <DefaultAdElement />;
         return (
           <>
             {itemElement}
