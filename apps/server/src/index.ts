@@ -42,7 +42,7 @@ app.post(
 );
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
-app.use(bandwidthCounter);
+//app.use(bandwidthCounter);
 app.use("/api", apiRouter);
 
 const server = http.createServer(app);

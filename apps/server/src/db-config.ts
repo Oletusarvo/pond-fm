@@ -4,8 +4,9 @@ import { tablenames } from "./tablenames";
 const env = process.env.DB_ENVIRONMENT || "development";
 
 export const db = knex(knexfile[env]);
-const bandwidthDb = knex(knexfile[env]);
+//const bandwidthDb = knex(knexfile[env]);
 
+/*
 db.on("query", (query) => {
   const sqlBytes = Buffer.byteLength(query.sql, "utf8");
 
@@ -34,3 +35,4 @@ db.on("query", (query) => {
       console.log("Failed to update bandwidth within db query!", err.message);
     });
 });
+*/
