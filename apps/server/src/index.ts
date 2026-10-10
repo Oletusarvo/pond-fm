@@ -13,10 +13,12 @@ import { fileDeleter } from "./features/file-deleter/file-deleter";
 import { TUser } from "@pondfm/app-shared";
 import { TUploadFolder } from "@pondfm/app-shared/dist/types/upload-folder";
 import { bandwidthCounter } from "./api/middleware/count-bandwidth";
+import compression from "compression";
 
 require("dotenv").config();
 const app = express();
 const allowedOrigins = ["http://localhost:5173", "https://pond-fm.onrender.com"];
+app.use(compression());
 app.use(cookieParser());
 app.use(
   cors({
