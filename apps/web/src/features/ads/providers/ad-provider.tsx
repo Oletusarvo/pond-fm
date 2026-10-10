@@ -55,7 +55,7 @@ export const [AdProvider, useAdContext] = createProvider({
           [children, itemRef],
         );
         const adToRender = useMemo(
-          () => (adElement ? <PassProps>{adElement}</PassProps> : <DefaultAdElement />),
+          () => (adElement ? adElement : <DefaultAdElement />),
           [adElement],
         );
         return (
