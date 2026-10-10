@@ -44,7 +44,7 @@ export const [AdProvider, useAdContext] = createProvider({
         }, [setRenderAd, itemsSeen.current]);
 
         const { ref: itemRef } = useSentinel({
-          threshold: 0.5,
+          threshold: 1,
           onVisible,
         });
 
