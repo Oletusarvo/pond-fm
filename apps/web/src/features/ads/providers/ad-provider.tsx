@@ -1,4 +1,4 @@
-import React, { ReactNode, useRef, useState } from "react";
+import React, { ReactNode, useCallback, useMemo, useRef, useState } from "react";
 import { createProvider } from "../../../utils/create-provider";
 import { useSentinel } from "../../../hooks/use-sentinel";
 import { PassProps } from "../../../components/pass-props";
@@ -31,7 +31,7 @@ export const [AdProvider, useAdContext] = createProvider({
       Injector: function ({ children, adElement }: AdInjectorProps) {
         const { itemsSeen, enabled, interval } = hook();
         const [renderAd, setRenderAd] = useState(false);
-        const onVisible = () => {
+        const onVisible = useCallback(() => {
           //Count items seen only once.
           if (hasCounted.current) return;
 
@@ -41,7 +41,7 @@ export const [AdProvider, useAdContext] = createProvider({
           if (itemsSeen.current % interval === 0) {
             setRenderAd(true);
           }
-        };
+        }, [setRenderAd, itemsSeen.current]);
 
         const { ref: itemRef } = useSentinel({
           threshold: 0.5,
@@ -49,11 +49,15 @@ export const [AdProvider, useAdContext] = createProvider({
         });
 
         const hasCounted = useRef(false);
-
         const shouldRenderAd = enabled && renderAd;
-
-        const itemElement = <PassProps ref={itemRef}>{children}</PassProps>;
-        const adToRender = adElement ? <PassProps>{adElement}</PassProps> : <DefaultAdElement />;
+        const itemElement = useMemo(
+          () => <PassProps ref={itemRef}>{children}</PassProps>,
+          [children, itemRef],
+        );
+        const adToRender = useMemo(
+          () => (adElement ? <PassProps>{adElement}</PassProps> : <DefaultAdElement />),
+          [adElement],
+        );
         return (
           <>
             {itemElement}
