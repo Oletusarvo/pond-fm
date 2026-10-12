@@ -24,7 +24,7 @@ export default function HilltopAds({ ...props }) {
   }, []);
 
   return (
-    <div {...props} className='w-full'>
+    <div {...props}>
       <div ref={containerRef} className='hilltop-ads' />
     </div>
   );
