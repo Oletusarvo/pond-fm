@@ -67,11 +67,6 @@ export function HomeScreen() {
           </div>
         </div>
       </section>
-      <section className='h-pad w-full'>
-        <AdContainer>
-          <HilltopAds />
-        </AdContainer>
-      </section>
 
       <section className='h-pad py-16 flex-1 xs:block lg:flex gap-4 w-full items-center'>
         <article className='flex flex-col items-start w-full'>
