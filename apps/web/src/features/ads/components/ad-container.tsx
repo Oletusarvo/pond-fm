@@ -48,7 +48,7 @@ export default function BaseBannerAd({
   );
 }
 
-export function BannerAd({ props }) {
+export function BannerAd({ ...props }) {
   const breakpoint = useBreakpoint();
   const renderedAd =
     breakpoint === "xs" ? (
