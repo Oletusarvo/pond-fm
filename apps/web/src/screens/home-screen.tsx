@@ -45,12 +45,7 @@ export function HomeScreen() {
               A music sharing platform where all tracks get a fair shot at getting heard.
             </p>
           </div>
-          <div className='flex flex-col gap-1 items-center'>
-            <WarningMessage>
-              The service has not been released yet. This page, the terms of service and privacy
-              policy, are demos.
-            </WarningMessage>
-          </div>
+
           <div className='flex gap-2'>
             <Button
               onClick={heroButtonAction}
