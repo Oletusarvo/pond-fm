@@ -9,6 +9,8 @@ import { defaults } from "../utils/defaults";
 import { FaIconLink } from "../components/fa-icon-link";
 import { useScrollToTop } from "../hooks/use-scroll-to-top";
 import { ErrorMessage, WarningMessage } from "../components/helper-message";
+import { AdContainer } from "../features/ads/providers/ad-provider";
+import HilltopAds from "../features/ads/components/hilltop-banner-ad";
 
 const appName = "Amphitune";
 /**Renders the home screen. */
@@ -64,6 +66,11 @@ export function HomeScreen() {
             </Button>
           </div>
         </div>
+      </section>
+      <section className='h-pad w-full'>
+        <AdContainer>
+          <HilltopAds />
+        </AdContainer>
       </section>
 
       <section className='h-pad py-16 flex-1 xs:block lg:flex gap-4 w-full items-center'>

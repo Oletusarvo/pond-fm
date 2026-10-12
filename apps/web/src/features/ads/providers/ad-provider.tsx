@@ -72,7 +72,7 @@ export const [AdProvider, useAdContext] = createProvider({
         );
 
         const adToRender = (
-          <DefaultAdElement ref={adRef}>{AdElement ? <AdElement /> : null}</DefaultAdElement>
+          <AdContainer ref={adRef}>{AdElement ? <AdElement /> : null}</AdContainer>
         );
 
         return (
@@ -86,7 +86,7 @@ export const [AdProvider, useAdContext] = createProvider({
   },
 });
 
-function DefaultAdElement({ children, ...props }: React.ComponentProps<"div">) {
+export function AdContainer({ children, ...props }: React.ComponentProps<"div">) {
   return (
     <div
       {...props}
@@ -99,7 +99,7 @@ function DefaultAdElement({ children, ...props }: React.ComponentProps<"div">) {
         </div>
         <div className='bg-gray-200 rounded-[100px] px-4 py-2 text-xs'>Ad</div>
       </div>
-      {children}
+      <div className='flex w-full justify-center'>{children}</div>
     </div>
   );
 }
