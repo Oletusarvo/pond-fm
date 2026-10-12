@@ -8,7 +8,7 @@ import { CancelableTrackMethodsProvider } from "../../../providers/cancelable-tr
 import { PopulatesPlaylistStore } from "../providers/populates-playlist-store";
 import HilltopAds from "../../ads/components/hilltop-banner-ad";
 
-const adElement = import.meta.env.PROD ? <HilltopAds /> : null;
+const adElement = import.meta.env.PROD ? HilltopAds : null;
 
 /**Renders feeds using the Post-component as the renderComponent. Each Post is wrapped inside a PostProvider.
  * This component must be placed within a FeedProvider, and will populate the post store with the fetched items. */

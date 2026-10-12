@@ -1,5 +1,4 @@
 import { useEffect, useRef } from "react";
-import { rootPropsReducer } from "recharts/types/state/rootPropsSlice";
 
 export default function HilltopAds({ ...props }) {
   const containerRef = useRef(null);

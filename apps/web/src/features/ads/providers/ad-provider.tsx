@@ -2,6 +2,7 @@ import React, { ReactNode, useCallback, useMemo, useRef, useState } from "react"
 import { createProvider } from "../../../utils/create-provider";
 import { useSentinel } from "../../../hooks/use-sentinel";
 import { PassProps } from "../../../components/pass-props";
+import { Megaphone } from "lucide-react";
 
 type AdProviderProps = {
   interval: number;
@@ -9,7 +10,8 @@ type AdProviderProps = {
 };
 
 type AdInjectorProps = React.PropsWithChildren & {
-  adElement?: ReactNode;
+  adElement?: React.FC<any>;
+  hideOnInvisible?: boolean;
 };
 
 export const [AdProvider, useAdContext] = createProvider({
@@ -28,7 +30,11 @@ export const [AdProvider, useAdContext] = createProvider({
   extend: (hook) => {
     return {
       /**Injects an Ad after its children when the number of injectors seen hits the interval defined in the AdProvider. */
-      Injector: function ({ children, adElement }: AdInjectorProps) {
+      Injector: function ({
+        children,
+        adElement: AdElement,
+        hideOnInvisible = false,
+      }: AdInjectorProps) {
         const { itemsSeen, enabled, interval } = hook();
         const [renderAd, setRenderAd] = useState(false);
         const shouldHideAd = useRef(false);
@@ -53,8 +59,7 @@ export const [AdProvider, useAdContext] = createProvider({
           threshold: 0,
           onVisible: () => (shouldHideAd.current = true),
           onInvisible: () => {
-            if (!shouldHideAd.current) return;
-
+            if (!shouldHideAd.current || !hideOnInvisible) return;
             setRenderAd(false);
           },
         });
@@ -66,15 +71,10 @@ export const [AdProvider, useAdContext] = createProvider({
           [children, itemRef],
         );
 
-        const adToRender = useMemo(
-          () =>
-            adElement ? (
-              <PassProps ref={adRef}>{adElement}</PassProps>
-            ) : (
-              <DefaultAdElement ref={adRef} />
-            ),
-          [adElement],
+        const adToRender = (
+          <DefaultAdElement ref={adRef}>{AdElement ? <AdElement /> : null}</DefaultAdElement>
         );
+
         return (
           <>
             {itemElement}
@@ -86,13 +86,20 @@ export const [AdProvider, useAdContext] = createProvider({
   },
 });
 
-function DefaultAdElement(props) {
+function DefaultAdElement({ children, ...props }: React.ComponentProps<"div">) {
   return (
     <div
       {...props}
-      className='bg-primary/10 w-full p-8 rounded-md shrink-0 flex h-8 items-center justify-center'
+      className='w-full py-4 px-8 rounded-md shrink-0 flex flex-col gap-2 border border-dashed border-olive-500 my-2'
     >
-      <h2 className='text-lg font-semibold'>Ad goes here.</h2>
+      <div className='flex items-center justify-between w-full'>
+        <div className='flex items-center gap-4'>
+          <Megaphone size='1rem' color='var(--color-olive-500)' />
+          <h2 className='text-lg font-semibold text-olive-500'>Advertisement</h2>
+        </div>
+        <div className='bg-gray-200 rounded-[100px] px-4 py-2 text-xs'>Ad</div>
+      </div>
+      {children}
     </div>
   );
 }
