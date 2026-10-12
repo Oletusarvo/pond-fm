@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from "react";
+import { useBreakpoint } from "../../../hooks/use-breakpoint";
 
 export default function BaseBannerAd({
   atOptions,
@@ -25,6 +26,7 @@ export default function BaseBannerAd({
 
     return () => {
       script.remove();
+      delete (window as any).atOptions;
     };
   }, []);
 
@@ -44,7 +46,8 @@ export default function BaseBannerAd({
 }
 
 export function BannerAd() {
-  return (
+  const breakpoint = useBreakpoint();
+  return breakpoint === "xs" ? (
     <BaseBannerAd
       scriptUrl='https://www.highrevenueformat.com/c578292fe9f7ca275651caa326bf7853/invoke.js'
       atOptions={{
@@ -52,6 +55,17 @@ export function BannerAd() {
         format: "iframe",
         height: 50,
         width: 320,
+        params: {},
+      }}
+    />
+  ) : (
+    <BaseBannerAd
+      scriptUrl='https://www.highrevenueformat.com/b6c7f4f0194bb6a0d64a27813b499262/invoke.js'
+      atOptions={{
+        key: "b6c7f4f0194bb6a0d64a27813b499262",
+        format: "iframe",
+        height: 90,
+        width: 728,
         params: {},
       }}
     />

@@ -20,8 +20,12 @@ import { VerifyEmailUpdateScreen } from "./features/auth/screens/verify-email-up
 
 import { Toaster } from "react-hot-toast";
 import { CancelableTrackMethodsProvider } from "./providers/cancelable-track-methods-provider";
+import { useBreakpoint } from "./hooks/use-breakpoint";
 
 function App() {
+  const breakpoint = useBreakpoint();
+  console.log(breakpoint);
+
   return (
     <CancelableTrackMethodsProvider>
       <QueryClientProvider client={new QueryClient()}>
