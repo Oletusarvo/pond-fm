@@ -1,6 +1,7 @@
 import { useEffect, useRef } from "react";
+import { rootPropsReducer } from "recharts/types/state/rootPropsSlice";
 
-export default function HilltopAds() {
+export default function HilltopAds({ ...props }) {
   const containerRef = useRef(null);
 
   useEffect(() => {
@@ -23,5 +24,9 @@ export default function HilltopAds() {
     };
   }, []);
 
-  return <div ref={containerRef} className='hilltop-ads' />;
+  return (
+    <div {...props} className='w-full'>
+      <div ref={containerRef} className='hilltop-ads' />
+    </div>
+  );
 }
