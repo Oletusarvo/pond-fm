@@ -24,7 +24,6 @@ import { useBreakpoint } from "./hooks/use-breakpoint";
 
 function App() {
   const breakpoint = useBreakpoint();
-  console.log(breakpoint);
 
   return (
     <CancelableTrackMethodsProvider>
