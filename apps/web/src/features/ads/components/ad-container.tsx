@@ -21,7 +21,6 @@ export default function BaseBannerAd({
     // Load the ad script inside this component
     const script = document.createElement("script");
     script.src = scriptUrl;
-    script.async = true;
 
     container.appendChild(script);
 
