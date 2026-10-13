@@ -19,7 +19,7 @@ const featureCards = [
   {
     title: "Fair discovery",
     description:
-      "Every upload gets a real chance to be heard. Amphitune has no algorithms deciding what you should hear.",
+      "Every upload gets a real and equal chance to be heard. Amphitune has no algorithms deciding who should hear your music.",
     icon: Sprout,
   },
   {
@@ -117,7 +117,7 @@ export function HomeScreen() {
                 <p className='mt-5 text-lg leading-8 text-slate-600'>
                   {appName} is a music discovery layer built on Audius, for the long tail — where
                   new releases, overlooked sessions, and artist-first listening get room to grow
-                  without being buried by the feed algorithm.
+                  without being buried by a feed algorithm.
                 </p>
 
                 <div className='mt-8 flex flex-col gap-3 sm:flex-row'>
