@@ -204,7 +204,7 @@ export function MiniPlayerWithInfo() {
             }}
             disabled={!currentTrack}
             aria-label='Seek track'
-            className='h-5 w-full cursor-pointer accent-emerald-600 disabled:cursor-default'
+            className='h-5 w-full cursor-pointer accent-emerald-600 disabled:cursor-default outline-none'
           />
           <span className='text-[11px] font-medium text-slate-500'>
             {formatTime(duration || currentTime)}

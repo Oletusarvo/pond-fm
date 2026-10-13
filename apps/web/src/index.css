@@ -99,13 +99,13 @@ button {
 
 @media screen and (max-width: 1200px) {
   .h-pad {
-    padding-inline: --spacing(16);
+    padding-inline: --spacing(8);
   }
 }
 
 @media screen and (max-width: 1000px) {
   .h-pad {
-    padding-inline: --spacing(8);
+    padding-inline: --spacing(4);
   }
 }
 
@@ -123,7 +123,7 @@ button {
 
 @media screen and (min-width: 1201px) {
   .h-pad {
-    padding-inline: --spacing(48);
+    padding-inline: --spacing(16);
   }
 }
 
