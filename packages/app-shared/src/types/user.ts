@@ -29,6 +29,7 @@ export type TUser = {
   subscription: TSubscription;
   profile_picture: string;
   urls: string[];
+  track_count: number;
 };
 
 /**The user type displayed for the authenticated user themselves. */
@@ -48,6 +49,7 @@ export type TUserPublic = Pick<
   | "following_count"
   | "followed_by_me"
   | "urls"
+  | "track_count"
 > & {
   subscription: TSubscriptionPublic;
 };

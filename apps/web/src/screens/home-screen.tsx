@@ -169,7 +169,7 @@ export function HomeScreen() {
                     className='aspect-4/5 w-full rounded-3xl object-cover shadow-inner'
                   />
 
-                  <div className='mt-4 grid grid-cols-3 gap-3'>
+                  <div className='mt-4 grid grid-cols-3 gap-3' hidden>
                     <div className='rounded-2xl border border-white/10 bg-white/5 p-3 text-white'>
                       <div className='mb-1 text-xs uppercase tracking-[0.2em] text-slate-300'>
                         New

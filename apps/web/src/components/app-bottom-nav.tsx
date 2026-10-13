@@ -46,7 +46,7 @@ function NavButton({
       }
     >
       <span className='flex h-5 items-center justify-center [&>svg]:h-[1.15rem] [&>svg]:w-[1.15rem]'>
-        {children}
+        {children as any}
       </span>
       <span className='truncate'>{title}</span>
     </NavLink>
