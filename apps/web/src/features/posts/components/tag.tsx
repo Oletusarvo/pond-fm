@@ -12,21 +12,25 @@ type TagProps = {
 
 const colorMap: Record<TagProps["color"], Record<"selected" | "unselected", string>> = {
   primary: {
-    selected: "bg-primary/20 text-green-900 border-transparent",
-    unselected: "boder-primary text-primary",
+    selected: "border-emerald-500 bg-emerald-500 text-white shadow-sm shadow-emerald-500/20",
+    unselected:
+      "border-slate-200 bg-white text-slate-700 hover:border-emerald-200 hover:text-emerald-700",
   },
   secondary: {
-    selected: "bg-slate-500/20 text-slate-900 border-transparent",
-    unselected: "border-slate-500 text-slate-500",
+    selected: "border-slate-900 bg-slate-900 text-white shadow-sm shadow-slate-900/15",
+    unselected:
+      "border-slate-200 bg-slate-50 text-slate-600 hover:border-slate-300 hover:text-slate-800",
   },
 };
 
 export function Tag({ value, onSelected, selected, color = "primary", size }: TagProps) {
   const colorConfig = colorMap[color];
   const className = useClassName(
-    "rounded-[100px] font-semibold text-center shrink-0 border select-none",
-    size === "small" ? "px-[6px] py-[1px] text-xs" : "px-2 py-1 text-xs",
-    onSelected ? "cursor-pointer" : "",
+    "rounded-full border font-semibold text-center shrink-0 select-none transition-all duration-150",
+    size === "small"
+      ? "px-2.5 py-1 text-[10px] leading-none"
+      : "px-3 py-1.5 text-[11px] leading-none",
+    onSelected ? "cursor-pointer" : "cursor-default",
     selected ? colorConfig.selected : colorConfig.unselected,
   );
 

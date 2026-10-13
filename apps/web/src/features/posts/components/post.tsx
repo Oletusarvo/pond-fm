@@ -29,8 +29,10 @@ export function Post({ ref }: { ref?: React.RefObject<any> }) {
     usePlaybackContext();
   const isPlaying = currentPlayback?.track.id === post?.id;
   const containerClassName = useClassName(
-    "flex py-2 rounded-md w-full flex-col gap-1 items-start transition-colors duration-500 grow-0",
-    isPlaying ? "bg-primary/5" : "bg-white",
+    "group flex w-full flex-col items-start gap-3 rounded-[1.75rem] border p-3 transition-all duration-200 ease-out md:p-4",
+    isPlaying
+      ? "border-emerald-200 bg-emerald-50/70 shadow-[0_12px_28px_rgba(16,185,129,0.08)]"
+      : "border-slate-200 bg-white shadow-[0_10px_24px_rgba(15,23,42,0.04)] hover:-translate-y-0.5 hover:border-emerald-200 hover:shadow-[0_16px_30px_rgba(15,23,42,0.08)]",
   );
 
   const trackId = post?.id;
@@ -101,31 +103,37 @@ function Content() {
   };
 
   return (
-    <article className='flex gap-1 flex-1 w-full overflow-hidden items-center'>
+    <article className='flex w-full flex-1 items-start gap-3 md:gap-4'>
       <TrackImage
         src={post?.artwork}
-        className='xs:w-24 xs:h-24 lg:w-32 lg:h-32 rounded-lg'
+        className='h-24 w-24 shrink-0 rounded-2xl border border-slate-200 object-cover shadow-sm md:h-32 md:w-32'
         mirrors={post.artwork_mirrors}
       />
       <ContentBody>
-        <ContentRow>
+        <ContentRow className='items-start gap-3'>
           <PostAuthor />
           <UploadTime />
         </ContentRow>
-        <ContentRow className='mb-2'>
-          <Title />
+
+        <ContentRow className='items-center gap-3'>
+          <div className='min-w-0 flex-1'>
+            <Title />
+          </div>
           <EditButton />
         </ContentRow>
 
         <ContentRow className='mt-auto'>
-          <div className='flex w-full flex-col items-start'>
-            <div className='flex flex-col gap-1 items-start'>
+          <div className='flex w-full flex-col items-start gap-3'>
+            <div className='flex flex-col items-start gap-2'>
               <Tag value={post?.genre} size='small' selected={true} />
-              <HorizontalScrollable>
-                <TagList tags={post?.moods} size={"small"} color='secondary' />
-              </HorizontalScrollable>
+              {post?.moods?.length ? (
+                <HorizontalScrollable>
+                  <TagList tags={post?.moods} size='small' color='secondary' />
+                </HorizontalScrollable>
+              ) : null}
             </div>
-            <div className='flex w-full justify-between items-center'>
+
+            <div className='flex w-full items-center justify-between gap-3'>
               <StatsArea />
               <PlaybackStatus />
             </div>

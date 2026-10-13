@@ -79,7 +79,6 @@ export function PostFeedScreen({ title, description, queryFn, queryKey, icon }: 
         </QuerySetterContext.Provider>
       </PostFeedHeader>
 
-      <Separator />
       <QueryValuesContext.Provider
         value={{
           genres: queryGenres,

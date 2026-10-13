@@ -17,34 +17,33 @@ export const GenreSelector = React.memo(function GenreSelector({
   initialMoods,
 }: GenreSelectorProps) {
   return (
-    <div className='flex flex-col gap-2'>
-      <HorizontalScrollable>
-        <GenreFilter onChange={onGenresChanged} initialGenres={initialGenres} />
-      </HorizontalScrollable>
-      <HorizontalScrollable>
-        <MoodFilter onChange={onMoodsChanged} initialMoods={initialMoods} />
-      </HorizontalScrollable>
-    </div>
-  );
-});
-
-const Container = React.memo(function ({ children }: React.PropsWithChildren) {
-  const SmallScreen = () => {
-    return (
-      <div className='md:hidden xs:block'>
-        <HorizontalScrollable>{children}</HorizontalScrollable>
+    <div className='flex flex-col gap-3 pt-3'>
+      <div className='flex flex-col gap-2'>
+        <div className='flex items-center justify-between'>
+          <span className='text-[10px] font-semibold uppercase tracking-[0.2em] text-slate-500'>
+            Genres
+          </span>
+        </div>
+        <HorizontalScrollable>
+          <div className='flex items-center gap-2'>
+            <GenreFilter onChange={onGenresChanged} initialGenres={initialGenres} />
+          </div>
+        </HorizontalScrollable>
       </div>
-    );
-  };
-  const LargeScreen = () => {
-    return <div className='xs:hidden md:flex flex-wrap w-full gap-1'>{children}</div>;
-  };
 
-  return (
-    <>
-      <LargeScreen />
-      <SmallScreen />
-    </>
+      <div className='flex flex-col gap-2'>
+        <div className='flex items-center justify-between'>
+          <span className='text-[10px] font-semibold uppercase tracking-[0.2em] text-slate-500'>
+            Moods
+          </span>
+        </div>
+        <HorizontalScrollable>
+          <div className='flex items-center gap-2'>
+            <MoodFilter onChange={onMoodsChanged} initialMoods={initialMoods} />
+          </div>
+        </HorizontalScrollable>
+      </div>
+    </div>
   );
 });
 

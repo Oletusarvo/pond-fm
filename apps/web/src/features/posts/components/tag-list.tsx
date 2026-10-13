@@ -22,7 +22,7 @@ export function TagList({
   size,
 }: TagListProps) {
   return (
-    <>
+    <div className='flex items-center gap-1.5 flex-wrap'>
       {tags?.map((tag) => {
         return (
           <Tag
@@ -35,6 +35,6 @@ export function TagList({
           />
         );
       })}
-    </>
+    </div>
   );
 }

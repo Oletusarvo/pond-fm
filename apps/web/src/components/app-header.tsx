@@ -22,25 +22,37 @@ export function AppHeader() {
   const { status: authStatus } = useAuthContext();
 
   return (
-    <header className='bg-primary text-white py-3 h-pad w-full flex items-center justify-between'>
-      <div className='flex items-center gap-4 text-sm'>
-        <Link to='/' className='flex gap-1 items-center'>
+    <header className='flex h-16 w-full items-center justify-between border-b border-slate-200 bg-white/95 py-2 text-slate-900 shadow-[0_4px_18px_rgba(15,23,42,0.04)] backdrop-blur-sm h-pad'>
+      <div className='flex min-w-0 items-center gap-4 text-sm'>
+        <Link
+          to='/'
+          className='flex shrink-0 items-center gap-1 rounded-lg focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-emerald-600'
+        >
           <AppIcon />
-          <h2 className='font-bold cursive'>
+          <h2 className='font-bold text-slate-900 cursive'>
             <span>Amphitune</span>
           </h2>
         </Link>
 
-        <nav className='md:flex items-center gap-4 xs:hidden'>
-          <ResponsiveLink to='/undiscovered' className='font-semibold'>
+        <nav aria-label='Primary navigation' className='hidden items-center gap-1 md:flex'>
+          <ResponsiveLink
+            to='/undiscovered'
+            className='rounded-lg px-3 py-2 font-semibold text-slate-600 transition-colors hover:bg-emerald-50 hover:text-emerald-800'
+          >
             Undiscovered
           </ResponsiveLink>
-          <ResponsiveLink to='/new' className='font-semibold'>
+          <ResponsiveLink
+            to='/new'
+            className='rounded-lg px-3 py-2 font-semibold text-slate-600 transition-colors hover:bg-emerald-50 hover:text-emerald-800'
+          >
             New
           </ResponsiveLink>
 
           {authStatus === "authenticated" ? (
-            <ResponsiveLink to='/followed' className='font-semibold'>
+            <ResponsiveLink
+              to='/followed'
+              className='rounded-lg px-3 py-2 font-semibold text-slate-600 transition-colors hover:bg-emerald-50 hover:text-emerald-800'
+            >
               Followed
             </ResponsiveLink>
           ) : null}
@@ -63,7 +75,7 @@ const AuthControls = React.memo(function ({
   authStatus: ReturnType<typeof useAuthContext>["status"];
 }) {
   return (
-    <div className='flex gap-4 items-center text-sm'>
+    <div className='flex shrink-0 items-center gap-1 sm:gap-2'>
       {authStatus === "authenticated" ? (
         <>
           <UserProfileButton />
@@ -94,7 +106,14 @@ const AuthControls = React.memo(function ({
           </ToggleProvider>
           <ToggleProvider>
             <ToggleProvider.Trigger>
-              <Button color='white' variant='ghost' shape='circle'>
+              <Button
+                color='primary'
+                variant='ghost'
+                shape='circle'
+                paddingEnabled
+                aria-label='Open settings'
+                title='Settings'
+              >
                 <SettingsIcon />
               </Button>
             </ToggleProvider.Trigger>
@@ -131,7 +150,10 @@ function UserProfileButton() {
     <Button
       shape='circle'
       variant='ghost'
-      color='white'
+      color='primary'
+      paddingEnabled
+      aria-label='Open profile'
+      title='Profile'
       onClick={() => navigate(defaults.url.userTracks(session.user.id))}
     >
       <UserIcon />
@@ -141,7 +163,15 @@ function UserProfileButton() {
 
 function UploadButton(props) {
   return (
-    <Button {...props} color='white' variant='ghost' shape='circle'>
+    <Button
+      {...props}
+      color='primary'
+      variant='ghost'
+      shape='circle'
+      paddingEnabled
+      aria-label='Import or upload tracks'
+      title='Import or upload tracks'
+    >
       <UploadIcon />
     </Button>
   );
@@ -155,9 +185,12 @@ function NotificationsButton(props) {
   return (
     <Button
       {...props}
-      color='white'
+      color='primary'
       variant='ghost'
       shape='circle'
+      paddingEnabled
+      aria-label='Notifications'
+      title='Notifications'
       onClick={async (e) => {
         await authService.refreshSession({
           user: {
@@ -171,9 +204,9 @@ function NotificationsButton(props) {
         <NotificationsIcon />
         {hasUnseen ? (
           <>
-            <div className='bg-red-500 animate-ping p-1 aspect-square w-2 h-2 rounded-full absolute z-10 right-0 bottom-1 text-red text-center'></div>
+            <div className='absolute bottom-1 right-0 z-10 h-2 w-2 animate-ping rounded-full bg-red-500 ring-2 ring-white'></div>
 
-            <div className='bg-red-500 p-1 aspect-square w-2 h-2 rounded-full absolute z-10 right-0 bottom-1 text-red text-center'></div>
+            <div className='absolute bottom-1 right-0 z-10 h-2 w-2 rounded-full bg-red-500 ring-2 ring-white'></div>
           </>
         ) : null}
       </div>

@@ -1,5 +1,4 @@
 import { useState } from "react";
-import { Button } from "../../../components/button";
 import { cancelable } from "../../../utils/debounced";
 import { useQueryClient } from "@tanstack/react-query";
 import { useUserContext } from "../../users/providers/user-proivder";
@@ -16,11 +15,9 @@ import { PlaysPerDayChart, PlaysPerMonthChart } from "../../charting/components/
 
 /**Renders the header at the top of a user's profile screen. */
 export function UserHeader() {
-  const { status, session } = useAuthContext();
+  const { status } = useAuthContext();
   const { user } = useUserContext();
   const [followedByMe, setFollowedByMe] = useState(user.followed_by_me);
-  const { data: playsPerDay, isLoading } = usePlayData("week");
-
   const navigate = useNavigate();
 
   const queryClient = useQueryClient();
@@ -50,88 +47,121 @@ export function UserHeader() {
     });
   };
 
-  const FollowButtonIcon = followedByMe ? UserMinus : UserPlus;
   const urls = user.urls;
+
   return (
-    <section className='flex flex-col w-full py-2 gap-4 items-start relative'>
-      {/**Header portion */}
-      <div className='w-full leading-none flex flex-row justify-between xs:items-start'>
-        <div className='flex sm:gap-8 xs:gap-2 md:items-center xs:items-start w-full'>
+    <section className='relative overflow-hidden rounded-[2rem] border border-slate-200 bg-[radial-gradient(circle_at_top_left,rgba(16,185,129,0.12),transparent_38%),linear-gradient(180deg,#ffffff,#f8fafc)] p-4 shadow-[0_20px_60px_rgba(15,23,42,0.06)] md:p-6'>
+      <div className='flex flex-col gap-5'>
+        <div className='flex items-start justify-between gap-4'>
           <div
-            className='flex gap-2 items-center cursor-pointer w-full'
+            className='flex min-w-0 items-center gap-3 md:gap-4'
             onClick={() => navigate(defaults.url.userTracks(user.id))}
           >
-            <div className='shrink-0 flex items-center justify-center md:w-24 md:h-24 xs:w-16 xs:h-16 rounded-full bg-primary text-white overflow-hidden'>
+            <div className='flex h-16 w-16 shrink-0 items-center justify-center overflow-hidden rounded-full border border-emerald-200 bg-emerald-500/10 text-emerald-700 shadow-sm md:h-20 md:w-20'>
               {user.profile_picture ? (
-                <img src={user.profile_picture} loading='lazy' />
+                <img
+                  src={user.profile_picture}
+                  loading='lazy'
+                  className='h-full w-full object-cover'
+                />
               ) : (
-                <User size='1rem' />
+                <User size='1.1rem' />
               )}
             </div>
-            <div className='flex w-full items-center justify-between'>
-              <h2 className='text-sm font-semibold text-primary'>{user.username}</h2>
-              <Button
-                color={followedByMe ? "danger" : "primary"}
-                variant='text'
-                onClick={onFollowButtonClicked}
-                icon={FollowButtonIcon}
-              >
-                <span className='text-sm'>{followedByMe ? "Unfollow" : "Follow"}</span>
-              </Button>
+
+            <div className='min-w-0'>
+              <h2 className='truncate text-lg font-black tracking-tight text-slate-900 md:text-2xl'>
+                {user.username}
+              </h2>
+              <p className='mt-1 text-xs font-semibold uppercase tracking-[0.2em] text-slate-500'>
+                Artist profile
+              </p>
             </div>
           </div>
+
+          <button
+            type='button'
+            onClick={onFollowButtonClicked}
+            className={[
+              "inline-flex items-center gap-2 rounded-full border px-4 py-2 text-sm font-semibold transition-all duration-150",
+              followedByMe
+                ? "border-slate-200 bg-white text-slate-700 hover:border-slate-300 hover:text-slate-900"
+                : "border-emerald-500 bg-emerald-500 text-white shadow-sm shadow-emerald-500/20 hover:bg-emerald-400",
+            ].join(" ")}
+          >
+            {followedByMe ? <UserMinus size='1rem' /> : <UserPlus size='1rem' />}
+            {followedByMe ? "Unfollow" : "Follow"}
+          </button>
         </div>
-      </div>
-      <div className='flex xs:flex-col md:flex-row w-full lg:justify-between gap-2'>
-        <div className='flex flex-col flex-1 gap-4'>
-          <p className='text-sm text-slate-500 xs:w-full md:w-92'>{user.bio || "No bio."}</p>
-          {urls ? (
-            <div className='flex flex-col gap-2'>
-              {urls.map((url, i) => {
-                return (
-                  <FaBrandIconLink
-                    key={i}
-                    to={url}
-                    className='text-sm text-primary'
-                    target='_blank'
-                  />
-                );
-              })}
+
+        <div className='grid gap-3 sm:grid-cols-2 xl:grid-cols-4'>
+          <StatBlock label='Followers' value={user.follower_count} />
+          <StatBlock label='Following' value={user.following_count} />
+          <StatBlock label='Tracks' value={user.track_count ?? 0} />
+          <StatBlock label='Status' value={followedByMe ? "Following" : "Public"} />
+        </div>
+
+        <div className='flex flex-col gap-4'>
+          <p className='max-w-2xl text-sm leading-7 text-slate-600 md:text-base'>
+            {user.bio || "No bio."}
+          </p>
+
+          {urls && urls.length ? (
+            <div className='flex flex-wrap items-center gap-2'>
+              {urls.map((url, i) => (
+                <FaBrandIconLink
+                  key={i}
+                  to={url}
+                  className='rounded-full border border-slate-200 bg-white px-3 py-1.5 text-xs font-semibold text-emerald-700 transition hover:border-emerald-200 hover:text-emerald-800'
+                  target='_blank'
+                />
+              ))}
             </div>
           ) : null}
-          {/**Bottom controls */}
-          <div className='flex w-full items-center justify-between'>
-            <div className='flex items-center sm:gap-4 xs:gap-2'>
-              <ToggleProvider>
-                <ToggleProvider.Trigger>
-                  <Button variant='text'>
-                    <span className='text-xs font-semibold text-primary'>
-                      {user.follower_count} Followers
-                    </span>
-                  </Button>
-                </ToggleProvider.Trigger>
-                <ToggleProvider.Target>
-                  <FollowerFeedModal />
-                </ToggleProvider.Target>
-              </ToggleProvider>
-              <ToggleProvider>
-                <ToggleProvider.Trigger>
-                  <Button variant='text'>
-                    <span className='text-xs font-semibold text-primary'>
-                      {" "}
-                      {user.following_count} Following
-                    </span>
-                  </Button>
-                </ToggleProvider.Trigger>
-                <ToggleProvider.Target>
-                  <FollowingFeedModal />
-                </ToggleProvider.Target>
-              </ToggleProvider>
-            </div>
+
+          <div className='flex flex-wrap items-center gap-3'>
+            <ToggleProvider>
+              <ToggleProvider.Trigger>
+                <button
+                  type='button'
+                  className='rounded-full border border-slate-200 bg-white px-3 py-1.5 text-xs font-semibold text-slate-700 transition hover:border-slate-300 hover:text-slate-900'
+                >
+                  {user.follower_count} Followers
+                </button>
+              </ToggleProvider.Trigger>
+              <ToggleProvider.Target>
+                <FollowerFeedModal />
+              </ToggleProvider.Target>
+            </ToggleProvider>
+
+            <ToggleProvider>
+              <ToggleProvider.Trigger>
+                <button
+                  type='button'
+                  className='rounded-full border border-slate-200 bg-white px-3 py-1.5 text-xs font-semibold text-slate-700 transition hover:border-slate-300 hover:text-slate-900'
+                >
+                  {user.following_count} Following
+                </button>
+              </ToggleProvider.Trigger>
+              <ToggleProvider.Target>
+                <FollowingFeedModal />
+              </ToggleProvider.Target>
+            </ToggleProvider>
           </div>
         </div>
       </div>
     </section>
+  );
+}
+
+function StatBlock({ label, value }: { label: string; value: string | number }) {
+  return (
+    <div className='rounded-2xl border border-slate-200 bg-white/80 p-3 shadow-sm'>
+      <div className='text-[10px] font-semibold uppercase tracking-[0.2em] text-slate-500'>
+        {label}
+      </div>
+      <div className='mt-2 text-xl font-black text-slate-900'>{value}</div>
+    </div>
   );
 }
 

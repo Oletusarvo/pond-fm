@@ -45,12 +45,11 @@ export function Feed({
   }
 
   return (
-    <ul className='flex flex-col w-full flex-1 overflow-y-scroll max-h-full'>
+    <ul className='flex flex-col w-full flex-1 overflow-y-scroll max-h-full gap-1'>
       {data.map((item, i) => {
         return (
           <React.Fragment key={keyExtractor?.(item)}>
             <RenderComponent item={item} />
-            {i < data.length - 1 ? <Separator /> : null}
           </React.Fragment>
         );
       })}

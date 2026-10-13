@@ -65,6 +65,7 @@ function Notification({ notification }) {
         : "var(--color-primary)";
   const iconProps =
     type === "like" ? { color: "transparent", fill: iconColor } : { color: iconColor };
+  const isUnseen = notification?.seen_at === null;
   const message =
     type === "like"
       ? "liked your track"
@@ -73,31 +74,37 @@ function Notification({ notification }) {
         : "followed you";
   return (
     <div
-      className='flex w-full items-center text-black gap-2 py-4 cursor-pointer'
+      className={`group flex w-full cursor-pointer items-center gap-3 rounded-xl border px-4 py-3 transition-colors ${
+        isUnseen
+          ? "border-emerald-200 bg-emerald-50/70 hover:bg-emerald-50"
+          : "border-slate-100 bg-white hover:border-emerald-100 hover:bg-slate-50/70"
+      }`}
       onClick={() => {
         toggleModalState(false);
         navigate(defaults.url.userTracks(notification.sender.id));
       }}
     >
-      <Icon {...iconProps} size='1.2rem' />
-      <div className='flex flex-col flex-1 items-start'>
-        <div className='flex flex-col items-start text-sm'>
-          <div className='flex items-center gap-2'>
-            <strong>{notification.sender.username}</strong>
-            <span className='text-nowrap'>{message}</span>
+      <div className='flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-white shadow-sm ring-1 ring-slate-200/70'>
+        <Icon {...iconProps} size='1.1rem' />
+      </div>
+      <div className='flex min-w-0 flex-1 flex-col items-start'>
+        <div className='flex w-full min-w-0 items-start justify-between gap-3'>
+          <div className='min-w-0 text-sm leading-5 text-slate-600'>
+            <strong className='font-bold text-slate-900'>{notification.sender.username}</strong>{" "}
+            <span>{message}</span>
+            {notification.type !== "follow" ? (
+              <span className='block truncate font-semibold text-emerald-800'>
+                {notification.track?.title}
+              </span>
+            ) : null}
           </div>
-
-          {notification.type !== "follow" ? (
-            <strong className='text-primary'>{notification.track?.title}</strong>
-          ) : null}
-
-          {notification?.seen_at === null ? (
-            <div className='rounded-md px-1 border-primary/20 bg-primary/10 text-primary text-xs'>
+          {isUnseen ? (
+            <span className='shrink-0 rounded-full border border-emerald-200 bg-white px-2 py-0.5 text-[10px] font-bold uppercase text-emerald-700'>
               New
-            </div>
+            </span>
           ) : null}
         </div>
-        <span className='text-slate-500 text-sm'>{timestamp}</span>
+        <span className='mt-1 text-xs font-medium text-slate-500'>{timestamp}</span>
       </div>
     </div>
   );

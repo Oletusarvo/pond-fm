@@ -46,13 +46,19 @@ function Content({ onClose }) {
     window.open("https://audius.co/upload", "_blank");
   };
   return (
-    <div className='flex flex-col gap-2 w-full'>
-      <div className='flex w-full flex-col items-center mb-8'>
-        <img src='/assets/guitar-frawg.webp' className='w-42' />
-        <h2 className='text-xl font-semibold'>Import Tracks</h2>
-        <p className='text-center'>
-          Import your entire catalogue from Audius to Amphitune, or upload to Audius.{" "}
-        </p>
+    <div className='flex w-full flex-col gap-3'>
+      <div className='mb-2 flex w-full items-center gap-4 rounded-2xl border border-emerald-100 bg-linear-to-br from-emerald-50 via-white to-teal-50 p-4 sm:p-5'>
+        <img
+          src='/assets/guitar-frawg.webp'
+          alt='Amphitune frog playing a guitar'
+          className='h-16 w-16 shrink-0 rounded-2xl border border-white object-cover shadow-sm sm:h-20 sm:w-20'
+        />
+        <div className='min-w-0'>
+          <h2 className='text-lg font-bold text-slate-900 sm:text-xl'>Bring your music over</h2>
+          <p className='mt-1 text-sm leading-5 text-slate-600'>
+            Import your Audius catalogue or upload a new track on Audius.
+          </p>
+        </div>
       </div>
 
       <MethodButton
@@ -122,11 +128,16 @@ function MethodButton({
   return (
     <button
       {...props}
-      className='rounded-md border border-primary text-primary w-full p-4 cursor-pointer text-start flex gap-4 items-center'
+      className='group flex w-full cursor-pointer items-center gap-4 rounded-xl border border-slate-200 bg-white p-4 text-start text-slate-900 transition-colors hover:border-emerald-300 hover:bg-emerald-50/40 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-600 disabled:cursor-not-allowed disabled:opacity-50'
     >
-      <div className='flex flex-col'>
-        <h3 className='font-semibold'>{title}</h3>
-        {React.isValidElement(description) ? description : <p>{description}</p>}
+      <span className='flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-emerald-50 text-emerald-700 transition-colors group-hover:bg-emerald-100'>
+        {icon}
+      </span>
+      <div className='flex min-w-0 flex-col gap-1'>
+        <h3 className='font-bold text-slate-900'>{title}</h3>
+        <div className='text-sm leading-5 text-slate-600'>
+          {React.isValidElement(description) ? description : <p>{description}</p>}
+        </div>
       </div>
     </button>
   );

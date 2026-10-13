@@ -1,5 +1,5 @@
 import React, { startTransition, useState } from "react";
-import { Check, Crown, Delete, ExternalLink, Waves } from "lucide-react";
+import { Check, Crown, Delete, ExternalLink, LogOut, Waves } from "lucide-react";
 import { Modal } from "../../../components/modal";
 import { useClassName } from "../../../hooks/use-class-name";
 import { Button, LoaderButton } from "../../../components/button";
@@ -61,9 +61,9 @@ export function SettingsModal({
 
   return (
     <Modal title='Settings' onClose={onClose} fullHeight>
-      <div className='flex flex-col gap-4 scrollable'>
+      <div className='flex flex-col gap-5 scrollable'>
         <TabsProvider initialTab={"profile"}>
-          <div className='flex w-full'>
+          <div className='flex w-full border-b border-slate-100'>
             <TabsProvider.Button index='profile'>Profile</TabsProvider.Button>
           </div>
           <TabsProvider.Tab index='profile'>
@@ -77,9 +77,7 @@ export function SettingsModal({
 
 function SectionLabel({ children }: React.PropsWithChildren) {
   return (
-    <h4 className='text-xs font-semibold uppercase tracking-wide text-slate-400 ml-1'>
-      {children}
-    </h4>
+    <h4 className='ml-1 text-xs font-bold uppercase tracking-wide text-slate-500'>{children}</h4>
   );
 }
 
@@ -157,13 +155,13 @@ function DetailsSection() {
   };
 
   return (
-    <section className='flex flex-col w-full gap-2'>
+    <section className='flex w-full flex-col gap-4'>
       <SectionLabel>Profile</SectionLabel>
-      <form className='flex flex-col gap-2 w-full items-end' onSubmit={submit}>
-        <div className='w-full flex items-start' id='link-aligner'>
+      <form className='flex w-full flex-col items-end gap-4' onSubmit={submit}>
+        <div className='flex w-full items-center' id='link-aligner'>
           <Link
             to={"https://audius.co/" + session.user.handle}
-            className='text-primary flex gap-2 items-center'
+            className='inline-flex items-center gap-2 rounded-lg border border-emerald-100 bg-emerald-50/70 px-3 py-2 text-sm font-semibold text-emerald-800 transition-colors hover:bg-emerald-50'
             target='_blank'
           >
             <span>Edit profile on Audius</span>
@@ -202,7 +200,9 @@ function DetailsSection() {
         <LoaderButton
           icon={status === "success" && !detailsDirty ? Check : null}
           type='submit'
-          variant='text'
+          variant='contained'
+          shape='rounded'
+          paddingEnabled
           loading={loading}
           disabled={loading || !detailsDirty}
         >
@@ -210,7 +210,8 @@ function DetailsSection() {
         </LoaderButton>
       </form>
       <Separator />
-      <div className='flex flex-col gap-2 items-start'>
+      <div className='flex w-full flex-col items-start gap-2'>
+        <SectionLabel>Account</SectionLabel>
         <LogoutButton />
         <DeleteAccountButton />
       </div>
@@ -248,7 +249,7 @@ function LogoutButton() {
         </LoaderButton>
       }
       intentButton={
-        <Button variant='text' shape='rounded'>
+        <Button variant='ghost' shape='rounded' paddingEnabled icon={LogOut}>
           Logout
         </Button>
       }
@@ -281,7 +282,7 @@ function DeleteAccountButton() {
         </LoaderButton>
       }
       intentButton={
-        <Button shape='rounded' variant='text' color='danger'>
+        <Button shape='rounded' variant='outlined' color='danger' paddingEnabled icon={Delete}>
           Delete Account
         </Button>
       }
