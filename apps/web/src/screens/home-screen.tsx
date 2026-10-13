@@ -82,7 +82,7 @@ export function HomeScreen() {
     <main className='w-full bg-[radial-gradient(circle_at_top,rgba(16,185,129,0.12),transparent_46%)] text-slate-900'>
       <section className='h-pad py-12 md:py-16'>
         <div className='mx-auto max-w-7xl'>
-          <div className='rounded-4xl border border-emerald-100/80 bg-white/80 p-5 shadow-[0_28px_80px_rgba(15,23,42,0.08)] backdrop-blur-sm md:p-8'>
+          <div className='rounded-4xl border border-emerald-100/80 bg-white/80 p-5 shadow-lg backdrop-blur-sm md:p-8'>
             <div className='mb-8 flex items-center justify-between gap-4'>
               <div className='flex items-center gap-3'>
                 <div className='flex h-11 w-11 items-center justify-center rounded-2xl bg-emerald-500/10 text-emerald-700'>
@@ -156,7 +156,7 @@ export function HomeScreen() {
 
               <div className='relative'>
                 <div className='absolute inset-6 rounded-full bg-emerald-400/20 blur-3xl' />
-                <div className='relative overflow-hidden rounded-4xl border border-slate-200 bg-slate-900 shadow-[0_30px_90px_rgba(15,23,42,0.35)]'>
+                <div className='relative overflow-hidden rounded-4xl border border-slate-200 bg-slate-900 shadow-lg'>
                   <div className='mb-4 flex items-center justify-between rounded-2xl border border-white/10 bg-white/5 px-4 py-3 m-4 text-white'>
                     <div className='flex items-center gap-3'>
                       <div className='flex h-10 w-10 items-center justify-center rounded-full bg-emerald-500/20 text-emerald-300'>
@@ -225,7 +225,7 @@ export function HomeScreen() {
       </section>
 
       <section className='h-pad pb-14 pt-6 md:pb-20'>
-        <div className='mx-auto max-w-5xl rounded-4xl bg-slate-900 px-6 py-8 text-white shadow-[0_30px_80px_rgba(15,23,42,0.35)] md:px-8 md:py-10'>
+        <div className='mx-auto max-w-5xl rounded-4xl bg-slate-900 px-6 py-8 text-white shadow-lg md:px-8 md:py-10'>
           <div className='flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between'>
             <div className='max-w-xl'>
               <p className='text-sm font-semibold uppercase tracking-[0.22em] text-emerald-300'>
@@ -366,7 +366,7 @@ function FeatureCard({
   icon: typeof Sprout;
 }) {
   return (
-    <div className='rounded-[1.75rem] border border-slate-200 bg-white p-5 shadow-[0_12px_30px_rgba(15,23,42,0.04)]'>
+    <div className='rounded-[1.75rem] border border-slate-200 bg-white p-5 shadow-lg'>
       <div className='mb-4 flex h-12 w-12 items-center justify-center rounded-2xl bg-emerald-500/10 text-emerald-700'>
         <Icon className='h-5 w-5' />
       </div>

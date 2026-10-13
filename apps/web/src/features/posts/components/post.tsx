@@ -32,7 +32,7 @@ export function Post({ ref }: { ref?: React.RefObject<any> }) {
     "group flex w-full flex-col items-start gap-3 rounded-[1.75rem] border p-3 transition-all duration-200 ease-out md:p-4",
     isPlaying
       ? "border-emerald-200 bg-emerald-50/70 shadow-[0_12px_28px_rgba(16,185,129,0.08)]"
-      : "border-slate-200 bg-white shadow-[0_10px_24px_rgba(15,23,42,0.04)] hover:-translate-y-0.5 hover:border-emerald-200 hover:shadow-[0_16px_30px_rgba(15,23,42,0.08)]",
+      : "border-slate-200 bg-white shadow-lg hover:-translate-y-0.5 hover:border-emerald-200 hover:shadow-[0_16px_30px_rgba(15,23,42,0.08)]",
   );
 
   const trackId = post?.id;
