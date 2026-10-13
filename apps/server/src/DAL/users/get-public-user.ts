@@ -17,7 +17,7 @@ export async function getPublicUser(ctx: DBContext, config: { id: string; sessio
   query.select("subscription.plan_id as subcription");
   query.select(
     db.raw(
-      "(SELECT COUNT(*) FROM ?? tracks WHERE tracks.author_id = users.id AND tracks.status = active) AS track_count",
+      "(SELECT COUNT(*) FROM ?? tracks WHERE tracks.author_id = users.id AND tracks.status = 'active') AS track_count",
       [tablenames.tracks],
     ),
   );
