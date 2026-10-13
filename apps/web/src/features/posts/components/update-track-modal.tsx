@@ -14,7 +14,7 @@ import { TTrack, TTrackPublic } from "@pondfm/app-shared";
 import { useStopPropagation } from "../../../hooks/use-stop-propagation";
 import { stopPropagation } from "../../../utils/stop-propagation";
 import { Link } from "react-router-dom";
-import { ExternalLink } from "lucide-react";
+import { ExternalLink, Save, Trash2 } from "lucide-react";
 
 const [UpdateTrackProvider, useUpdateTrackContext] = createProvider({
   contextName: "UpdateTrackContext",
@@ -65,13 +65,18 @@ function ModalContent() {
 
   return (
     <Form onSubmit={submit}>
-      <div className='flex gap-2'>
-        <img src={track?.artwork} loading='lazy' className='w-16 h-16 rounded-md' />
-        <div className='flex flex-col'>
-          <h2 className='text-xl font-semibold'>Updating {track?.title}</h2>
+      <div className='flex items-center gap-4 rounded-2xl border border-emerald-100 bg-linear-to-br from-emerald-50 via-white to-teal-50 p-4'>
+        <img
+          src={track?.artwork}
+          alt=''
+          loading='lazy'
+          className='h-16 w-16 shrink-0 rounded-xl border border-white object-cover shadow-sm'
+        />
+        <div className='flex min-w-0 flex-col gap-1'>
+          <h2 className='truncate text-lg font-bold text-slate-900'>Updating {track?.title}</h2>
           <Link
             to={`https://audius.co${track.permalink}/edit`}
-            className='flex gap-1 items-center text-primary'
+            className='inline-flex w-fit items-center gap-1 rounded-lg px-2 py-1 text-sm font-semibold text-emerald-800 transition-colors hover:bg-emerald-100/70'
             target='_blank'
           >
             <span>Edit on Audius</span>
@@ -80,7 +85,7 @@ function ModalContent() {
         </div>
       </div>
       <Form.Group label='Main Genre'>
-        <div className='gap-1 flex w-full flex-wrap'>
+        <div className='flex w-full flex-wrap gap-2'>
           <GenreSelector
             onChange={(genre) => {
               setGenre(genre);
@@ -90,7 +95,7 @@ function ModalContent() {
         </div>
       </Form.Group>
       <Form.Group label='Style (Max 3)'>
-        <div className='flex gap-1 w-full flex-wrap'>
+        <div className='flex w-full flex-wrap gap-2'>
           <MoodSelector
             onChange={(moods) => {
               setMoods(moods);
@@ -99,11 +104,12 @@ function ModalContent() {
           />
         </div>
       </Form.Group>
-      <div className='flex flex-col w-full gap-2'>
+      <div className='flex w-full flex-col gap-3 border-t border-slate-100 pt-4'>
         <LoaderButton
           onClick={stopPropagation()}
           type='submit'
           variant='contained'
+          icon={Save}
           loading={updateLoading}
           disabled={updateLoading}
           fullWidth
@@ -115,16 +121,34 @@ function ModalContent() {
         <ConfirmAction
           variant='danger'
           intentButton={
-            <Button variant='text' color='danger'>
+            <Button
+              variant='outlined'
+              color='danger'
+              shape='rounded'
+              paddingEnabled
+              fullWidth
+              icon={Trash2}
+            >
               Delete Track
             </Button>
           }
           confirmButton={
-            <LoaderButton variant='text' loading={deleteLoading}>
+            <LoaderButton
+              variant='contained'
+              color='danger'
+              shape='rounded'
+              paddingEnabled
+              loading={deleteLoading}
+              disabled={deleteLoading || deleteStatus === "success"}
+            >
               Delete Track
             </LoaderButton>
           }
-          intentCancelButton={<Button variant='text'>Keep Track</Button>}
+          intentCancelButton={
+            <Button variant='outlined' shape='rounded' paddingEnabled>
+              Keep Track
+            </Button>
+          }
           onConfirm={async () => {
             if (playbackService.currentPlayback?.track.id === track.id) {
               //Stop playback before deleting to prevent errors

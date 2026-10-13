@@ -106,9 +106,9 @@ export function HomeScreen() {
                 </h1>
 
                 <p className='mt-5 text-lg leading-8 text-slate-600'>
-                  {appName} is a music discovery layer built for the long tail — where new releases,
-                  overlooked sessions, and artist-first listening get room to grow without being
-                  buried by the feed algorithm.
+                  {appName} is a music discovery layer built on Audius, for the long tail — where
+                  new releases, overlooked sessions, and artist-first listening get room to grow
+                  without being buried by the feed algorithm.
                 </p>
 
                 <div className='mt-8 flex flex-col gap-3 sm:flex-row'>
