@@ -46,7 +46,7 @@ export function HomeScreen() {
 
   const handlePrimaryAction = () => {
     if (status === "authenticated") {
-      navigate("/new");
+      navigate("/undiscovered");
     } else {
       navigate("/login");
     }
