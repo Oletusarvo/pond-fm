@@ -5,6 +5,7 @@ import { Spinner } from "../components/spinner";
 import { defaults } from "../utils/defaults";
 import { FaIconLink } from "../components/fa-icon-link";
 import { useScrollToTop } from "../hooks/use-scroll-to-top";
+import React from "react";
 
 const appName = "Amphitune";
 
@@ -18,7 +19,7 @@ const featureCards = [
   {
     title: "Fair discovery",
     description:
-      "Every upload gets a real chance to be heard before the algorithm decides what matters.",
+      "Every upload gets a real chance to be heard. Amphitune has no algorithms deciding what you should hear.",
     icon: Sprout,
   },
   {
@@ -38,6 +39,14 @@ const featureCards = [
     icon: Repeat,
   },
 ];
+
+function MainImageCard({ children }: React.PropsWithChildren) {
+  return (
+    <div className='flex h-11 w-11 items-center justify-center rounded-2xl bg-emerald-500/10 text-emerald-700'>
+      {children}
+    </div>
+  );
+}
 
 /**Renders the home screen. */
 export function HomeScreen() {
@@ -147,8 +156,8 @@ export function HomeScreen() {
 
               <div className='relative'>
                 <div className='absolute inset-6 rounded-full bg-emerald-400/20 blur-3xl' />
-                <div className='relative overflow-hidden rounded-4xl border border-slate-200 bg-slate-900 p-4 shadow-[0_30px_90px_rgba(15,23,42,0.35)]'>
-                  <div className='mb-4 flex items-center justify-between rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-white'>
+                <div className='relative overflow-hidden rounded-4xl border border-slate-200 bg-slate-900 shadow-[0_30px_90px_rgba(15,23,42,0.35)]'>
+                  <div className='mb-4 flex items-center justify-between rounded-2xl border border-white/10 bg-white/5 px-4 py-3 m-4 text-white'>
                     <div className='flex items-center gap-3'>
                       <div className='flex h-10 w-10 items-center justify-center rounded-full bg-emerald-500/20 text-emerald-300'>
                         <Music4 className='h-5 w-5' />

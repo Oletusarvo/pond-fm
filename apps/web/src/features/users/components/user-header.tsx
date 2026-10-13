@@ -94,13 +94,6 @@ export function UserHeader() {
           </button>
         </div>
 
-        <div className='grid gap-3 sm:grid-cols-2 xl:grid-cols-4'>
-          <StatBlock label='Followers' value={user.follower_count} />
-          <StatBlock label='Following' value={user.following_count} />
-          <StatBlock label='Tracks' value={user.track_count ?? 0} />
-          <StatBlock label='Status' value={followedByMe ? "Following" : "Public"} />
-        </div>
-
         <div className='flex flex-col gap-4'>
           <p className='max-w-2xl text-sm leading-7 text-slate-600 md:text-base'>
             {user.bio || "No bio."}
@@ -154,13 +147,32 @@ export function UserHeader() {
   );
 }
 
+function Stats() {
+  const { user } = useUserContext();
+
+  return (
+    <div className='grid gap-3 sm:grid-cols-2 xl:grid-cols-4'>
+      <StatBlock label='Followers' value={user.follower_count} />
+      <StatBlock label='Following' value={user.following_count} />
+      <StatBlock label='Tracks' value={user.track_count ?? 0} />
+      <StatBlock label='Status' value={user.followed_by_me ? "Following" : "Public"} />
+    </div>
+  );
+}
+
+function StatLabel({ children }) {
+  return (
+    <div className='text-[10px] font-semibold uppercase tracking-[0.2em] text-slate-500'>
+      {children}
+    </div>
+  );
+}
+
 function StatBlock({ label, value }: { label: string; value: string | number }) {
   return (
     <div className='rounded-2xl border border-slate-200 bg-white/80 p-3 shadow-sm'>
-      <div className='text-[10px] font-semibold uppercase tracking-[0.2em] text-slate-500'>
-        {label}
-      </div>
-      <div className='mt-2 text-xl font-black text-slate-900'>{value}</div>
+      <StatLabel>{label}</StatLabel>
+      <div className='mt-2 text-lg font-black text-slate-900'>{value}</div>
     </div>
   );
 }

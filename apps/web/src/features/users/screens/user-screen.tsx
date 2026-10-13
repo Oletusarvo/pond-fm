@@ -23,7 +23,7 @@ export function UserScreenContent() {
   return (
     <>
       <UserHeader />
-      <Separator />
+
       <TabsProvider
         initialTab={initialTab}
         onChange={(tab) =>
