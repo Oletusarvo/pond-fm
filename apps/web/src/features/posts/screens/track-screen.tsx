@@ -45,9 +45,9 @@ function Content({ trackId }) {
   if (userIdPending) return <Spinner />;
 
   return (
-    <div className='flex flex-col w-full'>
+    <div className='flex flex-col w-full gap-2'>
       <UserHeader />
-      <Separator />
+
       <TrackProvider trackId={trackId}>
         <Post />
       </TrackProvider>
