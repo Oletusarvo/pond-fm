@@ -298,17 +298,6 @@ export function HomeScreen() {
               </Link>
             </div>
           </div>
-
-          <div className='flex items-end'>
-            <Link to='https://audius.co/' target='_blank'>
-              <img
-                src='/assets/audius-logo-black.webp'
-                width='130px'
-                className='invert opacity-90'
-                alt='Audius logo'
-              />
-            </Link>
-          </div>
         </div>
       </footer>
     </main>
@@ -377,6 +366,21 @@ function HeroImageCard() {
           <div className='text-lg font-bold'>870</div>
         </div>
       </div>
+    </div>
+  );
+}
+
+function AudiusLogo() {
+  return (
+    <div className='flex items-end'>
+      <Link to='https://audius.co/' target='_blank'>
+        <img
+          src='/assets/audius-logo-black.webp'
+          width='130px'
+          className='invert opacity-90'
+          alt='Audius logo'
+        />
+      </Link>
     </div>
   );
 }
