@@ -22,7 +22,7 @@
 }
 
 :root {
-  --primary: var(--color-green-600);
+  --primary: var(--color-emerald-700);
   --warning: var(--color-orange-400);
   --success: var(--color-green-400);
   --error: var(--color-red-400);
