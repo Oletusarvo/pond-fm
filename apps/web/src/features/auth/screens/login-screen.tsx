@@ -1,20 +1,11 @@
 import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import { Modal } from "../../../components/modal";
-import { Button, LoaderButton } from "../../../components/button";
-import { Input } from "../../../components/input";
-import { Form } from "../../../components/form";
 import { useAuthContext } from "../providers/auth-provider";
-import { useSubmit } from "../../../hooks/use-submit";
-import { ErrorMessage, SuccessMessage } from "../../../components/helper-message";
 import { createProvider } from "../../../utils/create-provider";
-import { Lock, LockOpen } from "lucide-react";
+import { ArrowRight, Lock, LockOpen, RotateCcw } from "lucide-react";
 import { useEffect, useState } from "react";
-import { useAction } from "../../../hooks/use-action";
-import { api } from "../../../utils/api/api";
 import { Spinner } from "../../../components/spinner";
-import { apiService } from "../../../utils/api/api-service";
 import { useQuery } from "@tanstack/react-query";
-import { useStatus } from "../../../hooks/use-status";
 
 const [LoginProvider, useLoginContext] = createProvider({
   contextName: "LoginContext",
@@ -70,9 +61,9 @@ function ModalContent() {
     <Lock className='w-12 h-12' />
   );
   return (
-    <div className='flex flex-col w-full gap-8'>
-      <div className='w-full flex justify-center'>
-        <div className='bg-primary/10 text-primary w-32 h-32 rounded-full flex items-center justify-center grow-0'>
+    <div className='flex w-full flex-col gap-6'>
+      <div className='flex w-full justify-center'>
+        <div className='flex h-16 w-16 grow-0 items-center justify-center rounded-2xl bg-emerald-50 text-emerald-700'>
           {icon}
         </div>
       </div>
@@ -92,29 +83,35 @@ function CredentialsContent() {
 
   return (
     <>
-      <p className='text-center'>
-        Please continue by clicking the button below. You will be redirected to the Audius login
-        screen. Amphitune will never have access to your credentials.
-        <br />
-        <Link to='https://audius.co/signup/create-email' className='text-primary'>
-          Don't have an Audius account? Create one here.
+      <div className='mx-auto max-w-xl text-center'>
+        <h2 className='text-xl font-bold text-slate-900'>Continue with Audius</h2>
+        <p className='mt-2 text-sm leading-6 text-slate-600'>
+          Sign in securely on Audius. Amphitune never sees or stores your Audius password.
+        </p>
+        <Link
+          to='https://audius.co/signup/create-email'
+          className='mt-3 inline-flex text-sm font-semibold text-emerald-700 underline decoration-emerald-300 underline-offset-4 hover:text-emerald-800 focus-visible:rounded-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-600'
+        >
+          New to Audius? Create an account
         </Link>
-      </p>
+      </div>
 
-      <div className='flex flex-col gap-2 w-full items-center'>
-        <Button onClick={login} fullWidth paddingEnabled variant='contained' shape='rounded'>
-          Login With Audius
-        </Button>
-        <Button
+      <div className='flex w-full flex-col gap-2'>
+        <button
+          type='button'
+          onClick={login}
+          className='inline-flex min-h-12 w-full items-center justify-center gap-2 rounded-xl bg-slate-900 px-5 py-3 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-slate-800 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-600 active:scale-95'
+        >
+          Continue to Audius
+          <ArrowRight className='h-4 w-4' />
+        </button>
+        <button
           type='button'
           onClick={close}
-          fullWidth
-          paddingEnabled
-          variant='ghost'
-          shape='rounded'
+          className='min-h-11 w-full active:scale-95 rounded-xl border border-slate-200 bg-white px-5 py-2.5 text-sm font-semibold text-slate-700 transition-colors hover:bg-slate-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-600'
         >
           Cancel
-        </Button>
+        </button>
       </div>
     </>
   );
@@ -145,8 +142,8 @@ function AuthorizeStep() {
   }, [isLoading, data]);
 
   return (
-    <div className='flex flex-col gap-4 items-center w-full'>
-      <p className='text-center'>
+    <div className='flex w-full flex-col items-center gap-4'>
+      <p className='text-center text-sm leading-6 text-slate-600'>
         {status === "loading"
           ? "Signing in. Please wait..."
           : status !== "success"
@@ -154,13 +151,22 @@ function AuthorizeStep() {
             : null}
       </p>
       {status !== "success" && status !== "loading" ? (
-        <div className='flex flex-col w-full gap-2'>
-          <Button fullWidth shape='rounded' onClick={async () => await refetch()}>
+        <div className='flex w-full flex-col gap-2'>
+          <button
+            type='button'
+            onClick={async () => await refetch()}
+            className='inline-flex min-h-12 active:scale-95 w-full items-center justify-center gap-2 rounded-xl bg-slate-900 px-5 py-3 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-slate-800 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-600'
+          >
+            <RotateCcw className='h-4 w-4' />
             Retry
-          </Button>
-          <Button fullWidth shape='rounded' variant='ghost' onClick={close}>
+          </button>
+          <button
+            type='button'
+            onClick={close}
+            className='min-h-11 w-full active:scale-95 rounded-xl border border-slate-200 bg-white px-5 py-2.5 text-sm font-semibold text-slate-700 transition-colors hover:bg-slate-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-600'
+          >
             Cancel
-          </Button>
+          </button>
         </div>
       ) : null}
     </div>

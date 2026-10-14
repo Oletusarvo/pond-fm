@@ -32,7 +32,7 @@ export function UserScreenContent() {
           })
         }
       >
-        <div className='sticky top-0 z-10 mb-4 mt-4 w-full rounded-full border border-slate-200 bg-slate-50/80 p-1 backdrop-blur-sm'>
+        <div className='sticky top-0 z-10 mb-4 mt-4 w-full rounded-full border border-slate-200 bg-slate-50/80 p-1'>
           <div className='flex gap-1'>
             <TabButton index='tracks' icon={Music}>
               Tracks

@@ -82,7 +82,7 @@ export function HomeScreen() {
     <main className='w-full bg-[radial-gradient(circle_at_top,rgba(16,185,129,0.12),transparent_46%)] text-slate-900'>
       <section className='h-pad py-12 md:py-16'>
         <div className='mx-auto max-w-7xl'>
-          <div className='rounded-4xl border border-emerald-100/80 bg-white/80 p-5 shadow-lg backdrop-blur-sm md:p-8'>
+          <div className='rounded-4xl border border-emerald-100/80 bg-white/80 p-5 shadow-lg md:p-8'>
             <div className='mb-8 flex items-center justify-between gap-4'>
               <div className='flex items-center gap-3'>
                 <div className='flex h-11 w-11 items-center justify-center rounded-2xl bg-emerald-500/10 text-emerald-700'>
@@ -108,7 +108,7 @@ export function HomeScreen() {
                 </div>
 
                 <h1 className='text-4xl font-black tracking-tight text-slate-900 sm:text-5xl lg:text-6xl'>
-                  Give every track a
+                  Every track gets a
                   <span className='block bg-linear-to-r from-emerald-600 to-teal-500 bg-clip-text text-transparent'>
                     fair shot.
                   </span>
@@ -155,7 +155,7 @@ export function HomeScreen() {
               </div>
 
               <div className='relative'>
-                <div className='absolute inset-6 rounded-full bg-emerald-400/20 blur-3xl' />
+                <div className='absolute inset-6 rounded-full bg-emerald-400/20' />
                 <div className='relative overflow-hidden rounded-4xl border border-slate-200 bg-slate-900 shadow-lg'>
                   <div className='mb-4 flex items-center justify-between rounded-2xl border border-white/10 bg-white/5 px-4 py-3 m-4 text-white'>
                     <div className='flex items-center gap-3'>
