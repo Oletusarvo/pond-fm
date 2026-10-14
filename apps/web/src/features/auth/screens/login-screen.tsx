@@ -139,7 +139,7 @@ function AuthorizeStep() {
     if (status !== "success") return;
     updateLoginSuccess(true);
     navigate("/undiscovered");
-  }, [isLoading, data]);
+  }, [isLoading, status]);
 
   return (
     <div className='flex w-full flex-col items-center gap-4'>

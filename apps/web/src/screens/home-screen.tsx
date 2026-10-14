@@ -18,8 +18,7 @@ const impactStats = [
 const featureCards = [
   {
     title: "Fair discovery",
-    description:
-      "Every upload gets a real and equal chance to be heard. Amphitune has no algorithms deciding who should hear your music.",
+    description: "Every upload gets a real and equal chance to be heard.",
     icon: Sprout,
   },
   {
