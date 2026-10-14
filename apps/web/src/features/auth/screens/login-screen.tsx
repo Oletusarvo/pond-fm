@@ -6,6 +6,7 @@ import { ArrowRight, Lock, LockOpen, RotateCcw } from "lucide-react";
 import { useEffect, useState } from "react";
 import { Spinner } from "../../../components/spinner";
 import { useQuery } from "@tanstack/react-query";
+import { useAction } from "../../../hooks/use-action";
 
 const [LoginProvider, useLoginContext] = createProvider({
   contextName: "LoginContext",
@@ -97,19 +98,11 @@ function CredentialsContent() {
       </div>
 
       <div className='flex w-full flex-col gap-2'>
-        <button
-          type='button'
-          onClick={login}
-          className='inline-flex min-h-12 w-full items-center justify-center gap-2 rounded-xl bg-slate-900 px-5 py-3 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-slate-800 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-600 active:scale-95'
-        >
+        <button type='button' onClick={login} className='button --primary'>
           Continue to Audius
           <ArrowRight className='h-4 w-4' />
         </button>
-        <button
-          type='button'
-          onClick={close}
-          className='min-h-11 w-full active:scale-95 rounded-xl border border-slate-200 bg-white px-5 py-2.5 text-sm font-semibold text-slate-700 transition-colors hover:bg-slate-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-600'
-        >
+        <button type='button' onClick={close} className='button --secondary'>
           Cancel
         </button>
       </div>
@@ -125,21 +118,20 @@ function AuthorizeStep() {
 
   const navigate = useNavigate();
   const authService = useAuthContext();
-  const { data, isLoading, refetch } = useQuery({
-    queryKey: ["token", code, state],
-    queryFn: async () => {
+
+  const { action, status, loading } = useAction({
+    fn: async () => {
       return await authService.authorize(code, state);
+    },
+    onSuccess: () => {
+      updateLoginSuccess(true);
+      navigate("/undiscovered");
     },
   });
 
-  const status = isLoading ? "loading" : data?.success === true ? "success" : "error";
-
   useEffect(() => {
-    if (isLoading) return;
-    if (status !== "success") return;
-    updateLoginSuccess(true);
-    navigate("/undiscovered");
-  }, [isLoading, status]);
+    action();
+  }, []);
 
   return (
     <div className='flex w-full flex-col items-center gap-4'>
@@ -152,19 +144,17 @@ function AuthorizeStep() {
       </p>
       {status !== "success" && status !== "loading" ? (
         <div className='flex w-full flex-col gap-2'>
-          <button
-            type='button'
-            onClick={async () => await refetch()}
-            className='inline-flex min-h-12 active:scale-95 w-full items-center justify-center gap-2 rounded-xl bg-slate-900 px-5 py-3 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-slate-800 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-600'
-          >
-            <RotateCcw className='h-4 w-4' />
-            Retry
+          <button type='button' onClick={async () => await action()} className='button --primary'>
+            {loading ? (
+              <Spinner />
+            ) : (
+              <>
+                <RotateCcw className='h-4 w-4' />
+                Retry
+              </>
+            )}
           </button>
-          <button
-            type='button'
-            onClick={close}
-            className='min-h-11 w-full active:scale-95 rounded-xl border border-slate-200 bg-white px-5 py-2.5 text-sm font-semibold text-slate-700 transition-colors hover:bg-slate-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-600'
-          >
+          <button type='button' onClick={close} className='button --secondary'>
             Cancel
           </button>
         </div>

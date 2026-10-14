@@ -5,7 +5,6 @@ import { Form } from "../../../components/form";
 import { createProvider } from "../../../utils/create-provider";
 import { GenreSelector, MoodSelector } from "./track-modal-selector";
 import { Input } from "../../../components/input";
-import { Button, LoaderButton } from "../../../components/button";
 import { useDeleteTrack } from "../hooks/use-delete-track";
 import { usePlaybackContext } from "../../audio/providers/playback-provider";
 import { useUpdateTrack } from "../hooks/use-update-track";
@@ -15,6 +14,7 @@ import { useStopPropagation } from "../../../hooks/use-stop-propagation";
 import { stopPropagation } from "../../../utils/stop-propagation";
 import { Link } from "react-router-dom";
 import { ExternalLink, Save, Trash2 } from "lucide-react";
+import { Spinner } from "../../../components/spinner";
 
 const [UpdateTrackProvider, useUpdateTrackContext] = createProvider({
   contextName: "UpdateTrackContext",
@@ -105,49 +105,43 @@ function ModalContent() {
         </div>
       </Form.Group>
       <div className='flex w-full flex-col gap-3 border-t border-slate-100 pt-4'>
-        <LoaderButton
+        <button
           onClick={stopPropagation()}
           type='submit'
-          variant='contained'
-          icon={Save}
-          loading={updateLoading}
           disabled={updateLoading}
-          fullWidth
-          shape='rounded'
-          paddingEnabled
+          className='inline-flex min-h-12 w-full items-center justify-center gap-2 rounded-xl bg-slate-900 px-5 py-3 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-slate-800 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-600 active:scale-95 disabled:cursor-not-allowed disabled:opacity-60'
         >
-          Update
-        </LoaderButton>
+          {updateLoading ? <Spinner /> : <Save className='h-4 w-4' />}
+          {updateLoading ? "Updating..." : "Update"}
+        </button>
         <ConfirmAction
           variant='danger'
           intentButton={
-            <Button
-              variant='outlined'
-              color='danger'
-              shape='rounded'
-              paddingEnabled
-              fullWidth
-              icon={Trash2}
+            <button
+              type='button'
+              className='inline-flex min-h-11 w-full text-nowrap flex-nowrap items-center justify-center gap-2 rounded-xl border border-red-200 bg-white px-5 py-2.5 text-sm font-semibold text-red-700 transition-colors hover:bg-red-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-600 active:scale-95'
             >
+              <Trash2 className='h-4 w-4' />
               Delete Track
-            </Button>
+            </button>
           }
           confirmButton={
-            <LoaderButton
-              variant='contained'
-              color='danger'
-              shape='rounded'
-              paddingEnabled
-              loading={deleteLoading}
+            <button
+              type='button'
               disabled={deleteLoading || deleteStatus === "success"}
+              className='inline-flex min-h-10 flex-1 items-center justify-center gap-2 rounded-xl bg-red-600 px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-red-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-600 active:scale-95 disabled:cursor-not-allowed disabled:opacity-60'
             >
-              Delete Track
-            </LoaderButton>
+              {deleteLoading ? <Spinner /> : <Trash2 className='h-4 w-4' />}
+              {deleteLoading ? "Deleting..." : "Delete Track"}
+            </button>
           }
           intentCancelButton={
-            <Button variant='outlined' shape='rounded' paddingEnabled>
+            <button
+              type='button'
+              className='min-h-10 flex-1 rounded-xl border border-slate-200 bg-white px-4 py-2 text-sm font-semibold text-slate-700 transition-colors hover:bg-slate-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-600 active:scale-95'
+            >
               Keep Track
-            </Button>
+            </button>
           }
           onConfirm={async () => {
             if (playbackService.currentPlayback?.track.id === track.id) {

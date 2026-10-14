@@ -7,6 +7,7 @@ import { audius, REDIRECT_URI } from "../../../../audius.config";
 
 export const exchangeAudiusCodeForTokenHandler = createHandler(async (req, res) => {
   const { code, state } = req.query as { code: string; state: string };
+
   const loginSession = await db(tablenames.loginSessions)
     .where({ state, is_used: false })
     .andWhereRaw("expires_at > CURRENT_TIMESTAMP")

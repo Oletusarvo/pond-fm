@@ -54,7 +54,7 @@ function ModalContent({ cancel }) {
           type='button'
           onClick={onLogout}
           disabled={buttonsDisabled}
-          className='inline-flex min-h-12 w-full items-center justify-center gap-2 rounded-xl bg-slate-900 px-5 py-3 active:scale-95 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-slate-800 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-600 disabled:cursor-not-allowed disabled:opacity-60'
+          className='button --primary'
         >
           {loading ? <Spinner /> : <LogOut className='h-4 w-4' />}
           {loading ? "Logging out..." : "Log out"}
@@ -63,7 +63,7 @@ function ModalContent({ cancel }) {
           type='button'
           onClick={cancel}
           disabled={buttonsDisabled}
-          className='min-h-11 w-full rounded-xl active:scale-95 border border-slate-200 bg-white px-5 py-2.5 text-sm font-semibold text-slate-700 transition-colors hover:bg-slate-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-600 disabled:cursor-not-allowed disabled:opacity-60'
+          className='button --secondary'
         >
           Cancel
         </button>

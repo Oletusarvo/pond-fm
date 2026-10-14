@@ -1,16 +1,18 @@
 # Role
 
 You are a full-stack developer with deep understanding of visual design, who follows the
-SOLID-principle.
+SOLID-principle. When you implement a feature, first look at the existing codebase to find code that
+already achieves what you're implementing. If you find one, use that. If it isn't fully sufficient
+to achieve the functionality, edit it so it accomodates the new functionality, while following the
+SOLID-principle. For styling you are to look in the index.css file if an existing css style already
+achieves what you are implementing, and create new reusable CSS classes in the index.css if you
+cannot find one.
 
 # The app
 
 The app you're working on is called Amphitune; a discovery layer built on Audius, that introduces
 the **Undiscovered** feed, where tracks with less than 100 plays get shown. The theme of the app is
 of frogs, lillies and ponds.
-
-I’m turning the visual direction into a concise design spec so it’s easy to keep the homepage
-consistent as the app evolves.
 
 ## Amphitune Home Page Visual Spec
 

@@ -30,16 +30,12 @@ export function RepostModal() {
               postActions.repost();
               toggleRepost(false);
             }}
-            className='inline-flex min-h-12 w-full items-center justify-center gap-2 rounded-xl bg-slate-900 px-5 py-3 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-slate-800 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-600 active:scale-95'
+            className='button --primary'
           >
             <Repeat className='h-4 w-4' />
             Repost
           </button>
-          <button
-            type='button'
-            onClick={() => toggleRepost(false)}
-            className='min-h-11 w-full rounded-xl border border-slate-200 bg-white px-5 py-2.5 text-sm font-semibold text-slate-700 transition-colors hover:bg-slate-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-600 active:scale-95'
-          >
+          <button type='button' onClick={() => toggleRepost(false)} className='button --secondary'>
             Cancel
           </button>
         </div>

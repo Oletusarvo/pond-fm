@@ -119,7 +119,10 @@ function Content() {
           <div className='min-w-0 flex-1'>
             <Title />
           </div>
-          <EditButton />
+          <div className='flex items-center gap-2'>
+            <PlaybackStatus />
+            <EditButton />
+          </div>
         </ContentRow>
 
         <ContentRow className='mt-auto'>
@@ -135,7 +138,6 @@ function Content() {
 
             <div className='flex w-full items-center justify-between gap-3'>
               <StatsArea />
-              <PlaybackStatus />
             </div>
           </div>
         </ContentRow>
