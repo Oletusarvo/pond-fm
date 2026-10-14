@@ -92,6 +92,7 @@ function CredentialsContent() {
         <Link
           to='https://audius.co/signup/create-email'
           className='mt-3 inline-flex text-sm font-semibold text-emerald-700 underline decoration-emerald-300 underline-offset-4 hover:text-emerald-800 focus-visible:rounded-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-600'
+          target='_blank'
         >
           New to Audius? Create an account
         </Link>

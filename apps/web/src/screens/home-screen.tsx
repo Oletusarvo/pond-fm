@@ -34,7 +34,7 @@ const featureCards = [
   {
     title: "Reposts with intent",
     description:
-      "Boost the tracks you love back to the top of the New feed without gaming the system.",
+      "Boost the tracks you love back to the top of the New feed without gaming the system. Reposts on Amphitune cannot be undone.",
     icon: Repeat,
   },
 ];
@@ -114,9 +114,9 @@ export function HomeScreen() {
                 </h1>
 
                 <p className='mt-5 text-lg leading-8 text-slate-600'>
-                  {appName} is a music discovery layer extending Audius — where new releases,
-                  overlooked sessions, and artist-first listening get room to grow without being
-                  buried by a feed algorithm.
+                  {appName} is a music discovery layer extending Audius, where new tracks are given
+                  a fair and equal chance to get heard without being buried under an obscure
+                  recommendation algorithm.
                 </p>
 
                 <div className='mt-8 flex flex-col gap-3 sm:flex-row'>
@@ -153,51 +153,15 @@ export function HomeScreen() {
                 </div>
               </div>
 
-              <div className='relative'>
-                <div className='absolute inset-6 rounded-full bg-emerald-400/20' />
-                <div className='relative overflow-hidden rounded-4xl border border-slate-200 bg-slate-900 shadow-lg'>
-                  <div className='mb-4 flex items-center justify-between rounded-2xl border border-white/10 bg-white/5 px-4 py-3 m-4 text-white'>
-                    <div className='flex items-center gap-3'>
-                      <div className='flex h-10 w-10 items-center justify-center rounded-full bg-emerald-500/20 text-emerald-300'>
-                        <Music4 className='h-5 w-5' />
-                      </div>
-                      <div>
-                        <div className='text-sm font-semibold'>Live discovery</div>
-                        <div className='text-xs text-slate-300'>Fresh uploads, every day</div>
-                      </div>
-                    </div>
-                    <div className='rounded-full border border-emerald-400/30 bg-emerald-500/15 px-2 py-1 text-xs font-medium text-emerald-200'>
-                      24/7
-                    </div>
-                  </div>
-
-                  <img
-                    src='/assets/guitar-frawg.webp'
-                    alt='Featured artist artwork'
-                    className='aspect-4/5 w-full rounded-3xl object-cover shadow-inner'
-                  />
-
-                  <div className='mt-4 grid grid-cols-3 gap-3' hidden>
-                    <div className='rounded-2xl border border-white/10 bg-white/5 p-3 text-white'>
-                      <div className='mb-1 text-xs uppercase tracking-[0.2em] text-slate-300'>
-                        New
-                      </div>
-                      <div className='text-lg font-bold'>1.2k</div>
-                    </div>
-                    <div className='rounded-2xl border border-white/10 bg-white/5 p-3 text-white'>
-                      <div className='mb-1 text-xs uppercase tracking-[0.2em] text-slate-300'>
-                        Undis.
-                      </div>
-                      <div className='text-lg font-bold'>41%</div>
-                    </div>
-                    <div className='rounded-2xl border border-white/10 bg-white/5 p-3 text-white'>
-                      <div className='mb-1 text-xs uppercase tracking-[0.2em] text-slate-300'>
-                        Followed
-                      </div>
-                      <div className='text-lg font-bold'>870</div>
-                    </div>
-                  </div>
-                </div>
+              <div className='relative items-center justify-center xs:hidden lg:flex w-full h-full'>
+                <img
+                  src='/assets/guitar-frawg.webp'
+                  className='absolute -translate-y-40 -translate-x-25 h-56'
+                />
+                <img
+                  src='/assets/synth-frawg.webp'
+                  className='absolute translate-y-10 translate-x-10'
+                />
               </div>
             </div>
           </div>
@@ -371,6 +335,52 @@ function FeatureCard({
       </div>
       <h3 className='mb-2 text-xl font-bold text-slate-900'>{title}</h3>
       <p className='leading-7 text-slate-600'>{description}</p>
+    </div>
+  );
+}
+
+function LiveDiscoveryBadge() {
+  return (
+    <div className='mb-4 flex items-center justify-between rounded-2xl border border-white/10 bg-white/5 px-4 py-3 m-4 text-white'>
+      <div className='flex items-center gap-3'>
+        <div className='flex h-10 w-10 items-center justify-center rounded-full bg-emerald-500/20 text-emerald-300'>
+          <Music4 className='h-5 w-5' />
+        </div>
+        <div>
+          <div className='text-sm font-semibold'>Live discovery</div>
+          <div className='text-xs text-slate-300'>Fresh uploads, every day</div>
+        </div>
+      </div>
+      <div className='rounded-full border border-emerald-400/30 bg-emerald-500/15 px-2 py-1 text-xs font-medium text-emerald-200'>
+        24/7
+      </div>
+    </div>
+  );
+}
+
+function HeroImageCard() {
+  return (
+    <div className='relative overflow-hidden rounded-4xl border border-slate-200 bg-slate-900 shadow-lg'>
+      <img
+        src='/assets/guitar-frawg.webp'
+        alt='Featured artist artwork'
+        className='aspect-4/5 w-full rounded-3xl object-cover shadow-inner'
+      />
+
+      <div className='mt-4 grid grid-cols-3 gap-3' hidden>
+        <div className='rounded-2xl border border-white/10 bg-white/5 p-3 text-white'>
+          <div className='mb-1 text-xs uppercase tracking-[0.2em] text-slate-300'>New</div>
+          <div className='text-lg font-bold'>1.2k</div>
+        </div>
+        <div className='rounded-2xl border border-white/10 bg-white/5 p-3 text-white'>
+          <div className='mb-1 text-xs uppercase tracking-[0.2em] text-slate-300'>Undis.</div>
+          <div className='text-lg font-bold'>41%</div>
+        </div>
+        <div className='rounded-2xl border border-white/10 bg-white/5 p-3 text-white'>
+          <div className='mb-1 text-xs uppercase tracking-[0.2em] text-slate-300'>Followed</div>
+          <div className='text-lg font-bold'>870</div>
+        </div>
+      </div>
     </div>
   );
 }

@@ -33,6 +33,7 @@
   --breakpoint-xs: 360px;
   --animate-fade-in: FadeInAnimation 0.2s ease-out;
   --animate-grow-in: GrowInAnimation 0.2s ease-out;
+  --animate-hover: HoverAnimation 3s ease-in-out infinite;
 }
 
 #root {

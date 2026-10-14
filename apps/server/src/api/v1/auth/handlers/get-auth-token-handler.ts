@@ -23,7 +23,10 @@ export const exchangeAudiusCodeForTokenHandler = createHandler(async (req, res) 
   const audiusUser = await audius.auth.me(token.access_token);
 
   const user = await db.transaction(async (trx) => {
-    await trx(tablenames.loginSessions).where({ id: loginSession.id }).update({ is_used: true });
+    await trx(tablenames.loginSessions)
+      .where({ id: loginSession.id })
+      .update({ is_used: true })
+      .del();
     return await createUserIfNotExists(trx, {
       user: {
         id: audiusUser.id,
