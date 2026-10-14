@@ -102,7 +102,7 @@ export function useAudioPlayer() {
   //Set the initial volume of the audio-tag.
   useEffect(() => {
     if (audioRef.current) {
-      audioRef.current.volume = 0.25;
+      audioRef.current.volume = 0.75;
     }
   }, [audioRef.current]);
 

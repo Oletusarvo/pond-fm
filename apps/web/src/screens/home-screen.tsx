@@ -53,11 +53,7 @@ export function HomeScreen() {
   const { toggleLogoutModal, status } = useAuthContext();
 
   const handlePrimaryAction = () => {
-    if (status === "authenticated") {
-      navigate("/undiscovered");
-    } else {
-      navigate("/login");
-    }
+    navigate("/undiscovered");
   };
 
   const handleAuthAction = () => {
