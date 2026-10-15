@@ -1,0 +1,25 @@
+.icon-container {
+  display: flex;
+  width: 2.75rem;
+  height: 2.75rem;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  border-radius: 0.75rem;
+  background-color: #ecfdf5;
+  color: #047857;
+  transition: background-color 150ms;
+}
+
+.icon-container.--error {
+  background-color: var(--color-red-50);
+  color: var(--color-red-700);
+}
+
+.group:hover .icon-container.--error {
+  background-color: #fad1d1;
+}
+
+.group:hover .icon-container {
+  background-color: #d1fae5;
+}

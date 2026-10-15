@@ -18,7 +18,8 @@ const impactStats = [
 const featureCards = [
   {
     title: "Fair discovery",
-    description: "Every upload gets a real and equal chance to be heard.",
+    description:
+      "Every upload gets a real and equal chance to be heard. Tracks with less than 100 unique listeners are listed on the Undiscovered-feed, oldest to newest, preventing new uploads from burying old ones.",
     icon: Sprout,
   },
   {
@@ -171,7 +172,7 @@ export function HomeScreen() {
               Why Amphitune
             </p>
             <h2 className='mt-3 text-3xl font-black tracking-tight text-slate-900 md:text-4xl'>
-              Discovery without the algorithmic fog.
+              Great music shouldn't depend on getting picked by an algorithm.
             </h2>
           </div>
 

@@ -11,8 +11,8 @@ cannot find one.
 # The app
 
 The app you're working on is called Amphitune; a discovery layer built on Audius, that introduces
-the **Undiscovered** feed, where tracks with less than 100 plays get shown. The theme of the app is
-of frogs, lillies and ponds.
+the **Undiscovered** feed, where tracks with less than 100 unique listeners get shown. The theme of
+the app is of frogs, lillies and ponds.
 
 ## Amphitune Home Page Visual Spec
 
