@@ -53,7 +53,7 @@ function Content({ onClose }) {
         <img
           src='/assets/guitar-frawg.webp'
           alt='Amphitune frog playing a guitar'
-          className='h-16 w-16 shrink-0 rounded-2xl border border-white object-cover shadow-sm sm:h-20 sm:w-20'
+          className='md:h-24 xs:h-16 shrink-0'
         />
         <div className='min-w-0'>
           <h2 className='text-lg font-bold text-slate-900 sm:text-xl'>Bring your music over</h2>
