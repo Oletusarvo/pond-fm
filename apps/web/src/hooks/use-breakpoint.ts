@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 
-type Breakpoint = "xs" | "sm" | "md" | "lg" | "xl" | "2xl";
+export type Breakpoint = "xs" | "sm" | "md" | "lg" | "xl" | "2xl";
 
 const breakpoints: Record<Breakpoint, number> = {
   xs: 360,
@@ -19,8 +19,17 @@ function getBreakpoint(width: number): Breakpoint | null {
   return matches.at(-1) ?? null;
 }
 
-export function useBreakpoint(): Breakpoint | null {
+export function useBreakpoint() {
   const [breakpoint, setBreakpoint] = useState<Breakpoint | null>(null);
+
+  const breakpointBetween = (min: Breakpoint, max?: Breakpoint) => {
+    const currentBreakpoint = breakpoints[breakpoint];
+    const minBreakpoint = breakpoints[min];
+    const maxBreakpoint = max ? breakpoints[max] : null;
+    return maxBreakpoint
+      ? currentBreakpoint >= minBreakpoint && currentBreakpoint < maxBreakpoint
+      : currentBreakpoint >= minBreakpoint;
+  };
 
   useEffect(() => {
     const updateBreakpoint = () => {
@@ -33,5 +42,5 @@ export function useBreakpoint(): Breakpoint | null {
     return () => window.removeEventListener("resize", updateBreakpoint);
   }, []);
 
-  return breakpoint;
+  return { breakpoint, breakpointBetween };
 }

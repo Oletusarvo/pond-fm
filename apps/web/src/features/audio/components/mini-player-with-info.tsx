@@ -11,7 +11,7 @@ import { Pause, Play, Repeat, SkipBack, SkipForward, Volume2 } from "lucide-reac
 import { useReturnToTrack } from "../../posts/hooks/use-return-to-url";
 import { createProvider } from "../../../utils/create-provider";
 import { setupContext } from "../../../utils/setup-context";
-import { useBreakpoint } from "../../../hooks/use-breakpoint";
+import { Breakpoint, useBreakpoint } from "../../../hooks/use-breakpoint";
 
 function MobileRepostButton() {
   const { track: post, toggleRepost } = useTrackContext();
@@ -65,7 +65,6 @@ export function MiniPlayerWithInfo() {
     onPlayTimeReached: () => postActions.countPlay(),
   });
   const authService = useAuthContext();
-  const breakpoint = useBreakpoint();
   const currentUserIsAuthor =
     !!currentTrack &&
     !!authService.session &&
@@ -152,63 +151,28 @@ export function MiniPlayerWithInfo() {
             </div>
           </div>
 
-          <div className='flex items-center gap-2 md:hidden'>
-            <button
-              type='button'
-              onClick={handlePrimaryAction}
-              disabled={!currentTrack}
-              className='flex h-9 w-9 items-center justify-center rounded-full bg-emerald-500 text-white shadow-sm shadow-emerald-500/25 transition hover:bg-emerald-400 disabled:cursor-not-allowed disabled:opacity-40'
-              aria-label={isPlaying ? "Pause" : "Play"}
-            >
-              {playbackService.currentPlayback?.state === "buffering" ? (
-                <div className='h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent' />
-              ) : isPlaying ? (
-                <Pause className='h-4 w-4 fill-current' />
-              ) : (
-                <Play className='ml-0.5 h-4 w-4 fill-current' />
-              )}
-            </button>
-          </div>
+          {/*The play button rendered on small screens. */}
+          <BreakpointRenderer min={"xs"} max={"md"}>
+            <PlayButton type='button' onClick={handlePrimaryAction} disabled={!currentTrack} />
+          </BreakpointRenderer>
 
-          <div className='hidden items-center gap-2 md:flex'>
-            <button
-              type='button'
-              onClick={handlePrevious}
-              disabled={!currentTrack}
-              className='flex h-9 w-9 items-center justify-center rounded-full border border-slate-200 bg-white text-slate-700 transition hover:border-slate-300 hover:text-slate-900 disabled:cursor-not-allowed disabled:opacity-40'
-              aria-label='Previous track'
-            >
-              <SkipBack className='h-4 w-4' />
-            </button>
+          {/*The playback controls rendered from medium screens upward.*/}
+          <BreakpointRenderer min={"md"}>
+            <div className='items-center gap-2 flex'>
+              <SecondaryButton type='button' onClick={handlePrevious} disabled={!currentTrack}>
+                <SkipBack className='h-4 w-4' />
+              </SecondaryButton>
+              <PlayButton type='button' onClick={handlePrimaryAction} disabled={!currentTrack} />
+              <SecondaryButton type='button' onClick={handleNext} disabled={!currentTrack}>
+                <SkipForward className='h-4 w-4' />
+              </SecondaryButton>
+            </div>
+          </BreakpointRenderer>
 
-            <button
-              type='button'
-              onClick={handlePrimaryAction}
-              disabled={!currentTrack}
-              className='flex h-11 w-11 items-center justify-center rounded-full bg-emerald-500 text-white shadow-sm shadow-emerald-500/25 transition hover:bg-emerald-400 disabled:cursor-not-allowed disabled:opacity-40'
-              aria-label={isPlaying ? "Pause" : "Play"}
-            >
-              {playbackService.currentPlayback?.state === "buffering" ? (
-                <div className='h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent' />
-              ) : isPlaying ? (
-                <Pause className='h-5 w-5 fill-current' />
-              ) : (
-                <Play className='ml-0.5 h-5 w-5 fill-current' />
-              )}
-            </button>
-
-            <button
-              type='button'
-              onClick={handleNext}
-              disabled={!currentTrack}
-              className='flex h-9 w-9 items-center justify-center rounded-full border border-slate-200 bg-white text-slate-700 transition hover:border-slate-300 hover:text-slate-900 disabled:cursor-not-allowed disabled:opacity-40'
-              aria-label='Next track'
-            >
-              <SkipForward className='h-4 w-4' />
-            </button>
-          </div>
-
-          <SeekBar hiddenOn={["xs"]} />
+          {/*The seekbar rendered from medium screens upward. */}
+          <BreakpointRenderer min={"md"}>
+            <SeekBar />
+          </BreakpointRenderer>
 
           {currentTrack ? (
             <TrackProvider trackId={currentTrack.id}>
@@ -219,7 +183,11 @@ export function MiniPlayerWithInfo() {
             </TrackProvider>
           ) : null}
         </div>
-        <SeekBar hiddenOn={["sm", "md", "lg", "xl", "2xl"]} />
+        {/*The seekbar rendered on small to medium screens. */}
+        <BreakpointRenderer min={"xs"} max={"md"}>
+          <SeekBar />
+        </BreakpointRenderer>
+
         <audio
           className='hidden'
           onPlay={() => {
@@ -251,14 +219,63 @@ export function MiniPlayerWithInfo() {
   );
 }
 
-function SeekBar({ hiddenOn }) {
+/**Renders the main play button. */
+function PlayButton(props: React.ComponentProps<"button">) {
   const playbackService = usePlaybackContext();
-  const breakpoint = useBreakpoint();
+  const currentPlayback = playbackService.currentPlayback;
+  const isPlaying = currentPlayback?.state === "playing";
+  return (
+    <button
+      {...props}
+      className='flex h-11 w-11 items-center justify-center rounded-full bg-emerald-500 text-white shadow-sm shadow-emerald-500/25 transition hover:bg-emerald-400 disabled:cursor-not-allowed disabled:opacity-40'
+      aria-label={isPlaying ? "Pause" : "Play"}
+    >
+      {currentPlayback?.state === "buffering" ? (
+        <div className='h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent' />
+      ) : isPlaying ? (
+        <Pause className='h-5 w-5 fill-current' />
+      ) : (
+        <Play className='ml-0.5 h-5 w-5 fill-current' />
+      )}
+    </button>
+  );
+}
+
+/**Renders the type of button used for skip forward and backward actions. */
+function SecondaryButton({ children, ...props }: React.ComponentProps<"button">) {
+  return (
+    <button
+      {...props}
+      className='flex h-9 w-9 items-center justify-center rounded-full border border-slate-200 bg-white text-slate-700 transition hover:border-slate-300 hover:text-slate-900 disabled:cursor-not-allowed disabled:opacity-40'
+      aria-label='Previous track'
+    >
+      {" "}
+      {children}
+    </button>
+  );
+}
+
+/**Renders its children conditionally when the screen size is between the provided breakpoints.*/
+function BreakpointRenderer({
+  children,
+  min,
+  max,
+}: React.PropsWithChildren & { min: Breakpoint; max?: Breakpoint }) {
+  const { breakpoint, breakpointBetween } = useBreakpoint();
+  console.log(breakpoint);
+  const shouldRender = breakpointBetween(min, max);
+  return shouldRender ? children : null;
+}
+
+/**Renders the seek bar. */
+function SeekBar() {
+  const playbackService = usePlaybackContext();
+
   const { currentTime, formatTime, setCurrentTime } = useMiniPlayerContext();
   const currentTrack = playbackService.currentPlayback?.track;
   const duration = currentTrack?.duration;
-  const shouldRender = hiddenOn.includes(breakpoint);
-  return !shouldRender ? (
+
+  return (
     <div className='flex flex-1 items-center gap-3'>
       <span className='text-[11px] font-medium text-slate-500'>{formatTime(currentTime)}</span>
       <input
@@ -280,5 +297,5 @@ function SeekBar({ hiddenOn }) {
         {formatTime(currentTrack?.duration || currentTime)}
       </span>
     </div>
-  ) : null;
+  );
 }
