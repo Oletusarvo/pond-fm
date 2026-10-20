@@ -1,5 +1,5 @@
 import { usePlaybackContext } from "../providers/playback-provider";
-import { useState } from "react";
+import React, { useState } from "react";
 import { TrackProvider, useTrackContext } from "../../posts/providers/post-provider";
 import { RepostButton } from "../../posts/components/repost-button";
 import { LikeButton } from "../../posts/components/like-button";
@@ -9,6 +9,9 @@ import { useScrobble } from "../hooks/use-scrobble";
 import { usePlaylistStore } from "../hooks/use-playlist-store";
 import { Pause, Play, Repeat, SkipBack, SkipForward, Volume2 } from "lucide-react";
 import { useReturnToTrack } from "../../posts/hooks/use-return-to-url";
+import { createProvider } from "../../../utils/create-provider";
+import { setupContext } from "../../../utils/setup-context";
+import { useBreakpoint } from "../../../hooks/use-breakpoint";
 
 function MobileRepostButton() {
   const { track: post, toggleRepost } = useTrackContext();
@@ -41,6 +44,13 @@ function MobileRepostButton() {
   );
 }
 
+const [MiniPlayerContext, useMiniPlayerContext] = setupContext<{
+  currentTime: number;
+  formatTime: (time: number) => string;
+  duration: number;
+  setCurrentTime: React.Dispatch<React.SetStateAction<number>>;
+}>({ name: "MiniPlayerContext" });
+
 export function MiniPlayerWithInfo() {
   const playbackService = usePlaybackContext();
   const currentTrack = playbackService.currentPlayback?.track;
@@ -55,6 +65,7 @@ export function MiniPlayerWithInfo() {
     onPlayTimeReached: () => postActions.countPlay(),
   });
   const authService = useAuthContext();
+  const breakpoint = useBreakpoint();
   const currentUserIsAuthor =
     !!currentTrack &&
     !!authService.session &&
@@ -105,148 +116,169 @@ export function MiniPlayerWithInfo() {
   };
 
   return (
-    <div
-      className='border-t border-slate-200 bg-white/90 px-3 pb-[calc(env(safe-area-inset-bottom)+0.75rem)] pt-3 shadow-[0_-18px_40px_rgba(15,23,42,0.08)] backdrop-blur-sm md:px-6'
-      id='main-audio-player'
+    <MiniPlayerContext.Provider
+      value={{
+        currentTime,
+        formatTime,
+        duration,
+        setCurrentTime,
+      }}
     >
-      <div className='mx-auto flex max-w-7xl items-center gap-3'>
-        <div className='flex min-w-0 flex-1 items-center gap-3'>
-          {currentTrack ? (
-            <img
-              src={currentTrack.artwork}
-              alt={currentTrack.title}
-              className='h-12 w-12 rounded-xl border border-slate-200 object-cover shadow-sm md:h-14 md:w-14'
-            />
-          ) : (
-            <div className='flex h-12 w-12 items-center justify-center rounded-xl border border-slate-200 bg-slate-100 text-slate-500 md:h-14 md:w-14'>
-              <Volume2 className='h-5 w-5' />
-            </div>
-          )}
+      <div
+        className='border-t border-slate-200 bg-white/90 px-3 pb-[calc(env(safe-area-inset-bottom)+0.75rem)] pt-3 shadow-[0_-18px_40px_rgba(15,23,42,0.08)] backdrop-blur-sm md:px-6'
+        id='main-audio-player'
+      >
+        <div className='mx-auto flex max-w-7xl items-center gap-3'>
+          <div className='flex min-w-0 flex-1 items-center gap-3'>
+            {currentTrack ? (
+              <img
+                src={currentTrack.artwork}
+                alt={currentTrack.title}
+                className='h-12 w-12 rounded-xl border border-slate-200 object-cover shadow-sm md:h-14 md:w-14'
+              />
+            ) : (
+              <div className='flex h-12 w-12 items-center justify-center rounded-xl border border-slate-200 bg-slate-100 text-slate-500 md:h-14 md:w-14'>
+                <Volume2 className='h-5 w-5' />
+              </div>
+            )}
 
-          <div className='min-w-0 flex-1'>
-            <div className='truncate text-sm font-bold text-slate-900 md:text-base'>
-              {currentTrack?.title || "No track selected"}
-            </div>
-            <div className='truncate text-xs text-slate-500'>
-              {currentTrack?.author.username || "Select a track to play"}
+            <div className='min-w-0 flex-1'>
+              <div className='truncate text-sm font-bold text-slate-900 md:text-base'>
+                {currentTrack?.title || "No track selected"}
+              </div>
+              <div className='truncate text-xs text-slate-500'>
+                {currentTrack?.author.username || "Select a track to play"}
+              </div>
             </div>
           </div>
+
+          <div className='flex items-center gap-2 md:hidden'>
+            <button
+              type='button'
+              onClick={handlePrimaryAction}
+              disabled={!currentTrack}
+              className='flex h-9 w-9 items-center justify-center rounded-full bg-emerald-500 text-white shadow-sm shadow-emerald-500/25 transition hover:bg-emerald-400 disabled:cursor-not-allowed disabled:opacity-40'
+              aria-label={isPlaying ? "Pause" : "Play"}
+            >
+              {playbackService.currentPlayback?.state === "buffering" ? (
+                <div className='h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent' />
+              ) : isPlaying ? (
+                <Pause className='h-4 w-4 fill-current' />
+              ) : (
+                <Play className='ml-0.5 h-4 w-4 fill-current' />
+              )}
+            </button>
+          </div>
+
+          <div className='hidden items-center gap-2 md:flex'>
+            <button
+              type='button'
+              onClick={handlePrevious}
+              disabled={!currentTrack}
+              className='flex h-9 w-9 items-center justify-center rounded-full border border-slate-200 bg-white text-slate-700 transition hover:border-slate-300 hover:text-slate-900 disabled:cursor-not-allowed disabled:opacity-40'
+              aria-label='Previous track'
+            >
+              <SkipBack className='h-4 w-4' />
+            </button>
+
+            <button
+              type='button'
+              onClick={handlePrimaryAction}
+              disabled={!currentTrack}
+              className='flex h-11 w-11 items-center justify-center rounded-full bg-emerald-500 text-white shadow-sm shadow-emerald-500/25 transition hover:bg-emerald-400 disabled:cursor-not-allowed disabled:opacity-40'
+              aria-label={isPlaying ? "Pause" : "Play"}
+            >
+              {playbackService.currentPlayback?.state === "buffering" ? (
+                <div className='h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent' />
+              ) : isPlaying ? (
+                <Pause className='h-5 w-5 fill-current' />
+              ) : (
+                <Play className='ml-0.5 h-5 w-5 fill-current' />
+              )}
+            </button>
+
+            <button
+              type='button'
+              onClick={handleNext}
+              disabled={!currentTrack}
+              className='flex h-9 w-9 items-center justify-center rounded-full border border-slate-200 bg-white text-slate-700 transition hover:border-slate-300 hover:text-slate-900 disabled:cursor-not-allowed disabled:opacity-40'
+              aria-label='Next track'
+            >
+              <SkipForward className='h-4 w-4' />
+            </button>
+          </div>
+
+          <SeekBar hiddenOn={["xs"]} />
+
+          {currentTrack ? (
+            <TrackProvider trackId={currentTrack.id}>
+              <div className='flex items-center gap-2'>
+                {!currentUserIsAuthor ? <RepostButton /> : null}
+                <LikeButton />
+              </div>
+            </TrackProvider>
+          ) : null}
         </div>
-
-        <div className='flex items-center gap-2 md:hidden'>
-          <button
-            type='button'
-            onClick={handlePrimaryAction}
-            disabled={!currentTrack}
-            className='flex h-9 w-9 items-center justify-center rounded-full bg-emerald-500 text-white shadow-sm shadow-emerald-500/25 transition hover:bg-emerald-400 disabled:cursor-not-allowed disabled:opacity-40'
-            aria-label={isPlaying ? "Pause" : "Play"}
-          >
-            {playbackService.currentPlayback?.state === "buffering" ? (
-              <div className='h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent' />
-            ) : isPlaying ? (
-              <Pause className='h-4 w-4 fill-current' />
-            ) : (
-              <Play className='ml-0.5 h-4 w-4 fill-current' />
-            )}
-          </button>
-        </div>
-
-        <div className='hidden items-center gap-2 md:flex'>
-          <button
-            type='button'
-            onClick={handlePrevious}
-            disabled={!currentTrack}
-            className='flex h-9 w-9 items-center justify-center rounded-full border border-slate-200 bg-white text-slate-700 transition hover:border-slate-300 hover:text-slate-900 disabled:cursor-not-allowed disabled:opacity-40'
-            aria-label='Previous track'
-          >
-            <SkipBack className='h-4 w-4' />
-          </button>
-
-          <button
-            type='button'
-            onClick={handlePrimaryAction}
-            disabled={!currentTrack}
-            className='flex h-11 w-11 items-center justify-center rounded-full bg-emerald-500 text-white shadow-sm shadow-emerald-500/25 transition hover:bg-emerald-400 disabled:cursor-not-allowed disabled:opacity-40'
-            aria-label={isPlaying ? "Pause" : "Play"}
-          >
-            {playbackService.currentPlayback?.state === "buffering" ? (
-              <div className='h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent' />
-            ) : isPlaying ? (
-              <Pause className='h-5 w-5 fill-current' />
-            ) : (
-              <Play className='ml-0.5 h-5 w-5 fill-current' />
-            )}
-          </button>
-
-          <button
-            type='button'
-            onClick={handleNext}
-            disabled={!currentTrack}
-            className='flex h-9 w-9 items-center justify-center rounded-full border border-slate-200 bg-white text-slate-700 transition hover:border-slate-300 hover:text-slate-900 disabled:cursor-not-allowed disabled:opacity-40'
-            aria-label='Next track'
-          >
-            <SkipForward className='h-4 w-4' />
-          </button>
-        </div>
-
-        <div className='hidden flex-1 items-center gap-3 md:flex'>
-          <span className='text-[11px] font-medium text-slate-500'>{formatTime(currentTime)}</span>
-          <input
-            type='range'
-            min={0}
-            max={duration}
-            step='any'
-            value={Math.min(currentTime, duration)}
-            onChange={(e) => {
-              const time = e.currentTarget.valueAsNumber;
-              playbackService.updatePlaybackPosition(time);
-              setCurrentTime(time);
-            }}
-            disabled={!currentTrack}
-            aria-label='Seek track'
-            className='h-5 w-full cursor-pointer accent-emerald-600 disabled:cursor-default outline-none'
-          />
-          <span className='text-[11px] font-medium text-slate-500'>
-            {formatTime(duration || currentTime)}
-          </span>
-        </div>
-
-        {currentTrack ? (
-          <TrackProvider trackId={currentTrack.id}>
-            <div className='flex items-center gap-2'>
-              {!currentUserIsAuthor ? <RepostButton /> : null}
-              <LikeButton />
-            </div>
-          </TrackProvider>
-        ) : null}
+        <SeekBar hiddenOn={["sm", "md", "lg", "xl", "2xl"]} />
+        <audio
+          className='hidden'
+          onPlay={() => {
+            playbackService.updatePlaybackState("playing");
+          }}
+          onPause={() => {
+            playbackService.updatePlaybackState("paused");
+            scrobbleService.resetLastTimeUpdate();
+          }}
+          onEnded={() => {
+            const nextTrack = next();
+            playbackService.updateCurrentPlayback(nextTrack);
+          }}
+          onTimeUpdate={(e) => {
+            setCurrentTime(e.currentTarget.currentTime || 0);
+            scrobbleService.updateTimeListened();
+          }}
+          onLoadedMetadata={(e) => {
+            setCurrentTime(0);
+            playbackService.updatePlaybackState("playing");
+            scrobbleService.reset();
+            e.currentTarget.currentTime = 0;
+          }}
+          ref={playbackService.audioRef}
+          src={playbackService.playbackSrc}
+        />
       </div>
-
-      <audio
-        className='hidden'
-        onPlay={() => {
-          playbackService.updatePlaybackState("playing");
-        }}
-        onPause={() => {
-          playbackService.updatePlaybackState("paused");
-          scrobbleService.resetLastTimeUpdate();
-        }}
-        onEnded={() => {
-          const nextTrack = next();
-          playbackService.updateCurrentPlayback(nextTrack);
-        }}
-        onTimeUpdate={(e) => {
-          setCurrentTime(e.currentTarget.currentTime || 0);
-          scrobbleService.updateTimeListened();
-        }}
-        onLoadedMetadata={(e) => {
-          setCurrentTime(0);
-          playbackService.updatePlaybackState("playing");
-          scrobbleService.reset();
-          e.currentTarget.currentTime = 0;
-        }}
-        ref={playbackService.audioRef}
-        src={playbackService.playbackSrc}
-      />
-    </div>
+    </MiniPlayerContext.Provider>
   );
+}
+
+function SeekBar({ hiddenOn }) {
+  const playbackService = usePlaybackContext();
+  const breakpoint = useBreakpoint();
+  const { currentTime, formatTime, setCurrentTime } = useMiniPlayerContext();
+  const currentTrack = playbackService.currentPlayback?.track;
+  const duration = currentTrack?.duration;
+  const shouldRender = hiddenOn.includes(breakpoint);
+  return !shouldRender ? (
+    <div className='flex flex-1 items-center gap-3'>
+      <span className='text-[11px] font-medium text-slate-500'>{formatTime(currentTime)}</span>
+      <input
+        type='range'
+        min={0}
+        max={duration}
+        step='any'
+        value={Math.min(currentTime, duration)}
+        onChange={(e) => {
+          const time = e.currentTarget.valueAsNumber;
+          playbackService.updatePlaybackPosition(time);
+          setCurrentTime(time);
+        }}
+        disabled={!currentTrack}
+        aria-label='Seek track'
+        className='h-5 w-full cursor-pointer accent-emerald-600 disabled:cursor-default outline-none'
+      />
+      <span className='text-[11px] font-medium text-slate-500'>
+        {formatTime(currentTrack?.duration || currentTime)}
+      </span>
+    </div>
+  ) : null;
 }
