@@ -113,8 +113,8 @@ export function HomeScreen() {
                 <p className='mt-5 text-lg leading-8 text-slate-600'>
                   {appName} is a music discovery layer extending Audius, where new tracks are given
                   a fair and equal chance to get heard without being buried under an obscure
-                  recommendation algorithm. Getting your tracks on Amphitune is easy; with the click
-                  of a button, your entire catalogue already uploaded on Audius is imported.
+                  recommendation algorithm. Getting your tracks on Amphitune is easy; import your
+                  entire Audius catalogue with the click of a button.
                 </p>
 
                 <div className='mt-8 flex flex-col gap-3 sm:flex-row'>
