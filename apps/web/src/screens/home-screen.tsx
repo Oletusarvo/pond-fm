@@ -19,7 +19,7 @@ const featureCards = [
   {
     title: "Fair discovery",
     description:
-      "Every upload gets a real and equal chance to be heard. Tracks with less than 100 unique listeners are listed on the Undiscovered-feed, oldest to newest, preventing new uploads from burying old ones.",
+      "Every track gets a real and equal chance to be heard. Tracks with less than 100 unique listeners are listed on the Undiscovered-feed, oldest to newest, preventing new uploads from burying old ones.",
     icon: Sprout,
   },
   {
@@ -113,7 +113,8 @@ export function HomeScreen() {
                 <p className='mt-5 text-lg leading-8 text-slate-600'>
                   {appName} is a music discovery layer extending Audius, where new tracks are given
                   a fair and equal chance to get heard without being buried under an obscure
-                  recommendation algorithm.
+                  recommendation algorithm. Getting your tracks on Amphitune is easy; with the click
+                  of a button, your entire catalogue already uploaded on Audius is imported.
                 </p>
 
                 <div className='mt-8 flex flex-col gap-3 sm:flex-row'>
@@ -299,6 +300,7 @@ export function HomeScreen() {
               </Link>
             </div>
           </div>
+          <img src='/assets/lounge-frawg.webp' className='h-48 xs:hidden md:block' />
         </div>
       </footer>
     </main>

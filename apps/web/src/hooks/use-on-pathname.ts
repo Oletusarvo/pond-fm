@@ -1,6 +1,7 @@
 import { useLocation } from "react-router-dom";
 
-export function useOnPathname(target: string) {
+/**Returns true if currently viewing a page at the provided target url. */
+export function useOnUrl(target: string) {
   const location = useLocation();
   return location.pathname === target;
 }

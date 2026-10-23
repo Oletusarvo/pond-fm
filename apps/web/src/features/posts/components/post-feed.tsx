@@ -3,10 +3,8 @@ import { Feed } from "../../../components/feed";
 import { Post } from "./post";
 import { PopulateTrackStore } from "../providers/populates-post-store";
 import { AdProvider } from "../../ads/providers/ad-provider";
-import { BannerAd } from "../../ads/components/ad-container";
 import { CancelableTrackMethodsProvider } from "../../../providers/cancelable-track-methods-provider";
 import { PopulatesPlaylistStore } from "../providers/populates-playlist-store";
-import HilltopAds from "../../ads/components/hilltop-banner-ad";
 
 const adElement = null; //import.meta.env.PROD ? HilltopAds : null;
 

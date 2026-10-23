@@ -12,9 +12,9 @@ import { api } from "../../../utils/api/api";
 import { defaults } from "../../../utils/defaults";
 
 export function NotificationsModal() {
-  const { toggleState } = useToggleContext();
+  const { toggle } = useToggleContext();
   return (
-    <Modal title='Notifications' onClose={() => toggleState(false)}>
+    <Modal title='Notifications' onClose={() => toggle(false)}>
       <ModalContent />
     </Modal>
   );
@@ -50,7 +50,7 @@ function ModalContent() {
 
 function Notification({ notification }) {
   const navigate = useNavigate();
-  const { toggleState: toggleModalState } = useToggleContext();
+  const { toggle: toggleModalState } = useToggleContext();
   const timestamp = formatDistanceToNow(new Date(notification.created_at), {
     addSuffix: true,
   });

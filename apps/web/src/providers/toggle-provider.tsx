@@ -1,13 +1,7 @@
-import { useCallback, useState } from "react";
 import { createProvider } from "../utils/create-provider";
 import { PassProps } from "../components/pass-props";
-import { setupContext } from "../utils/setup-context";
-import { useStopPropagation } from "../hooks/use-stop-propagation";
 import { stopPropagation } from "../utils/stop-propagation";
-
-type ToggleProviderProps = React.PropsWithChildren & {
-  initialState?: boolean;
-};
+import { useToggle } from "../hooks/use-toggle";
 
 export const [
   /**Provides functionality for toggling things on and off. */
@@ -16,26 +10,17 @@ export const [
   useToggleContext,
 ] = createProvider({
   contextName: "ToggleContext",
-  hook: ({ initialState }: ToggleProviderProps) => {
-    const [isOn, setIsOn] = useState(initialState || false);
-    const toggleState = useCallback((state: boolean) => setIsOn(state), [setIsOn]);
-    return {
-      isOn,
-      toggleState,
-    };
-  },
+  hook: useToggle,
   extend: (hook) => {
     return {
       Trigger: function ({ children }: React.PropsWithChildren) {
-        const { isOn, toggleState } = hook();
-        return (
-          <PassProps onClick={stopPropagation(() => toggleState(!isOn))}>{children}</PassProps>
-        );
+        const { toggle } = hook();
+        return <PassProps onClick={stopPropagation(() => toggle())}>{children}</PassProps>;
       },
 
       Target: function ({ children }: React.PropsWithChildren) {
-        const { isOn } = hook();
-        return isOn ? children : null;
+        const { value } = hook();
+        return value ? children : null;
       },
     };
   },

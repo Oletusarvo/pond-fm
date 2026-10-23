@@ -4,6 +4,7 @@ type UseDetectClickOutsideProps = {
   onClickOutside: () => void;
 };
 
+/**Provides functionality for detecting clicks outside elements. */
 export function useDetectClickOutside({ onClickOutside }: UseDetectClickOutsideProps) {
   const ref = useRef<HTMLElement>(null);
   useEffect(() => {

@@ -24,9 +24,9 @@ const [UpdateTrackProvider, useUpdateTrackContext] = createProvider({
 });
 
 export function UpdateTrackModal({ track }: { track: TTrackPublic }) {
-  const { toggleState } = useToggleContext();
+  const { toggle } = useToggleContext();
   return (
-    <Modal title='Update Track' onClose={() => toggleState(false)}>
+    <Modal title='Update Track' onClose={() => toggle(false)}>
       <UpdateTrackProvider track={track}>
         <ModalContent />
       </UpdateTrackProvider>
@@ -40,7 +40,7 @@ function ModalContent() {
   const [genre, setGenre] = useState(track?.genre);
   const [moods, setMoods] = useState(track?.moods || []);
 
-  const { toggleState: toggleModalVisible } = useToggleContext();
+  const { toggle: toggleModalVisible } = useToggleContext();
 
   const { submit, loading: updateLoading } = useUpdateTrack({
     track: {

@@ -56,8 +56,8 @@ export function SettingsModal({
   onUpgrade,
   onCancelSubscription,
 }: SettingsModalProps) {
-  const { toggleState } = useToggleContext();
-  const onClose = () => toggleState(false);
+  const { toggle } = useToggleContext();
+  const onClose = () => toggle(false);
 
   return (
     <Modal title='Settings' onClose={onClose} fullHeight>
@@ -295,7 +295,7 @@ function DeleteAccountButton() {
 }
 
 function PlanSection() {
-  const { toggleState } = useToggleContext();
+  const { toggle } = useToggleContext();
   const { session } = useAuthContext();
 
   const daysSinceSubscriptionStart = session
@@ -310,7 +310,7 @@ function PlanSection() {
     mode: withinRefundWindow ? "immediate" : "at_period_end",
     onSuccess: () => {
       //Should update the user's session.
-      toggleState(false);
+      toggle(false);
     },
   });
 

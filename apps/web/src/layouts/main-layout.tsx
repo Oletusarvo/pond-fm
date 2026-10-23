@@ -2,7 +2,7 @@ import { Outlet } from "react-router-dom";
 import { AppBottomBar } from "../components/app-bottom-nav";
 import { AppHeader } from "../components/app-header";
 import { WindowResizeManager } from "../managers/window-resize-manager";
-import { MiniPlayerWithInfo } from "../features/audio/components/mini-player-with-info";
+import { MiniPlayer } from "../features/audio/components/mini-player";
 import { AdProvider } from "../features/ads/providers/ad-provider";
 import { useAuthContext } from "../features/auth/providers/auth-provider";
 import { AdScript } from "../features/ads/components/ad-script";
@@ -42,7 +42,7 @@ export function MainLayout() {
       </MainLayoutProvider>
 
       <CancelableTrackMethodsProvider>
-        <MiniPlayerWithInfo />
+        <MiniPlayer />
       </CancelableTrackMethodsProvider>
 
       <AppBottomBar />

@@ -90,12 +90,10 @@ export function useAudioPlayer() {
   };
 
   const onPlay = async () => {
-    if (!audioRef.current) return;
     await audioRef.current.play();
   };
 
   const onPause = () => {
-    if (!audioRef.current) return;
     audioRef.current.pause();
   };
 
@@ -110,8 +108,8 @@ export function useAudioPlayer() {
   useEffect(() => {
     if (currentPlayback?.state === "ready") {
       audioRef.current.currentTime = currentPlayback.start_position || 0;
-      onPlay();
       updateCurrentIndex(currentPlayback);
+      onPlay();
     }
   }, [currentPlayback?.track.id, currentPlayback?.state]);
 

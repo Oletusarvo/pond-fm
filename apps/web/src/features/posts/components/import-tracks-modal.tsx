@@ -16,8 +16,8 @@ import { useClassName } from "../../../hooks/use-class-name";
 
 /**Renders the modal for importing or uploading tracks. */
 export function ImportTracksModal() {
-  const { toggleState } = useToggleContext();
-  const onClose = () => toggleState(false);
+  const { toggle } = useToggleContext();
+  const onClose = () => toggle(false);
 
   return (
     <Modal title='Import Tracks' onClose={onClose}>
