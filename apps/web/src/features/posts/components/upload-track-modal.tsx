@@ -43,7 +43,7 @@ const [
 
 /**Renders the form form uploading a new track. */
 export const UploadTrackModal = React.memo(function () {
-  const { toggleState } = useToggleContext();
+  const { toggle: toggleState } = useToggleContext();
   const onClose = () => toggleState(false);
 
   return (

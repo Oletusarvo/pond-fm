@@ -17,7 +17,7 @@ const PRO_FEATURES = [
 ] as const;
 
 export const GoProModal = React.memo(function GoProModal({ onUpgrade }: GoProModalProps) {
-  const { toggleState } = useToggleContext();
+  const { toggle: toggleState } = useToggleContext();
   const onClose = () => toggleState(false);
 
   return (
@@ -28,7 +28,7 @@ export const GoProModal = React.memo(function GoProModal({ onUpgrade }: GoProMod
 });
 
 function ModalContent() {
-  const { toggleState } = useToggleContext();
+  const { toggle: toggleState } = useToggleContext();
   const onClose = () => toggleState(false);
   const { upgradeSubscription, loading, status } = useUpgradeSubscription({
     onSuccess: async (res) => {

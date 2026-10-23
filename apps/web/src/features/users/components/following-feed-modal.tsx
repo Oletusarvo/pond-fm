@@ -9,7 +9,7 @@ import { useToggleContext } from "../../../providers/toggle-provider";
 
 /**Renders the feed displaying who is following a user. */
 export function FollowingFeedModal() {
-  const { toggleState: toggleModal } = useToggleContext();
+  const { toggle: toggleModal } = useToggleContext();
   const userService = useUserContext();
   return (
     <FeedModal

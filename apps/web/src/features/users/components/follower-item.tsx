@@ -10,7 +10,7 @@ type FollowerItemProps = {
 
 /**Renders the component used to show a user on the follower- or following feeds. */
 export function FollowerItem({ user }: FollowerItemProps) {
-  const { toggleState: toggleModal } = useToggleContext();
+  const { toggle: toggleModal } = useToggleContext();
   const navigate = useNavigate();
 
   const onClick = () => {

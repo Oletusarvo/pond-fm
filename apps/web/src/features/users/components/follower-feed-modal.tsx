@@ -9,7 +9,7 @@ import { useToggleContext } from "../../../providers/toggle-provider";
 
 /**Renders the modal displaying a users followers. */
 export function FollowerFeedModal() {
-  const { toggleState: toggleModal } = useToggleContext();
+  const { toggle: toggleModal } = useToggleContext();
   const userService = useUserContext();
   return (
     <FeedModal

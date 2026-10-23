@@ -11,7 +11,7 @@ import { useStopPropagation } from "../../../hooks/use-stop-propagation";
 
 /**Renders the modal displayed when the report button is tapped. Must be rendered within a ToggleProvider.Target */
 export function ReportModal() {
-  const { toggleState: toggleModal } = useToggleContext();
+  const { toggle: toggleModal } = useToggleContext();
   const close = useStopPropagation(() => toggleModal(false));
   return (
     <Modal title='Report Copyright Infringement' onClose={close}>
